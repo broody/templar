@@ -1,0 +1,20 @@
+{
+  "scope": "Repeat public synthetic membership baseline; complete process, not privacy/payment qualification",
+  "command": [
+    "/home/broody/development/templar/target/poseidon-membership/client-target/release/templar-poseidon-membership",
+    "/home/broody/development/templar/bench/poseidon-membership/fixtures/two-paths.json",
+    "/home/broody/development/templar/bench/poseidon-membership/results/baseline-8g-1t-repeat2/proof"
+  ],
+  "binary_sha256": "0ca540ea98f0034face61e4c4628f0aa198fd9f3d2fd399a5249f541b0fd1128",
+  "cap_gib": 8,
+  "threads": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "elapsed_seconds": 8.727492720005102,
+  "sampled_peak_rss_gib": 4.281703948974609,
+  "sampled_peak_cgroup_gib": 4.284172058105469,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "time_peak_rss_gib": 4.281703948974609
+}

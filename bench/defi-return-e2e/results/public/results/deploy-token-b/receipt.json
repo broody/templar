@@ -1,0 +1,61 @@
+{
+  "actual_fee": {
+    "amount": "0x80bf79667b5690",
+    "unit": "FRI"
+  },
+  "block_hash": "0x1978c0f636a7daba08cd24794fc3b2963c5da53df628511737ab54f00f1e404",
+  "block_number": 15387978,
+  "events": [
+    {
+      "data": [
+        "0x328b0b5dfb7eb09efcf36ac4af4b1da407cbe90ca9519e6f4d02d677e28a044",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x0",
+        "0x2b858677d25bfd41b805fa3640abf330141a6a7152b8668b038e1b84b5d29da",
+        "0x3",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0xe8d4a51000",
+        "0x0",
+        "0xa6b65459208d5513c894bcd668124a562bc10b1b2f885071f47a1a0ee66d33"
+      ],
+      "from_address": "0x2ceed65a4bd731034c01113685c831b01c15d7d432f71afb1cf1634b53a2125",
+      "keys": [
+        "0x26b160f10156dea0639bec90696772c640b9706a47f5b8c52ea1abe5858b34d"
+      ]
+    },
+    {
+      "data": [
+        "0x1",
+        "0x1",
+        "0x328b0b5dfb7eb09efcf36ac4af4b1da407cbe90ca9519e6f4d02d677e28a044"
+      ],
+      "from_address": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+      "keys": [
+        "0x1dcde06aabdbca2f80aa51392b345d7549d7757aa855f7e37f5d335ac8243b1",
+        "0x34192aedf50e5db6d721a230cf2816ea074819e6a152e004eeb08912c645f01"
+      ]
+    },
+    {
+      "data": [
+        "0x80bf79667b5690",
+        "0x0"
+      ],
+      "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+      "keys": [
+        "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8"
+      ]
+    }
+  ],
+  "execution_resources": {
+    "l1_data_gas": 320,
+    "l1_gas": 0,
+    "l2_gas": 2000720
+  },
+  "execution_status": "SUCCEEDED",
+  "finality_status": "ACCEPTED_ON_L2",
+  "messages_sent": [],
+  "transaction_hash": "0x34192aedf50e5db6d721a230cf2816ea074819e6a152e004eeb08912c645f01",
+  "type": "INVOKE"
+}

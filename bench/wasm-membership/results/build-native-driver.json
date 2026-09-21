@@ -1,0 +1,12 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "0-7",
+    "bench/wasm-membership/client/build.sh",
+    "native"
+  ],
+  "start_unix": 1789975489.3724487,
+  "elapsed_seconds": 129.19963932037354,
+  "exit_code": 0
+}

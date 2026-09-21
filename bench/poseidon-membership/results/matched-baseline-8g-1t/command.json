@@ -1,0 +1,28 @@
+{
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-membership-matched-baseline-8g-1t-1789973623674891757",
+    "-p",
+    "WorkingDirectory=/home/broody/development/templar",
+    "-p",
+    "MemoryMax=8G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUQuota=100%",
+    "-p",
+    "CPUAffinity=0",
+    "-p",
+    "RuntimeMaxSec=600",
+    "--setenv=RAYON_NUM_THREADS=1",
+    "--setenv=PATH=/home/broody/.local/share/solana/install/active_release/bin:/home/broody/.local/bin:/home/broody/bin:/home/broody/.codex/tmp/arg0/codex-arg0rl6QtN:/home/broody/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/broody/.local/share/solana/install/active_release/bin:/home/broody/.local/bin:/home/broody/bin:/home/broody/.bb:/home/broody/.bb:/home/broody/.kimi-code/bin:/home/broody/.openfang/bin:/home/broody/.opencode/bin:/home/broody/.asdf/shims:/home/broody/.local/bin:/home/broody/.local/share/solana/install/active_release/bin:/home/broody/.bun/bin:/home/broody/.local/share/pnpm:/home/broody/.nvm/versions/node/v22.22.1/bin:/home/broody/.local/share/solana/install/active_release/bin:/home/broody/.starkli/bin:/home/broody/.cargo/bin:/home/broody/.local/bin:/home/broody/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/broody/.local/bin:/home/broody/.slot/bin:/home/broody/bin/cursor:/home/broody/.local/bin:/usr/local/go/bin:/home/broody/go/bin:/home/broody/.local/bin:/home/broody/.local/bin:/home/broody/.local/bin:/home/broody/.local/bin:/home/broody/.nargo/bin:/home/broody/.nargo/bin:/home/broody/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+    "/usr/bin/time",
+    "-v",
+    "/home/broody/development/templar/target/poseidon-membership/client-target/release/templar-poseidon-membership",
+    "/home/broody/development/templar/bench/poseidon-membership/fixtures/two-paths.json",
+    "/home/broody/development/templar/bench/poseidon-membership/results/matched-baseline-8g-1t/proof"
+  ]
+}

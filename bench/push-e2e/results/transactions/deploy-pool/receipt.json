@@ -1,0 +1,60 @@
+{
+  "actual_fee": {
+    "amount": "0x571400e01906060",
+    "unit": "FRI"
+  },
+  "block_hash": "0x1f3633171eab91f15553c6452e8a5e32df07becac5d2d4e164378b3f3bafab",
+  "block_number": 15363555,
+  "events": [
+    {
+      "data": [
+        "0x7430fdfc9121d40c0b92bec1a19265c5f9b2c0fd16aba973f1799beed736a1e",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x0",
+        "0x1718e7070d933ac667a49d8312236241636d6decfda9562581f6ad4f1da044a",
+        "0x2",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x0",
+        "0xa45a7dca6a0df1b9870f0a0d8beb113c4b48f6b5cae0ab66e15e3c04f94534"
+      ],
+      "from_address": "0x2ceed65a4bd731034c01113685c831b01c15d7d432f71afb1cf1634b53a2125",
+      "keys": [
+        "0x26b160f10156dea0639bec90696772c640b9706a47f5b8c52ea1abe5858b34d"
+      ]
+    },
+    {
+      "data": [
+        "0x1",
+        "0x1",
+        "0x7430fdfc9121d40c0b92bec1a19265c5f9b2c0fd16aba973f1799beed736a1e"
+      ],
+      "from_address": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+      "keys": [
+        "0x1dcde06aabdbca2f80aa51392b345d7549d7757aa855f7e37f5d335ac8243b1",
+        "0x56c539c00983c6f61916004f9e11f6b8ce820468e083003ef8318518add5df2"
+      ]
+    },
+    {
+      "data": [
+        "0x571400e01906060",
+        "0x0"
+      ],
+      "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+      "keys": [
+        "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8"
+      ]
+    }
+  ],
+  "execution_resources": {
+    "l1_data_gas": 3872,
+    "l1_gas": 0,
+    "l2_gas": 20384480
+  },
+  "execution_status": "SUCCEEDED",
+  "finality_status": "ACCEPTED_ON_L2",
+  "messages_sent": [],
+  "transaction_hash": "0x56c539c00983c6f61916004f9e11f6b8ce820468e083003ef8318518add5df2",
+  "type": "INVOKE"
+}

@@ -1,0 +1,53 @@
+{
+  "pool": "0x036636caea4e6d63566de391af83a931365c3a3a2fd48c81c4a456bee10d49c0",
+  "statement": "0x01ccc0ef53fa9e37cc4ebc85487d1927279f0cd1d958c854dc38b461a58512f6",
+  "statement_class": "0xe876a4750d6dcbb0ff0cc029dbd839be297a45a0ed48dc9eb24fcb59600f9b",
+  "verifier": "0x01fe28ee742ce6234d298249f7383be6b5cfc97ef460cb60b8a7454d3cec294d",
+  "token": "0x039f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8",
+  "token_a": "0x039f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8",
+  "token_b": "0x0328b0b5dfb7eb09efcf36ac4af4b1da407cbe90ca9519e6f4d02d677e28a044",
+  "adapter": "0x02170da7d3388efdeb86aafb2ed342db69ced37d87801658e6463c96fad2e2b2",
+  "relayer": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+  "start_block": 15389956,
+  "classes": {
+    "Pool": "0x6f75a1437e829c46a53f037b78edc914f1fb815c98bfac19750b93ea1f139c1",
+    "StatementAccount": "0xe876a4750d6dcbb0ff0cc029dbd839be297a45a0ed48dc9eb24fcb59600f9b",
+    "NativeProofVerifier": "0x59bd39a970bd622f4bcfb28e19d11a68a3b280bacbb84d4e5b96c9332f74c07",
+    "EkuboSwapAnonymizer": "0x2b293fbc496757f84123a1bc789b3bf92067920b2e37a78f8268c4bdb731e2e"
+  },
+  "ekubo": {
+    "core": {
+      "address": "0x0444a09d96389aa7148f1aada508e30b71299ffe650d9c97fdaae38cb9a23384",
+      "class_hash": "0x577604a2611c851e9cfc4da2ba7f7fc1d44a9327cc734d68b2b271340a6551c",
+      "block_number": 15389577,
+      "block_hash": "0x2ee12441d2310423ff41ab1fa2997f8f8c266fa60ec2eac0ef41abcb365893b",
+      "source": "https://docs.ekubo.org/reference/contracts/starknet-sepolia/"
+    },
+    "router": {
+      "address": "0x0045f933adf0607292468ad1c1dedaa74d5ad166392590e72676a34d01d7b763",
+      "class_hash": "0x137a5970f752fd80649fb38d684b090decebec4f2853396617e4f2f01e5396a",
+      "block_number": 15389577,
+      "block_hash": "0x2ee12441d2310423ff41ab1fa2997f8f8c266fa60ec2eac0ef41abcb365893b",
+      "source": "https://docs.ekubo.org/reference/contracts/starknet-sepolia/"
+    },
+    "positions": {
+      "address": "0x06a2aee84bb0ed5dded4384ddd0e40e9c1372b818668375ab8e3ec08807417e5",
+      "class_hash": "0xc12f7c0a0bf73e3675345a8d28d26c83db3b13605f2aa33cba8344a0f582b5",
+      "block_number": 15389577,
+      "block_hash": "0x2ee12441d2310423ff41ab1fa2997f8f8c266fa60ec2eac0ef41abcb365893b",
+      "source": "https://docs.ekubo.org/reference/contracts/starknet-sepolia/"
+    }
+  },
+  "pool_key": [
+    1428832039008617000195820088556908623791563621072455733433048352489604685892,
+    1638482101400834274803790307942338246874949356461610145982088101307546600888,
+    0,
+    1000,
+    0
+  ],
+  "protocol": "TEMPLAR_RETURN_POC1",
+  "ordinary_notes_only": true,
+  "upstream_revision": "b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106",
+  "adapter_source_unchanged": true,
+  "synthetic_pair_reused_from": "../defi-return-e2e"
+}

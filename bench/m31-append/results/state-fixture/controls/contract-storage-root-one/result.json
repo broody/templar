@@ -1,0 +1,12 @@
+{
+  "name": "contract-storage-root-one",
+  "expected": "reject",
+  "exit_code": 101,
+  "passed": true,
+  "input": "bench/m31-append/results/state-fixture/controls/contract-storage-root-one/fixture.json",
+  "input_sha256": "9753b6b6604e4237fa5d8d1475a69ee00394e24ef3b538f971d0efdf3ecd4517",
+  "report_path": null,
+  "stdout": "bench/m31-append/results/state-fixture/controls/contract-storage-root-one/stdout.log",
+  "stderr": "bench/m31-append/results/state-fixture/controls/contract-storage-root-one/stderr.log",
+  "cgroup": "bench/m31-append/results/state-fixture/controls/contract-storage-root-one/cgroup.txt"
+}

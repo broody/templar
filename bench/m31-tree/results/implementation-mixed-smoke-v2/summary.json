@@ -1,0 +1,27 @@
+{
+  "scope": "Implementation correctness smoke only; exclude from performance aggregation",
+  "command": [
+    "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree",
+    "bench/m31-tree/client/fixtures/mixed.json",
+    "bench/m31-tree/results/implementation-mixed-smoke-v2/proof"
+  ],
+  "binary_sha256": "afd206ceed8ebe44127840d4a3a908c48550934408e1c1a38bcba2dde0af6fc6",
+  "cap_gib": 3,
+  "cpu_budget_cores": 1,
+  "prover_workers": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 17.291340444993693,
+  "sampled_command_peak_rss_gib": 1.8992729187011719,
+  "sampled_peak_cgroup_gib": 1.8964500427246094,
+  "effective_peak_cgroup_gib": 1.8964500427246094,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 668,
+  "cgroup_sample_count": 667,
+  "time_largest_process_peak_rss_gib": 1.8992729187011719
+}

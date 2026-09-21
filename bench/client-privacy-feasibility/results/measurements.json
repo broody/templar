@@ -1,0 +1,636 @@
+{
+  "scope": "Native public synthetic fixed-Cairo privacy wrapper cost; no custom privacy construction or browser qualification",
+  "checkpoint_bytes": 998918,
+  "checkpoint_sha256": "81500ea26cf4ab0ae8f53fe2a1975b8e09522c0f8cbd31bcea5acb702f54d43a",
+  "proof_sha256": "9326c1eaad137c1b865b417b36d041928b1e5d9ec15b363662f0535eed868153",
+  "proof_bytes": 235734,
+  "completed_final_proofs": 3,
+  "proofs_byte_identical": true,
+  "original_verifier_library_rejections": 9,
+  "runs": [
+    {
+      "name": "prepare-8g-4c",
+      "scope": "Public synthetic Cairo checkpoint preparation; excludes recursion and verification",
+      "command": [
+        "/home/broody/development/templar/target/client-privacy-feasibility/bin/fixed-cairo-wrapper",
+        "prepare",
+        "/home/broody/development/templar/target/client-privacy-feasibility/proving-utils/crates/privacy_prove/test_data/privacy_tx_cairo_pie.zip",
+        "/home/broody/development/templar/bench/client-privacy-feasibility/results/prepare-8g-4c/output"
+      ],
+      "binary_sha256": "86073d1ee5b6dfae0264aeddedb5e12d17215aa51480a70a03810f5ef8630b0c",
+      "cap_gib": 8,
+      "cpu_budget_cores": 4,
+      "rayon_workers": 4,
+      "cpu_affinity": "0 1 2 3",
+      "privacy_qualified_by_measurement": false,
+      "exit_code": 0,
+      "systemd_result": "success",
+      "final_cgroup_peak_bytes": null,
+      "final_cgroup_swap_peak_bytes": null,
+      "elapsed_seconds": 12.005433368001832,
+      "sampled_prover_peak_rss_gib": 4.989219665527344,
+      "sampled_peak_cgroup_gib": 4.954387664794922,
+      "effective_peak_cgroup_gib": 4.954387664794922,
+      "sampled_swap_peak_bytes": 0,
+      "sampled_oom_kill": 0,
+      "sample_count": 453,
+      "cgroup_sample_count": 453,
+      "time_largest_process_peak_rss_gib": 4.989219665527344,
+      "stage_summary": {
+        "blinding_policy": "unchanged inner witness commitment seed and outer query count",
+        "bounded_cairo_columns": 16,
+        "bounded_circuit_columns": 16,
+        "cairo_interaction_pow_bits": 24,
+        "cairo_pcs_config": {
+          "fri_config": {
+            "fold_step": 4,
+            "log_blowup_factor": 3,
+            "log_last_layer_degree_bound": 0,
+            "n_queries": 23
+          },
+          "lifting_log_size": 23,
+          "pow_bits": 27
+        },
+        "channel": "Blake2sM31",
+        "checkpoint": "local typed CairoProof with auxiliary data and matching output preimage; no config authority",
+        "checkpoint_bytes": 998918,
+        "circuit_interaction_pow_bits": 20,
+        "circuit_output_addresses": [
+          3,
+          4,
+          2
+        ],
+        "circuit_pcs_config": {
+          "fri_config": {
+            "fold_step": 4,
+            "log_blowup_factor": 2,
+            "log_last_layer_degree_bound": 0,
+            "n_queries": 35
+          },
+          "lifting_log_size": 23,
+          "pow_bits": 26
+        },
+        "elapsed_through_artifact_write_seconds": 11.41685055,
+        "input_bytes": 669569,
+        "load_seconds": 0.025384178,
+        "mode": "prepare",
+        "prepare_seconds": 11.389755668,
+        "privacy_qualified_by_measurement": false,
+        "scope": "unchanged fixed Cairo wrapper; synthetic local fixture only",
+        "trusted_circuit_preprocessed_root": [
+          1226144497,
+          1215753816,
+          1261723493,
+          447821635,
+          511752374,
+          214804093,
+          1020993193,
+          1889786400
+        ],
+        "write_seconds": 0.00122575
+      },
+      "phases": [
+        {
+          "seconds": 0.02561501,
+          "message": "Run privacy bootloader and get the prover input and output preimage"
+        },
+        {
+          "seconds": 0.039581902,
+          "message": "privacy_prove: Running the program"
+        },
+        {
+          "seconds": 0.119100596,
+          "message": "privacy_prove: Reading the bootloader output preimage"
+        },
+        {
+          "seconds": 0.11913087,
+          "message": "privacy_prove: Adapting the runner output for the prover"
+        },
+        {
+          "seconds": 0.182353039,
+          "message": "Prepare only the Cairo stage"
+        },
+        {
+          "seconds": 0.529046077,
+          "message": "Generate the cairo proof"
+        },
+        {
+          "seconds": 2.973143723,
+          "message": "stwo_cairo_prover::prover: Witness trace cells: [10161776, 94066912, 100172736]"
+        },
+        {
+          "seconds": 11.415269825,
+          "message": "Cairo stage tree and buffer pool released"
+        }
+      ]
+    },
+    {
+      "name": "unsplit-8g-4c",
+      "scope": "Public synthetic bootloader plus both unchanged proof stages; external verifier excluded",
+      "command": [
+        "/home/broody/development/templar/target/client-privacy-feasibility/bin/fixed-cairo-wrapper",
+        "unsplit",
+        "/home/broody/development/templar/target/client-privacy-feasibility/proving-utils/crates/privacy_prove/test_data/privacy_tx_cairo_pie.zip",
+        "/home/broody/development/templar/bench/client-privacy-feasibility/results/unsplit-8g-4c/output"
+      ],
+      "binary_sha256": "86073d1ee5b6dfae0264aeddedb5e12d17215aa51480a70a03810f5ef8630b0c",
+      "cap_gib": 8,
+      "cpu_budget_cores": 4,
+      "rayon_workers": 4,
+      "cpu_affinity": "0 1 2 3",
+      "privacy_qualified_by_measurement": false,
+      "exit_code": 0,
+      "systemd_result": "success",
+      "final_cgroup_peak_bytes": null,
+      "final_cgroup_swap_peak_bytes": null,
+      "elapsed_seconds": 20.95123636900098,
+      "sampled_prover_peak_rss_gib": 5.2091217041015625,
+      "sampled_peak_cgroup_gib": 5.171241760253906,
+      "effective_peak_cgroup_gib": 5.171241760253906,
+      "sampled_swap_peak_bytes": 0,
+      "sampled_oom_kill": 0,
+      "sample_count": 800,
+      "cgroup_sample_count": 798,
+      "time_largest_process_peak_rss_gib": 5.207569122314453,
+      "stage_summary": {
+        "blinding_policy": "unchanged inner witness commitment seed and outer query count",
+        "bounded_cairo_columns": 16,
+        "bounded_circuit_columns": 16,
+        "cairo_interaction_pow_bits": 24,
+        "cairo_pcs_config": {
+          "fri_config": {
+            "fold_step": 4,
+            "log_blowup_factor": 3,
+            "log_last_layer_degree_bound": 0,
+            "n_queries": 23
+          },
+          "lifting_log_size": 23,
+          "pow_bits": 27
+        },
+        "channel": "Blake2sM31",
+        "checkpoint": "local typed CairoProof with auxiliary data and matching output preimage; no config authority",
+        "circuit_interaction_pow_bits": 20,
+        "circuit_output_addresses": [
+          3,
+          4,
+          2
+        ],
+        "circuit_pcs_config": {
+          "fri_config": {
+            "fold_step": 4,
+            "log_blowup_factor": 2,
+            "log_last_layer_degree_bound": 0,
+            "n_queries": 35
+          },
+          "lifting_log_size": 23,
+          "pow_bits": 26
+        },
+        "elapsed_through_artifact_write_seconds": 20.282243427,
+        "input_bytes": 669569,
+        "load_seconds": 0.021410882,
+        "mode": "unsplit",
+        "output_preimage_felts": 9,
+        "privacy_qualified_by_measurement": false,
+        "proof_bytes": 235734,
+        "proof_sha256": "9326c1eaad137c1b865b417b36d041928b1e5d9ec15b363662f0535eed868153",
+        "scope": "unchanged fixed Cairo wrapper; synthetic local fixture only",
+        "trusted_circuit_preprocessed_root": [
+          1226144497,
+          1215753816,
+          1261723493,
+          447821635,
+          511752374,
+          214804093,
+          1020993193,
+          1889786400
+        ],
+        "unsplit_seconds": 20.259839896,
+        "verification": "separate verify command, excluded from proving measurement",
+        "write_seconds": 0.000149301
+      },
+      "verification": {
+        "reference": "/home/broody/development/templar/bench/client-privacy-feasibility/results/unsplit-8g-4c/output",
+        "byte_parity": true,
+        "public_output_parity": true,
+        "proof_bytes": 235734,
+        "proof_sha256": "9326c1eaad137c1b865b417b36d041928b1e5d9ec15b363662f0535eed868153",
+        "preserved_original_verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+        "mutation_adapter_sha256": "b8658ac824cbfe38edd45b35c35d469c5239662a9c305d57713b2dde01b86a28",
+        "verifier_library_modified": false,
+        "mutation": "add one to each changed public field",
+        "exit_code": 0,
+        "external_verification_and_controls_seconds": 0.44745980299194343,
+        "external_verification_excluded_from_wrapper_measurement": true,
+        "privacy_qualified_by_measurement": false
+      },
+      "phases": [
+        {
+          "seconds": 0.021549575,
+          "message": "privacy_prove::low_memory: Run privacy bootloader and get the prover input and output preimage"
+        },
+        {
+          "seconds": 0.174311062,
+          "message": "privacy_prove::low_memory: Prepare only the Cairo stage"
+        },
+        {
+          "seconds": 0.513531159,
+          "message": "privacy_prove::low_memory: Generate the cairo proof"
+        },
+        {
+          "seconds": 11.385988537,
+          "message": "privacy_prove::low_memory: Cairo stage tree and buffer pool released"
+        },
+        {
+          "seconds": 11.401172282,
+          "message": "privacy_prove::low_memory: Prepare the cairo proof for the cairo-circuit verifier"
+        },
+        {
+          "seconds": 11.402595702,
+          "message": "privacy_prove::low_memory: Build the cairo-circuit verifier context"
+        },
+        {
+          "seconds": 11.624932564,
+          "message": "privacy_prove::low_memory: Prepare only the recursive circuit stage"
+        },
+        {
+          "seconds": 12.387678108,
+          "message": "privacy_prove::low_memory: Prove the cairo-circuit verifier"
+        },
+        {
+          "seconds": 20.279975091,
+          "message": "privacy_prove::low_memory: Recursive stage tree and buffer pool released"
+        },
+        {
+          "seconds": 20.279979851,
+          "message": "privacy_prove::low_memory: Prepare the circuit proof for the circuit verifier"
+        },
+        {
+          "seconds": 20.280588191,
+          "message": "privacy_prove::low_memory: Serialize and compress the proof"
+        }
+      ]
+    },
+    {
+      "name": "wrapper-8g-4c",
+      "scope": "Fresh fixed-Cairo wrapper including load/setup/prove/serialization; external verifier excluded",
+      "command": [
+        "/home/broody/development/templar/target/client-privacy-feasibility/bin/fixed-cairo-wrapper",
+        "wrap",
+        "/home/broody/development/templar/bench/client-privacy-feasibility/results/prepare-8g-4c/output/checkpoint.bin",
+        "/home/broody/development/templar/bench/client-privacy-feasibility/results/wrapper-8g-4c/output"
+      ],
+      "binary_sha256": "86073d1ee5b6dfae0264aeddedb5e12d17215aa51480a70a03810f5ef8630b0c",
+      "cap_gib": 8,
+      "cpu_budget_cores": 4,
+      "rayon_workers": 4,
+      "cpu_affinity": "0 1 2 3",
+      "privacy_qualified_by_measurement": false,
+      "exit_code": 0,
+      "systemd_result": "success",
+      "final_cgroup_peak_bytes": null,
+      "final_cgroup_swap_peak_bytes": null,
+      "elapsed_seconds": 11.499954277998768,
+      "sampled_prover_peak_rss_gib": 4.782218933105469,
+      "sampled_peak_cgroup_gib": 4.7574920654296875,
+      "effective_peak_cgroup_gib": 4.7574920654296875,
+      "sampled_swap_peak_bytes": 0,
+      "sampled_oom_kill": 0,
+      "sample_count": 434,
+      "cgroup_sample_count": 434,
+      "time_largest_process_peak_rss_gib": 4.782218933105469,
+      "stage_summary": {
+        "blinding_policy": "unchanged inner witness commitment seed and outer query count",
+        "bounded_cairo_columns": 16,
+        "bounded_circuit_columns": 16,
+        "cairo_interaction_pow_bits": 24,
+        "cairo_pcs_config": {
+          "fri_config": {
+            "fold_step": 4,
+            "log_blowup_factor": 3,
+            "log_last_layer_degree_bound": 0,
+            "n_queries": 23
+          },
+          "lifting_log_size": 23,
+          "pow_bits": 27
+        },
+        "channel": "Blake2sM31",
+        "checkpoint": "local typed CairoProof with auxiliary data and matching output preimage; no config authority",
+        "circuit_interaction_pow_bits": 20,
+        "circuit_output_addresses": [
+          3,
+          4,
+          2
+        ],
+        "circuit_pcs_config": {
+          "fri_config": {
+            "fold_step": 4,
+            "log_blowup_factor": 2,
+            "log_last_layer_degree_bound": 0,
+            "n_queries": 35
+          },
+          "lifting_log_size": 23,
+          "pow_bits": 26
+        },
+        "elapsed_through_artifact_write_seconds": 11.031276774,
+        "input_bytes": 998918,
+        "load_seconds": 0.002131453,
+        "mode": "wrap",
+        "output_preimage_felts": 9,
+        "privacy_qualified_by_measurement": false,
+        "proof_bytes": 235734,
+        "proof_sha256": "9326c1eaad137c1b865b417b36d041928b1e5d9ec15b363662f0535eed868153",
+        "scope": "unchanged fixed Cairo wrapper; synthetic local fixture only",
+        "trusted_circuit_preprocessed_root": [
+          1226144497,
+          1215753816,
+          1261723493,
+          447821635,
+          511752374,
+          214804093,
+          1020993193,
+          1889786400
+        ],
+        "verification": "separate verify command, excluded from proving measurement",
+        "wrapper_seconds": 11.02807903,
+        "write_seconds": 0.000191402
+      },
+      "verification": {
+        "reference": "/home/broody/development/templar/bench/client-privacy-feasibility/results/unsplit-8g-4c/output",
+        "byte_parity": true,
+        "public_output_parity": true,
+        "proof_bytes": 235734,
+        "proof_sha256": "9326c1eaad137c1b865b417b36d041928b1e5d9ec15b363662f0535eed868153",
+        "preserved_original_verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+        "mutation_adapter_sha256": "b8658ac824cbfe38edd45b35c35d469c5239662a9c305d57713b2dde01b86a28",
+        "verifier_library_modified": false,
+        "mutation": "add one to each changed public field",
+        "exit_code": 0,
+        "external_verification_and_controls_seconds": 0.47518039200804196,
+        "external_verification_excluded_from_wrapper_measurement": true,
+        "privacy_qualified_by_measurement": false
+      },
+      "phases": [
+        {
+          "seconds": 0.042846882,
+          "message": "Prepare the cairo proof for the cairo-circuit verifier"
+        },
+        {
+          "seconds": 0.044208761,
+          "message": "Build the cairo-circuit verifier context"
+        },
+        {
+          "seconds": 0.348829038,
+          "message": "Prepare only the recursive circuit stage"
+        },
+        {
+          "seconds": 1.38562839,
+          "message": "Prove the cairo-circuit verifier"
+        },
+        {
+          "seconds": 11.001226414,
+          "message": "stwo::prover: proof_size_estimate=191460"
+        },
+        {
+          "seconds": 11.001429464,
+          "message": "Recursive stage tree and buffer pool released"
+        },
+        {
+          "seconds": 11.001433582,
+          "message": "Prepare the circuit proof for the circuit verifier"
+        },
+        {
+          "seconds": 11.012036539,
+          "message": "Serialize and compress the proof"
+        }
+      ]
+    },
+    {
+      "name": "wrapper-4g-4c",
+      "scope": "Fresh fixed-Cairo wrapper lower-cap probe; external verifier excluded",
+      "command": [
+        "/home/broody/development/templar/target/client-privacy-feasibility/bin/fixed-cairo-wrapper",
+        "wrap",
+        "/home/broody/development/templar/bench/client-privacy-feasibility/results/prepare-8g-4c/output/checkpoint.bin",
+        "/home/broody/development/templar/bench/client-privacy-feasibility/results/wrapper-4g-4c/output"
+      ],
+      "binary_sha256": "86073d1ee5b6dfae0264aeddedb5e12d17215aa51480a70a03810f5ef8630b0c",
+      "cap_gib": 4,
+      "cpu_budget_cores": 4,
+      "rayon_workers": 4,
+      "cpu_affinity": "0 1 2 3",
+      "privacy_qualified_by_measurement": false,
+      "exit_code": 1,
+      "systemd_result": "oom-kill",
+      "final_cgroup_peak_bytes": 4294967296,
+      "final_cgroup_swap_peak_bytes": 0,
+      "elapsed_seconds": 3.247832646986353,
+      "sampled_prover_peak_rss_gib": 3.966930389404297,
+      "sampled_peak_cgroup_gib": 4.0,
+      "effective_peak_cgroup_gib": 4.0,
+      "sampled_swap_peak_bytes": 0,
+      "sampled_oom_kill": 1,
+      "sample_count": 113,
+      "cgroup_sample_count": 113,
+      "time_largest_process_peak_rss_gib": null,
+      "phases": [
+        {
+          "seconds": 0.045799006,
+          "message": "Prepare the cairo proof for the cairo-circuit verifier"
+        },
+        {
+          "seconds": 0.04717545,
+          "message": "Build the cairo-circuit verifier context"
+        },
+        {
+          "seconds": 0.351927026,
+          "message": "Prepare only the recursive circuit stage"
+        },
+        {
+          "seconds": 1.393871554,
+          "message": "Prove the cairo-circuit verifier"
+        }
+      ]
+    },
+    {
+      "name": "wrapper-8g-1c",
+      "scope": "Fresh one-worker fixed-Cairo wrapper including load/setup/prove/serialization; external verifier excluded",
+      "command": [
+        "/home/broody/development/templar/target/client-privacy-feasibility/bin/fixed-cairo-wrapper",
+        "wrap",
+        "/home/broody/development/templar/bench/client-privacy-feasibility/results/prepare-8g-4c/output/checkpoint.bin",
+        "/home/broody/development/templar/bench/client-privacy-feasibility/results/wrapper-8g-1c/output"
+      ],
+      "binary_sha256": "86073d1ee5b6dfae0264aeddedb5e12d17215aa51480a70a03810f5ef8630b0c",
+      "cap_gib": 8,
+      "cpu_budget_cores": 1,
+      "rayon_workers": 1,
+      "cpu_affinity": "0",
+      "privacy_qualified_by_measurement": false,
+      "exit_code": 0,
+      "systemd_result": "success",
+      "final_cgroup_peak_bytes": null,
+      "final_cgroup_swap_peak_bytes": null,
+      "elapsed_seconds": 35.1737535840075,
+      "sampled_prover_peak_rss_gib": 4.5867156982421875,
+      "sampled_peak_cgroup_gib": 4.560848236083984,
+      "effective_peak_cgroup_gib": 4.560848236083984,
+      "sampled_swap_peak_bytes": 0,
+      "sampled_oom_kill": 0,
+      "sample_count": 1351,
+      "cgroup_sample_count": 1351,
+      "time_largest_process_peak_rss_gib": 4.5867156982421875,
+      "stage_summary": {
+        "blinding_policy": "unchanged inner witness commitment seed and outer query count",
+        "bounded_cairo_columns": 16,
+        "bounded_circuit_columns": 16,
+        "cairo_interaction_pow_bits": 24,
+        "cairo_pcs_config": {
+          "fri_config": {
+            "fold_step": 4,
+            "log_blowup_factor": 3,
+            "log_last_layer_degree_bound": 0,
+            "n_queries": 23
+          },
+          "lifting_log_size": 23,
+          "pow_bits": 27
+        },
+        "channel": "Blake2sM31",
+        "checkpoint": "local typed CairoProof with auxiliary data and matching output preimage; no config authority",
+        "circuit_interaction_pow_bits": 20,
+        "circuit_output_addresses": [
+          3,
+          4,
+          2
+        ],
+        "circuit_pcs_config": {
+          "fri_config": {
+            "fold_step": 4,
+            "log_blowup_factor": 2,
+            "log_last_layer_degree_bound": 0,
+            "n_queries": 35
+          },
+          "lifting_log_size": 23,
+          "pow_bits": 26
+        },
+        "elapsed_through_artifact_write_seconds": 34.704305824,
+        "input_bytes": 998918,
+        "load_seconds": 0.001994008,
+        "mode": "wrap",
+        "output_preimage_felts": 9,
+        "privacy_qualified_by_measurement": false,
+        "proof_bytes": 235734,
+        "proof_sha256": "9326c1eaad137c1b865b417b36d041928b1e5d9ec15b363662f0535eed868153",
+        "scope": "unchanged fixed Cairo wrapper; synthetic local fixture only",
+        "trusted_circuit_preprocessed_root": [
+          1226144497,
+          1215753816,
+          1261723493,
+          447821635,
+          511752374,
+          214804093,
+          1020993193,
+          1889786400
+        ],
+        "verification": "separate verify command, excluded from proving measurement",
+        "wrapper_seconds": 34.701287367,
+        "write_seconds": 0.000178825
+      },
+      "verification": {
+        "reference": "/home/broody/development/templar/bench/client-privacy-feasibility/results/unsplit-8g-4c/output",
+        "byte_parity": true,
+        "public_output_parity": true,
+        "proof_bytes": 235734,
+        "proof_sha256": "9326c1eaad137c1b865b417b36d041928b1e5d9ec15b363662f0535eed868153",
+        "preserved_original_verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+        "mutation_adapter_sha256": "b8658ac824cbfe38edd45b35c35d469c5239662a9c305d57713b2dde01b86a28",
+        "verifier_library_modified": false,
+        "mutation": "add one to each changed public field",
+        "exit_code": 0,
+        "external_verification_and_controls_seconds": 0.4381381010025507,
+        "external_verification_excluded_from_wrapper_measurement": true,
+        "privacy_qualified_by_measurement": false
+      },
+      "phases": [
+        {
+          "seconds": 0.054653025,
+          "message": "Prepare the cairo proof for the cairo-circuit verifier"
+        },
+        {
+          "seconds": 0.056434876,
+          "message": "Build the cairo-circuit verifier context"
+        },
+        {
+          "seconds": 0.391731964,
+          "message": "Prepare only the recursive circuit stage"
+        },
+        {
+          "seconds": 2.545414662,
+          "message": "Prove the cairo-circuit verifier"
+        },
+        {
+          "seconds": 34.661286737,
+          "message": "stwo::prover: proof_size_estimate=191460"
+        },
+        {
+          "seconds": 34.68441687,
+          "message": "Recursive stage tree and buffer pool released"
+        },
+        {
+          "seconds": 34.684439309,
+          "message": "Prepare the circuit proof for the circuit verifier"
+        },
+        {
+          "seconds": 34.68504367,
+          "message": "Serialize and compress the proof"
+        }
+      ]
+    },
+    {
+      "name": "wrapper-4g-1c",
+      "scope": "Fresh one-worker fixed-Cairo wrapper lower-cap probe; external verifier excluded",
+      "command": [
+        "/home/broody/development/templar/target/client-privacy-feasibility/bin/fixed-cairo-wrapper",
+        "wrap",
+        "/home/broody/development/templar/bench/client-privacy-feasibility/results/prepare-8g-4c/output/checkpoint.bin",
+        "/home/broody/development/templar/bench/client-privacy-feasibility/results/wrapper-4g-1c/output"
+      ],
+      "binary_sha256": "86073d1ee5b6dfae0264aeddedb5e12d17215aa51480a70a03810f5ef8630b0c",
+      "cap_gib": 4,
+      "cpu_budget_cores": 1,
+      "rayon_workers": 1,
+      "cpu_affinity": "0",
+      "privacy_qualified_by_measurement": false,
+      "exit_code": 1,
+      "systemd_result": "oom-kill",
+      "final_cgroup_peak_bytes": 4294967296,
+      "final_cgroup_swap_peak_bytes": 0,
+      "elapsed_seconds": 8.228346441988833,
+      "sampled_prover_peak_rss_gib": 4.0265960693359375,
+      "sampled_peak_cgroup_gib": 4.0,
+      "effective_peak_cgroup_gib": 4.0,
+      "sampled_swap_peak_bytes": 0,
+      "sampled_oom_kill": 1,
+      "sample_count": 306,
+      "cgroup_sample_count": 306,
+      "time_largest_process_peak_rss_gib": null,
+      "phases": [
+        {
+          "seconds": 0.048246473,
+          "message": "Prepare the cairo proof for the cairo-circuit verifier"
+        },
+        {
+          "seconds": 0.049575421,
+          "message": "Build the cairo-circuit verifier context"
+        },
+        {
+          "seconds": 0.356251898,
+          "message": "Prepare only the recursive circuit stage"
+        },
+        {
+          "seconds": 2.501021915,
+          "message": "Prove the cairo-circuit verifier"
+        }
+      ]
+    }
+  ]
+}

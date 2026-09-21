@@ -1,0 +1,26 @@
+test_address_only_send_and_seed_restore (test_protocol.PushReceiving.test_address_only_send_and_seed_restore) ... ok
+test_ciphertext_is_fixed_size_and_randomized (test_protocol.PushReceiving.test_ciphertext_is_fixed_size_and_randomized) ... ok
+test_ciphertext_substitution_rejects (test_protocol.PushReceiving.test_ciphertext_substitution_rejects) ... ok
+test_concurrent_senders_need_no_recipient_counter (test_protocol.PushReceiving.test_concurrent_senders_need_no_recipient_counter) ... ok
+test_duplicate_deliveries_count_once (test_protocol.PushReceiving.test_duplicate_deliveries_count_once) ... ok
+test_encryption_key_substitution_does_not_change_owner (test_protocol.PushReceiving.test_encryption_key_substitution_does_not_change_owner) ... ok
+test_incoming_view_can_read_but_key_cannot_spend (test_protocol.PushReceiving.test_incoming_view_can_read_but_key_cannot_spend) ... ok
+test_local_settlement_missing_delivery_is_atomic (test_protocol.PushReceiving.test_local_settlement_missing_delivery_is_atomic) ... ok
+test_local_settlement_recomputes_delivery_digest_and_rejects_replay (test_protocol.PushReceiving.test_local_settlement_recomputes_delivery_digest_and_rejects_replay) ... ok
+test_malformed_plaintext_does_not_poison_scan (test_protocol.PushReceiving.test_malformed_plaintext_does_not_poison_scan) ... ok
+test_missing_data_is_not_recoverable_from_seed (test_protocol.PushReceiving.test_missing_data_is_not_recoverable_from_seed) ... ok
+test_noncanonical_fields_and_amounts_reject (test_protocol.PushReceiving.test_noncanonical_fields_and_amounts_reject) ... ok
+test_other_chain_and_pool_reject (test_protocol.PushReceiving.test_other_chain_and_pool_reject) ... ok
+test_same_commitment_at_two_funded_positions_remains_spendable (test_protocol.PushReceiving.test_same_commitment_at_two_funded_positions_remains_spendable) ... ok
+test_same_randomness_different_amount_has_distinct_nullifier (test_protocol.PushReceiving.test_same_randomness_different_amount_has_distinct_nullifier) ... ok
+test_sender_cannot_spend (test_protocol.PushReceiving.test_sender_cannot_spend) ... ok
+test_tampering_rejects_even_with_recomputed_digest (test_protocol.PushReceiving.test_tampering_rejects_even_with_recomputed_digest) ... ok
+test_unconfirmed_delivery_is_not_credited (test_protocol.PushReceiving.test_unconfirmed_delivery_is_not_credited) ... ok
+test_view_cannot_determine_spent_status (test_protocol.PushReceiving.test_view_cannot_determine_spent_status) ... ok
+test_wrong_committed_digest_rejects (test_protocol.PushReceiving.test_wrong_committed_digest_rejects) ... ok
+test_wrong_wallet_cannot_decrypt (test_protocol.PushReceiving.test_wrong_wallet_cannot_decrypt) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.842s
+
+OK

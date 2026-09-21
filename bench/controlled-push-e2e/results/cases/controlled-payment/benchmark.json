@@ -1,0 +1,26 @@
+{
+  "case": "controlled-payment",
+  "startup_seconds": 2.0028193239995744,
+  "request_seconds": 19.257147561998863,
+  "proving_seconds": 12.726,
+  "virtual_os_seconds": 6.527,
+  "proof_bytes": 238717,
+  "proof_sha256": "583d65eaa70421be6d10d832e53a1080656eaa23d939aa742ef24bb8be1d031b",
+  "peak_rss_gib": 13.829452514648438,
+  "swap_peak_bytes": 0,
+  "local_verification_passed": true,
+  "public_binding_matches": true,
+  "public_values": [
+    "0x54454d504c41525f434f4e54524f4c5f504f4331",
+    "0x534e5f5345504f4c4941",
+    "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+    "0x5df4156066c08c183fc28260be0978dde7a2c6fba2bd8ece1e42c3c7b520542",
+    "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+    "0xeac9a4",
+    "0x68c1533fc62b3c17cb185406402698b8ef36081e68037bbfddfb58433ab4a52",
+    "0x5ff6ad66d5ad41888c2735cbef6104fdaf6ed714bbc906762d687ef44efb130"
+  ],
+  "base_block": 15385246,
+  "memory_cap_gib": 16,
+  "cores": 4
+}

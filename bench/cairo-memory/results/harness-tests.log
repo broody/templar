@@ -1,0 +1,8 @@
+test_latest_not_cached (test_harness.CacheTests.test_latest_not_cached) ... ok
+test_pinned_reads_cached_and_response_ids_updated (test_harness.CacheTests.test_pinned_reads_cached_and_response_ids_updated) ... ok
+test_private_or_mutating_requests_never_forwarded (test_harness.CacheTests.test_private_or_mutating_requests_never_forwarded) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 2.544s
+
+OK

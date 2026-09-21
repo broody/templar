@@ -1,0 +1,15 @@
+[package]
+name = "templar_bench"
+version = "0.1.0"
+edition = "2024_07"
+
+[[target.executable]]
+
+[cairo]
+enable-gas = false
+
+[dependencies]
+cairo_execute = "2.14.0"
+
+[profile.release.cairo]
+inlining-strategy = 250

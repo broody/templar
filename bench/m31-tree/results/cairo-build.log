@@ -1,0 +1,37 @@
+   Compiling m31_tree_bench v0.1.0 (/home/broody/development/templar/bench/m31-tree/cairo/Scarb.toml)
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:5
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+    ^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:27
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:50
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:18:5
+    StoragePointerWriteAccess,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E2311]: Trait has no implementation in context: core::traits::PartialOrd::<core::felt252>.
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/m31_hash.cairo:124:11
+    while i < 8 {
+          ^^^^^
+
+error[E2311]: Trait has no implementation in context: core::traits::PartialOrd::<core::felt252>.
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/m31_hash.cairo:177:11
+    while i < 9 {
+          ^^^^^
+
+error[E2099]: Item `m31_tree_bench::m31_hash::DigestTrait` is not visible in this context.
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/m31_tree.cairo:14:36
+    use m31_tree_bench::m31_hash::{DigestTrait, empty_leaf, leaf_hash, node_hash};
+                                   ^^^^^^^^^^^
+
+error: could not compile `m31_tree_bench` due to 3 previous errors and 4 warnings

@@ -1,0 +1,15 @@
+[package]
+name = "desktop"
+version = "0.1.0"
+edition = "2024_07"
+[dependencies]
+starknet = "2.16.1"
+garaga = { git = "https://github.com/keep-starknet-strange/garaga.git", tag = "v1.1.0" }
+[dev-dependencies]
+snforge_std = "0.63.0"
+assert_macros = "2.16.1"
+[[target.starknet-contract]]
+casm = true
+[cairo]
+sierra-replace-ids = false
+inlining-strategy = 2

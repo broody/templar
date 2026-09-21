@@ -1,0 +1,67 @@
+---
+showAskAi: false
+title: Notes & ownership
+description: Locally derived cloaked receiving addresses, private ownership, and the commitments that record payments.
+---
+
+# Notes & ownership
+
+Templar supports push payments to reusable **cloaked receiving addresses**, or **cloaked addresses** for short. A payer chooses an amount and creates a fresh note for the recipient. The recipient can be offline and does not need to prepare anything for that particular payment.
+
+A note describes a token, amount, receiving identity, fresh randomness, and optional controller and policy within a particular chain and pool. Its **commitment** is the hash stored as a leaf in the pool's tree. Spending requires both the note data and the owner's spending authority.
+
+## A cloaked receiving address is shareable payment information
+
+The recipient's wallet derives the receiving identity and encryption public key locally from its seed, scoped to the chain and pool. These values form the cloaked receiving address. Creating one requires no onchain registration or account deployment. The address format also needs a protocol version so a wallet can interpret it correctly.
+
+The receiving identity lets a payer construct a note owned by the recipient. The encryption key lets the payer deliver its contents privately. Neither gives the payer spending authority. A cloaked receiving address is not a Starknet account address used to submit transactions or receive a public withdrawal.
+
+A cloaked address is shareable, not secret. It can be shared once and used for repeated payments from independent payers. Each payment uses fresh randomness and fresh encryption. The receiving address is not published as a recipient field in the private transfer.
+
+Wallets must authenticate addresses through the contact exchange or another trusted source. Substituting an attacker's entire address redirects a payment; encryption cannot identify the intended person by itself.
+
+## Ownership, commitment, and nullifier
+
+The reference construction separates spending authority from the material needed to watch receipts and spent status:
+
+```text
+ak       = H(AUTHORITY_DOMAIN, spending_secret)
+nk       = H(NULLIFIER_KEY_DOMAIN, spending_secret)
+receiver = H(OWNER_DOMAIN, ak, nk)
+inner    = H(INNER_DOMAIN, receiver, fresh_randomness)
+commitment = H(NOTE_DOMAIN,
+               chain, pool, token, amount, controller, policy, inner)
+nullifier  = H(NULLIFIER_DOMAIN, nk, commitment, leaf_index)
+```
+
+Here `H` is Starknet Poseidon over canonical felt252 values. Each domain is a distinct versioned tag. Ordinary notes fix controller and policy to zero. [Controlled notes](/architecture/controllers) bind a controller and policy into the same commitment and additionally require approval to spend. Format qualifications are recorded on the [status page](/status).
+
+| Material | Who needs it | What it enables |
+| --- | --- | --- |
+| Receiving identity and encryption public key | Anyone paying the address | Create and encrypt an output |
+| Note opening | Payer knows the output it creates; recipient decrypts it | Reconstruct the commitment and understand the value |
+| Incoming decryption key | Recipient or an explicitly authorized incoming viewer | Decrypt received notes |
+| `ak` and `nk`, with incoming viewing material | An explicitly authorized full viewer | Validate the viewing scope and derive received-note nullifiers |
+| Spending secret | Owner's wallet and local prover | Prove ownership and authorize spending |
+
+**Knowing a note's opening does not grant spending authority.** The payer knows the amount and randomness it chose, but lacks the recipient's spending secret. A full viewer can derive nullifiers but still lacks that secret. The spending statement requires it and derives both `ak` and `nk` before checking the committed receiving identity.
+
+## Paying an offline recipient
+
+Alice has Bob's receiving address and wants to send 600 units. Her wallet chooses fresh randomness, constructs a note for Bob, and encrypts its contents to his encryption key. It includes that output and any change in her spend.
+
+The pool publishes the funded commitment and encrypted payload together. Bob later downloads the public history, decrypts the payload, validates its context, and recomputes its commitment. Once those checks match a canonical leaf, his wallet records the note and its position. He can spend it to another receiving address or withdraw publicly, subject to any controller approval attached to the note.
+
+Bob's wallet reports the actual token and amount received. Neither the address nor the proof says what an off-chain agreement required Alice to pay.
+
+## Fresh notes and stable addresses
+
+Address reuse does not reuse the note commitment. Fresh randomness hides the receiving identity inside each commitment, and encryption uses a fresh ephemeral key. There is no stable public recipient discovery identifier.
+
+The leaf position is included in the nullifier. Two separately funded leaves with identical commitments remain separately spendable, while receiving the same event twice never credits it twice. Randomness must still be fresh: identical commitments are publicly linkable.
+
+The [receiving and recovery model](/architecture/receiving) explains encrypted delivery, viewing authority, and reconstruction after loss of local wallet data.
+
+## Receiving proceeds from an external operation
+
+A [return note](/architecture/returns) prepares ownership and recovery information before the amount is known. After the pool collects the actual proceeds, it creates an ordinary funded note. `ReturnNote` describes the preparation and funding lifecycle; it is not a separate permanent wallet balance or spending authority.

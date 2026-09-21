@@ -1,0 +1,10 @@
+[package]
+name = "templar_m31_append_statement"
+version = "0.1.0"
+edition = "2024_07"
+[dependencies]
+starknet = "2.18.0"
+templar_m31_append_bridge = { path = "../bridge" }
+[[target.starknet-contract]]
+sierra = true
+casm = true

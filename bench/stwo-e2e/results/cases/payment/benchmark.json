@@ -1,0 +1,26 @@
+{
+  "case": "payment",
+  "startup_seconds": 1.9243252079977538,
+  "request_seconds": 19.217364197997085,
+  "proving_seconds": 12.687,
+  "virtual_os_seconds": 6.525,
+  "proof_bytes": 230822,
+  "proof_sha256": "7d8b5b9c80ad6ba83b3da8d00193e363326c92bd6c809edafadf5024addae6d4",
+  "peak_rss_gib": 13.923423767089844,
+  "swap_peak_bytes": 0,
+  "local_verification_passed": true,
+  "public_binding_matches": true,
+  "public_values": [
+    "0x54454d504c41525f5632",
+    "0x534e5f5345504f4c4941",
+    "0xba1d723e8d952cb0a8d4612ddb04ef2f7d9a697ba4d30b2e407f91acfe98ad",
+    "0x7e336060698e111aa0feab9a1c32577f2d020eae8c69715a2c018d8edff460",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x3a198b08bd193efc8a6b28a1d2cec0d5fa377a2fb8bca008a62cea58e65ed5d"
+  ],
+  "base_block": 15358322,
+  "memory_cap_gib": 16,
+  "cores": 4
+}

@@ -1,0 +1,26 @@
+{
+  "case": "mock-swap",
+  "startup_seconds": 2.0029439569989336,
+  "request_seconds": 21.174215115999687,
+  "proving_seconds": 14.459,
+  "virtual_os_seconds": 6.708,
+  "proof_bytes": 235068,
+  "proof_sha256": "3f8325b4d50fa2b1ef58f50c936f724351367e69b49e678095e84726b751ec45",
+  "peak_rss_gib": 13.844684600830078,
+  "swap_peak_bytes": 0,
+  "local_verification_passed": true,
+  "public_binding_matches": true,
+  "public_values": [
+    "0x54454d504c41525f444546495f504f4331",
+    "0x534e5f5345504f4c4941",
+    "0x7dd89fb990e470c913a77a9b1cc96f652e1812f7d71d2be6b356a03e4baeeae",
+    "0x491b24fbea4604bc0f5b99f0fa052f8971683a4c81400a58c1565b34e4fef97",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x4affe3f375380637469e71236b62ac279c28b6ef2b5ceaf83a3abe070e814de"
+  ],
+  "base_block": 15388038,
+  "memory_cap_gib": 16,
+  "cores": 4
+}

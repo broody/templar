@@ -1,0 +1,96 @@
+{
+  "actual_fee": {
+    "amount": "0x18e73b68ddc8daf0",
+    "unit": "FRI"
+  },
+  "block_hash": "0x596fa1a78dcd1ad37e97bc8b8b103c50b2a40097a90c51856e5497ba86c9683",
+  "block_number": 15363767,
+  "events": [
+    {
+      "data": [
+        "0x6a063cf39f8c139094b8c72b97ce7cccc3b598f53d56d692e43d3b51ec924fd"
+      ],
+      "from_address": "0x7430fdfc9121d40c0b92bec1a19265c5f9b2c0fd16aba973f1799beed736a1e",
+      "keys": [
+        "0x3afda429dcbeebfb5b6bb4c2248f61da069fcf5406f9a1f6bfc7c2e58d97ce4"
+      ]
+    },
+    {
+      "data": [
+        "0x4",
+        "0x6623e5d1e0fa23e8cf536a9a1d27d2de1bc932418860001b9a647ffe44bbdf9",
+        "0x31fd7aec1c17190ac80aebcbccf26eacda5c4e76b4776704a52b58c9d241a7c",
+        "0xa",
+        "0xe206f0b5d3921519171d249cd5502927ac5e5ceaa924ee68e567a8c1f308db",
+        "0x410214a9ae09287d69ce1481a65ae2272273d3d27e7d895dff1d9e70d091b7",
+        "0xd2899d3611f2680048735301de025372b3e047bf4c13f79754d528a84eaf9c",
+        "0x20cce7edfba9caa73e25fae012849e76700cb476ac8c215cd508fabe8c7c2a",
+        "0x884823ee51b6f2a3e895d3738aef812509a5b42649eb43c8f0f01d5663d938",
+        "0x8705e9efa61c9c916683a18498a4371fee33fc61f232f2fc0114b5559b1889",
+        "0x95e4d1d6fd81b8e19184ae4eaa8e00541489db42079af9e6477c1c6e370f46",
+        "0x722264abac4f67ac58c1149b8ac9b32250aa26777746a244990ddd4437e3db",
+        "0x54b70f81ee9318a8ba7a14b363c742063aa2a7af45488e4f27da62e969d1a",
+        "0x72ee20f7f067b3fcc5d1b12ec11cad056e91525a97ae744460"
+      ],
+      "from_address": "0x7430fdfc9121d40c0b92bec1a19265c5f9b2c0fd16aba973f1799beed736a1e",
+      "keys": [
+        "0x10a7e8aac45030c9785c0c740540eb083470c45ac5bcb7f9b1c09d5c2648aa6"
+      ]
+    },
+    {
+      "data": [
+        "0x5",
+        "0x3ae48040ea684fd51420d7eee424690bf661ad2d2afe0f9b09f83828a558147",
+        "0x304eb85eb63268f4cc455157ac157b3a3f71ab746901afee9618a3f2e27a312",
+        "0xa",
+        "0xdebc39fd033b7d288e7f3958e525ac44096f5e196df2ff1d8b3f550e487b16",
+        "0xe4b09ccd8a54e0be830f441079d2f94a53eea10c364573c042f6d74fd7b80",
+        "0x9887932e223ee44c9c675bc05732816eb041d1195d469376fc443d81b111f4",
+        "0x4bbf5eb65f957618e82e2f767eaaa038b215cce8d8c567d2e6836f24db8525",
+        "0x83e8502f620f2dc84d1439cd240652c0b0ff6ef83fdc8389d347f383cbdb2f",
+        "0x493e279ab3c5a247857124b87eaf158259923a8eaf928831b1288e0dd4b20a",
+        "0x2dcb5485867ade3fd893064debbc7d840e6cdd8cab0efa9acda0897963eff",
+        "0xf06948ac107ac5805053a0368a92d93b9bbcd123fa1b87f12a35ceba4936e2",
+        "0xcef2cd3564f6d9458daa30abc29adc049ff2ff74247c0c6913aee7a8d21425",
+        "0xbd02a1025dc263e30cf7861e7778b89827b6d288c7b292e60a"
+      ],
+      "from_address": "0x7430fdfc9121d40c0b92bec1a19265c5f9b2c0fd16aba973f1799beed736a1e",
+      "keys": [
+        "0x10a7e8aac45030c9785c0c740540eb083470c45ac5bcb7f9b1c09d5c2648aa6"
+      ]
+    },
+    {
+      "data": [
+        "0x1",
+        "0x0"
+      ],
+      "from_address": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+      "keys": [
+        "0x1dcde06aabdbca2f80aa51392b345d7549d7757aa855f7e37f5d335ac8243b1",
+        "0x6e53c7ac62a6ec0eff8c7a40b545792a44e2e931c79c38aab2c1f5f508dec79"
+      ]
+    },
+    {
+      "data": [
+        "0x18e73b68ddc8daf0",
+        "0x0"
+      ],
+      "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+      "keys": [
+        "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8"
+      ]
+    }
+  ],
+  "execution_resources": {
+    "l1_data_gas": 3616,
+    "l1_gas": 0,
+    "l2_gas": 93607920
+  },
+  "execution_status": "SUCCEEDED",
+  "finality_status": "ACCEPTED_ON_L2",
+  "messages_sent": [],
+  "transaction_hash": "0x6e53c7ac62a6ec0eff8c7a40b545792a44e2e931c79c38aab2c1f5f508dec79",
+  "type": "INVOKE"
+}

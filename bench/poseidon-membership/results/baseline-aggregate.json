@@ -1,0 +1,29 @@
+[
+  {
+    "run": "baseline-8g-1t",
+    "peak_rss_gib": 4.281917572021484,
+    "whole_harness_elapsed_seconds": 8.58018009699299,
+    "client_reported_seconds": 8.369771952,
+    "proof_sha256": "7883c50e7125e608365e7887b50df589ac57bcc91438fe2f1f660caf56a9631e",
+    "native_proof_verified": true,
+    "swap_bytes": 0
+  },
+  {
+    "run": "baseline-8g-1t-repeat1",
+    "peak_rss_gib": 4.281650543212891,
+    "whole_harness_elapsed_seconds": 8.815943766006967,
+    "client_reported_seconds": 8.663069572,
+    "proof_sha256": "7883c50e7125e608365e7887b50df589ac57bcc91438fe2f1f660caf56a9631e",
+    "native_proof_verified": true,
+    "swap_bytes": 0
+  },
+  {
+    "run": "baseline-8g-1t-repeat2",
+    "peak_rss_gib": 4.281703948974609,
+    "whole_harness_elapsed_seconds": 8.727492720005102,
+    "client_reported_seconds": 8.529084166,
+    "proof_sha256": "7883c50e7125e608365e7887b50df589ac57bcc91438fe2f1f660caf56a9631e",
+    "native_proof_verified": true,
+    "swap_bytes": 0
+  }
+]

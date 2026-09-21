@@ -1,0 +1,37 @@
+   Compiling num-traits v0.2.19
+   Compiling serde v1.0.228
+   Compiling itertools v0.10.5
+   Compiling tracing-core v0.1.34
+   Compiling num-integer v0.1.46
+   Compiling ark-std v0.4.0
+   Compiling ark-ff v0.4.2
+   Compiling num-bigint v0.4.6
+   Compiling hashbrown v0.15.4
+   Compiling tracing v0.1.41
+   Compiling tracing-subscriber v0.3.19
+   Compiling indexmap v2.10.0
+   Compiling ark-serialize v0.4.2
+   Compiling starknet-ff v0.3.7
+   Compiling starknet-curve v0.4.2
+   Compiling starknet-crypto-codegen v0.3.3
+   Compiling starknet-crypto v0.6.2
+   Compiling stwo v2.2.0 (/home/broody/development/templar/target/bounded-memory/stwo/crates/stwo)
+warning: the feature `stdarch_x86_avx512` has been stable since 1.89.0 and no longer requires an attribute to enable
+ --> crates/stwo/src/lib.rs:4:13
+  |
+4 |     feature(stdarch_x86_avx512)
+  |             ^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(stable_features)]` on by default
+
+warning: `stwo` (lib) generated 1 warning
+   Compiling stwo-constraint-framework v2.2.0 (/home/broody/development/templar/target/bounded-memory/stwo/crates/constraint-framework)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.51s
+     Running unittests src/lib.rs (/home/broody/development/templar/target/bounded-memory/stwo-test-target/debug/deps/stwo_constraint_framework-a3604b1aedc82413)
+
+running 2 tests
+test prover::component_prover::bounded_tests::bounded_component_columns_cpu ... ok
+test prover::component_prover::bounded_tests::bounded_component_columns_simd ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.00s
+

@@ -1,0 +1,82 @@
+{
+  "status": "blocked_before_PROOF1",
+  "scope": "public append; unchanged original prover and verifier; synthetic authenticated state",
+  "attempts": [
+    {
+      "path": "bench/m31-append/results/outer/single",
+      "stage": "transaction gas exhausted",
+      "status": "failed",
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "local_node_attachment": false,
+      "native_verification_passed": false,
+      "error": "{\"code\": 1000, \"message\": \"Invalid transaction input\", \"data\": \"Transaction execution has failed:\\n0: Error in the called contract (contract address: 0x0224abbc723ec41df538065d8fc9b1d3459960364236e50556c371207970e860, class hash: 0x06ef8a6b896fe830b46f08893a54dcc11853331b3f23fd04834349f87a2cfd48, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\\nExecution failed. Failure reason:\\nError in contract (contract address: 0x0224abbc723ec41df538065d8fc9b1d3459960364236e50556c371207970e860, class hash: 0x06ef8a6b896fe830b46f08893a54dcc11853331b3f23fd04834349f87a2cfd48, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\\n0x4f7574206f6620676173 ('Out of gas').\\n\\n\\nThis is likely caused by l2_gas.max_amount being too low. Set it to the value from starknet_estimateFee, or use 100000000 (0x5f5e100) as a safe upper bound (sufficient for ~1 million Cairo steps).\"}",
+      "error_type": "RuntimeError",
+      "peak_rss_gib": 2.5675277709960938,
+      "cgroup_peak_bytes": 2723426304,
+      "swap_peak_bytes": 0,
+      "resource_samples": 9,
+      "virtual_os_steps": null,
+      "report_sha256": "74a79df6b2ef723199b22cff1cf2fe6583f3784496928407b10d6b738da00ce0"
+    },
+    {
+      "path": "bench/m31-append/results/outer/verified/single",
+      "stage": "Cairo proof generation: cgroup OOM",
+      "status": "failed",
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "l2_gas_max_amount": 1000000000,
+      "local_node_attachment": false,
+      "native_verification_passed": false,
+      "error": "Remote end closed connection without response",
+      "error_type": "RemoteDisconnected",
+      "peak_rss_gib": 15.77170181274414,
+      "cgroup_peak_bytes": 17179869184,
+      "swap_peak_bytes": 0,
+      "resource_samples": 204,
+      "os_seconds": 4.481,
+      "virtual_os_steps": 8062701,
+      "report_sha256": "3f3993e365452fc6dd9a74fbec2e65199776d98c74eee92ee3618e0152a26713"
+    },
+    {
+      "path": "bench/m31-append/results/outer/cap64/single",
+      "stage": "Cairo proof generation: twiddle capacity panic",
+      "status": "failed",
+      "memory_cap_gib": 64,
+      "cores": 4,
+      "l2_gas_max_amount": 1000000000,
+      "local_node_attachment": false,
+      "native_verification_passed": false,
+      "error": "{\"code\": -32603, \"message\": \"Internal error\", \"data\": \"Proving task failed to join: task 29 panicked with message \\\"Not enough twiddles!\\\"\"}",
+      "error_type": "RuntimeError",
+      "peak_rss_gib": 29.270309448242188,
+      "cgroup_peak_bytes": 31393665024,
+      "swap_peak_bytes": 0,
+      "resource_samples": 341,
+      "os_seconds": 4.382,
+      "virtual_os_steps": 8062701,
+      "report_sha256": "4319fe261c7d15cabba479be8281e71e2f56d5a37cc2aa7b06abb80c364c3036"
+    }
+  ],
+  "source_pins": {
+    "/home/broody/.cargo/git/checkouts/proving-utils-fe3a66dc6b32d5d3/3035dd0/crates/privacy_prove/src/lib.rs": "b7b6449a5ae6713ddba810b3ed3feaacba6294541b289939658fc1640cf9a446",
+    "/home/broody/.cargo/git/checkouts/proving-utils-fe3a66dc6b32d5d3/3035dd0/crates/privacy_circuit_verify/src/consts.rs": "9b6d4d844bdc7f81c616f6f323687af361f36e4121d9f209091dd92c4943700e",
+    "/home/broody/.cargo/git/checkouts/proving-utils-fe3a66dc6b32d5d3/3035dd0/crates/privacy_circuit_verify/src/lib.rs": "a7f9708e741ccffd28bbf6c06ddd749e787ecfa4fe76e4aa9559117bb9923729",
+    "/home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs": "ee4c33cb489a0311880de69d4a9fd7a955660a03f6646025e2e411d98303a8be",
+    "/home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/prover/vcs_lifted/prover.rs": "d1e2c36c592587d451b6f1db5d7fd23f9a1a89eb26edbab03c08f4e95c34d9ee"
+  },
+  "source_configuration": {
+    "cairo_trace_log_size": 20,
+    "cairo_log_blowup_factor": 3,
+    "cairo_lifting_log_size": 23,
+    "circuit_trace_log_size": 21,
+    "circuit_log_blowup_factor": 2,
+    "circuit_lifting_log_size": 23
+  },
+  "interpretation": "The observed domain request exceeded the fixed precomputed twiddle capacity. Source also fixes the Cairo PCS and recursive verifier configuration. Increasing RAM or twiddle allocation alone does not establish compatibility with the unchanged verifier. Exact offending component has not been profiled. The configured trace size is not a universal Cairo instruction-count limit.",
+  "real_outer_proofs": 0,
+  "original_outer_verifier_runs": 0,
+  "local_contract_tests_run": false,
+  "local_node_attachment": false,
+  "next_gate": "Profile verifier component sizes and reduce the work to fit the unchanged PROOF1 capacity, or explicitly evaluate a separately versioned supported outer route."
+}

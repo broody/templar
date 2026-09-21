@@ -1,0 +1,36 @@
+Running as unit: templar-bench-ed105cc1f365.service; invocation ID: b19fbad645f6467299e292ec3a80f4f9
+Scheme is: ultra_honk, num threads: 4 (mem: 7.46 MiB)
+{"functions": [
+  {
+        "acir_opcodes": 6,
+        "circuit_size": 204
+  }
+]}	Command being timed: "/home/broody/.bb/bb gates -s ultra_honk --oracle_hash keccak -b /home/broody/development/templar/bench/desktop/cases/native-2/target/bench.json"
+	User time (seconds): 0.00
+	System time (seconds): 0.00
+	Percent of CPU this job got: 100%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.00
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 11940
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 855
+	Voluntary context switches: 1
+	Involuntary context switches: 0
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 16ms
+CPU time consumed: 16ms
+Memory peak: 1.5M
+Memory swap peak: 0B

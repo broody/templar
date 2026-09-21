@@ -1,0 +1,37 @@
+{
+  "files": [
+    {
+      "path": "bench/poseidon-membership/client/Cargo.toml",
+      "sha256": "69326a165c8026e84c1b265ae0d935f188b47058d2a04ffa5f91f9c3afaf8247",
+      "bytes": 1966
+    },
+    {
+      "path": "bench/poseidon-membership/client/Cargo.lock",
+      "sha256": "3467d6bd73a0eaedd9d4e16b781d1154319a055897f5209ca6ebae433725d730",
+      "bytes": 73213
+    },
+    {
+      "path": "bench/poseidon-membership/client/src/main.rs",
+      "sha256": "b15fda90e181163a5e7ba1a9b6aac29b594ad376fb86c5e5ee00b921cfaf9fc8",
+      "bytes": 22940
+    },
+    {
+      "path": "bench/poseidon-membership/client/src/statement.rs",
+      "sha256": "59e93a6864e5064d393fb36480b9a46c4db9f368993b3a16327efe3d7650209b",
+      "bytes": 11811
+    },
+    {
+      "path": "bench/poseidon-membership/client/README.md",
+      "sha256": "717d30845c1067284ebb0311855ebc28a55d3bb6e252683957c0784498f8ddff",
+      "bytes": 4386
+    },
+    {
+      "path": "target/poseidon-membership/client-target/release/templar-poseidon-membership",
+      "sha256": "9c44542bd838100722358edc8c92f91e08012c4e59ebbf2b6ea35813c95c8974",
+      "bytes": 13736112
+    }
+  ],
+  "build": "bounded-build.json",
+  "tests": "bounded-test.json",
+  "proof_byte_equality": "pending root-owned measurement"
+}

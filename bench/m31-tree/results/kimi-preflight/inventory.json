@@ -1,0 +1,251 @@
+{
+  "task": "m31-tree preflight inventory (read-only)",
+  "date": "2026-09-21",
+  "worker_scope": "inventory only; no builds, tests, or benchmarks executed; source logs unchanged",
+  "toolchain": {
+    "scarb": {
+      "path": "/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb",
+      "version": "scarb 2.18.0 (e6144df0f 2026-04-21)",
+      "cairo": "2.18.0",
+      "sierra": "1.8.0",
+      "verified_by": "direct --version call"
+    },
+    "snforge": {
+      "path": "/home/broody/.asdf/installs/starknet-foundry/0.63.0/bin/snforge",
+      "version": "0.63.0",
+      "verified_by": "direct --version call",
+      "warning": "plain snforge on PATH is an older installation; do not use",
+      "flags_confirmed": [
+        "--max-n-steps",
+        "--max-threads",
+        "--detailed-resources",
+        "--gas-report",
+        "--trace-components"
+      ],
+      "default_max_n_steps": "unknown (not printed by --help; unverified)"
+    },
+    "scarb_toml": {
+      "starknet": "2.18.0",
+      "snforge_std": "0.63.0",
+      "assert_macros": "2.18.0"
+    }
+  },
+  "test_suite": {
+    "total_tests": 52,
+    "golden_tests": 24,
+    "cost_matrix_tests": 16,
+    "other_unit_tests": 7,
+    "other_unit_test_names": [
+      "packing_max_roundtrip",
+      "packing_reject_low_p",
+      "packing_reject_high_p",
+      "packing_reject_top_bits",
+      "m31_reject_zero",
+      "m31_reject_full",
+      "m31_history_eviction"
+    ],
+    "snapshot_tests": 5,
+    "snapshot_test_names": [
+      "snapshot_felt_prefix1",
+      "snapshot_felt_prefix2",
+      "snapshot_felt_prefix8",
+      "snapshot_m31_prefix1",
+      "snapshot_m31_prefix2"
+    ]
+  },
+  "completed_evidence": {
+    "plonky3_oracle_parity": {
+      "oracle_file": "bench/m31-tree/client/fixtures/golden-vectors.json",
+      "oracle_vector_entries_total": 120,
+      "breakdown": {
+        "permutations": 4,
+        "sponges": 10,
+        "leaves": 37,
+        "nodes": 4,
+        "empty": 33,
+        "append_roots": 32
+      },
+      "checker": "bench/m31-tree/generate-cairo-vectors.py (independent Python integer reference)",
+      "log": "results/cairo-oracle-parity.log",
+      "log_contents": {
+        "permutation_cases": 3,
+        "sponge_cases": 11,
+        "prefix_roots": 32,
+        "upstream_permutation_golden": true
+      },
+      "note": "log records generated Cairo fixture counts; 120 is the native oracle vector-entry count asserted against",
+      "reference_commit": "00fe0a985b398d3ef1f10d69543ca2b8f9f236da"
+    },
+    "cairo_golden_tests": {
+      "log": "results/cairo-golden-tests.log",
+      "passed": 24,
+      "failed": 0
+    },
+    "prefix8_snapshots": {
+      "log": "results/cairo-snapshot-generation.log",
+      "artifact": "results/prefix8-snapshots.json",
+      "felt": {
+        "nodes": 44,
+        "zeros": 33,
+        "history": 9
+      },
+      "m31": {
+        "nodes": 44,
+        "zeros": 33,
+        "history": 9
+      },
+      "review_status": "conditionally approved by Math Reviewer pending exact snapshot-equality review (per Astra); not closed here"
+    },
+    "archive_integrity": {
+      "log": "results/integrity-initial.json",
+      "passed": true,
+      "failures": []
+    },
+    "permutation_steps_reference": {
+      "log": "results/cairo-permutation-steps.log",
+      "test": "m31_tree_bench::golden::permutation_golden_0",
+      "steps": 101661,
+      "memory_holes": 1931,
+      "builtins": {
+        "range_check": 18952
+      }
+    }
+  },
+  "cost_results": {
+    "scope_note": "whole-test figures include deploy, seeding and read-only assertion calls; append_batch per-selector L2 gas is the comparable per-call figure. Local snforge VM estimates only; not Sepolia/mainnet fee quotes. Cold M31 insertion performs 130 total permutations (65 empty-tree init + 65 append); warm 65. Digest stored as 2 felts.",
+    "flag_mode_note": "whole-test L2 gas differs between gas-report and detailed-resources runs of the same test (38,002,328 vs 37,306,000 for cost_felt_cold_1)",
+    "felt_cold_1": {
+      "status": "PASS",
+      "log": "results/cairo-cost-felt-cold-1.log",
+      "whole_test": {
+        "l1_gas": 0,
+        "l1_data_gas": 7104,
+        "l2_gas": 38002328,
+        "sierra_gas": 8656328,
+        "syscalls": {
+          "StorageWrite": 76,
+          "StorageRead": 71,
+          "CallContract": 4,
+          "Deploy": 1
+        }
+      },
+      "per_selector_l2_gas": {
+        "append_batch": 8000008,
+        "get_root": 26640,
+        "get_leaf_count": 27180,
+        "root_is_known": 34200
+      },
+      "detailed_resources_run": {
+        "log": "results/cairo-steps-felt-cold-1.log",
+        "steps": 79218,
+        "memory_holes": 36,
+        "builtins": {
+          "range_check": 1266,
+          "pedersen": 142,
+          "poseidon": 128
+        },
+        "whole_test_l2_gas": 37306000,
+        "scope": "whole-test counters (deploy+append+assertion calls), not per-selector"
+      }
+    },
+    "m31_warm_1": {
+      "status": "PASS",
+      "log": "results/cairo-cost-m31-warm-1.log",
+      "whole_test": {
+        "l1_gas": 0,
+        "l1_data_gas": 19008,
+        "l2_gas": 880337130,
+        "sierra_gas": 801143130,
+        "syscalls": {
+          "StorageWrite": 259,
+          "StorageRead": 136,
+          "CallContract": 6,
+          "Deploy": 1
+        }
+      },
+      "per_selector_l2_gas": {
+        "append_batch": 787619740,
+        "seed_snapshot": 12387470,
+        "get_root": 52010,
+        "get_leaf_count": 27180,
+        "root_is_known_each": 39150
+      },
+      "note": "seed_snapshot is warm-state setup, excluded from the measured append charge"
+    },
+    "m31_cold_1": {
+      "status": "FAIL",
+      "log": "results/cairo-cost-m31-cold-1.log",
+      "error": "Could not reach the end of the program. RunResources has no remaining steps. (pc=0:8966)",
+      "append_batch_l2_gas_reported": 0,
+      "cause": "default snforge step limit exhausted; default numeric value unverified"
+    }
+  },
+  "outstanding_matrix_cells": {
+    "felt_cold": [
+      2,
+      4,
+      8
+    ],
+    "felt_warm": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "m31_cold": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "m31_warm": [
+      2,
+      4,
+      8
+    ],
+    "also_unrecorded": "7 non-cost unit tests in tests.cairo have no run log"
+  },
+  "next_commands": {
+    "cwd": "/home/broody/development/templar/bench/m31-tree/cairo",
+    "env_path": "/home/broody/.asdf/installs/scarb/2.18.0/bin:$HOME/.local/bin:$PATH",
+    "snforge": "/home/broody/.asdf/installs/starknet-foundry/0.63.0/bin/snforge",
+    "base_flags": "--max-threads 1 --detailed-resources --gas-report --trace-components gas",
+    "m31_cold_extra_flags": "--max-n-steps 80000000",
+    "budget_authorization": "80M local VM step budget with 8 GiB / no-swap / 300 s cap explicitly authorized by root; NOT executed in this task",
+    "commands": [
+      "snforge test packing_ $BASE_FLAGS",
+      "snforge test m31_reject_ $BASE_FLAGS",
+      "snforge test m31_history_eviction $BASE_FLAGS",
+      "snforge test cost_felt_cold_2 $BASE_FLAGS",
+      "snforge test cost_felt_cold_4 $BASE_FLAGS",
+      "snforge test cost_felt_cold_8 $BASE_FLAGS",
+      "snforge test cost_felt_warm_1 $BASE_FLAGS",
+      "snforge test cost_felt_warm_2 $BASE_FLAGS",
+      "snforge test cost_felt_warm_4 $BASE_FLAGS",
+      "snforge test cost_felt_warm_8 $BASE_FLAGS",
+      "snforge test cost_m31_cold_1 $BASE_FLAGS --max-n-steps 80000000",
+      "snforge test cost_m31_cold_2 $BASE_FLAGS --max-n-steps 80000000",
+      "snforge test cost_m31_cold_4 $BASE_FLAGS --max-n-steps 80000000",
+      "snforge test cost_m31_cold_8 $BASE_FLAGS --max-n-steps 80000000",
+      "snforge test cost_m31_warm_2 $BASE_FLAGS",
+      "snforge test cost_m31_warm_4 $BASE_FLAGS",
+      "snforge test cost_m31_warm_8 $BASE_FLAGS"
+    ],
+    "execution_rules": "run one cell at a time; no overlap with builds or native prover runs; write m31-cold-1 retry to a new log file (existing failure log stays immutable)"
+  },
+  "unknowns": [
+    "default numeric --max-n-steps value in snforge 0.63.0",
+    "whether 80M steps suffices for any m31 cold cell",
+    "exact command lines that produced the historical logs",
+    "pass/fail of the 7 non-cost unit tests (never run on record)",
+    "Math Reviewer exact snapshot-equality review for warm prefix-8 fixture (pending)",
+    "native/WASM prover implementation status and all native/browser timing and memory cells (Astra, in progress)"
+  ],
+  "disclaimer": "local VM resource estimates under pinned tool versions only; no live on-chain executability, privacy, soundness, or performance claim is made",
+  "corrections_2026_09_21": [
+    "79,218 steps / memory holes / builtin counts for cost_felt_cold_1 are WHOLE-TEST counters, not append-selector counters",
+    "test suite now 52 total: 24 golden + 16 cost + 7 unit + 5 snapshot_ (snapshot_felt_prefix1/2/8, snapshot_m31_prefix1/2); snapshot source review passed, runtime pending",
+    "cold M31 insertion = 130 total permutations (65 empty-tree init + 65 append); warm = 65; 9-word digest stored as 2 felts",
+    "per-call storage/VM counters must not be inferred from whole-test totals"
+  ]
+}

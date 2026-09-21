@@ -1,0 +1,77 @@
+---
+showAskAi: false
+title: Transaction lifecycle
+description: Follow value from a public deposit through offline push payments, recovery, and a public withdrawal.
+---
+
+import { Flow } from '../../components/Flow'
+
+# Transaction lifecycle
+
+Templar has two entry paths for value changes: a public deposit and a proof-authorized spend. Payments, change, and withdrawals are output shapes of the same spend mechanism. A [return-note execution](/architecture/returns) extends an ordinary spend with an authorized external call and atomic funding of its proceeds.
+
+## Deposit: fund a note
+
+A deposit supplies a token, amount, controller and policy, inner commitment, and encrypted note payload. The pool computes the commitment using its own chain/pool context, the actual token and amount, supplied controller and policy fields, and the supplied inner value. It transfers the tokens from the caller and publishes the ciphertext with the new leaf.
+
+No zero-knowledge proof is needed for this operation. The token, amount, funding account, and supplied inner value are public. The receiving identity and note randomness remain hidden inside the inner commitment and encrypted payload.
+
+The deposit caller and eventual note owner can differ. The caller supplies funds; the note's receiving identity determines whose spending secret can authorize its consumption.
+
+## Spend: prepare, prove, settle
+
+<Flow steps={[
+  { title: 'Prepare', detail: 'Select inputs and paths. Create fresh encrypted recipient notes and change.' },
+  { title: 'Prove', detail: 'Check ownership, membership, amounts, and the exact operation binding locally.' },
+  { title: 'Settle', detail: 'Verify the proof, mark nullifiers, publish encrypted outputs, and transfer withdrawals.' },
+]} caption="One public pool-spend transaction follows private preparation and local proving. Recipients need not be online." />
+
+The holder selects an accepted root and prepares input membership paths. For each output, their wallet uses the recipient's address, chooses fresh randomness, and encrypts the note. Change uses their own receiving address.
+
+The local prover produces a proof of the spend statement's public result. The transaction carries that proof and the public bundle: token, nullifiers, output commitments and ciphertexts, and withdrawal destinations and amounts.
+
+Starknet verifies the proof. The adapter checks that the verified facts match the approved statement and intended spend. The pool recomputes the binding from actual transaction data, checks the root and nullifiers, and applies the changes atomically.
+
+## Follow two payments to an offline wallet
+
+For clarity, this example omits separately funded fees.
+
+| Operation | Notes consumed | Notes created | Public token movement |
+| --- | --- | --- | --- |
+| Alice and Carol deposit | None | Alice: 1,000; Carol: 500 | 1,500 enters the pool |
+| Alice pays Bob | Alice: 1,000 | Bob: 600; Alice change: 400 | None |
+| Carol pays Bob | Carol: 500 | Bob: 250; Carol change: 250 | None |
+| Bob restores and spends | Bob: 600 and 250 | Dave: 500; Bob change: 310 | 40 leaves the pool |
+| Bob restores and withdraws | Bob: 310 | None | 310 leaves the pool |
+
+Both payers use the same Bob receiving address independently. Bob can recover the 850 while holding only his backup and public history. After his final withdrawal, the pool holds 1,150 backing Alice's 400, Carol's 250, and Dave's 500. This is the lifecycle exercised by the [Sepolia integration](/status#demonstrated-behavior).
+
+A private payment does not move ERC20 tokens between public accounts. It changes who can spend the value represented by notes inside the pool. Spending leaves the original commitments in the tree; their nullifiers record consumption.
+
+## Exact public effects
+
+| Bundle data | Pool effect |
+| --- | --- |
+| Ordered nullifiers | Mark each proven input spent once |
+| Output commitments and ciphertexts | Append leaves, store delivery digests, and publish encrypted notes |
+| Withdrawal destinations and amounts | Transfer the public token out of the pool |
+
+Counts and ordering are bound to the proof. Changing a ciphertext, adding an output, or changing a withdrawal destination changes the expected binding. A caller cannot reuse the original proof for that altered operation.
+
+## Bundle boundaries and fees
+
+A bundle supports at most **4 inputs, 4 outputs, and 2 withdrawals** for one public token. It requires at least one input and at least one output or withdrawal. Each note amount is a nonzero u128 value. Ordinary notes have zero controller and policy. [Controlled notes](/architecture/controllers) require a controller signature and preserve that controller across every input and output.
+
+```text
+sum(input note amounts) = sum(output note amounts) + sum(withdrawals)
+```
+
+The configurable **pool fee** is paid separately by the public transaction caller, outside this private equation. Starknet's **network fee** is another charge. A relayer can submit the transaction without owning its private notes, but needs funds and permissions for these fees.
+
+Pool changes and token transfers revert together on failure. Network gas for a reverted transaction remains payable.
+
+The 4/4/2 limit is the current reference format’s cap. Native proving supports larger measured synthetic statements; [capacity pathfinding](/status#spend-capacity-pathfinding) separates those results from funded settlement and desktop qualification.
+
+## External execution and returns
+
+The input-token spend funds the adapter. The public operation returns one or more authorized assets, and verified receipts fund ordinary notes in the same transaction. Private change and return notes share the total output cap; amounts in different tokens are accounted separately. A failed return reverts the entire operation, including the initial spend.

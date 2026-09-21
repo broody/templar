@@ -1,0 +1,32 @@
+Running as unit: templar-m31-native-branch12-1789990777220639420.service; invocation ID: 4df2842193e94af6a93b323f322b5377
+Error: wire query count
+Command exited with non-zero status 1
+	Command being timed: "/home/broody/development/templar/target/m31-append/frozen-native-v1/templar-m31-append /home/broody/development/templar/bench/m31-append/results/native-inputs/concurrent-a-to-b.json /home/broody/development/templar/bench/m31-append/results/native-branch12/proof"
+	User time (seconds): 4.45
+	System time (seconds): 0.00
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:04.47
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 17896
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 3895
+	Voluntary context switches: 196
+	Involuntary context switches: 618
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 4.472s
+CPU time consumed: 4.467s
+Memory peak: 1.2M
+Memory swap peak: 0B

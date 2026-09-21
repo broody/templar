@@ -1,0 +1,33 @@
+{
+  "actual_fee": {
+    "amount": "0x1486d210f2e5fe40",
+    "unit": "FRI"
+  },
+  "block_hash": "0x77ca8118fb2b06827b6b9952d0e65f8d7c0ac1f3616be9f93fc1140eeba796b",
+  "block_number": 15358506,
+  "events": [
+    {
+      "data": [
+        "0x1486d210f2e5fe40",
+        "0x0"
+      ],
+      "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+      "keys": [
+        "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8"
+      ]
+    }
+  ],
+  "execution_resources": {
+    "l1_data_gas": 128,
+    "l1_gas": 0,
+    "l2_gas": 76639680
+  },
+  "execution_status": "REVERTED",
+  "finality_status": "ACCEPTED_ON_L2",
+  "messages_sent": [],
+  "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x5a45524f5f524543495049454e54 ('ZERO_RECIPIENT'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n",
+  "transaction_hash": "0x5eabdfbaeaa4066e49aaa6f0f793dc7a44b4518af7c55a16a7f5d5df0a630c1",
+  "type": "INVOKE"
+}

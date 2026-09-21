@@ -1,0 +1,26 @@
+{
+  "project": "/home/broody/development/templar/bench/desktop/cases/felt-32",
+  "date_utc": "2026-09-20T06:29:48Z",
+  "nargo": "nargo version = 1.0.0-beta.16\nnoirc version = 1.0.0-beta.16+2d46fca7203545cbbfb31a0d0328de6c10a8db95\n(git version hash: 2d46fca7203545cbbfb31a0d0328de6c10a8db95, is dirty: false)",
+  "bb": "3.0.0-nightly.20251104",
+  "stages": [
+    {
+      "stage": "compile",
+      "command": [
+        "/home/broody/.nargo/bin/nargo",
+        "compile"
+      ],
+      "exit_code": 1,
+      "wall_seconds": null,
+      "driver_wall_seconds": 169.0167546470002,
+      "max_rss_kib": null,
+      "memory_limit": "32G",
+      "cpu_affinity": "0-3",
+      "cpu_quota": "400%",
+      "swap_limit": 0,
+      "timeout_seconds": 300,
+      "systemd_result": "oom-kill",
+      "cgroup_peak": "32.0G"
+    }
+  ]
+}

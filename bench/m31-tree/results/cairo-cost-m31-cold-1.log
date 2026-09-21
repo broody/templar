@@ -1,0 +1,68 @@
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.10s
+   Compiling test(m31_tree_bench_unittest) m31_tree_bench v0.1.0 (/home/broody/development/templar/bench/m31-tree/cairo/Scarb.toml)
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:5
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+    ^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:27
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:50
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:18:5
+    StoragePointerWriteAccess,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    Finished `dev` profile target(s) in 0 seconds
+
+
+Collected 1 test(s) from m31_tree_bench package
+Running 1 test(s) from src/
+[FAIL] m31_tree_bench::tests::cost_m31_cold_1
+
+Failure data:
+    Got an exception while executing a hint: Error at pc=0:8966:
+Could not reach the end of the program. RunResources has no remaining steps.
+Cairo traceback (most recent call last):
+Unknown location (pc=0:4150)
+Unknown location (pc=0:4150)
+Unknown location (pc=0:4150)
+Unknown location (pc=0:4150)
+Unknown location (pc=0:4150)
+Unknown location (pc=0:4150)
+Unknown location (pc=0:4150)
+Unknown location (pc=0:4150)
+Unknown location (pc=0:4150)
+Unknown location (pc=0:3947)
+Unknown location (pc=0:4944)
+Unknown location (pc=0:3453)
+Unknown location (pc=0:4639)
+Unknown location (pc=0:5430)
+Unknown location (pc=0:7597)
+Unknown location (pc=0:9244)
+Unknown location (pc=0:7179)
+Unknown location (pc=0:8966)
+Unknown location (pc=0:8966)
+Unknown location (pc=0:8966)
+
+
+note: run with `SNFORGE_BACKTRACE=1` environment variable to display a backtrace
+[test name] m31_tree_bench::tests::cost_m31_cold_1
+└─ [selector] append_batch
+   └─ [L2 gas] 0
+
+Tests: 0 passed, 1 failed, 0 ignored, 46 filtered out
+
+Failures:
+    m31_tree_bench::tests::cost_m31_cold_1

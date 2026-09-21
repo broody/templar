@@ -1,0 +1,27 @@
+{
+  "scope": "synthetic local trust anchor; no network finality",
+  "pins": {
+    "bench/m31-append/state_fixture.rs": "1dbcf926ab88223db50a013b350966bbdc6bd1ee763c812bff0212b084b5e5b6",
+    "bench/m31-append/build_state_fixture.py": "ca0cf333faf8e7ef76e2411220ab322d569b360e7a0f34c5abcecfe54151b4b4",
+    "target/m31-append/state-fixture-build-v3/state-fixture": "7ce5b25e4421afcc33aad753d6042414394d675f801824c4712458d2554b4e12",
+    "bench/m31-append/fixture_server.py": "68ed888c036af88cfdf7da3abb19b5dae76b9436b57c648ceacd29789ed2c901",
+    "bench/m31-append/results/state-fixture/fixture.json": "a0936d5ac143d921ea1900bdde5540b252f615b1f4e6dffc270b9881358bcc2c",
+    "bench/m31-append/cairo/target/contract/templar_m31_append_statement_M31AppendStatementAccount.contract_class.json": "79ce307becc7cd901c363afa64ce03797a1646330111885f1041c257d514c310",
+    "target/m31-append/state-fixture-build-v4/state-fixture": "f04d0f3bfad252db20220a545cd3dbd717d0d8451824986f77cc66dbeaba291c",
+    "bench/m31-append/run_outer.py": "c390a29be8b19eefe41820ac51a08fcac4b7e034f64dc89a21162fe85d6ea71a"
+  },
+  "authority": {
+    "compiled_class_v2": "0x6d1ad21151ce7f06a20bd4bf21ecad40d898a3c9c95e3b0832ca94e975bbba6",
+    "constructor_calldata": [],
+    "deployer": "0x0",
+    "os_config_hash": "0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57",
+    "pool": "0x456",
+    "salt": "0x4d33315f415050454e445f464958545552455f5631",
+    "statement": "0x224abbc723ec41df538065d8fc9b1d3459960364236e50556c371207970e860",
+    "statement_class": "0x6ef8a6b896fe830b46f08893a54dcc11853331b3f23fd04834349f87a2cfd48"
+  },
+  "base_number": 100,
+  "base_hash": "0x5e0835638f30e6821384e81492b4e73f09fc7c66dc5753735adf96b07a20e8b",
+  "global_root": "0x54b0c4d028e9501ed391f9a1477ae3ce40b5c3c570ffef94a4be7b9ac12277",
+  "current_generator": "target/m31-append/state-fixture-build-v4/state-fixture"
+}

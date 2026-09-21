@@ -1,0 +1,39 @@
+Running as unit: templar-privacy-cost-wrapper-8g-4c-1789979758046791452.service; invocation ID: 0cb1eba5f7704d53a4c62f369fc4902c
+   0.042846882s  INFO privacy_prove::checkpoint: Prepare the cairo proof for the cairo-circuit verifier
+   0.044208761s  INFO privacy_prove::checkpoint: Build the cairo-circuit verifier context
+   0.348829038s  INFO privacy_prove::checkpoint: Prepare only the recursive circuit stage
+   1.385628390s  INFO privacy_prove::checkpoint: Prove the cairo-circuit verifier
+  11.001226414s  INFO prove_ex: stwo::prover: proof_size_estimate=191460
+  11.001429464s  INFO privacy_prove::checkpoint: Recursive stage tree and buffer pool released
+  11.001433582s  INFO privacy_prove::checkpoint: Prepare the circuit proof for the circuit verifier
+  11.012036539s  INFO privacy_prove::checkpoint: Serialize and compress the proof
+{"blinding_policy":"unchanged inner witness commitment seed and outer query count","bounded_cairo_columns":16,"bounded_circuit_columns":16,"cairo_interaction_pow_bits":24,"cairo_pcs_config":{"fri_config":{"fold_step":4,"log_blowup_factor":3,"log_last_layer_degree_bound":0,"n_queries":23},"lifting_log_size":23,"pow_bits":27},"channel":"Blake2sM31","checkpoint":"local typed CairoProof with auxiliary data and matching output preimage; no config authority","circuit_interaction_pow_bits":20,"circuit_output_addresses":[3,4,2],"circuit_pcs_config":{"fri_config":{"fold_step":4,"log_blowup_factor":2,"log_last_layer_degree_bound":0,"n_queries":35},"lifting_log_size":23,"pow_bits":26},"elapsed_through_artifact_write_seconds":11.031276774,"input_bytes":998918,"load_seconds":0.002131453,"mode":"wrap","output_preimage_felts":9,"privacy_qualified_by_measurement":false,"proof_bytes":235734,"proof_sha256":"9326c1eaad137c1b865b417b36d041928b1e5d9ec15b363662f0535eed868153","scope":"unchanged fixed Cairo wrapper; synthetic local fixture only","trusted_circuit_preprocessed_root":[1226144497,1215753816,1261723493,447821635,511752374,214804093,1020993193,1889786400],"verification":"separate verify command, excluded from proving measurement","wrapper_seconds":11.02807903,"write_seconds":0.000191402}
+	Command being timed: "/home/broody/development/templar/target/client-privacy-feasibility/bin/fixed-cairo-wrapper wrap /home/broody/development/templar/bench/client-privacy-feasibility/results/prepare-8g-4c/output/checkpoint.bin /home/broody/development/templar/bench/client-privacy-feasibility/results/wrapper-8g-4c/output"
+	User time (seconds): 29.92
+	System time (seconds): 7.13
+	Percent of CPU this job got: 331%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:11.17
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 5014520
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 4812444
+	Voluntary context switches: 11478
+	Involuntary context switches: 15348
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 480
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 11.181s
+CPU time consumed: 37.067s
+Memory peak: 540.0K
+Memory swap peak: 0B

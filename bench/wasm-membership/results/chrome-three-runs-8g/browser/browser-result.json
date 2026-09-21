@@ -1,0 +1,23 @@
+{
+  "started_utc": "2026-09-21T07:19:37.300Z",
+  "scope": "Public synthetic membership in one browser worker; no payment/privacy qualification",
+  "repeat": 3,
+  "pkg": "/home/broody/development/templar/target/wasm-membership/pkg",
+  "url": "http://127.0.0.1:45509/",
+  "host_is_consumer_desktop": false,
+  "status": "failed",
+  "browser_version": "153.0.8010.47",
+  "error": "Error: cdpSession.send: Protocol error (Browser.getBrowserCommandLine): Command line not returned because --enable-automation not set.",
+  "stack": "cdpSession.send: Protocol error (Browser.getBrowserCommandLine): Command line not returned because --enable-automation not set.\n    at /home/broody/development/templar/bench/wasm-membership/run-browser.mjs:72:38",
+  "server_error": null,
+  "completed_utc": "2026-09-21T07:19:37.449Z",
+  "sampled_browser_peak_summed_rss_bytes": null,
+  "sampled_browser_peak_summed_pss_bytes": null,
+  "memory_sample_coverage": {
+    "total": 0,
+    "rss_complete": 0,
+    "pss_complete": 0,
+    "cdp_errors": 0
+  },
+  "memory_metric_note": "PSS/RSS cover processes reported by Chrome CDP; summed RSS double-counts shared pages. The outer cgroup includes browser plus Node harness/server. WASM linear memory is separate."
+}

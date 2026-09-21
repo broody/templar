@@ -1,0 +1,50 @@
+Running as unit: templar-membership-baseline-verification-checks-1789973282676238761.service; invocation ID: d5e4a617b8114daf91ce1c049738175c
+{
+  "discarded_duplicate_multiplicity_rejected": true,
+  "omitted_padding_boundary_rejected": true,
+  "rejected_mutations": [
+    "root",
+    "leaf",
+    "index",
+    "sibling",
+    "padding",
+    "call_order",
+    "aggregator_log",
+    "claimed_sum",
+    "interaction_pow",
+    "PCS_config",
+    "STARK_sample",
+    "preprocessed_root",
+    "structurally_valid_unlinked_permutation_output"
+  ],
+  "wrong_memory_dictionary_rejected": true
+}
+	Command being timed: "/home/broody/development/templar/target/poseidon-membership/client-target/release/templar-poseidon-membership --verify-tests /home/broody/development/templar/bench/poseidon-membership/results/baseline-8g-1t/proof/proof.bin /home/broody/development/templar/bench/poseidon-membership/results/baseline-verification-checks/checks"
+	User time (seconds): 0.55
+	System time (seconds): 0.40
+	Percent of CPU this job got: 96%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.99
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 931784
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 315560
+	Voluntary context switches: 58
+	Involuntary context switches: 587
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 992ms
+CPU time consumed: 962ms
+Memory peak: 1.7M
+Memory swap peak: 0B

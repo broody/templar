@@ -1,0 +1,20 @@
+[
+  {
+    "case": "ordinary",
+    "public_scalars_match": true,
+    "program_hash": "0x3aea23d86aef0c0b8ccbfe9b24e69c974a35d0877ca897faf508f2fd85b1acb",
+    "proof_sha256": "9e0b1893b93989d65777022b2e8eeeaa8351da1c1ba33dd04bb1493300b96be3"
+  },
+  {
+    "case": "controlled",
+    "public_scalars_match": true,
+    "program_hash": "0x3aea23d86aef0c0b8ccbfe9b24e69c974a35d0877ca897faf508f2fd85b1acb",
+    "proof_sha256": "910e486f06740e05d47455c778154847a50d8498dd80c46823311e93eb66e680"
+  },
+  {
+    "case": "maximum",
+    "public_scalars_match": true,
+    "program_hash": "0x3aea23d86aef0c0b8ccbfe9b24e69c974a35d0877ca897faf508f2fd85b1acb",
+    "proof_sha256": "274066d7efccf37ce4c50058caf030497f97f154dadab81b17ff2b24ae4c9405"
+  }
+]

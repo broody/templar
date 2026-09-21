@@ -1,0 +1,34 @@
+Running as unit: templar-bench-d1a4cc653992.service; invocation ID: 562f15fcb7cb47ff81f0ab5ce133b325
+Scheme is: ultra_honk, num threads: 4 (mem: 7.46 MiB)
+CircuitProve: Proving key computed in 30 ms (mem: 47.52 MiB)
+VK saved to "/home/broody/development/templar/bench/desktop/cases/native-256/results/vk" (mem: 47.52 MiB)
+VK Hash saved to "/home/broody/development/templar/bench/desktop/cases/native-256/results/vk_hash" (mem: 47.52 MiB)
+	Command being timed: "/home/broody/.bb/bb write_vk -s ultra_honk --oracle_hash keccak -b /home/broody/development/templar/bench/desktop/cases/native-256/target/bench.json -o /home/broody/development/templar/bench/desktop/cases/native-256/results"
+	User time (seconds): 0.28
+	System time (seconds): 0.01
+	Percent of CPU this job got: 257%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.11
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 48664
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 11314
+	Voluntary context switches: 495
+	Involuntary context switches: 2
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 16
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 122ms
+CPU time consumed: 304ms
+Memory peak: 1.7M
+Memory swap peak: 0B

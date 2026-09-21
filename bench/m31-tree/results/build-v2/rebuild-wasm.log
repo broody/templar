@@ -1,0 +1,16 @@
+warning: patch `stwo-cairo-utils v1.2.2 (/home/broody/development/templar/target/m31-tree/stwo-cairo/stwo_cairo_prover/crates/utils)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+warning: constant `RAYON_THREAD_STACK_SIZE` is never used
+  --> /home/broody/development/templar/target/m31-tree/stwo-cairo/stwo_cairo_prover/crates/prover/src/witness/components/cube_252.rs:43:15
+   |
+43 |         const RAYON_THREAD_STACK_SIZE: usize = 1024 * 1024 * 8;
+   |               ^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `stwo-cairo-prover` (lib) generated 1 warning
+   Compiling templar-m31-tree v0.1.0 (/home/broody/development/templar/bench/m31-tree/client)
+    Finished `release` profile [optimized] target(s) in 8.02s

@@ -1,0 +1,1539 @@
+{
+  "started_utc": "2026-09-21T09:56:27.363Z",
+  "scope": "Public synthetic M31 tree or mixed hash workload in one browser worker; no payment/privacy qualification",
+  "repeat": 3,
+  "pkg": "/home/broody/development/templar/target/m31-tree/pkg",
+  "url": "http://127.0.0.1:42023/",
+  "host_is_consumer_desktop": false,
+  "status": "passed",
+  "browser_version": "153.0.8010.47",
+  "browser_command_protocol_note": "Error: cdpSession.send: Protocol error (Browser.getBrowserCommandLine): Command line not returned because --enable-automation not set.",
+  "browser_command": {
+    "arguments": [
+      "/opt/google/chrome/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-Bj1axZ --remote-debugging-pipe --no-startup-window --noerrdialogs --ozone-platform=headless --ozone-override-screen-size=800,600 --use-angle=swiftshader-webgl"
+    ]
+  },
+  "runtime": {
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+    "hardware_concurrency": 4,
+    "cross_origin_isolated": true
+  },
+  "ok": true,
+  "result": {
+    "type": "complete",
+    "checks": {
+      "report": {
+        "discarded_M31_duplicate_multiplicity_rejected": true,
+        "omitted_M31_padding_boundary_rejected": true,
+        "rejected_mutations": [
+          "root",
+          "packed_root",
+          "leaf",
+          "index",
+          "sibling",
+          "domain_kind",
+          "domain_level",
+          "padding",
+          "noncanonical_M31",
+          "component_log",
+          "claimed_sum",
+          "interaction_pow",
+          "PCS_config",
+          "STARK_sample",
+          "preprocessed_root",
+          "structurally_valid_unlinked_M31_output",
+          "extra_empty_preprocessing_sample",
+          "extra_empty_preprocessing_query",
+          "extra_empty_preprocessing_witness"
+        ]
+      },
+      "elapsed_ms": 19.08500000834465,
+      "linear_memory_bytes": 20709376
+    },
+    "proving_linear_memory_high_water_bytes": 20709376,
+    "linear_memory_high_water_after_checks_bytes": 20709376,
+    "runs": [
+      {
+        "type": "run",
+        "run": 1,
+        "instance_state": "first proof in fresh worker/module",
+        "elapsed_ms": 4219.805000007153,
+        "memory_before_bytes": 8519680,
+        "memory_after_bytes": 20709376,
+        "memory_after_result_free_bytes": 20709376,
+        "proof_bytes": 197320,
+        "proof_sha256": "d8f4881c20541419f45a4c96eb114dd82e9903b51bc41bc835a598576c68b332",
+        "matches_native": true,
+        "summary": {
+          "algorithm": "Plonky3-00fe0a98/Poseidon2-M31-width24-RF8-RP22/Pad10-rate15-digest9/Templar-frame-v1",
+          "binary_envelope_bytes": 197320,
+          "binary_stark_proof_bytes": 166809,
+          "binding_root_relationship": "mixed residual binding root independent of M31 root; workload union, no migrated payment statement",
+          "channel": "Blake2s",
+          "complete_seconds": 4.215935,
+          "components": [
+            {
+              "constraint_degree": 2,
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "poseidon2_m31_width24",
+              "rows": 256,
+              "trace_columns": 1172
+            }
+          ],
+          "config_security_metric_bits": 96,
+          "execution_target": "wasm32",
+          "felt252_aggregator_padded_rows": 0,
+          "felt252_aggregator_unique_rows": 0,
+          "felt252_public_memory_boundary_terms": 0,
+          "felt252_residual_hash_calls": 0,
+          "felt252_residual_permutations": 0,
+          "fri_pow_nonce": "81604813092",
+          "interaction_pow_bits": 24,
+          "interaction_pow_nonce": "85899869310",
+          "json_envelope_bytes": 487371,
+          "m31_padding_repeats": 126,
+          "m31_tree_requests": 130,
+          "m31_tree_rows_with_padding": 256,
+          "max_fri_columns": 16,
+          "mode": "tree_only",
+          "native_proof_verified": false,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 11,
+            "pow_bits": 27
+          },
+          "phases": {
+            "base_commit_seconds": 0.04406,
+            "base_witness_seconds": 0.004975,
+            "interaction_commit_and_stark_prove_seconds": 2.05752,
+            "interaction_pow_and_witness_seconds": 2.08854,
+            "preprocessing_twiddles_and_commit_seconds": 0.00501,
+            "public_transcript_regeneration_seconds": 0.00409,
+            "verify_seconds": 0.00721
+          },
+          "plonky3_pin": "00fe0a985b398d3ef1f10d69543ca2b8f9f236da",
+          "proof_verified_in_runtime": true,
+          "public_statement_json_bytes": 72120,
+          "reference_parity": true,
+          "runtime": "wasm32 single worker simd128",
+          "scope": "public synthetic M31 membership; mixed mode adds exact RTN residual hash union workload; no private/payment proof or protocol migration",
+          "security_metric_note": "existing configured metric, not a new exact soundness bound for small domains",
+          "trusted_preprocessed_root": [
+            105,
+            33,
+            122,
+            48,
+            121,
+            144,
+            128,
+            148,
+            225,
+            17,
+            33,
+            208,
+            66,
+            53,
+            74,
+            124,
+            31,
+            85,
+            182,
+            72,
+            44,
+            161,
+            165,
+            30,
+            27,
+            37,
+            13,
+            253,
+            30,
+            208,
+            238,
+            249
+          ],
+          "wasm_linear_memory_bytes": 20709376
+        },
+        "shape": {
+          "components": [
+            {
+              "constraint_degree": 2,
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "poseidon2_m31_width24",
+              "rows": 256,
+              "trace_columns": 1172
+            }
+          ],
+          "interaction_pow_bits": 24,
+          "mode": "tree_only",
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 11,
+            "pow_bits": 27
+          },
+          "preprocessed": [],
+          "trusted_preprocessed_root": [
+            105,
+            33,
+            122,
+            48,
+            121,
+            144,
+            128,
+            148,
+            225,
+            17,
+            33,
+            208,
+            66,
+            53,
+            74,
+            124,
+            31,
+            85,
+            182,
+            72,
+            44,
+            161,
+            165,
+            30,
+            27,
+            37,
+            13,
+            253,
+            30,
+            208,
+            238,
+            249
+          ]
+        },
+        "phases": [
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "public transcript regenerated and fixture parity passed",
+            "worker_ms": 97.76500000059605,
+            "linear_memory_bytes": 8978432
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "preprocessing commitment complete; generating witness",
+            "worker_ms": 102.97499999403954,
+            "linear_memory_bytes": 9240576
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "base witness complete; committing trace",
+            "worker_ms": 108.70999999344349,
+            "linear_memory_bytes": 10420224
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "base commitment complete; interaction PoW and witness",
+            "worker_ms": 152.79999999701977,
+            "linear_memory_bytes": 20381696
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "interaction witness complete; commitment and STARK proving",
+            "worker_ms": 2241.3349999934435,
+            "linear_memory_bytes": 20381696
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "proof generated; verifying serialized public envelope",
+            "worker_ms": 4298.870000004768,
+            "linear_memory_bytes": 20709376
+          }
+        ]
+      },
+      {
+        "type": "run",
+        "run": 2,
+        "instance_state": "warm repeat in same worker/module",
+        "elapsed_ms": 4218.855000004172,
+        "memory_before_bytes": 20709376,
+        "memory_after_bytes": 20709376,
+        "memory_after_result_free_bytes": 20709376,
+        "proof_bytes": 197320,
+        "proof_sha256": "d8f4881c20541419f45a4c96eb114dd82e9903b51bc41bc835a598576c68b332",
+        "matches_native": true,
+        "summary": {
+          "algorithm": "Plonky3-00fe0a98/Poseidon2-M31-width24-RF8-RP22/Pad10-rate15-digest9/Templar-frame-v1",
+          "binary_envelope_bytes": 197320,
+          "binary_stark_proof_bytes": 166809,
+          "binding_root_relationship": "mixed residual binding root independent of M31 root; workload union, no migrated payment statement",
+          "channel": "Blake2s",
+          "complete_seconds": 4.211685,
+          "components": [
+            {
+              "constraint_degree": 2,
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "poseidon2_m31_width24",
+              "rows": 256,
+              "trace_columns": 1172
+            }
+          ],
+          "config_security_metric_bits": 96,
+          "execution_target": "wasm32",
+          "felt252_aggregator_padded_rows": 0,
+          "felt252_aggregator_unique_rows": 0,
+          "felt252_public_memory_boundary_terms": 0,
+          "felt252_residual_hash_calls": 0,
+          "felt252_residual_permutations": 0,
+          "fri_pow_nonce": "81604813092",
+          "interaction_pow_bits": 24,
+          "interaction_pow_nonce": "85899869310",
+          "json_envelope_bytes": 487371,
+          "m31_padding_repeats": 126,
+          "m31_tree_requests": 130,
+          "m31_tree_rows_with_padding": 256,
+          "max_fri_columns": 16,
+          "mode": "tree_only",
+          "native_proof_verified": false,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 11,
+            "pow_bits": 27
+          },
+          "phases": {
+            "base_commit_seconds": 0.03238,
+            "base_witness_seconds": 0.00295,
+            "interaction_commit_and_stark_prove_seconds": 2.05327,
+            "interaction_pow_and_witness_seconds": 2.114455,
+            "preprocessing_twiddles_and_commit_seconds": 0.00066,
+            "public_transcript_regeneration_seconds": 0.00253,
+            "verify_seconds": 0.003865
+          },
+          "plonky3_pin": "00fe0a985b398d3ef1f10d69543ca2b8f9f236da",
+          "proof_verified_in_runtime": true,
+          "public_statement_json_bytes": 72120,
+          "reference_parity": true,
+          "runtime": "wasm32 single worker simd128",
+          "scope": "public synthetic M31 membership; mixed mode adds exact RTN residual hash union workload; no private/payment proof or protocol migration",
+          "security_metric_note": "existing configured metric, not a new exact soundness bound for small domains",
+          "trusted_preprocessed_root": [
+            105,
+            33,
+            122,
+            48,
+            121,
+            144,
+            128,
+            148,
+            225,
+            17,
+            33,
+            208,
+            66,
+            53,
+            74,
+            124,
+            31,
+            85,
+            182,
+            72,
+            44,
+            161,
+            165,
+            30,
+            27,
+            37,
+            13,
+            253,
+            30,
+            208,
+            238,
+            249
+          ],
+          "wasm_linear_memory_bytes": 20709376
+        },
+        "shape": {
+          "components": [
+            {
+              "constraint_degree": 2,
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "poseidon2_m31_width24",
+              "rows": 256,
+              "trace_columns": 1172
+            }
+          ],
+          "interaction_pow_bits": 24,
+          "mode": "tree_only",
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 11,
+            "pow_bits": 27
+          },
+          "preprocessed": [],
+          "trusted_preprocessed_root": [
+            105,
+            33,
+            122,
+            48,
+            121,
+            144,
+            128,
+            148,
+            225,
+            17,
+            33,
+            208,
+            66,
+            53,
+            74,
+            124,
+            31,
+            85,
+            182,
+            72,
+            44,
+            161,
+            165,
+            30,
+            27,
+            37,
+            13,
+            253,
+            30,
+            208,
+            238,
+            249
+          ]
+        },
+        "phases": [
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "public transcript regenerated and fixture parity passed",
+            "worker_ms": 4429.07500000298,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "preprocessing commitment complete; generating witness",
+            "worker_ms": 4429.774999991059,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "base witness complete; committing trace",
+            "worker_ms": 4432.784999996424,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "base commitment complete; interaction PoW and witness",
+            "worker_ms": 4465.179999992251,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "interaction witness complete; commitment and STARK proving",
+            "worker_ms": 6579.629999995232,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "proof generated; verifying serialized public envelope",
+            "worker_ms": 8632.89999999106,
+            "linear_memory_bytes": 20709376
+          }
+        ]
+      },
+      {
+        "type": "run",
+        "run": 3,
+        "instance_state": "warm repeat in same worker/module",
+        "elapsed_ms": 4193.945000007749,
+        "memory_before_bytes": 20709376,
+        "memory_after_bytes": 20709376,
+        "memory_after_result_free_bytes": 20709376,
+        "proof_bytes": 197320,
+        "proof_sha256": "d8f4881c20541419f45a4c96eb114dd82e9903b51bc41bc835a598576c68b332",
+        "matches_native": true,
+        "summary": {
+          "algorithm": "Plonky3-00fe0a98/Poseidon2-M31-width24-RF8-RP22/Pad10-rate15-digest9/Templar-frame-v1",
+          "binary_envelope_bytes": 197320,
+          "binary_stark_proof_bytes": 166809,
+          "binding_root_relationship": "mixed residual binding root independent of M31 root; workload union, no migrated payment statement",
+          "channel": "Blake2s",
+          "complete_seconds": 4.191715,
+          "components": [
+            {
+              "constraint_degree": 2,
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "poseidon2_m31_width24",
+              "rows": 256,
+              "trace_columns": 1172
+            }
+          ],
+          "config_security_metric_bits": 96,
+          "execution_target": "wasm32",
+          "felt252_aggregator_padded_rows": 0,
+          "felt252_aggregator_unique_rows": 0,
+          "felt252_public_memory_boundary_terms": 0,
+          "felt252_residual_hash_calls": 0,
+          "felt252_residual_permutations": 0,
+          "fri_pow_nonce": "81604813092",
+          "interaction_pow_bits": 24,
+          "interaction_pow_nonce": "85899869310",
+          "json_envelope_bytes": 487371,
+          "m31_padding_repeats": 126,
+          "m31_tree_requests": 130,
+          "m31_tree_rows_with_padding": 256,
+          "max_fri_columns": 16,
+          "mode": "tree_only",
+          "native_proof_verified": false,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 11,
+            "pow_bits": 27
+          },
+          "phases": {
+            "base_commit_seconds": 0.032925,
+            "base_witness_seconds": 0.00283,
+            "interaction_commit_and_stark_prove_seconds": 2.035395,
+            "interaction_pow_and_witness_seconds": 2.11395,
+            "preprocessing_twiddles_and_commit_seconds": 0.0006,
+            "public_transcript_regeneration_seconds": 0.00095,
+            "verify_seconds": 0.003555
+          },
+          "plonky3_pin": "00fe0a985b398d3ef1f10d69543ca2b8f9f236da",
+          "proof_verified_in_runtime": true,
+          "public_statement_json_bytes": 72120,
+          "reference_parity": true,
+          "runtime": "wasm32 single worker simd128",
+          "scope": "public synthetic M31 membership; mixed mode adds exact RTN residual hash union workload; no private/payment proof or protocol migration",
+          "security_metric_note": "existing configured metric, not a new exact soundness bound for small domains",
+          "trusted_preprocessed_root": [
+            105,
+            33,
+            122,
+            48,
+            121,
+            144,
+            128,
+            148,
+            225,
+            17,
+            33,
+            208,
+            66,
+            53,
+            74,
+            124,
+            31,
+            85,
+            182,
+            72,
+            44,
+            161,
+            165,
+            30,
+            27,
+            37,
+            13,
+            253,
+            30,
+            208,
+            238,
+            249
+          ],
+          "wasm_linear_memory_bytes": 20709376
+        },
+        "shape": {
+          "components": [
+            {
+              "constraint_degree": 2,
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "poseidon2_m31_width24",
+              "rows": 256,
+              "trace_columns": 1172
+            }
+          ],
+          "interaction_pow_bits": 24,
+          "mode": "tree_only",
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 11,
+            "pow_bits": 27
+          },
+          "preprocessed": [],
+          "trusted_preprocessed_root": [
+            105,
+            33,
+            122,
+            48,
+            121,
+            144,
+            128,
+            148,
+            225,
+            17,
+            33,
+            208,
+            66,
+            53,
+            74,
+            124,
+            31,
+            85,
+            182,
+            72,
+            44,
+            161,
+            165,
+            30,
+            27,
+            37,
+            13,
+            253,
+            30,
+            208,
+            238,
+            249
+          ]
+        },
+        "phases": [
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "public transcript regenerated and fixture parity passed",
+            "worker_ms": 8751.719999998808,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "preprocessing commitment complete; generating witness",
+            "worker_ms": 8752.355000004172,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "base witness complete; committing trace",
+            "worker_ms": 8755.234999999404,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "base commitment complete; interaction PoW and witness",
+            "worker_ms": 8788.164999991655,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "interaction witness complete; commitment and STARK proving",
+            "worker_ms": 10902.120000004768,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "proof generated; verifying serialized public envelope",
+            "worker_ms": 12937.515000000596,
+            "linear_memory_bytes": 20709376
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ready",
+        "initialization_and_fixture_ms": 75.97499999403954,
+        "initialization_timer_note": "Includes WASM init and fixture/reference loading and reference hash; excludes JS module import.",
+        "linear_memory_bytes": 8519680,
+        "fixture_sha256": "826822cd0ea6d44d3850ed23a0bec210b52c0e5b82b1a570502b591115d9f9e2",
+        "reference_sha256": "d8f4881c20541419f45a4c96eb114dd82e9903b51bc41bc835a598576c68b332",
+        "cross_origin_isolated": true
+      },
+      {
+        "type": "phase",
+        "run": 1,
+        "phase": "public transcript regenerated and fixture parity passed",
+        "worker_ms": 97.76500000059605,
+        "linear_memory_bytes": 8978432
+      },
+      {
+        "type": "phase",
+        "run": 1,
+        "phase": "preprocessing commitment complete; generating witness",
+        "worker_ms": 102.97499999403954,
+        "linear_memory_bytes": 9240576
+      },
+      {
+        "type": "phase",
+        "run": 1,
+        "phase": "base witness complete; committing trace",
+        "worker_ms": 108.70999999344349,
+        "linear_memory_bytes": 10420224
+      },
+      {
+        "type": "phase",
+        "run": 1,
+        "phase": "base commitment complete; interaction PoW and witness",
+        "worker_ms": 152.79999999701977,
+        "linear_memory_bytes": 20381696
+      },
+      {
+        "type": "phase",
+        "run": 1,
+        "phase": "interaction witness complete; commitment and STARK proving",
+        "worker_ms": 2241.3349999934435,
+        "linear_memory_bytes": 20381696
+      },
+      {
+        "type": "phase",
+        "run": 1,
+        "phase": "proof generated; verifying serialized public envelope",
+        "worker_ms": 4298.870000004768,
+        "linear_memory_bytes": 20709376
+      },
+      {
+        "type": "run",
+        "run": 1,
+        "instance_state": "first proof in fresh worker/module",
+        "elapsed_ms": 4219.805000007153,
+        "memory_before_bytes": 8519680,
+        "memory_after_bytes": 20709376,
+        "memory_after_result_free_bytes": 20709376,
+        "proof_bytes": 197320,
+        "proof_sha256": "d8f4881c20541419f45a4c96eb114dd82e9903b51bc41bc835a598576c68b332",
+        "matches_native": true,
+        "summary": {
+          "algorithm": "Plonky3-00fe0a98/Poseidon2-M31-width24-RF8-RP22/Pad10-rate15-digest9/Templar-frame-v1",
+          "binary_envelope_bytes": 197320,
+          "binary_stark_proof_bytes": 166809,
+          "binding_root_relationship": "mixed residual binding root independent of M31 root; workload union, no migrated payment statement",
+          "channel": "Blake2s",
+          "complete_seconds": 4.215935,
+          "components": [
+            {
+              "constraint_degree": 2,
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "poseidon2_m31_width24",
+              "rows": 256,
+              "trace_columns": 1172
+            }
+          ],
+          "config_security_metric_bits": 96,
+          "execution_target": "wasm32",
+          "felt252_aggregator_padded_rows": 0,
+          "felt252_aggregator_unique_rows": 0,
+          "felt252_public_memory_boundary_terms": 0,
+          "felt252_residual_hash_calls": 0,
+          "felt252_residual_permutations": 0,
+          "fri_pow_nonce": "81604813092",
+          "interaction_pow_bits": 24,
+          "interaction_pow_nonce": "85899869310",
+          "json_envelope_bytes": 487371,
+          "m31_padding_repeats": 126,
+          "m31_tree_requests": 130,
+          "m31_tree_rows_with_padding": 256,
+          "max_fri_columns": 16,
+          "mode": "tree_only",
+          "native_proof_verified": false,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 11,
+            "pow_bits": 27
+          },
+          "phases": {
+            "base_commit_seconds": 0.04406,
+            "base_witness_seconds": 0.004975,
+            "interaction_commit_and_stark_prove_seconds": 2.05752,
+            "interaction_pow_and_witness_seconds": 2.08854,
+            "preprocessing_twiddles_and_commit_seconds": 0.00501,
+            "public_transcript_regeneration_seconds": 0.00409,
+            "verify_seconds": 0.00721
+          },
+          "plonky3_pin": "00fe0a985b398d3ef1f10d69543ca2b8f9f236da",
+          "proof_verified_in_runtime": true,
+          "public_statement_json_bytes": 72120,
+          "reference_parity": true,
+          "runtime": "wasm32 single worker simd128",
+          "scope": "public synthetic M31 membership; mixed mode adds exact RTN residual hash union workload; no private/payment proof or protocol migration",
+          "security_metric_note": "existing configured metric, not a new exact soundness bound for small domains",
+          "trusted_preprocessed_root": [
+            105,
+            33,
+            122,
+            48,
+            121,
+            144,
+            128,
+            148,
+            225,
+            17,
+            33,
+            208,
+            66,
+            53,
+            74,
+            124,
+            31,
+            85,
+            182,
+            72,
+            44,
+            161,
+            165,
+            30,
+            27,
+            37,
+            13,
+            253,
+            30,
+            208,
+            238,
+            249
+          ],
+          "wasm_linear_memory_bytes": 20709376
+        },
+        "shape": {
+          "components": [
+            {
+              "constraint_degree": 2,
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "poseidon2_m31_width24",
+              "rows": 256,
+              "trace_columns": 1172
+            }
+          ],
+          "interaction_pow_bits": 24,
+          "mode": "tree_only",
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 11,
+            "pow_bits": 27
+          },
+          "preprocessed": [],
+          "trusted_preprocessed_root": [
+            105,
+            33,
+            122,
+            48,
+            121,
+            144,
+            128,
+            148,
+            225,
+            17,
+            33,
+            208,
+            66,
+            53,
+            74,
+            124,
+            31,
+            85,
+            182,
+            72,
+            44,
+            161,
+            165,
+            30,
+            27,
+            37,
+            13,
+            253,
+            30,
+            208,
+            238,
+            249
+          ]
+        },
+        "phases": [
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "public transcript regenerated and fixture parity passed",
+            "worker_ms": 97.76500000059605,
+            "linear_memory_bytes": 8978432
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "preprocessing commitment complete; generating witness",
+            "worker_ms": 102.97499999403954,
+            "linear_memory_bytes": 9240576
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "base witness complete; committing trace",
+            "worker_ms": 108.70999999344349,
+            "linear_memory_bytes": 10420224
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "base commitment complete; interaction PoW and witness",
+            "worker_ms": 152.79999999701977,
+            "linear_memory_bytes": 20381696
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "interaction witness complete; commitment and STARK proving",
+            "worker_ms": 2241.3349999934435,
+            "linear_memory_bytes": 20381696
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "proof generated; verifying serialized public envelope",
+            "worker_ms": 4298.870000004768,
+            "linear_memory_bytes": 20709376
+          }
+        ]
+      },
+      {
+        "type": "phase",
+        "run": 2,
+        "phase": "public transcript regenerated and fixture parity passed",
+        "worker_ms": 4429.07500000298,
+        "linear_memory_bytes": 20709376
+      },
+      {
+        "type": "phase",
+        "run": 2,
+        "phase": "preprocessing commitment complete; generating witness",
+        "worker_ms": 4429.774999991059,
+        "linear_memory_bytes": 20709376
+      },
+      {
+        "type": "phase",
+        "run": 2,
+        "phase": "base witness complete; committing trace",
+        "worker_ms": 4432.784999996424,
+        "linear_memory_bytes": 20709376
+      },
+      {
+        "type": "phase",
+        "run": 2,
+        "phase": "base commitment complete; interaction PoW and witness",
+        "worker_ms": 4465.179999992251,
+        "linear_memory_bytes": 20709376
+      },
+      {
+        "type": "phase",
+        "run": 2,
+        "phase": "interaction witness complete; commitment and STARK proving",
+        "worker_ms": 6579.629999995232,
+        "linear_memory_bytes": 20709376
+      },
+      {
+        "type": "phase",
+        "run": 2,
+        "phase": "proof generated; verifying serialized public envelope",
+        "worker_ms": 8632.89999999106,
+        "linear_memory_bytes": 20709376
+      },
+      {
+        "type": "run",
+        "run": 2,
+        "instance_state": "warm repeat in same worker/module",
+        "elapsed_ms": 4218.855000004172,
+        "memory_before_bytes": 20709376,
+        "memory_after_bytes": 20709376,
+        "memory_after_result_free_bytes": 20709376,
+        "proof_bytes": 197320,
+        "proof_sha256": "d8f4881c20541419f45a4c96eb114dd82e9903b51bc41bc835a598576c68b332",
+        "matches_native": true,
+        "summary": {
+          "algorithm": "Plonky3-00fe0a98/Poseidon2-M31-width24-RF8-RP22/Pad10-rate15-digest9/Templar-frame-v1",
+          "binary_envelope_bytes": 197320,
+          "binary_stark_proof_bytes": 166809,
+          "binding_root_relationship": "mixed residual binding root independent of M31 root; workload union, no migrated payment statement",
+          "channel": "Blake2s",
+          "complete_seconds": 4.211685,
+          "components": [
+            {
+              "constraint_degree": 2,
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "poseidon2_m31_width24",
+              "rows": 256,
+              "trace_columns": 1172
+            }
+          ],
+          "config_security_metric_bits": 96,
+          "execution_target": "wasm32",
+          "felt252_aggregator_padded_rows": 0,
+          "felt252_aggregator_unique_rows": 0,
+          "felt252_public_memory_boundary_terms": 0,
+          "felt252_residual_hash_calls": 0,
+          "felt252_residual_permutations": 0,
+          "fri_pow_nonce": "81604813092",
+          "interaction_pow_bits": 24,
+          "interaction_pow_nonce": "85899869310",
+          "json_envelope_bytes": 487371,
+          "m31_padding_repeats": 126,
+          "m31_tree_requests": 130,
+          "m31_tree_rows_with_padding": 256,
+          "max_fri_columns": 16,
+          "mode": "tree_only",
+          "native_proof_verified": false,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 11,
+            "pow_bits": 27
+          },
+          "phases": {
+            "base_commit_seconds": 0.03238,
+            "base_witness_seconds": 0.00295,
+            "interaction_commit_and_stark_prove_seconds": 2.05327,
+            "interaction_pow_and_witness_seconds": 2.114455,
+            "preprocessing_twiddles_and_commit_seconds": 0.00066,
+            "public_transcript_regeneration_seconds": 0.00253,
+            "verify_seconds": 0.003865
+          },
+          "plonky3_pin": "00fe0a985b398d3ef1f10d69543ca2b8f9f236da",
+          "proof_verified_in_runtime": true,
+          "public_statement_json_bytes": 72120,
+          "reference_parity": true,
+          "runtime": "wasm32 single worker simd128",
+          "scope": "public synthetic M31 membership; mixed mode adds exact RTN residual hash union workload; no private/payment proof or protocol migration",
+          "security_metric_note": "existing configured metric, not a new exact soundness bound for small domains",
+          "trusted_preprocessed_root": [
+            105,
+            33,
+            122,
+            48,
+            121,
+            144,
+            128,
+            148,
+            225,
+            17,
+            33,
+            208,
+            66,
+            53,
+            74,
+            124,
+            31,
+            85,
+            182,
+            72,
+            44,
+            161,
+            165,
+            30,
+            27,
+            37,
+            13,
+            253,
+            30,
+            208,
+            238,
+            249
+          ],
+          "wasm_linear_memory_bytes": 20709376
+        },
+        "shape": {
+          "components": [
+            {
+              "constraint_degree": 2,
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "poseidon2_m31_width24",
+              "rows": 256,
+              "trace_columns": 1172
+            }
+          ],
+          "interaction_pow_bits": 24,
+          "mode": "tree_only",
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 11,
+            "pow_bits": 27
+          },
+          "preprocessed": [],
+          "trusted_preprocessed_root": [
+            105,
+            33,
+            122,
+            48,
+            121,
+            144,
+            128,
+            148,
+            225,
+            17,
+            33,
+            208,
+            66,
+            53,
+            74,
+            124,
+            31,
+            85,
+            182,
+            72,
+            44,
+            161,
+            165,
+            30,
+            27,
+            37,
+            13,
+            253,
+            30,
+            208,
+            238,
+            249
+          ]
+        },
+        "phases": [
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "public transcript regenerated and fixture parity passed",
+            "worker_ms": 4429.07500000298,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "preprocessing commitment complete; generating witness",
+            "worker_ms": 4429.774999991059,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "base witness complete; committing trace",
+            "worker_ms": 4432.784999996424,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "base commitment complete; interaction PoW and witness",
+            "worker_ms": 4465.179999992251,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "interaction witness complete; commitment and STARK proving",
+            "worker_ms": 6579.629999995232,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "proof generated; verifying serialized public envelope",
+            "worker_ms": 8632.89999999106,
+            "linear_memory_bytes": 20709376
+          }
+        ]
+      },
+      {
+        "type": "phase",
+        "run": 3,
+        "phase": "public transcript regenerated and fixture parity passed",
+        "worker_ms": 8751.719999998808,
+        "linear_memory_bytes": 20709376
+      },
+      {
+        "type": "phase",
+        "run": 3,
+        "phase": "preprocessing commitment complete; generating witness",
+        "worker_ms": 8752.355000004172,
+        "linear_memory_bytes": 20709376
+      },
+      {
+        "type": "phase",
+        "run": 3,
+        "phase": "base witness complete; committing trace",
+        "worker_ms": 8755.234999999404,
+        "linear_memory_bytes": 20709376
+      },
+      {
+        "type": "phase",
+        "run": 3,
+        "phase": "base commitment complete; interaction PoW and witness",
+        "worker_ms": 8788.164999991655,
+        "linear_memory_bytes": 20709376
+      },
+      {
+        "type": "phase",
+        "run": 3,
+        "phase": "interaction witness complete; commitment and STARK proving",
+        "worker_ms": 10902.120000004768,
+        "linear_memory_bytes": 20709376
+      },
+      {
+        "type": "phase",
+        "run": 3,
+        "phase": "proof generated; verifying serialized public envelope",
+        "worker_ms": 12937.515000000596,
+        "linear_memory_bytes": 20709376
+      },
+      {
+        "type": "run",
+        "run": 3,
+        "instance_state": "warm repeat in same worker/module",
+        "elapsed_ms": 4193.945000007749,
+        "memory_before_bytes": 20709376,
+        "memory_after_bytes": 20709376,
+        "memory_after_result_free_bytes": 20709376,
+        "proof_bytes": 197320,
+        "proof_sha256": "d8f4881c20541419f45a4c96eb114dd82e9903b51bc41bc835a598576c68b332",
+        "matches_native": true,
+        "summary": {
+          "algorithm": "Plonky3-00fe0a98/Poseidon2-M31-width24-RF8-RP22/Pad10-rate15-digest9/Templar-frame-v1",
+          "binary_envelope_bytes": 197320,
+          "binary_stark_proof_bytes": 166809,
+          "binding_root_relationship": "mixed residual binding root independent of M31 root; workload union, no migrated payment statement",
+          "channel": "Blake2s",
+          "complete_seconds": 4.191715,
+          "components": [
+            {
+              "constraint_degree": 2,
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "poseidon2_m31_width24",
+              "rows": 256,
+              "trace_columns": 1172
+            }
+          ],
+          "config_security_metric_bits": 96,
+          "execution_target": "wasm32",
+          "felt252_aggregator_padded_rows": 0,
+          "felt252_aggregator_unique_rows": 0,
+          "felt252_public_memory_boundary_terms": 0,
+          "felt252_residual_hash_calls": 0,
+          "felt252_residual_permutations": 0,
+          "fri_pow_nonce": "81604813092",
+          "interaction_pow_bits": 24,
+          "interaction_pow_nonce": "85899869310",
+          "json_envelope_bytes": 487371,
+          "m31_padding_repeats": 126,
+          "m31_tree_requests": 130,
+          "m31_tree_rows_with_padding": 256,
+          "max_fri_columns": 16,
+          "mode": "tree_only",
+          "native_proof_verified": false,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 11,
+            "pow_bits": 27
+          },
+          "phases": {
+            "base_commit_seconds": 0.032925,
+            "base_witness_seconds": 0.00283,
+            "interaction_commit_and_stark_prove_seconds": 2.035395,
+            "interaction_pow_and_witness_seconds": 2.11395,
+            "preprocessing_twiddles_and_commit_seconds": 0.0006,
+            "public_transcript_regeneration_seconds": 0.00095,
+            "verify_seconds": 0.003555
+          },
+          "plonky3_pin": "00fe0a985b398d3ef1f10d69543ca2b8f9f236da",
+          "proof_verified_in_runtime": true,
+          "public_statement_json_bytes": 72120,
+          "reference_parity": true,
+          "runtime": "wasm32 single worker simd128",
+          "scope": "public synthetic M31 membership; mixed mode adds exact RTN residual hash union workload; no private/payment proof or protocol migration",
+          "security_metric_note": "existing configured metric, not a new exact soundness bound for small domains",
+          "trusted_preprocessed_root": [
+            105,
+            33,
+            122,
+            48,
+            121,
+            144,
+            128,
+            148,
+            225,
+            17,
+            33,
+            208,
+            66,
+            53,
+            74,
+            124,
+            31,
+            85,
+            182,
+            72,
+            44,
+            161,
+            165,
+            30,
+            27,
+            37,
+            13,
+            253,
+            30,
+            208,
+            238,
+            249
+          ],
+          "wasm_linear_memory_bytes": 20709376
+        },
+        "shape": {
+          "components": [
+            {
+              "constraint_degree": 2,
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "poseidon2_m31_width24",
+              "rows": 256,
+              "trace_columns": 1172
+            }
+          ],
+          "interaction_pow_bits": 24,
+          "mode": "tree_only",
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 11,
+            "pow_bits": 27
+          },
+          "preprocessed": [],
+          "trusted_preprocessed_root": [
+            105,
+            33,
+            122,
+            48,
+            121,
+            144,
+            128,
+            148,
+            225,
+            17,
+            33,
+            208,
+            66,
+            53,
+            74,
+            124,
+            31,
+            85,
+            182,
+            72,
+            44,
+            161,
+            165,
+            30,
+            27,
+            37,
+            13,
+            253,
+            30,
+            208,
+            238,
+            249
+          ]
+        },
+        "phases": [
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "public transcript regenerated and fixture parity passed",
+            "worker_ms": 8751.719999998808,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "preprocessing commitment complete; generating witness",
+            "worker_ms": 8752.355000004172,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "base witness complete; committing trace",
+            "worker_ms": 8755.234999999404,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "base commitment complete; interaction PoW and witness",
+            "worker_ms": 8788.164999991655,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "interaction witness complete; commitment and STARK proving",
+            "worker_ms": 10902.120000004768,
+            "linear_memory_bytes": 20709376
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "proof generated; verifying serialized public envelope",
+            "worker_ms": 12937.515000000596,
+            "linear_memory_bytes": 20709376
+          }
+        ]
+      },
+      {
+        "type": "checks",
+        "report": {
+          "discarded_M31_duplicate_multiplicity_rejected": true,
+          "omitted_M31_padding_boundary_rejected": true,
+          "rejected_mutations": [
+            "root",
+            "packed_root",
+            "leaf",
+            "index",
+            "sibling",
+            "domain_kind",
+            "domain_level",
+            "padding",
+            "noncanonical_M31",
+            "component_log",
+            "claimed_sum",
+            "interaction_pow",
+            "PCS_config",
+            "STARK_sample",
+            "preprocessed_root",
+            "structurally_valid_unlinked_M31_output",
+            "extra_empty_preprocessing_sample",
+            "extra_empty_preprocessing_query",
+            "extra_empty_preprocessing_witness"
+          ]
+        },
+        "elapsed_ms": 19.08500000834465,
+        "linear_memory_bytes": 20709376
+      },
+      {
+        "type": "complete",
+        "checks": {
+          "report": {
+            "discarded_M31_duplicate_multiplicity_rejected": true,
+            "omitted_M31_padding_boundary_rejected": true,
+            "rejected_mutations": [
+              "root",
+              "packed_root",
+              "leaf",
+              "index",
+              "sibling",
+              "domain_kind",
+              "domain_level",
+              "padding",
+              "noncanonical_M31",
+              "component_log",
+              "claimed_sum",
+              "interaction_pow",
+              "PCS_config",
+              "STARK_sample",
+              "preprocessed_root",
+              "structurally_valid_unlinked_M31_output",
+              "extra_empty_preprocessing_sample",
+              "extra_empty_preprocessing_query",
+              "extra_empty_preprocessing_witness"
+            ]
+          },
+          "elapsed_ms": 19.08500000834465,
+          "linear_memory_bytes": 20709376
+        },
+        "proving_linear_memory_high_water_bytes": 20709376,
+        "linear_memory_high_water_after_checks_bytes": 20709376
+      }
+    ],
+    "page_heartbeat_ticks": 130,
+    "page_max_heartbeat_gap_ms": 104.51500000059605,
+    "page_elapsed_ms": 13076.004999995232
+  },
+  "server_error": null,
+  "completed_utc": "2026-09-21T09:56:40.989Z",
+  "sampled_browser_peak_summed_rss_bytes": 972877824,
+  "sampled_browser_peak_summed_pss_bytes": 303479808,
+  "memory_sample_coverage": {
+    "total": 26,
+    "rss_complete": 26,
+    "pss_complete": 26,
+    "cdp_errors": 0
+  },
+  "memory_metric_note": "PSS/RSS cover processes reported by Chrome CDP; summed RSS double-counts shared pages. The outer cgroup includes browser plus Node harness/server. WASM linear memory is separate."
+}

@@ -1,0 +1,127 @@
+{
+  "seconds": 11.93670999200549,
+  "event_pages": 2,
+  "event_count": 4,
+  "unique_payloads": 4,
+  "ciphertext_bytes": 1216,
+  "leaf_count": 4,
+  "providers": [
+    "https://api.zan.top/public/starknet-sepolia/rpc/v0_10",
+    "https://api.cartridge.gg/x/starknet/sepolia/rpc/v0_10"
+  ],
+  "block_number": 15385354,
+  "block_hash": "0x2f3abffd60d1bd4c3ca7bda139db1f355f69300d5f2434dd76bf02db0a18bf9",
+  "anchor": "two trusted RPC providers agree on block/class/state; no consensus or state-proof verification",
+  "privacy_limit": "RPC providers see requested leaf positions and candidate nullifiers",
+  "pool_class": "0x075a9d07d648c7313627fad670f676200425d0a00ba326a52703ddb73517705a",
+  "raw_events": [
+    {
+      "block_hash": "0x5688119f8283a100e3ba63b88f41f04f4d1f205eedce6e1aa443cacd0fbe20",
+      "block_number": 15385227,
+      "data": [
+        "0x0",
+        "0x1e00e2e040bcd529180d90de1785dcf8a5a913490a55502ad2fb484e3dfd89a",
+        "0x2ea60336b5f030e0bd72159eaa0b1b8a80e24bcd37a518c3fe2d6998434af50",
+        "0xa",
+        "0xe31d212d4cf7f70d62f7e39a9d014fe47584a3356526daad0d8dd6a4f07e3",
+        "0x55e262563fad6da1c4bcd235d48aec5e5345bc7c94bcded391370cb19fa54",
+        "0xb177c9401824c5d5021ff8c25d6217b8cdf303f762a3085a89119f5f464998",
+        "0x5900de972e7d9f60a73de807e49fdd7b720011e5d8d0dfb1b025837f618832",
+        "0x8e61bca802d027bfd2c3ad93e8a2021b734a241abc1be98d6e90fd7d0e115a",
+        "0x3d5a39269eb944b32025f3f3b33bc23ba6e1bcb6d1ea6329c3b5fe270c5cf5",
+        "0x8d3c89fb239b7b96aaa86a599acbf9bab5613a0197810164bdbf07dd3e381d",
+        "0xaff7b47b98f8744e5c4dee3d8ec6f3e6e0e5f8c749d5ce897864ce98eee12e",
+        "0xfe251ec35c21aa716a69b040fdb19b42d2fe532a6d905a971e1db1535d8d44",
+        "0x726c48f759b5f3eb788d6ed08685323d4cb8925d0501036977"
+      ],
+      "event_index": 0,
+      "from_address": "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+      "keys": [
+        "0x10a7e8aac45030c9785c0c740540eb083470c45ac5bcb7f9b1c09d5c2648aa6"
+      ],
+      "transaction_hash": "0x34f9179711e7d4a41a7acf9d7cef3995eb189c2d1848532ad07d608e9ce0250",
+      "transaction_index": 1
+    },
+    {
+      "block_hash": "0x1dc7a863814dea98a5250557e8a2c7f501fd8e497290a9760e70899e2312801",
+      "block_number": 15385232,
+      "data": [
+        "0x1",
+        "0x3606a04208cec8258f15442428ff16b3ef9b91ce2823f5f7e68b3ea4f30d94d",
+        "0x2ef6df1fb94891e2933c8295f597465fee28e39e7f3718c2ac0274d65bc0e33",
+        "0xa",
+        "0x4639be1a26c119ac0b95989a5620941e7bb87963d0c5699a778165d54900fa",
+        "0x6eecaa95354e3a5e53684a2b0f32186fcd8daa53c85607408e88f009265b06",
+        "0x312f84688f84d9c07086e1a97c4cc4472b89c2c1db59bc7f5086ec5a558a35",
+        "0x2ef88c1c55d61bbeb0d06a4720fea0c4933393759fba28de2f2e9b76778ab3",
+        "0xf110a2763ec9be5e1776a75cd2ba9e567d04e1077301d2da52fb0801c7b85a",
+        "0x6720d5c6e3e3b21cb11e37b3720bf0a41fa23151e0e1a68999d24559526a22",
+        "0xffcd8469268a4f489c565240d42800d6365ad6753f3bc2c87d3ecb932c2358",
+        "0xe5e1b2a5dceb35f94b99ba5046e365bef131d8dcb0187859512da14a22967",
+        "0x6045c0c984e0ec14694eb18969308741b4f368da088738ac3963da31b5347a",
+        "0xc47aa3983f9d415307506be999efa6ffadd7339dd538e02176"
+      ],
+      "event_index": 0,
+      "from_address": "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+      "keys": [
+        "0x10a7e8aac45030c9785c0c740540eb083470c45ac5bcb7f9b1c09d5c2648aa6"
+      ],
+      "transaction_hash": "0x2327714a32e14fd140fb47df74fc879cab8d427ccce0f3de1c59dd47ff963ee",
+      "transaction_index": 0
+    },
+    {
+      "block_hash": "0x36aebc83605f5e3716ed2e3265f5a3d27b8c932967a31cc3be9aec4b7fabf63",
+      "block_number": 15385333,
+      "data": [
+        "0x2",
+        "0x623c5c8e0e49818906788295b819d1dd31a5e655eb428f0056972d09248eb73",
+        "0x6523f93b446bcfc78d0d3cc0d872b17144e277222ddd8cffbbd3a70690cb37e",
+        "0xa",
+        "0xdbfaebbc0c3625cbc265910fa7045f6e6e95ea0f7bb5af4fe76ff5d928dd25",
+        "0x1f8181fa2f3274764eb4740b4b5e84a2f34b38113fce4a7eea6ceb3a32094b",
+        "0xd6a1fa942a3d758bf340622598ae71a863e5cc39dbe9afad0c6b8b6448e05",
+        "0x6a228bbe283ed78e8793a16bb0aa47792947bb471e4d215011416cd5767640",
+        "0xc3d6380d6a0c9442eab47a462eef3b27c8a8d4e5a803eb30e02a52e63f706e",
+        "0xb72d3051617be6daebea46cd511999ff5cea684fa84bd986857a93beb2592d",
+        "0x59870e062b27b93f73207e0392d9904a3143b8b2534d9de36a78603d20de16",
+        "0xdc9b14e5bed5187f88ca4461e1d2c9c2771c1419c2ed85b790b1293212536d",
+        "0xa43d92d92db887a50292f61ca5e8c9cc4e2e986a19df9dcd68cabbc5f71577",
+        "0x154da683b6e6149996bfcbf6cece1ef8ebfc045ff2d4bad027"
+      ],
+      "event_index": 1,
+      "from_address": "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+      "keys": [
+        "0x10a7e8aac45030c9785c0c740540eb083470c45ac5bcb7f9b1c09d5c2648aa6"
+      ],
+      "transaction_hash": "0x493cb458f647e8db63315023791eefe256efa17ddcb420fb6519fe420dde484",
+      "transaction_index": 2
+    },
+    {
+      "block_hash": "0x36aebc83605f5e3716ed2e3265f5a3d27b8c932967a31cc3be9aec4b7fabf63",
+      "block_number": 15385333,
+      "data": [
+        "0x3",
+        "0x78db7c8a60517c1b0c498db236a6cd1b895fe1f1cfa7ee17a0c9b15341b56bc",
+        "0x8ef38316b42094c3a2906622a82fd4ce55a339e2a280a9f8b0823c8948da53",
+        "0xa",
+        "0x2e0d48f96be400608aad145ebea006a5ccbe947d6f80ba8b966b5578c02751",
+        "0x252b818548d540885dedb9115b5e500bb38126cd09de07656ff29ff7d276a4",
+        "0x156ae6a81426e06dcca49ae5822a19cb876be61bba51a8977234190dafcd26",
+        "0x890aebbcc65410f97480866fefa7d5f363ca3a52e1b1e8f2506e938799802f",
+        "0x8e3e11c8bdaaf5b539bf42d9be0664c161a7d74051992748955ef4ec77d503",
+        "0x59ab70029b2e1f9d536b73e43220ac531f5791843e5c33d0afbbc4f25822d8",
+        "0xcd99299d7d81a34c3707555a94b7ed20636601b7c00ed1bb83662b0a077649",
+        "0xb38e2cb4ff8790cd4ee1b9109d379b6d1d06e8668cc409e8c26fde3359d1dd",
+        "0xe8bbc62bce05d5a2e03c47966ec062d33e4f29ae345c6a076f21b91ad038a7",
+        "0x64ec271ca1a07c7dd17ba3e9e7717a4b2bebc38e515d79a5c5"
+      ],
+      "event_index": 2,
+      "from_address": "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+      "keys": [
+        "0x10a7e8aac45030c9785c0c740540eb083470c45ac5bcb7f9b1c09d5c2648aa6"
+      ],
+      "transaction_hash": "0x493cb458f647e8db63315023791eefe256efa17ddcb420fb6519fe420dde484",
+      "transaction_index": 2
+    }
+  ]
+}

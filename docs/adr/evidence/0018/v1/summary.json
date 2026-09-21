@@ -1,0 +1,56 @@
+{
+  "cases": {
+    "ordinary": {
+      "request_seconds": 18.591558047002763,
+      "proving_seconds": 12.631,
+      "peak_rss_gib": 13.500679016113281,
+      "proof_bytes": 237232,
+      "local_verification_ms": 155,
+      "swap_peak_bytes": 0,
+      "virtual_os_seconds": 5.929,
+      "startup_seconds": 1.42497
+    },
+    "controlled": {
+      "request_seconds": 18.84365250099654,
+      "proving_seconds": 12.326,
+      "peak_rss_gib": 13.977790832519531,
+      "proof_bytes": 239116,
+      "local_verification_ms": 161,
+      "swap_peak_bytes": 0,
+      "virtual_os_seconds": 6.483,
+      "startup_seconds": 1.439389
+    },
+    "maximum": {
+      "request_seconds": 19.588174857999547,
+      "proving_seconds": 13.083,
+      "peak_rss_gib": 14.336742401123047,
+      "proof_bytes": 236518,
+      "local_verification_ms": 172,
+      "swap_peak_bytes": 0,
+      "virtual_os_seconds": 6.469,
+      "startup_seconds": 1.462098
+    }
+  },
+  "cpu_model": "Intel Core i9-10980XE",
+  "cores": 4,
+  "cpu_affinity": "0-3",
+  "memory_limit_gib": 16,
+  "swap_disabled": true,
+  "host_kernel": "6.17.0-20-generic",
+  "build": "nightly-2026-01-15, release, -Ctarget-cpu=native; unmodified upstream source",
+  "native_prover_sha256": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5",
+  "live": {
+    "accepted_count": 1,
+    "event_binding_matches": true,
+    "binding": "0x155621d3a9512e7fe73723668c3a873ae98e17d6b964636d6882120c3945abb",
+    "transaction_hash": "0x27eaa86230d34e8a2874ec93d0c91027d782cd2d896f7f6bde9added90c5f85",
+    "block_number": 15357460,
+    "actual_fee_test_STRK": 1.4892471203278548,
+    "execution_resources": {
+      "l1_data_gas": 384,
+      "l1_gas": 0,
+      "l2_gas": 77423200
+    }
+  },
+  "scope": "Synthetic asset-free acceptance sink; only ordinary case submitted; controlled/max local proofs verified. Not production integration or physical 16 GiB desktop qualification."
+}

@@ -1,0 +1,222 @@
+{
+  "scope": "synthetic statements; no funded pool settlement; not physical-desktop qualification",
+  "maximum_shape": [
+    64,
+    64,
+    32
+  ],
+  "results": [
+    {
+      "case": "shape-1-2-0",
+      "startup_seconds": 2.0023801350034773,
+      "request_seconds": 20.112978445999033,
+      "proving_seconds": 13.631,
+      "virtual_os_seconds": 6.477,
+      "proof_bytes": 227350,
+      "proof_sha256": "dfec35f3cdc62636b07420ae27dcc763f2f1bdbe454506507533f3d5e3c95c76",
+      "peak_rss_gib": 15.26534652709961,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f5348415045535f504f4331",
+        "0x534e5f5345504f4c4941",
+        "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+        "0x2e26c899b9bcbe0b7e1a77d8b47ca086f5f7af87723a3103b485bbeaaf48dcd",
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+        "0xeacc80",
+        "0xc33febaff303d6a9bdc5139458b773d7f87bea48b9f4d8319032e9120e8c86",
+        "0x585235eade39da9053fdaa1c1c380644a8e718920378c92b5c6a89e28df2e16"
+      ],
+      "base_block": 15385778,
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "status": "PASS",
+      "shape": [
+        1,
+        2,
+        0
+      ],
+      "private_calldata_felts": 67,
+      "public_spend_calldata_felts": 41,
+      "ciphertext_bytes": 608,
+      "virtual_os_steps": 148223,
+      "cgroup_result": "success",
+      "cgroup_peak_gib": 15.197776794433594
+    },
+    {
+      "case": "shape-4-4-2",
+      "startup_seconds": 2.002793934996589,
+      "request_seconds": 21.167493223001657,
+      "proving_seconds": 13.74,
+      "virtual_os_seconds": 7.423,
+      "proof_bytes": 228065,
+      "proof_sha256": "1111f3d9692c68d7a2f664f837e83f76149678cc856b3f1f4492151840f4a8f1",
+      "peak_rss_gib": 15.423675537109375,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f5348415045535f504f4331",
+        "0x534e5f5345504f4c4941",
+        "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+        "0x3dbe60ffe9bb95a7ad304c8f93e55fcc85b51cb4b2dac76482eb4abbb84d0c8",
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+        "0xeacc8f",
+        "0x7837ac5d6cfa66f4c8673e964647ccfc7af012afc5eae7baed7bdb3763d3d7e",
+        "0x5d55786cb38a0e6ea1b88841f7c524f887a9b43e7eed1294f60e056860871ca"
+      ],
+      "base_block": 15385793,
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "status": "PASS",
+      "shape": [
+        4,
+        4,
+        2
+      ],
+      "private_calldata_felts": 202,
+      "public_spend_calldata_felts": 72,
+      "ciphertext_bytes": 1216,
+      "virtual_os_steps": 162612,
+      "cgroup_result": "success",
+      "cgroup_peak_gib": 15.356666564941406
+    },
+    {
+      "case": "shape-8-8-4",
+      "startup_seconds": 2.002683631006221,
+      "request_seconds": 20.717234675001237,
+      "proving_seconds": 13.878,
+      "virtual_os_seconds": 6.836,
+      "proof_bytes": 230181,
+      "proof_sha256": "d4dd8f4fb446169e604490b5564b7c7be1d760b633f63b6c2ac2e12139860bbd",
+      "peak_rss_gib": 15.351203918457031,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f5348415045535f504f4331",
+        "0x534e5f5345504f4c4941",
+        "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+        "0x1b7c2cc704292487b256d245a2bf99c6b42445412a5f277ea79dfb0ff8b5014",
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+        "0xeacc9e",
+        "0x5a4715857babfbb778d483ace43afd8e95271b7c0b8f5cc63b21ce7988a760",
+        "0xa06a71bcb1e02f2f7db436fa1518a664040089e57b35b5d9018e2874475749"
+      ],
+      "base_block": 15385809,
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "status": "PASS",
+      "shape": [
+        8,
+        8,
+        4
+      ],
+      "private_calldata_felts": 390,
+      "public_spend_calldata_felts": 128,
+      "ciphertext_bytes": 2432,
+      "virtual_os_steps": 182543,
+      "cgroup_result": "success",
+      "cgroup_peak_gib": 15.284496307373047
+    },
+    {
+      "case": "shape-16-16-8",
+      "shape": [
+        16,
+        16,
+        8
+      ],
+      "status": "FAILED",
+      "error": "Remote end closed connection without response",
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "virtual_os_steps": 223540,
+      "cgroup_result": "oom-kill",
+      "cgroup_peak_gib": 16.0
+    },
+    {
+      "case": "shape-32-32-16",
+      "shape": [
+        32,
+        32,
+        16
+      ],
+      "status": "FAILED",
+      "error": "Remote end closed connection without response",
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "virtual_os_steps": 309907,
+      "cgroup_result": "oom-kill",
+      "cgroup_peak_gib": 16.0
+    },
+    {
+      "case": "shape-64-64-32",
+      "shape": [
+        64,
+        64,
+        32
+      ],
+      "status": "FAILED",
+      "error": "Remote end closed connection without response",
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "virtual_os_steps": 500254,
+      "cgroup_result": "oom-kill",
+      "cgroup_peak_gib": 16.0
+    },
+    {
+      "case": "shape-32-2-0",
+      "shape": [
+        32,
+        2,
+        0
+      ],
+      "status": "FAILED",
+      "error": "Remote end closed connection without response",
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "virtual_os_steps": 299441,
+      "cgroup_result": "oom-kill",
+      "cgroup_peak_gib": 16.0
+    },
+    {
+      "case": "shape-1-32-0",
+      "startup_seconds": 2.002820783003699,
+      "request_seconds": 19.839933554001618,
+      "proving_seconds": 13.527,
+      "virtual_os_seconds": 6.309,
+      "proof_bytes": 237287,
+      "proof_sha256": "ad4c84b34576b5ad1a0cb235a23abc89ed52c50b08b6e57e0ebfc69edcfd4b72",
+      "peak_rss_gib": 15.32705307006836,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f5348415045535f504f4331",
+        "0x534e5f5345504f4c4941",
+        "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+        "0x2e26c899b9bcbe0b7e1a77d8b47ca086f5f7af87723a3103b485bbeaaf48dcd",
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+        "0xeaccee",
+        "0x7a1b23c95859810087cc7a24583a30b398817335aaa694ff0d7844b0adc4864",
+        "0x144727b194abbc50d60835dc980fd25e1e48f0f9621cde94d4482658a42f80a"
+      ],
+      "base_block": 15385888,
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "status": "PASS",
+      "shape": [
+        1,
+        32,
+        0
+      ],
+      "private_calldata_felts": 277,
+      "public_spend_calldata_felts": 401,
+      "ciphertext_bytes": 9728,
+      "virtual_os_steps": 158138,
+      "cgroup_result": "success",
+      "cgroup_peak_gib": 15.259437561035156
+    }
+  ]
+}

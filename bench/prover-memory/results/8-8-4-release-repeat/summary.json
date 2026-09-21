@@ -1,0 +1,42 @@
+{
+  "variant": "staged-release",
+  "fixture": "8-8-4",
+  "cap_gib": 12,
+  "rayon_threads": 4,
+  "cache_cairo_coefficients": true,
+  "cpu_cores": 4,
+  "trace_spans": false,
+  "base_block": 15391320,
+  "binary_sha256": "507f638f27fdac1b4e5b48ced1d32ca700a497084a5e6376511fc1a8a3f13b36",
+  "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+  "private_request_sha256": "9f44a25285a13d3a38f6f79ff2e18b4e9799b25dce41d66adb6cea4e3b7cac5d",
+  "public_rpc_cache": true,
+  "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+  "requests": [
+    {
+      "request_seconds": 16.051009613001952,
+      "start_unix_ms": 1789957166007,
+      "end_unix_ms": 1789957182058,
+      "proof_bytes": 228839,
+      "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+      "public_binding_matches": true,
+      "verification_and_three_mutation_rejections": true
+    },
+    {
+      "request_seconds": 15.301857255995856,
+      "start_unix_ms": 1789957182529,
+      "end_unix_ms": 1789957197831,
+      "proof_bytes": 228839,
+      "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+      "public_binding_matches": true,
+      "verification_and_three_mutation_rejections": true
+    }
+  ],
+  "startup_seconds": 0.06405227100185584,
+  "error": "Remote end closed connection without response",
+  "status": "FAILED",
+  "cgroup_peak_gib": 12.0,
+  "peak_rss_gib": 12.03948974609375,
+  "swap_peak_bytes": 0,
+  "oom_kill": 1
+}

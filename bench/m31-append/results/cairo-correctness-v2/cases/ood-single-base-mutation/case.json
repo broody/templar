@@ -1,0 +1,84 @@
+{
+  "actual_program_output": [
+    1625468692,
+    2104446076,
+    1828736971,
+    359382000
+  ],
+  "arguments": {
+    "path": "bench/m31-append/results/cairo-correctness-v2/arguments/ood-single-base-mutation.json",
+    "sha256": "12c4edb85428841ebcc49188f6f212666bc95dfa94a068db2aafacdbd754977f",
+    "size_bytes": 85783
+  },
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-m31-cc-ood-single-base-mutation-1017829",
+    "-p",
+    "WorkingDirectory=/home/broody/development/templar/bench/m31-append/cairo",
+    "-p",
+    "MemoryMax=8G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUQuota=100%",
+    "-p",
+    "CPUAffinity=0",
+    "-p",
+    "RuntimeMaxSec=300",
+    "--setenv=PATH=/home/broody/.asdf/installs/scarb/2.18.0/bin:/home/broody/.asdf/installs/starknet-foundry/0.63.0/bin:/usr/bin:/home/broody/.cargo/bin:/bin",
+    "/usr/bin/time",
+    "-v",
+    "/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb",
+    "--manifest-path",
+    "/home/broody/development/templar/bench/m31-append/cairo/Scarb.toml",
+    "execute",
+    "--no-build",
+    "-p",
+    "templar_m31_append_ood_probe",
+    "--arguments-file",
+    "/home/broody/development/templar/bench/m31-append/results/cairo-correctness-v2/arguments/ood-single-base-mutation.json",
+    "--output",
+    "none",
+    "--print-program-output",
+    "--print-resource-usage"
+  ],
+  "command_shell": "systemd-run --user --wait --pipe --unit=templar-m31-cc-ood-single-base-mutation-1017829 -p WorkingDirectory=/home/broody/development/templar/bench/m31-append/cairo -p MemoryMax=8G -p MemorySwapMax=0 -p CPUQuota=100% -p CPUAffinity=0 -p RuntimeMaxSec=300 --setenv=PATH=/home/broody/.asdf/installs/scarb/2.18.0/bin:/home/broody/.asdf/installs/starknet-foundry/0.63.0/bin:/usr/bin:/home/broody/.cargo/bin:/bin /usr/bin/time -v /home/broody/.asdf/installs/scarb/2.18.0/bin/scarb --manifest-path /home/broody/development/templar/bench/m31-append/cairo/Scarb.toml execute --no-build -p templar_m31_append_ood_probe --arguments-file /home/broody/development/templar/bench/m31-append/results/cairo-correctness-v2/arguments/ood-single-base-mutation.json --output none --print-program-output --print-resource-usage",
+  "comparison_exact": true,
+  "completed_at": "2026-09-21T19:34:40.536232+08:00",
+  "exit_code": 0,
+  "expected_field": "expected_mutated_numerator",
+  "expected_program_output": [
+    1625468692,
+    2104446076,
+    1828736971,
+    359382000
+  ],
+  "id": "ood-single-base-mutation",
+  "kind": "actual-proof OOD differential",
+  "passed": true,
+  "resources": {
+    "cairo_builtins": {
+      "output_builtin": 4,
+      "range_check_builtin": 80584
+    },
+    "cairo_max_memory_address": 730600,
+    "cairo_steps": 692318,
+    "time_elapsed": "0:00.29",
+    "time_exit_status": 0,
+    "time_max_rss_kib": 137452
+  },
+  "source_fixture": {
+    "path": "target/m31-append/smoke-single/ood.json",
+    "sha256": "d0cc2fbdb270f42dbdad1ee5b72d298af3ed79861ef019199c2164048bb859e1",
+    "size_bytes": 418834
+  },
+  "started_at": "2026-09-21T19:34:40.192588+08:00",
+  "stderr_path": "bench/m31-append/results/cairo-correctness-v2/cases/ood-single-base-mutation/stderr.log",
+  "stdout_path": "bench/m31-append/results/cairo-correctness-v2/cases/ood-single-base-mutation/stdout.log",
+  "systemd_properties_path": "bench/m31-append/results/cairo-correctness-v2/cases/ood-single-base-mutation/systemd-properties.txt",
+  "timed_out": false,
+  "unit": "templar-m31-cc-ood-single-base-mutation-1017829"
+}

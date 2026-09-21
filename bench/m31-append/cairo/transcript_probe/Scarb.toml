@@ -1,0 +1,9 @@
+[package]
+name = "templar_m31_append_transcript_probe"
+version = "0.1.0"
+edition = "2024_07"
+[[target.executable]]
+[dependencies]
+templar_m31_append_bridge = { path = "../bridge" }
+stwo_verifier_core = { path = "../vendor/verifier_core" }
+cairo_execute = "2.18.0"

@@ -1,0 +1,17 @@
+Declare Pool
+{"tx": "0x010dd4deecac654d29fed4f76539905d6081772e7ce88bbda7c556da0d53da2c", "status": "SUCCEEDED", "block": 15385083, "fee_test_STRK": 11.936482550201713, "revert_reason": null}
+Declare StatementAccount
+{"tx": "0x0244d83aea200228817e72951631406f63112c91dc472faf17f2a841c61d77d5", "status": "SUCCEEDED", "block": 15385102, "fee_test_STRK": 6.904399162708339, "revert_reason": null}
+Declare NativeProofVerifier
+{"tx": "0x01c2a34c87c39545d97bb75f8cd9dd4682d42de23ef226e16bd4e4ddae2d6661", "status": "SUCCEEDED", "block": 15385119, "fee_test_STRK": 2.5563630584780377, "revert_reason": null}
+Declare SignatureController
+{"tx": "0x03555b956ecbfc4190b8a45dfd364ff103faa9a0791458b6d2e715029ce62523", "status": "SUCCEEDED", "block": 15385137, "fee_test_STRK": 1.3876164563520357, "revert_reason": null}
+{"tx": "0x023693886908942245ab184640d554a6c4e5a09d15caaec39ff2a3fd1e103ce3", "status": "SUCCEEDED", "block": 15385143, "fee_test_STRK": 0.03427981909438088, "revert_reason": null}
+{"tx": "0x0180e08ae32aea54f89539e8af7f6e1987c4e0980998241463aeac0a642d6bd6", "status": "SUCCEEDED", "block": 15385149, "fee_test_STRK": 0.3679241533694399, "revert_reason": null}
+{"tx": "0x03a898a052c0f5b8cd95324673aaee5c7c4f4c5a500bf8373ea88f048dab26f6", "status": "SUCCEEDED", "block": 15385154, "fee_test_STRK": 0.03427971246704488, "revert_reason": null}
+{"tx": "0x030070c82bd006adf95c29a2c3cd8d5c9683f3e4067e876993d040fe3f322b35", "status": "SUCCEEDED", "block": 15385160, "fee_test_STRK": 0.06165515473601702, "revert_reason": null}
+{"tx": "0x016e43d8e441eda0fba3758bfad954c4f33a0cd4b096acd659ccb9b74b169510", "status": "SUCCEEDED", "block": 15385166, "fee_test_STRK": 0.03608481923505512, "revert_reason": null}
+{"tx": "0x00d4f1c048d3bba4646075d0041af3cd1a67dc65ce4bd88190a2578b2b441e5d", "status": "SUCCEEDED", "block": 15385172, "fee_test_STRK": 0.02938473538969064, "revert_reason": null}
+{"tx": "0x016bf70caa1ff8c5dade3bcea6444ca287985effae0aae3610685152f6538fdd", "status": "SUCCEEDED", "block": 15385177, "fee_test_STRK": 0.0476906432884316, "revert_reason": null}
+{"tx": "0x075860dee3c362c557932fb54767a61a3a1416b655ee12c63d68b7e59516f4f9", "status": "SUCCEEDED", "block": 15385182, "fee_test_STRK": 0.03109796895241243, "revert_reason": null}
+Deployment ready {"controller": "0x02683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad", "controller_public_key": "0x12652c25b53b2c930fdc2b4d7318ad17bbfc4cfc6affbe5eba85cc7d577c51c", "pool": "0x06d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be", "statement": "0x048597bcd6ed2c4441c4804777e70477ab05fc5c003239fc11f14361e4bb0f24", "verifier": "0x0728285fd9a46d256411b18c62bc2d621c6fa097665494f8cc0cef960079341e", "token": "0x05e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e", "statement_class": "0x053ec0d3c42e65ab7794371a21f20ada7348ab7ba8d1f437ce047fa2a6387b7e", "fee_collector": "0xfee", "bob_withdrawal_address": "0xb0b", "relayer": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3", "max_proof_age": 4096, "fee_amount": 5, "classes": {"Pool": "0x075a9d07d648c7313627fad670f676200425d0a00ba326a52703ddb73517705a", "StatementAccount": "0x053ec0d3c42e65ab7794371a21f20ada7348ab7ba8d1f437ce047fa2a6387b7e", "NativeProofVerifier": "0x04f3492ad0c0a1947d6e5a365b4d62209f8cf2a62f0a433c06696a2d42e99b5f", "E2EToken": "0xfb29a47941892d91a25179de02aee7564db6631cea9173e4763f07432a6f43", "SignatureController": "0x010b7b74d0fdb5c6adbedb6109838a5249f92b5e5681408dd68eecbee8c23fc7"}, "start_block": 15385149}

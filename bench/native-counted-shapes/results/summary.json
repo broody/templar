@@ -1,0 +1,245 @@
+{
+  "scope": "synthetic statements; no funded pool settlement; not physical-desktop qualification",
+  "maximum_shape": [
+    64,
+    64,
+    32
+  ],
+  "results": [
+    {
+      "case": "shape-1-2-0",
+      "startup_seconds": 2.0021707199994125,
+      "request_seconds": 20.529066310002236,
+      "proving_seconds": 12.519,
+      "virtual_os_seconds": 8.004,
+      "proof_bytes": 235372,
+      "proof_sha256": "54732454bbafecf9840534f539487a8d1b043334b708fbffc88df29f42f9a8fb",
+      "peak_rss_gib": 13.617080688476562,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f5348415045535f44594e31",
+        "0x534e5f5345504f4c4941",
+        "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+        "0x2e26c899b9bcbe0b7e1a77d8b47ca086f5f7af87723a3103b485bbeaaf48dcd",
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+        "0xeacd56",
+        "0x2c0d3e00e281876ee40ee2cfd8919e7e7ff2be50b8197f3d5789f3737310d47",
+        "0x59d77336627c22a500e5984769548a97782d6ad0622388d3bbd97ec7dec458f"
+      ],
+      "base_block": 15385992,
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "status": "PASS",
+      "shape": [
+        1,
+        2,
+        0
+      ],
+      "private_calldata_felts": 67,
+      "public_spend_calldata_felts": 41,
+      "ciphertext_bytes": 608,
+      "virtual_os_steps": 114367,
+      "cgroup_result": "success",
+      "cgroup_peak_gib": 13.546184539794922
+    },
+    {
+      "case": "shape-4-4-2",
+      "startup_seconds": 2.0023508930025855,
+      "request_seconds": 20.02655297900492,
+      "proving_seconds": 13.085,
+      "virtual_os_seconds": 6.937,
+      "proof_bytes": 229603,
+      "proof_sha256": "193c36fce5f1110472a74f3ed580c912ff917f42569344d432d6f84518b85196",
+      "peak_rss_gib": 14.465572357177734,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f5348415045535f44594e31",
+        "0x534e5f5345504f4c4941",
+        "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+        "0x3dbe60ffe9bb95a7ad304c8f93e55fcc85b51cb4b2dac76482eb4abbb84d0c8",
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+        "0xeacd64",
+        "0x2bfb1816a65b5ebea1b0c1e3767320a300d866043535bff7650b34be6b44449",
+        "0x299ce19d941afe908272a72a7da3a84d527ecc175a55f5a347c1848b154fc81"
+      ],
+      "base_block": 15386007,
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "status": "PASS",
+      "shape": [
+        4,
+        4,
+        2
+      ],
+      "private_calldata_felts": 202,
+      "public_spend_calldata_felts": 72,
+      "ciphertext_bytes": 1216,
+      "virtual_os_steps": 129986,
+      "cgroup_result": "success",
+      "cgroup_peak_gib": 14.39694595336914
+    },
+    {
+      "case": "shape-8-8-4",
+      "startup_seconds": 2.0034059079989675,
+      "request_seconds": 19.115905329999805,
+      "proving_seconds": 12.371,
+      "virtual_os_seconds": 6.741,
+      "proof_bytes": 229464,
+      "proof_sha256": "fd19ed2cf17914c597c817e4353cb332187b47aa1f66e81883ac080b2344c938",
+      "peak_rss_gib": 14.26852798461914,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f5348415045535f44594e31",
+        "0x534e5f5345504f4c4941",
+        "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+        "0x1b7c2cc704292487b256d245a2bf99c6b42445412a5f277ea79dfb0ff8b5014",
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+        "0xeacd7d",
+        "0x2ce2346b209c4b3dedf058d532c54c94e5dc6930525704d7190cb2b284d6871",
+        "0x7120db6aa0030ba3209aa19f450649beffbebf4c36c41ec02f616726dfdb59a"
+      ],
+      "base_block": 15386032,
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "status": "PASS",
+      "shape": [
+        8,
+        8,
+        4
+      ],
+      "private_calldata_felts": 390,
+      "public_spend_calldata_felts": 128,
+      "ciphertext_bytes": 2432,
+      "virtual_os_steps": 151769,
+      "cgroup_result": "success",
+      "cgroup_peak_gib": 14.1990966796875
+    },
+    {
+      "case": "shape-16-16-8",
+      "startup_seconds": 2.0039055870001903,
+      "request_seconds": 19.85077928800456,
+      "proving_seconds": 13.338,
+      "virtual_os_seconds": 6.506,
+      "proof_bytes": 226325,
+      "proof_sha256": "a6a75ae3973c6e932d13d06f3997cc31fa883141e8c08dc5bcc941957925ea11",
+      "peak_rss_gib": 15.375690460205078,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f5348415045535f44594e31",
+        "0x534e5f5345504f4c4941",
+        "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+        "0x533d768c72ab386f1655b2d203c3384fb786ddfa68efd20b70f769532fbe2fb",
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+        "0xeacd8c",
+        "0x5fef58b4f72b9f99693c95c935cf3c6ff86db629dffa67202551124cb17a2d5",
+        "0x57aacbab9714019eacd30fa318ed50ba2d267b3dc48f0fea721a26c50ebebea"
+      ],
+      "base_block": 15386047,
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "status": "PASS",
+      "shape": [
+        16,
+        16,
+        8
+      ],
+      "private_calldata_felts": 766,
+      "public_spend_calldata_felts": 240,
+      "ciphertext_bytes": 4864,
+      "virtual_os_steps": 196470,
+      "cgroup_result": "success",
+      "cgroup_peak_gib": 15.308300018310547
+    },
+    {
+      "case": "shape-32-32-16",
+      "shape": [
+        32,
+        32,
+        16
+      ],
+      "status": "FAILED",
+      "error": "Remote end closed connection without response",
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "virtual_os_steps": 290245,
+      "cgroup_result": "oom-kill",
+      "cgroup_peak_gib": 16.0
+    },
+    {
+      "case": "shape-64-64-32",
+      "shape": [
+        64,
+        64,
+        32
+      ],
+      "status": "FAILED",
+      "error": "Remote end closed connection without response",
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "virtual_os_steps": 495408,
+      "cgroup_result": "oom-kill",
+      "cgroup_peak_gib": 16.0
+    },
+    {
+      "case": "shape-32-2-0",
+      "shape": [
+        32,
+        2,
+        0
+      ],
+      "status": "FAILED",
+      "error": "Remote end closed connection without response",
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "virtual_os_steps": 270731,
+      "cgroup_result": "oom-kill",
+      "cgroup_peak_gib": 16.0
+    },
+    {
+      "case": "shape-1-32-0",
+      "startup_seconds": 2.002414238995698,
+      "request_seconds": 20.208564805994683,
+      "proving_seconds": 13.43,
+      "virtual_os_seconds": 6.774,
+      "proof_bytes": 233344,
+      "proof_sha256": "0ee8128afbd08a96e443718f592c81ef2f507181a75a82a634cae7f739fae518",
+      "peak_rss_gib": 14.452632904052734,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f5348415045535f44594e31",
+        "0x534e5f5345504f4c4941",
+        "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+        "0x2e26c899b9bcbe0b7e1a77d8b47ca086f5f7af87723a3103b485bbeaaf48dcd",
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+        "0xeacdcc",
+        "0x22c76e8bada26f1813a7d3f85b0920492f24c2ecccdb22f083b1514f583ddee",
+        "0x2e127efd96153a558d43f21bc948373e34033c6f83da32544c574cfe6732863"
+      ],
+      "base_block": 15386110,
+      "memory_cap_gib": 16,
+      "cores": 4,
+      "status": "PASS",
+      "shape": [
+        1,
+        32,
+        0
+      ],
+      "private_calldata_felts": 277,
+      "public_spend_calldata_felts": 401,
+      "ciphertext_bytes": 9728,
+      "virtual_os_steps": 131122,
+      "cgroup_result": "success",
+      "cgroup_peak_gib": 14.383682250976562
+    }
+  ]
+}

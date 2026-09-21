@@ -1,0 +1,1 @@
+export function membership_now() { return performance.now(); } export function membership_phase(name) { if (typeof globalThis.onMembershipPhase === 'function') globalThis.onMembershipPhase(name); } export function membership_panic(message) { console.error(message); }

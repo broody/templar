@@ -1,0 +1,20 @@
+{
+  "discarded_duplicate_multiplicity_rejected": true,
+  "omitted_padding_boundary_rejected": true,
+  "rejected_mutations": [
+    "root",
+    "leaf",
+    "index",
+    "sibling",
+    "padding",
+    "call_order",
+    "aggregator_log",
+    "claimed_sum",
+    "interaction_pow",
+    "PCS_config",
+    "STARK_sample",
+    "preprocessed_root",
+    "structurally_valid_unlinked_permutation_output"
+  ],
+  "wrong_memory_dictionary_rejected": true
+}

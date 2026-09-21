@@ -1,0 +1,80 @@
+---
+showAskAi: false
+title: Privacy & trust
+description: What a cloaked receiving address reveals, what the chain exposes, and the remaining trust boundaries.
+---
+
+# Privacy & trust
+
+Templar hides note openings and the direct relationship between a consumed note and its creation. Its receiving model lets someone pay a known address without publishing that address as the private transfer's recipient. It does not conceal every consequence of moving value on a public chain.
+
+## Trusted roles removed
+
+Templar is based on [StarkWare's starknet-privacy](https://github.com/starkware-libs/starknet-privacy), with these architectural boundaries:
+
+| Role | Templar's architecture |
+| --- | --- |
+| Mandatory auditor | No global auditor key or mandatory viewing-key disclosure. Incoming and full viewing capabilities are shared only by the user. |
+| Deposit screener | No screener key or screening-signature requirement. Deposits use the pool's funding and state checks. |
+| Proving operator entrusted with private inputs | The holder proves locally. No central service needs the private witness. |
+
+Ordinary notes need no auditor, screener, or controller approval. Starknet verification, token behavior, and pool configuration remain part of the trust model. The [upstream comparison](/comparison) explains the corresponding hosted services and contract roles.
+
+## Sharing a cloaked address does not expose a public balance
+
+A payer knows the address they were given and the payment they create. That does not give them the recipient's spending secret, viewing keys, or a way to derive that note's eventual nullifier. Other observers see a randomized commitment and encrypted note, without a stable recipient identifier.
+
+People who receive the same address off-chain can compare it and recognize the same recipient. A payer can disclose the note it created. Address reuse therefore has social and counterparty privacy implications even though it does not create a public list of payments to that address.
+
+## Who sees what?
+
+| Information | Owner's wallet / local prover | Other parties | Public chain |
+| --- | --- | --- | --- |
+| Spending secret | Required to spend | Not required by payer, viewer, or relayer | No |
+| Input leaf positions and membership paths | Required to prove | RPC queries may expose interest in them | Hidden by the proof |
+| Receiving address and output opening | Recipient knows the decrypted note | Payer knows its output; authorized viewers can inspect receipts | No plaintext private-recipient field or private note amount |
+| Commitments, delivery digests, ciphertexts, and leaf positions at creation | Yes | Anyone can download them | Yes |
+| Nullifiers at spend | Owner can derive them | Full viewers can derive them for received notes | Yes |
+| Spend token, root, and bundle shape | Yes | Anyone can observe them | Yes |
+| Deposit token, amount, and funding account | Yes | Anyone can observe them | Yes |
+| External call, return token and amount, and linked return deposit | Yes | Anyone can observe them | Yes |
+| Withdrawal token, amount, and destination | Yes | Anyone can observe them | Yes |
+| Transaction sender, fees, ordering, and timing | Yes | Anyone can observe them | Yes |
+
+The ordinary spend ABI exposes the token even when there is no withdrawal. Amounts of ordinary private-payment outputs remain inside the witness and encrypted payloads. Return-note funding amounts are public. Public movements and surrounding activity can still reveal or suggest those amounts.
+
+## Viewing keys are sensitive capabilities
+
+Incoming view reveals receipts. Full view additionally reveals their spent status for the address in scope, enabling a watch-only balance. Neither authorizes spending. A copied key can continue to reveal past and future receipts to the same address; deleting a local export does not revoke copies.
+
+A compromise of the long-lived decryption key exposes historical ciphertexts encrypted to it. Fresh ephemeral sender keys do not provide forward secrecy against that compromise. Rotation needs new authenticated receiving material and continued recovery of old addresses. See [receiving and recovery](/architecture/receiving).
+
+## Zero knowledge and delivery have boundaries
+
+The payer already knows the payment it made, and the recipient learns its contents. Either can disclose that information. The selected proof pipeline protects private witness information from public verification; it does not make counterparties forget what they know.
+
+The wallet must protect secrets at rest and keep witnesses local. Sending a plaintext witness to a remote prover exposes it to that service even if the resulting proof is zero knowledge.
+
+Payload integrity is checked against pool state, but correct encryption is not proved. A malformed intended payment must not be credited merely because a transaction succeeded. Sealed-box encryption also does not authenticate sender identity.
+
+## Metadata and chain access
+
+Observers can correlate transaction timing, public amounts, the number of notes, nullifiers spent together, and the chosen root. Repeated use of one submitting account also links transactions at the account layer. Separating the relayer from the note owner is useful but does not eliminate timing or network correlation.
+
+RPC providers may see requested tree data, candidate nullifiers, base-block reads, and client network information. Keeping a path private inside a proof does not hide how the wallet fetched it. Private query design and authenticated bulk history are separate concerns.
+
+A root obtained from an untrusted source does not establish its own canonical status. The current scanner's agreement between two RPC providers is an explicit trust assumption, not a light-client proof. Its [status and limitations](/status#recovery-and-synchronization) apply to displayed balances as well as recovery.
+
+## Configuration authority
+
+The push pool owner can change the verifier and fee configuration. A verifier that accepts false claims could compromise the pool, so local proving alone does not make a deployment immutable or fully trustless.
+
+Correct statement code, the recursive privacy pipeline, Starknet consensus and native verification, compatible tokens, secure keys, and available encrypted history remain necessary. The native verifier cannot repair a missing application invariant. The [status page](/status) records the remaining qualification work.
+
+## Controlled-note disclosure
+
+A controlled spend publicly identifies its controller. Its authorizer sees the scoped amounts, policies, nullifiers, output commitments and withdrawal destinations needed for its decision. This can link activity from that controller’s perspective. It does not receive spending keys or membership paths. Receiving and restoring a controlled note does not remove its approval requirement. See [controlled notes](/architecture/controllers).
+
+## External operations
+
+A [return note](/architecture/returns) keeps proceeds usable through ordinary private notes. The external operation and its return deposit remain publicly linked. It does not conceal an AMM trade or remove transaction-sender, gas-funding or amount/timing correlation. Supported adapter routes and compatible token behavior remain explicit assumptions.

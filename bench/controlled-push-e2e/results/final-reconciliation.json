@@ -1,0 +1,170 @@
+{
+  "status": "PASS",
+  "wallets": {
+    "alice": {
+      "unspent_by_controller": {
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad": 400
+      },
+      "summary": {
+        "as_of_block": 15385548,
+        "block_hash": "0x4e12f81554b4a42724c4bbe449bf286b366f5d1a23a313e135bd14ebd52ffae",
+        "anchor": "two trusted RPC providers agree on block/class/state; no consensus or state-proof verification",
+        "history_complete": true,
+        "missing_payload_indices": [],
+        "received_indices": [
+          0,
+          3
+        ],
+        "received_totals": {
+          "0x5e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e": 1400
+        },
+        "spent_indices": [
+          0
+        ],
+        "known_unspent": {
+          "0x5e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e": 400
+        },
+        "balances": {
+          "0x5e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e": 400
+        },
+        "balance_scope": "recoverable protocol-published notes for this receiving address",
+        "balance_semantics": "unspent value; controlled notes additionally require controller approval",
+        "note_conditions": {
+          "0": {
+            "controller": "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+            "policy": "0x12e90908742ac8b4b2886280f8f4269eacbd0769ca08fc14018ea714c2ffe01"
+          },
+          "3": {
+            "controller": "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+            "policy": "0x12e90908742ac8b4b2886280f8f4269eacbd0769ca08fc14018ea714c2ffe01"
+          }
+        }
+      },
+      "sync_seconds": 16.422641983001085
+    },
+    "bob": {
+      "unspent_by_controller": {},
+      "summary": {
+        "as_of_block": 15385548,
+        "block_hash": "0x4e12f81554b4a42724c4bbe449bf286b366f5d1a23a313e135bd14ebd52ffae",
+        "anchor": "two trusted RPC providers agree on block/class/state; no consensus or state-proof verification",
+        "history_complete": true,
+        "missing_payload_indices": [],
+        "received_indices": [
+          2,
+          5
+        ],
+        "received_totals": {
+          "0x5e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e": 660
+        },
+        "spent_indices": [
+          2,
+          5
+        ],
+        "known_unspent": {
+          "0x5e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e": 0
+        },
+        "balances": {
+          "0x5e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e": 0
+        },
+        "balance_scope": "recoverable protocol-published notes for this receiving address",
+        "balance_semantics": "unspent value; controlled notes additionally require controller approval",
+        "note_conditions": {
+          "2": {
+            "controller": "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+            "policy": "0x12e90908742ac8b4b2886280f8f4269eacbd0769ca08fc14018ea714c2ffe01"
+          },
+          "5": {
+            "controller": "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+            "policy": "0x12e90908742ac8b4b2886280f8f4269eacbd0769ca08fc14018ea714c2ffe01"
+          }
+        }
+      },
+      "sync_seconds": 16.39804381700378
+    },
+    "carol": {
+      "unspent_by_controller": {
+        "0x0": 200
+      },
+      "summary": {
+        "as_of_block": 15385547,
+        "block_hash": "0x6de91c0b8b17ecebe43e2cd49769821c514e93a24685493b2f111f095664fe6",
+        "anchor": "two trusted RPC providers agree on block/class/state; no consensus or state-proof verification",
+        "history_complete": true,
+        "missing_payload_indices": [],
+        "received_indices": [
+          1,
+          7
+        ],
+        "received_totals": {
+          "0x5e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e": 500
+        },
+        "spent_indices": [
+          1
+        ],
+        "known_unspent": {
+          "0x5e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e": 200
+        },
+        "balances": {
+          "0x5e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e": 200
+        },
+        "balance_scope": "recoverable protocol-published notes for this receiving address",
+        "balance_semantics": "unspent value; controlled notes additionally require controller approval",
+        "note_conditions": {
+          "1": {
+            "controller": "0x0",
+            "policy": "0x0"
+          },
+          "7": {
+            "controller": "0x0",
+            "policy": "0x0"
+          }
+        }
+      },
+      "sync_seconds": 33.51597379300074
+    },
+    "dave": {
+      "unspent_by_controller": {
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad": 500,
+        "0x0": 100
+      },
+      "summary": {
+        "as_of_block": 15385547,
+        "block_hash": "0x6de91c0b8b17ecebe43e2cd49769821c514e93a24685493b2f111f095664fe6",
+        "anchor": "two trusted RPC providers agree on block/class/state; no consensus or state-proof verification",
+        "history_complete": true,
+        "missing_payload_indices": [],
+        "received_indices": [
+          4,
+          6
+        ],
+        "received_totals": {
+          "0x5e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e": 600
+        },
+        "spent_indices": [],
+        "known_unspent": {
+          "0x5e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e": 600
+        },
+        "balances": {
+          "0x5e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e": 600
+        },
+        "balance_scope": "recoverable protocol-published notes for this receiving address",
+        "balance_semantics": "unspent value; controlled notes additionally require controller approval",
+        "note_conditions": {
+          "4": {
+            "controller": "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+            "policy": "0x12e90908742ac8b4b2886280f8f4269eacbd0769ca08fc14018ea714c2ffe01"
+          },
+          "6": {
+            "controller": "0x0",
+            "policy": "0x0"
+          }
+        }
+      },
+      "sync_seconds": 16.027184683996893
+    }
+  },
+  "total_unspent": 1200,
+  "pool_tokens": 1200,
+  "controller_and_policy_preserved": true
+}

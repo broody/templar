@@ -1,0 +1,22 @@
+   Executing templar_m31_append_transcript_probe
+Program output:
+8
+1255900028
+2014286385
+3869605608
+1024268137
+2868738260
+2243858107
+2004887551
+3357177155
+Resources:
+	steps: 792,602
+	max memory address: 679,891
+	memory holes: 8,039
+	builtins:
+		range_check_builtin: 36,742
+		output_builtin: 9
+	memory segments:
+		execution: 608,385
+		range_check: 36,742
+		output: 9

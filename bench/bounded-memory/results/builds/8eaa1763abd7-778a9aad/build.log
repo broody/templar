@@ -1,0 +1,55 @@
+Running as unit: templar-memory-build-1789960693432788411.service; invocation ID: 353ce2c778054ea2bcecfc0cedc59cdc
+     Locking 8 packages to latest compatible versions
+      Adding circuit-cairo-verifier v0.1.0 (/home/broody/development/templar/target/bounded-memory/stwo-circuits/crates/cairo_verifier)
+      Adding circuit-common v0.1.0 (/home/broody/development/templar/target/bounded-memory/stwo-circuits/crates/circuit_common)
+      Adding circuit-prover v0.1.0 (/home/broody/development/templar/target/bounded-memory/stwo-circuits/crates/circuit_prover)
+      Adding circuit-serialize v0.1.0 (/home/broody/development/templar/target/bounded-memory/stwo-circuits/crates/circuit_serialize)
+      Adding circuit-verifier v0.1.0 (/home/broody/development/templar/target/bounded-memory/stwo-circuits/crates/circuit_verifier)
+      Adding circuits v0.1.0 (/home/broody/development/templar/target/bounded-memory/stwo-circuits/crates/circuits)
+      Adding circuits-stark-verifier v0.1.0 (/home/broody/development/templar/target/bounded-memory/stwo-circuits/crates/stark_verifier)
+      Adding stwo-constraint-framework v2.2.0 (/home/broody/development/templar/target/bounded-memory/stwo/crates/constraint-framework)
+   Compiling stwo v2.2.0 (/home/broody/development/templar/target/bounded-memory/stwo/crates/stwo)
+   Compiling stwo-cairo-serialize-derive v1.2.2 (/home/broody/development/templar/target/bounded-memory/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize-derive)
+warning: apollo_starknet_os_program@0.19.0-rc.2: Dumping OS source files...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Compiling starknet_os program...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Compiling starknet_aggregator program...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Compiling virtual_os program...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Done compiling starknet_aggregator. Writing compiled bytes to output directory.
+warning: apollo_starknet_os_program@0.19.0-rc.2: Done compiling virtual_os. Writing compiled bytes to output directory.
+warning: apollo_starknet_os_program@0.19.0-rc.2: Done compiling starknet_os. Writing compiled bytes to output directory.
+   Compiling cairo-program-runner-lib v1.2.2 (/home/broody/development/templar/target/bounded-memory/proving-utils/crates/cairo-program-runner-lib)
+warning: the feature `stdarch_x86_avx512` has been stable since 1.89.0 and no longer requires an attribute to enable
+ --> /home/broody/development/templar/target/bounded-memory/stwo/crates/stwo/src/lib.rs:4:13
+  |
+4 |     feature(stdarch_x86_avx512)
+  |             ^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(stable_features)]` on by default
+
+   Compiling stwo-cairo-serialize v1.2.2 (/home/broody/development/templar/target/bounded-memory/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize)
+   Compiling stwo-constraint-framework v2.2.0 (/home/broody/development/templar/target/bounded-memory/stwo/crates/constraint-framework)
+   Compiling stwo-air-utils v2.2.0 (https://github.com/starkware-libs/stwo?rev=489a0f3e#489a0f3e)
+   Compiling stwo-cairo-common v1.2.2 (/home/broody/development/templar/target/bounded-memory/stwo-cairo/stwo_cairo_prover/crates/common)
+   Compiling circuits v0.1.0 (/home/broody/development/templar/target/bounded-memory/stwo-circuits/crates/circuits)
+   Compiling cairo-air v1.2.2 (/home/broody/development/templar/target/bounded-memory/stwo-cairo/stwo_cairo_prover/crates/cairo-air)
+   Compiling stwo-cairo-adapter v1.2.2 (/home/broody/development/templar/target/bounded-memory/stwo-cairo/stwo_cairo_prover/crates/adapter)
+   Compiling circuits-stark-verifier v0.1.0 (/home/broody/development/templar/target/bounded-memory/stwo-circuits/crates/stark_verifier)
+warning: `stwo` (lib) generated 1 warning
+   Compiling circuit-common v0.1.0 (/home/broody/development/templar/target/bounded-memory/stwo-circuits/crates/circuit_common)
+   Compiling circuit-serialize v0.1.0 (/home/broody/development/templar/target/bounded-memory/stwo-circuits/crates/circuit_serialize)
+   Compiling circuit-verifier v0.1.0 (/home/broody/development/templar/target/bounded-memory/stwo-circuits/crates/circuit_verifier)
+   Compiling circuit-cairo-verifier v0.1.0 (/home/broody/development/templar/target/bounded-memory/stwo-circuits/crates/cairo_verifier)
+   Compiling stwo-cairo-prover v1.2.2 (/home/broody/development/templar/target/bounded-memory/stwo-cairo/stwo_cairo_prover/crates/prover)
+   Compiling privacy-circuit-verify v1.2.2 (/home/broody/development/templar/target/bounded-memory/proving-utils/crates/privacy_circuit_verify)
+   Compiling privacy-circuit-verify v1.2.2 (https://github.com/starkware-libs/proving-utils?tag=v0.14.3-rust-bump#3035dd00)
+   Compiling starknet_proof_verifier v0.19.0-rc.2 (/home/broody/development/templar/target/bounded-memory/sequencer/crates/starknet_proof_verifier)
+   Compiling circuit-prover v0.1.0 (/home/broody/development/templar/target/bounded-memory/stwo-circuits/crates/circuit_prover)
+   Compiling privacy-prove v1.2.2 (/home/broody/development/templar/target/bounded-memory/proving-utils/crates/privacy_prove)
+   Compiling starknet_transaction_prover v0.19.0-rc.2 (/home/broody/development/templar/target/bounded-memory/sequencer/crates/starknet_transaction_prover)
+    Finished `release` profile [optimized] target(s) in 1m 45s
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 1min 45.503s
+CPU time consumed: 13min 25.142s
+Memory peak: 616.0K
+Memory swap peak: 0B

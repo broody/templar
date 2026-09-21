@@ -1,0 +1,2212 @@
+{
+  "results": [
+    {
+      "variant": "staged-release",
+      "fixture": "8-8-4",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "native_allocator_tuning": false,
+      "base_block": 15391320,
+      "binary_sha256": "507f638f27fdac1b4e5b48ced1d32ca700a497084a5e6376511fc1a8a3f13b36",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "9f44a25285a13d3a38f6f79ff2e18b4e9799b25dce41d66adb6cea4e3b7cac5d",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 15.717859530006535,
+          "start_unix_ms": 1789957334183,
+          "end_unix_ms": 1789957349901,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.0744476929976372,
+      "status": "PASS",
+      "cgroup_peak_gib": 11.1763916015625,
+      "peak_rss_gib": 11.248619079589844,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "8-8-4-release-fresh-a",
+      "proving_seconds": [
+        15.144
+      ],
+      "virtual_os_seconds": [
+        0.569
+      ]
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "8-8-4",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "native_allocator_tuning": false,
+      "base_block": 15391320,
+      "binary_sha256": "507f638f27fdac1b4e5b48ced1d32ca700a497084a5e6376511fc1a8a3f13b36",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "9f44a25285a13d3a38f6f79ff2e18b4e9799b25dce41d66adb6cea4e3b7cac5d",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 15.940806760001578,
+          "start_unix_ms": 1789957351412,
+          "end_unix_ms": 1789957367353,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.13776344899088144,
+      "status": "PASS",
+      "cgroup_peak_gib": 11.20431900024414,
+      "peak_rss_gib": 11.276264190673828,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "8-8-4-release-fresh-b",
+      "proving_seconds": [
+        15.402
+      ],
+      "virtual_os_seconds": [
+        0.535
+      ]
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "8-8-4",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "native_allocator_tuning": false,
+      "base_block": 15391320,
+      "binary_sha256": "507f638f27fdac1b4e5b48ced1d32ca700a497084a5e6376511fc1a8a3f13b36",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "9f44a25285a13d3a38f6f79ff2e18b4e9799b25dce41d66adb6cea4e3b7cac5d",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 16.069171163006104,
+          "start_unix_ms": 1789957369100,
+          "end_unix_ms": 1789957385170,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.13182090299960691,
+      "status": "PASS",
+      "cgroup_peak_gib": 11.104423522949219,
+      "peak_rss_gib": 11.176990509033203,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "8-8-4-release-fresh-c",
+      "proving_seconds": [
+        15.496
+      ],
+      "virtual_os_seconds": [
+        0.57
+      ]
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "8-8-4",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "native_allocator_tuning": true,
+      "base_block": 15391320,
+      "binary_sha256": "507f638f27fdac1b4e5b48ced1d32ca700a497084a5e6376511fc1a8a3f13b36",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "9f44a25285a13d3a38f6f79ff2e18b4e9799b25dce41d66adb6cea4e3b7cac5d",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 21.200136136991205,
+          "start_unix_ms": 1789957268112,
+          "end_unix_ms": 1789957289312,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 20.923002882991568,
+          "start_unix_ms": 1789957289779,
+          "end_unix_ms": 1789957310703,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 21.195557314000325,
+          "start_unix_ms": 1789957311174,
+          "end_unix_ms": 1789957332369,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.07449819598696195,
+      "status": "PASS",
+      "cgroup_peak_gib": 10.843116760253906,
+      "peak_rss_gib": 10.9195556640625,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "8-8-4-release-native-allocator",
+      "proving_seconds": [
+        20.646,
+        20.571,
+        20.836
+      ],
+      "virtual_os_seconds": [
+        0.551,
+        0.346,
+        0.355
+      ]
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "8-8-4",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "base_block": 15391320,
+      "binary_sha256": "507f638f27fdac1b4e5b48ced1d32ca700a497084a5e6376511fc1a8a3f13b36",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "9f44a25285a13d3a38f6f79ff2e18b4e9799b25dce41d66adb6cea4e3b7cac5d",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 16.051009613001952,
+          "start_unix_ms": 1789957166007,
+          "end_unix_ms": 1789957182058,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 15.301857255995856,
+          "start_unix_ms": 1789957182529,
+          "end_unix_ms": 1789957197831,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.06405227100185584,
+      "error": "Remote end closed connection without response",
+      "status": "FAILED",
+      "cgroup_peak_gib": 12.0,
+      "peak_rss_gib": 12.03948974609375,
+      "swap_peak_bytes": 0,
+      "oom_kill": 1,
+      "name": "8-8-4-release-repeat",
+      "proving_seconds": [
+        15.5,
+        14.947
+      ],
+      "virtual_os_seconds": [
+        0.546,
+        0.35,
+        0.335
+      ]
+    },
+    {
+      "variant": "staged",
+      "fixture": "8-8-4",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "base_block": 15391320,
+      "binary_sha256": "1f4e7d76092c6a550f8ece25fc0ae21c7ecf561e7fd30e736f6124fc0b6d3dd8",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "9f44a25285a13d3a38f6f79ff2e18b4e9799b25dce41d66adb6cea4e3b7cac5d",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 16.274685753000085,
+          "start_unix_ms": 1789956809769,
+          "end_unix_ms": 1789956826044,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 15.228881230999832,
+          "start_unix_ms": 1789956826512,
+          "end_unix_ms": 1789956841741,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 15.370514979003929,
+          "start_unix_ms": 1789956842209,
+          "end_unix_ms": 1789956857580,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.0660159960098099,
+      "status": "PASS",
+      "cgroup_peak_gib": 11.353813171386719,
+      "peak_rss_gib": 11.428062438964844,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "peak_requested_gib": 10.79343936033547,
+      "final_live_requested_gib": 0.019699024967849255,
+      "name": "8-8-4-staged-repeat",
+      "proving_seconds": [
+        15.705,
+        14.887,
+        15.028
+      ],
+      "virtual_os_seconds": [
+        0.566,
+        0.337,
+        0.338
+      ],
+      "phase_snapshots": [
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956810874.47,
+          "live_requested_gib": 0.8926527667790651,
+          "peak_requested_gib": 1.150466250255704,
+          "rss_gib": 1.1011810302734375,
+          "rss_high_water_gib": 1.1011810302734375
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789956818946.054,
+          "live_requested_gib": 0.05304382834583521,
+          "peak_requested_gib": 10.793363789096475,
+          "rss_gib": 6.093799591064453,
+          "rss_high_water_gib": 11.204566955566406
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956818960.5652,
+          "live_requested_gib": 0.05304382834583521,
+          "peak_requested_gib": 10.793363789096475,
+          "rss_gib": 6.094898223876953,
+          "rss_high_water_gib": 11.204566955566406
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956820283.313,
+          "live_requested_gib": 1.8245800351724029,
+          "peak_requested_gib": 10.793363789096475,
+          "rss_gib": 6.721851348876953,
+          "rss_high_water_gib": 11.204566955566406
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789956826018.96,
+          "live_requested_gib": 0.6319239642471075,
+          "peak_requested_gib": 10.793363789096475,
+          "rss_gib": 6.606201171875,
+          "rss_high_water_gib": 11.204566955566406
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=15705",
+          "unix_ms": 1789956826041.986,
+          "live_requested_gib": 0.1769936541095376,
+          "peak_requested_gib": 10.793363789096475,
+          "rss_gib": 6.193973541259766,
+          "rss_high_water_gib": 11.204566955566406
+        },
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956827320.6228,
+          "live_requested_gib": 0.9901416441425681,
+          "peak_requested_gib": 10.793363789096475,
+          "rss_gib": 6.635608673095703,
+          "rss_high_water_gib": 11.204566955566406
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789956834719.213,
+          "live_requested_gib": 0.9597258605062962,
+          "peak_requested_gib": 10.793401813134551,
+          "rss_gib": 7.110313415527344,
+          "rss_high_water_gib": 11.303775787353516
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956834733.981,
+          "live_requested_gib": 0.06512668821960688,
+          "peak_requested_gib": 10.793401813134551,
+          "rss_gib": 7.079059600830078,
+          "rss_high_water_gib": 11.303775787353516
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956836045.196,
+          "live_requested_gib": 1.8217827063053846,
+          "peak_requested_gib": 10.793401813134551,
+          "rss_gib": 7.692863464355469,
+          "rss_high_water_gib": 11.303775787353516
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789956841682.873,
+          "live_requested_gib": 4.793510913848877,
+          "peak_requested_gib": 10.793401813134551,
+          "rss_gib": 7.548713684082031,
+          "rss_high_water_gib": 11.303775787353516
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=14887",
+          "unix_ms": 1789956841739.1592,
+          "live_requested_gib": 0.019661477766931057,
+          "peak_requested_gib": 10.793401813134551,
+          "rss_gib": 6.419742584228516,
+          "rss_high_water_gib": 11.303775787353516
+        },
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956843005.939,
+          "live_requested_gib": 0.9650265378877521,
+          "peak_requested_gib": 10.793401813134551,
+          "rss_gib": 6.84417724609375,
+          "rss_high_water_gib": 11.303775787353516
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789956850383.542,
+          "live_requested_gib": 0.5146195068955421,
+          "peak_requested_gib": 10.79343936033547,
+          "rss_gib": 7.3627777099609375,
+          "rss_high_water_gib": 11.428062438964844
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956850398.4102,
+          "live_requested_gib": 0.06418508011847734,
+          "peak_requested_gib": 10.79343936033547,
+          "rss_gib": 7.239566802978516,
+          "rss_high_water_gib": 11.428062438964844
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956851729.5598,
+          "live_requested_gib": 1.841524200513959,
+          "peak_requested_gib": 10.79343936033547,
+          "rss_gib": 7.533775329589844,
+          "rss_high_water_gib": 11.428062438964844
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789956857568.1292,
+          "live_requested_gib": 0.1770692253485322,
+          "peak_requested_gib": 10.79343936033547,
+          "rss_gib": 7.015941619873047,
+          "rss_high_water_gib": 11.428062438964844
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=15028",
+          "unix_ms": 1789956857578.175,
+          "live_requested_gib": 0.1770692253485322,
+          "peak_requested_gib": 10.79343936033547,
+          "rss_gib": 7.015941619873047,
+          "rss_high_water_gib": 11.428062438964844
+        }
+      ],
+      "final_rss_gib": 6.9546966552734375
+    },
+    {
+      "variant": "stock",
+      "fixture": "8-8-4",
+      "cap_gib": 16,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "base_block": 15391320,
+      "binary_sha256": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "9f44a25285a13d3a38f6f79ff2e18b4e9799b25dce41d66adb6cea4e3b7cac5d",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 19.79175516900432,
+          "start_unix_ms": 1789956788146,
+          "end_unix_ms": 1789956807937,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 1.5711930439865682,
+      "status": "PASS",
+      "cgroup_peak_gib": 14.298023223876953,
+      "peak_rss_gib": 14.36663818359375,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "8-8-4-stock",
+      "proving_seconds": [
+        14.003
+      ],
+      "virtual_os_seconds": [
+        5.785
+      ]
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "controlled",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "base_block": 15391278,
+      "binary_sha256": "507f638f27fdac1b4e5b48ced1d32ca700a497084a5e6376511fc1a8a3f13b36",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "69a787d733377aa89b5c5ef9820d6b58c92ee5df5e895e80d5cb41e85eb81cc5",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 14.885790482003358,
+          "start_unix_ms": 1789957119652,
+          "end_unix_ms": 1789957134538,
+          "proof_bytes": 231894,
+          "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 14.038209434002056,
+          "start_unix_ms": 1789957135009,
+          "end_unix_ms": 1789957149048,
+          "proof_bytes": 231894,
+          "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 14.910493005998433,
+          "start_unix_ms": 1789957149518,
+          "end_unix_ms": 1789957164429,
+          "proof_bytes": 231894,
+          "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.13468651700532064,
+      "status": "PASS",
+      "cgroup_peak_gib": 11.37255859375,
+      "peak_rss_gib": 11.447868347167969,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "controlled-release-repeat",
+      "proving_seconds": [
+        14.376,
+        13.728,
+        14.583
+      ],
+      "virtual_os_seconds": [
+        0.505,
+        0.305,
+        0.324
+      ]
+    },
+    {
+      "variant": "staged",
+      "fixture": "controlled",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "base_block": 15391278,
+      "binary_sha256": "1f4e7d76092c6a550f8ece25fc0ae21c7ecf561e7fd30e736f6124fc0b6d3dd8",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "69a787d733377aa89b5c5ef9820d6b58c92ee5df5e895e80d5cb41e85eb81cc5",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 15.760068820003653,
+          "start_unix_ms": 1789956736782,
+          "end_unix_ms": 1789956752542,
+          "proof_bytes": 231894,
+          "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 15.388933131005615,
+          "start_unix_ms": 1789956753013,
+          "end_unix_ms": 1789956768402,
+          "proof_bytes": 231894,
+          "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 15.187884736005799,
+          "start_unix_ms": 1789956768868,
+          "end_unix_ms": 1789956784056,
+          "proof_bytes": 231894,
+          "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.07346148999931756,
+      "status": "PASS",
+      "cgroup_peak_gib": 10.941596984863281,
+      "peak_rss_gib": 11.017024993896484,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "peak_requested_gib": 10.283641481772065,
+      "final_live_requested_gib": 0.019703732803463936,
+      "name": "controlled-staged-repeat",
+      "proving_seconds": [
+        15.184,
+        15.054,
+        14.858
+      ],
+      "virtual_os_seconds": [
+        0.571,
+        0.331,
+        0.323
+      ],
+      "phase_snapshots": [
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956737878.721,
+          "live_requested_gib": 0.8842624612152576,
+          "peak_requested_gib": 1.1498885340988636,
+          "rss_gib": 0.9773445129394531,
+          "rss_high_water_gib": 1.062835693359375
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789956745456.6492,
+          "live_requested_gib": 0.05388224311172962,
+          "peak_requested_gib": 10.283570066094398,
+          "rss_gib": 5.763816833496094,
+          "rss_high_water_gib": 10.692127227783203
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956745475.178,
+          "live_requested_gib": 0.05388224311172962,
+          "peak_requested_gib": 10.283570066094398,
+          "rss_gib": 5.763816833496094,
+          "rss_high_water_gib": 10.692127227783203
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956746795.687,
+          "live_requested_gib": 1.8726390600204468,
+          "peak_requested_gib": 10.283570066094398,
+          "rss_gib": 6.324211120605469,
+          "rss_high_water_gib": 10.692127227783203
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789956752528.912,
+          "live_requested_gib": 0.1769369300454855,
+          "peak_requested_gib": 10.283570066094398,
+          "rss_gib": 6.030353546142578,
+          "rss_high_water_gib": 10.692127227783203
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=15184",
+          "unix_ms": 1789956752539.8271,
+          "live_requested_gib": 0.1769369300454855,
+          "peak_requested_gib": 10.283570066094398,
+          "rss_gib": 6.030353546142578,
+          "rss_high_water_gib": 10.692127227783203
+        },
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956753799.347,
+          "live_requested_gib": 0.8842964675277472,
+          "peak_requested_gib": 10.283570066094398,
+          "rss_gib": 6.4593963623046875,
+          "rss_high_water_gib": 10.692127227783203
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789956761287.044,
+          "live_requested_gib": 0.052637734450399876,
+          "peak_requested_gib": 10.283603934571147,
+          "rss_gib": 6.922756195068359,
+          "rss_high_water_gib": 11.015449523925781
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956761302.8171,
+          "live_requested_gib": 0.0699731158092618,
+          "peak_requested_gib": 10.283603934571147,
+          "rss_gib": 6.922756195068359,
+          "rss_high_water_gib": 11.015449523925781
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956762733.135,
+          "live_requested_gib": 1.692984119988978,
+          "peak_requested_gib": 10.283603934571147,
+          "rss_gib": 7.53656005859375,
+          "rss_high_water_gib": 11.015449523925781
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789956768389.781,
+          "live_requested_gib": 4.793490085750818,
+          "peak_requested_gib": 10.283603934571147,
+          "rss_gib": 7.342613220214844,
+          "rss_high_water_gib": 11.015449523925781
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=15054",
+          "unix_ms": 1789956768400.343,
+          "live_requested_gib": 0.019666185602545738,
+          "peak_requested_gib": 10.283603934571147,
+          "rss_gib": 7.027183532714844,
+          "rss_high_water_gib": 11.015449523925781
+        },
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956769642.38,
+          "live_requested_gib": 0.8921466041356325,
+          "peak_requested_gib": 10.283603934571147,
+          "rss_gib": 7.481842041015625,
+          "rss_high_water_gib": 11.015449523925781
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789956777227.704,
+          "live_requested_gib": 0.053157913498580456,
+          "peak_requested_gib": 10.283641481772065,
+          "rss_gib": 7.117267608642578,
+          "rss_high_water_gib": 11.017024993896484
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956777242.485,
+          "live_requested_gib": 0.053157913498580456,
+          "peak_requested_gib": 10.283641481772065,
+          "rss_gib": 7.117267608642578,
+          "rss_high_water_gib": 11.017024993896484
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956778578.113,
+          "live_requested_gib": 1.693021667189896,
+          "peak_requested_gib": 10.283641481772065,
+          "rss_gib": 7.731071472167969,
+          "rss_high_water_gib": 11.017024993896484
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789956784035.339,
+          "live_requested_gib": 4.793527618050575,
+          "peak_requested_gib": 10.283641481772065,
+          "rss_gib": 7.1310272216796875,
+          "rss_high_water_gib": 11.017024993896484
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=14858",
+          "unix_ms": 1789956784053.4712,
+          "live_requested_gib": 0.051488873548805714,
+          "peak_requested_gib": 10.283641481772065,
+          "rss_gib": 7.1310272216796875,
+          "rss_high_water_gib": 11.017024993896484
+        }
+      ],
+      "final_rss_gib": 6.989143371582031
+    },
+    {
+      "variant": "stock",
+      "fixture": "controlled",
+      "cap_gib": 16,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "base_block": 15391278,
+      "binary_sha256": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "69a787d733377aa89b5c5ef9820d6b58c92ee5df5e895e80d5cb41e85eb81cc5",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 19.029098136001267,
+          "start_unix_ms": 1789956716395,
+          "end_unix_ms": 1789956735424,
+          "proof_bytes": 231894,
+          "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 1.5441523270128528,
+      "status": "PASS",
+      "cgroup_peak_gib": 13.790435791015625,
+      "peak_rss_gib": 13.860363006591797,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "controlled-stock",
+      "proving_seconds": [
+        12.9
+      ],
+      "virtual_os_seconds": [
+        6.126
+      ]
+    },
+    {
+      "variant": "staged",
+      "fixture": "invalid-intent",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "base_block": 15391404,
+      "binary_sha256": "1f4e7d76092c6a550f8ece25fc0ae21c7ecf561e7fd30e736f6124fc0b6d3dd8",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "d687ef2f9982426ebf959667e49a0fa4e602e556b684d911375a3018d29281f4",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [],
+      "startup_seconds": 0.13782335899304599,
+      "error": "{\"code\": -32603, \"message\": \"Internal error\", \"data\": \"Reverted transactions are not supported; hash: TransactionHash(0x48ff53e4875ed83b8c637a7d4ac3c8c3be4c741ba77dc0df2d18d7275f78b0e), revert reason: Transaction execution has failed:\\n0: Error in the called contract (contract address: 0x01ccc0ef53fa9e37cc4ebc85487d1927279f0cd1d958c854dc38b461a58512f6, class hash: 0x00e876a4750d6dcbb0ff0cc029dbd839be297a45a0ed48dc9eb24fcb59600f9b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\\nExecution failed. Failure reason:\\nError in contract (contract address: 0x01ccc0ef53fa9e37cc4ebc85487d1927279f0cd1d958c854dc38b461a58512f6, class hash: 0x00e876a4750d6dcbb0ff0cc029dbd839be297a45a0ed48dc9eb24fcb59600f9b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\\n0x42494e44494e47 ('BINDING').\\n\"}",
+      "status": "REJECTED",
+      "cgroup_peak_gib": 0.015529632568359375,
+      "peak_rss_gib": null,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "peak_requested_gib": 0.0069285184144973755,
+      "final_live_requested_gib": 0.0005032261833548546,
+      "rss_measurement_note": "Process renamed to profiled-prover; early sampler matched original process name. Cgroup and Rust counters valid; RSS unavailable.",
+      "name": "invalid-intent-staged",
+      "proving_seconds": [],
+      "virtual_os_seconds": [],
+      "phase_snapshots": [],
+      "final_rss_gib": 0.0
+    },
+    {
+      "variant": "cached",
+      "fixture": "ordinary",
+      "cap_gib": 16,
+      "rayon_threads": 4,
+      "cpu_cores": 4,
+      "base_block": 15390992,
+      "binary_sha256": "e22a7222bcd272fd661d656a08682ee7e045a698db552571a01b35491014ea06",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "fd48d099eddab05f5560b510190649bdf2803328fc9b9934d88b0015b32bb2db",
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 21.184615316989948,
+          "start_unix_ms": 1789956367183,
+          "end_unix_ms": 1789956388368,
+          "proof_bytes": 228713,
+          "proof_sha256": "1291616b5a55b39593c16a7d4c0648222ea3d06ccc4c1bc5ff29d9edafffb04f",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 1.7364614749967586,
+      "status": "PASS",
+      "cgroup_peak_gib": 13.72231674194336,
+      "peak_rss_gib": 13.79238510131836,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "peak_requested_gib": 12.976863132789731,
+      "final_live_requested_gib": 9.865496108308434,
+      "name": "ordinary-cached-profile",
+      "proving_seconds": [
+        13.296
+      ],
+      "virtual_os_seconds": [
+        7.885
+      ],
+      "phase_snapshots": [
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956375228.1401,
+          "live_requested_gib": 2.3268479704856873,
+          "peak_requested_gib": 2.5260575274005532,
+          "rss_gib": 2.4870376586914062,
+          "rss_high_water_gib": 2.5667800903320312
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956382485.07,
+          "live_requested_gib": 8.894088851287961,
+          "peak_requested_gib": 11.66049015428871,
+          "rss_gib": 10.166732788085938,
+          "rss_high_water_gib": 12.095497131347656
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956382771.4182,
+          "live_requested_gib": 9.162222403101623,
+          "peak_requested_gib": 11.66049015428871,
+          "rss_gib": 10.303226470947266,
+          "rss_high_water_gib": 12.095497131347656
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=13296",
+          "unix_ms": 1789956388366.525,
+          "live_requested_gib": 9.865496108308434,
+          "peak_requested_gib": 12.976863132789731,
+          "rss_gib": 11.348430633544922,
+          "rss_high_water_gib": 13.79238510131836
+        }
+      ],
+      "final_rss_gib": 11.1727294921875
+    },
+    {
+      "variant": "staged",
+      "fixture": "ordinary",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "native_allocator_tuning": false,
+      "base_block": 15391165,
+      "binary_sha256": "ea3e10530cb4749b614e7a3b1cbfbab48f489cb6362bbb9396960f1338207720",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "52d1af98342f8ca9cfbfbb175398ca4215a7a7a85d9e3f2ea4c6d7d21721bdf0",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 16.271875587990507,
+          "start_unix_ms": 1789957531506,
+          "end_unix_ms": 1789957547778,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.067598163994262,
+      "status": "PASS",
+      "cgroup_peak_gib": 10.53409194946289,
+      "peak_rss_gib": 10.607845306396484,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "peak_requested_gib": 10.266800735145807,
+      "final_live_requested_gib": 0.01963184028863907,
+      "name": "ordinary-final-profile-smoke",
+      "proving_seconds": [
+        15.719
+      ],
+      "virtual_os_seconds": [
+        0.55
+      ],
+      "phase_snapshots": [
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789957532599.925,
+          "live_requested_gib": 0.954818625934422,
+          "peak_requested_gib": 1.1495462954044342,
+          "rss_gib": 1.02801513671875,
+          "rss_high_water_gib": 1.0633163452148438
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789957540521.677,
+          "live_requested_gib": 0.052819970063865185,
+          "peak_requested_gib": 10.266800735145807,
+          "rss_gib": 5.619232177734375,
+          "rss_high_water_gib": 10.607845306396484
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789957540536.646,
+          "live_requested_gib": 0.07294417452067137,
+          "peak_requested_gib": 10.266800735145807,
+          "rss_gib": 5.463939666748047,
+          "rss_high_water_gib": 10.607845306396484
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789957541899.678,
+          "live_requested_gib": 1.83967861905694,
+          "peak_requested_gib": 10.266800735145807,
+          "rss_gib": 6.083824157714844,
+          "rss_high_water_gib": 10.607845306396484
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789957547715.324,
+          "live_requested_gib": 0.33142904564738274,
+          "peak_requested_gib": 10.266800735145807,
+          "rss_gib": 6.58990478515625,
+          "rss_high_water_gib": 10.607845306396484
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=15719",
+          "unix_ms": 1789957547776.5269,
+          "live_requested_gib": 0.17693208623677492,
+          "peak_requested_gib": 10.266800735145807,
+          "rss_gib": 5.587696075439453,
+          "rss_high_water_gib": 10.607845306396484
+        }
+      ],
+      "final_rss_gib": 5.587696075439453
+    },
+    {
+      "variant": "staged",
+      "fixture": "ordinary",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": false,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "base_block": 15390992,
+      "binary_sha256": "09f839e09b4d2834ec2302fba68ce4920b1479704553b19063f8c57577d3eaea",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "fd48d099eddab05f5560b510190649bdf2803328fc9b9934d88b0015b32bb2db",
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [],
+      "startup_seconds": 0.06549932800407987,
+      "error": "{\"code\": 42, \"message\": \"The node doesn't support storage proofs for blocks that are too far in the past\"}",
+      "status": "FAILED",
+      "cgroup_peak_gib": 0.01561737060546875,
+      "peak_rss_gib": 0.038143157958984375,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "peak_requested_gib": 0.007123184390366077,
+      "final_live_requested_gib": 0.0005013719201087952,
+      "name": "ordinary-no-coeff",
+      "proving_seconds": [],
+      "virtual_os_seconds": [],
+      "phase_snapshots": [],
+      "final_rss_gib": 0.038143157958984375
+    },
+    {
+      "variant": "staged",
+      "fixture": "ordinary",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": false,
+      "cpu_cores": 4,
+      "trace_spans": true,
+      "base_block": 15391165,
+      "binary_sha256": "1f4e7d76092c6a550f8ece25fc0ae21c7ecf561e7fd30e736f6124fc0b6d3dd8",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "52d1af98342f8ca9cfbfbb175398ca4215a7a7a85d9e3f2ea4c6d7d21721bdf0",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 27.962059176003095,
+          "start_unix_ms": 1789956522416,
+          "end_unix_ms": 1789956550378,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.07408167299581692,
+      "status": "PASS",
+      "cgroup_peak_gib": 10.411033630371094,
+      "peak_rss_gib": 10.4847412109375,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "peak_requested_gib": 9.888440475799143,
+      "final_live_requested_gib": 0.019633394666016102,
+      "name": "ordinary-no-coeff-profile",
+      "proving_seconds": [
+        20.6
+      ],
+      "virtual_os_seconds": [
+        7.359
+      ],
+      "phase_snapshots": [
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956530299.757,
+          "live_requested_gib": 0.8304377207532525,
+          "peak_requested_gib": 1.1116887936368585,
+          "rss_gib": 0.9842147827148438,
+          "rss_high_water_gib": 1.0632133483886719
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789956543375.0051,
+          "live_requested_gib": 0.053036101162433624,
+          "peak_requested_gib": 9.888440475799143,
+          "rss_gib": 5.217445373535156,
+          "rss_high_water_gib": 10.4847412109375
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956543389.516,
+          "live_requested_gib": 0.053036101162433624,
+          "peak_requested_gib": 9.888440475799143,
+          "rss_gib": 5.093345642089844,
+          "rss_high_water_gib": 10.4847412109375
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956544722.353,
+          "live_requested_gib": 1.70857547596097,
+          "peak_requested_gib": 9.888440475799143,
+          "rss_gib": 5.17608642578125,
+          "rss_high_water_gib": 10.4847412109375
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789956550367.2231,
+          "live_requested_gib": 0.019633394666016102,
+          "peak_requested_gib": 9.888440475799143,
+          "rss_gib": 5.279350280761719,
+          "rss_high_water_gib": 10.4847412109375
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=20600",
+          "unix_ms": 1789956550377.0398,
+          "live_requested_gib": 0.019633394666016102,
+          "peak_requested_gib": 9.888440475799143,
+          "rss_gib": 5.279350280761719,
+          "rss_high_water_gib": 10.4847412109375
+        }
+      ],
+      "final_rss_gib": 5.177001953125,
+      "cairo_committed_evaluations": {
+        "columns_by_log_size": {
+          "10": 8,
+          "11": 441,
+          "17": 223,
+          "20": 116,
+          "8": 1,
+          "21": 50,
+          "9": 310,
+          "7": 323,
+          "15": 996,
+          "14": 156,
+          "23": 84,
+          "13": 1,
+          "22": 90,
+          "12": 1,
+          "16": 320,
+          "18": 794,
+          "19": 474
+        },
+        "gib": 6.898474216461182
+      }
+    },
+    {
+      "variant": "staged",
+      "fixture": "ordinary",
+      "cap_gib": 12,
+      "rayon_threads": 1,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "base_block": 15391165,
+      "binary_sha256": "1f4e7d76092c6a550f8ece25fc0ae21c7ecf561e7fd30e736f6124fc0b6d3dd8",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "52d1af98342f8ca9cfbfbb175398ca4215a7a7a85d9e3f2ea4c6d7d21721bdf0",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 48.43336939399887,
+          "start_unix_ms": 1789956610300,
+          "end_unix_ms": 1789956658733,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.03669040399836376,
+      "status": "PASS",
+      "cgroup_peak_gib": 10.521644592285156,
+      "peak_rss_gib": 10.59511947631836,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "peak_requested_gib": 10.266746044158936,
+      "final_live_requested_gib": 0.01957688108086586,
+      "name": "ordinary-one-thread",
+      "proving_seconds": [
+        47.893
+      ],
+      "virtual_os_seconds": [
+        0.537
+      ],
+      "phase_snapshots": [
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956612203.675,
+          "live_requested_gib": 0.9005984114482999,
+          "peak_requested_gib": 1.1492433100938797,
+          "rss_gib": 1.0015525817871094,
+          "rss_high_water_gib": 1.0609512329101562
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789956637948.3809,
+          "live_requested_gib": 3.4411163832992315,
+          "peak_requested_gib": 10.266746044158936,
+          "rss_gib": 5.46270751953125,
+          "rss_high_water_gib": 10.595012664794922
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956637963.166,
+          "live_requested_gib": 0.05403112154453993,
+          "peak_requested_gib": 10.266746044158936,
+          "rss_gib": 5.46270751953125,
+          "rss_high_water_gib": 10.595012664794922
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956640204.59,
+          "live_requested_gib": 1.716331678442657,
+          "peak_requested_gib": 10.266746044158936,
+          "rss_gib": 6.0781707763671875,
+          "rss_high_water_gib": 10.595012664794922
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789956658717.877,
+          "live_requested_gib": 0.5771902985870838,
+          "peak_requested_gib": 10.266746044158936,
+          "rss_gib": 6.338367462158203,
+          "rss_high_water_gib": 10.595012664794922
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=47893",
+          "unix_ms": 1789956658731.781,
+          "live_requested_gib": 0.01957688108086586,
+          "peak_requested_gib": 10.266746044158936,
+          "rss_gib": 6.338367462158203,
+          "rss_high_water_gib": 10.595012664794922
+        }
+      ],
+      "final_rss_gib": 6.185779571533203
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "ordinary",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "base_block": 15391165,
+      "binary_sha256": "507f638f27fdac1b4e5b48ced1d32ca700a497084a5e6376511fc1a8a3f13b36",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "52d1af98342f8ca9cfbfbb175398ca4215a7a7a85d9e3f2ea4c6d7d21721bdf0",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 14.938390903000254,
+          "start_unix_ms": 1789957073199,
+          "end_unix_ms": 1789957088137,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 14.560226629007957,
+          "start_unix_ms": 1789957088605,
+          "end_unix_ms": 1789957103165,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 14.211674912003218,
+          "start_unix_ms": 1789957103633,
+          "end_unix_ms": 1789957117844,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.0735095359996194,
+      "status": "PASS",
+      "cgroup_peak_gib": 11.258811950683594,
+      "peak_rss_gib": 11.333919525146484,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "ordinary-release-repeat",
+      "proving_seconds": [
+        14.401,
+        14.226,
+        13.893
+      ],
+      "virtual_os_seconds": [
+        0.534,
+        0.331,
+        0.315
+      ]
+    },
+    {
+      "variant": "staged",
+      "fixture": "ordinary",
+      "cap_gib": 10,
+      "rayon_threads": 4,
+      "cpu_cores": 4,
+      "base_block": 15390992,
+      "binary_sha256": "e22a7222bcd272fd661d656a08682ee7e045a698db552571a01b35491014ea06",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "fd48d099eddab05f5560b510190649bdf2803328fc9b9934d88b0015b32bb2db",
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [],
+      "startup_seconds": 0.13290300499647856,
+      "error": "Remote end closed connection without response",
+      "status": "FAILED",
+      "cgroup_peak_gib": 10.0,
+      "peak_rss_gib": 10.075031280517578,
+      "swap_peak_bytes": 0,
+      "oom_kill": 1,
+      "peak_requested_gib": 9.82852885313332,
+      "final_live_requested_gib": 9.82852885313332,
+      "name": "ordinary-staged-10",
+      "proving_seconds": [],
+      "virtual_os_seconds": [
+        6.768
+      ],
+      "phase_snapshots": [
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956306057.153,
+          "live_requested_gib": 0.8839257042855024,
+          "peak_requested_gib": 1.1495517771691084,
+          "rss_gib": 0.99786376953125,
+          "rss_high_water_gib": 1.0681571960449219
+        }
+      ],
+      "final_rss_gib": 0.0
+    },
+    {
+      "variant": "staged",
+      "fixture": "ordinary",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cpu_cores": 4,
+      "base_block": 15390992,
+      "binary_sha256": "e22a7222bcd272fd661d656a08682ee7e045a698db552571a01b35491014ea06",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "fd48d099eddab05f5560b510190649bdf2803328fc9b9934d88b0015b32bb2db",
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 21.732899878988974,
+          "start_unix_ms": 1789956329957,
+          "end_unix_ms": 1789956351690,
+          "proof_bytes": 228713,
+          "proof_sha256": "1291616b5a55b39593c16a7d4c0648222ea3d06ccc4c1bc5ff29d9edafffb04f",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.06598093900538515,
+      "status": "PASS",
+      "cgroup_peak_gib": 10.643470764160156,
+      "peak_rss_gib": 10.717235565185547,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "peak_requested_gib": 10.26680669374764,
+      "final_live_requested_gib": 0.01963658072054386,
+      "name": "ordinary-staged-12",
+      "proving_seconds": [
+        14.797
+      ],
+      "virtual_os_seconds": [
+        6.933
+      ],
+      "phase_snapshots": [
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956337430.499,
+          "live_requested_gib": 0.9591199336573482,
+          "peak_requested_gib": 1.1495522540062666,
+          "rss_gib": 1.090087890625,
+          "rss_high_water_gib": 1.090087890625
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789956344632.9392,
+          "live_requested_gib": 0.05298689100891352,
+          "peak_requested_gib": 10.26680669374764,
+          "rss_gib": 5.648017883300781,
+          "rss_high_water_gib": 10.717235565185547
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956344647.466,
+          "live_requested_gib": 0.05298689100891352,
+          "peak_requested_gib": 10.26680669374764,
+          "rss_gib": 5.648017883300781,
+          "rss_high_water_gib": 10.717235565185547
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956345953.839,
+          "live_requested_gib": 1.708579738624394,
+          "peak_requested_gib": 10.26680669374764,
+          "rss_gib": 6.285285949707031,
+          "rss_high_water_gib": 10.717235565185547
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789956351679.1401,
+          "live_requested_gib": 0.25679513718932867,
+          "peak_requested_gib": 10.26680669374764,
+          "rss_gib": 5.873924255371094,
+          "rss_high_water_gib": 10.717235565185547
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=14797",
+          "unix_ms": 1789956351689.2969,
+          "live_requested_gib": 0.25679513718932867,
+          "peak_requested_gib": 10.26680669374764,
+          "rss_gib": 5.6862640380859375,
+          "rss_high_water_gib": 10.717235565185547
+        }
+      ],
+      "final_rss_gib": 5.6862640380859375
+    },
+    {
+      "variant": "staged",
+      "fixture": "ordinary",
+      "cap_gib": 8,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "base_block": 15391165,
+      "binary_sha256": "1f4e7d76092c6a550f8ece25fc0ae21c7ecf561e7fd30e736f6124fc0b6d3dd8",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "52d1af98342f8ca9cfbfbb175398ca4215a7a7a85d9e3f2ea4c6d7d21721bdf0",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [],
+      "startup_seconds": 0.1374506010033656,
+      "error": "Remote end closed connection without response",
+      "status": "FAILED",
+      "cgroup_peak_gib": 8.0,
+      "peak_rss_gib": 8.053726196289062,
+      "swap_peak_bytes": 0,
+      "oom_kill": 1,
+      "peak_requested_gib": 8.531391740776598,
+      "final_live_requested_gib": 8.53139151725918,
+      "name": "ordinary-staged-8-cap",
+      "proving_seconds": [],
+      "virtual_os_seconds": [
+        0.532
+      ],
+      "phase_snapshots": [
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956709019.6519,
+          "live_requested_gib": 0.891733375377953,
+          "peak_requested_gib": 1.1495468588545918,
+          "rss_gib": 1.0987930297851562,
+          "rss_high_water_gib": 1.0987930297851562
+        }
+      ],
+      "final_rss_gib": 0.0
+    },
+    {
+      "variant": "staged",
+      "fixture": "ordinary",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": true,
+      "base_block": 15391165,
+      "binary_sha256": "1f4e7d76092c6a550f8ece25fc0ae21c7ecf561e7fd30e736f6124fc0b6d3dd8",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "52d1af98342f8ca9cfbfbb175398ca4215a7a7a85d9e3f2ea4c6d7d21721bdf0",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 15.42146632100048,
+          "start_unix_ms": 1789956660445,
+          "end_unix_ms": 1789956675866,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 14.61971925800026,
+          "start_unix_ms": 1789956676335,
+          "end_unix_ms": 1789956690955,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 14.647407967990148,
+          "start_unix_ms": 1789956691425,
+          "end_unix_ms": 1789956706073,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.0700202510051895,
+      "status": "PASS",
+      "cgroup_peak_gib": 10.945953369140625,
+      "peak_rss_gib": 11.021568298339844,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "peak_requested_gib": 10.266879184171557,
+      "final_live_requested_gib": 0.019710006192326546,
+      "name": "ordinary-staged-repeat",
+      "proving_seconds": [
+        14.907,
+        14.297,
+        14.329
+      ],
+      "virtual_os_seconds": [
+        0.511,
+        0.316,
+        0.315
+      ],
+      "phase_snapshots": [
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956661470.0872,
+          "live_requested_gib": 0.9918457623571157,
+          "peak_requested_gib": 1.1495479950681329,
+          "rss_gib": 0.9901161193847656,
+          "rss_high_water_gib": 1.0631637573242188
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789956669021.614,
+          "live_requested_gib": 0.052978649735450745,
+          "peak_requested_gib": 10.266803049482405,
+          "rss_gib": 5.768939971923828,
+          "rss_high_water_gib": 10.699623107910156
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956669036.0469,
+          "live_requested_gib": 0.052978649735450745,
+          "peak_requested_gib": 10.266803049482405,
+          "rss_gib": 5.582393646240234,
+          "rss_high_water_gib": 10.699623107910156
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956670343.921,
+          "live_requested_gib": 1.6929509527981281,
+          "peak_requested_gib": 10.266803049482405,
+          "rss_gib": 6.229396820068359,
+          "rss_high_water_gib": 10.699623107910156
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789956675854.817,
+          "live_requested_gib": 0.17693419195711613,
+          "peak_requested_gib": 10.266803049482405,
+          "rss_gib": 5.922859191894531,
+          "rss_high_water_gib": 10.699623107910156
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=14907",
+          "unix_ms": 1789956675864.447,
+          "live_requested_gib": 0.17693419195711613,
+          "peak_requested_gib": 10.266803049482405,
+          "rss_gib": 5.922859191894531,
+          "rss_high_water_gib": 10.699623107910156
+        },
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956677096.698,
+          "live_requested_gib": 0.8917737100273371,
+          "peak_requested_gib": 10.266803049482405,
+          "rss_gib": 6.383827209472656,
+          "rss_high_water_gib": 10.699623107910156
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789956684248.934,
+          "live_requested_gib": 0.05313588213175535,
+          "peak_requested_gib": 10.26684163697064,
+          "rss_gib": 6.974300384521484,
+          "rss_high_water_gib": 10.903938293457031
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956684263.783,
+          "live_requested_gib": 0.05313588213175535,
+          "peak_requested_gib": 10.26684163697064,
+          "rss_gib": 6.849285125732422,
+          "rss_high_water_gib": 10.903938293457031
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956685582.186,
+          "live_requested_gib": 1.8865943122655153,
+          "peak_requested_gib": 10.26684163697064,
+          "rss_gib": 7.468173980712891,
+          "rss_high_water_gib": 10.903938293457031
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789956690941.066,
+          "live_requested_gib": 0.2568306503817439,
+          "peak_requested_gib": 10.26684163697064,
+          "rss_gib": 7.10675048828125,
+          "rss_high_water_gib": 10.903938293457031
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=14297",
+          "unix_ms": 1789956690951.127,
+          "live_requested_gib": 0.2568306503817439,
+          "peak_requested_gib": 10.26684163697064,
+          "rss_gib": 6.860877990722656,
+          "rss_high_water_gib": 10.903938293457031
+        },
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956692181.945,
+          "live_requested_gib": 0.8986471947282553,
+          "peak_requested_gib": 10.26684163697064,
+          "rss_gib": 7.310813903808594,
+          "rss_high_water_gib": 10.903938293457031
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789956699307.638,
+          "live_requested_gib": 0.053561896085739136,
+          "peak_requested_gib": 10.266879184171557,
+          "rss_gib": 7.320350646972656,
+          "rss_high_water_gib": 11.021568298339844
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956699322.303,
+          "live_requested_gib": 0.053561896085739136,
+          "peak_requested_gib": 10.266879184171557,
+          "rss_gib": 7.197174072265625,
+          "rss_high_water_gib": 11.021568298339844
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956700655.311,
+          "live_requested_gib": 1.7164646768942475,
+          "peak_requested_gib": 10.266879184171557,
+          "rss_gib": 7.744686126708984,
+          "rss_high_water_gib": 11.021568298339844
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789956706055.043,
+          "live_requested_gib": 0.2568681975826621,
+          "peak_requested_gib": 10.266879184171557,
+          "rss_gib": 7.2960662841796875,
+          "rss_high_water_gib": 11.021568298339844
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=14329",
+          "unix_ms": 1789956706071.53,
+          "live_requested_gib": 0.2568681975826621,
+          "peak_requested_gib": 10.266879184171557,
+          "rss_gib": 7.115345001220703,
+          "rss_high_water_gib": 11.021568298339844
+        }
+      ],
+      "final_rss_gib": 7.115345001220703,
+      "cairo_committed_evaluations": {
+        "columns_by_log_size": {
+          "20": 116,
+          "22": 90,
+          "23": 84,
+          "18": 794,
+          "19": 474,
+          "16": 320,
+          "7": 323,
+          "10": 8,
+          "11": 441,
+          "8": 1,
+          "13": 1,
+          "12": 1,
+          "14": 156,
+          "15": 996,
+          "21": 50,
+          "9": 310,
+          "17": 223
+        },
+        "gib": 6.898474216461182
+      }
+    },
+    {
+      "variant": "stock",
+      "fixture": "ordinary",
+      "cap_gib": 16,
+      "rayon_threads": 4,
+      "cpu_cores": 4,
+      "base_block": 15390992,
+      "binary_sha256": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "fd48d099eddab05f5560b510190649bdf2803328fc9b9934d88b0015b32bb2db",
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 19.08044757100288,
+          "start_unix_ms": 1789956230271,
+          "end_unix_ms": 1789956249352,
+          "proof_bytes": 228713,
+          "proof_sha256": "1291616b5a55b39593c16a7d4c0648222ea3d06ccc4c1bc5ff29d9edafffb04f",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 1.5459724760003155,
+      "status": "PASS",
+      "cgroup_peak_gib": 14.00204849243164,
+      "peak_rss_gib": 14.071704864501953,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "ordinary-stock",
+      "proving_seconds": [
+        12.514
+      ],
+      "virtual_os_seconds": [
+        6.562
+      ]
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "return",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "native_allocator_tuning": false,
+      "base_block": 15391363,
+      "binary_sha256": "507f638f27fdac1b4e5b48ced1d32ca700a497084a5e6376511fc1a8a3f13b36",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "4a838b63a98712c6e98be29f03b857ba732cb71da02775f273165ae4329f6fac",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 15.21641353800078,
+          "start_unix_ms": 1789957386772,
+          "end_unix_ms": 1789957401989,
+          "proof_bytes": 229871,
+          "proof_sha256": "f1f4e439648a3e6b693fd2f59d7897e164d0573a50600d0fb86a9b9993900e14",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 14.449258769993321,
+          "start_unix_ms": 1789957402456,
+          "end_unix_ms": 1789957416906,
+          "proof_bytes": 229871,
+          "proof_sha256": "f1f4e439648a3e6b693fd2f59d7897e164d0573a50600d0fb86a9b9993900e14",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 14.37560374000168,
+          "start_unix_ms": 1789957417373,
+          "end_unix_ms": 1789957431749,
+          "proof_bytes": 229871,
+          "proof_sha256": "f1f4e439648a3e6b693fd2f59d7897e164d0573a50600d0fb86a9b9993900e14",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.1297198410029523,
+      "status": "PASS",
+      "cgroup_peak_gib": 10.97030258178711,
+      "peak_rss_gib": 11.04592514038086,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "return-release-repeat",
+      "proving_seconds": [
+        14.678,
+        14.122,
+        14.061
+      ],
+      "virtual_os_seconds": [
+        0.535,
+        0.324,
+        0.311
+      ]
+    },
+    {
+      "variant": "staged",
+      "fixture": "return",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "base_block": 15391363,
+      "binary_sha256": "1f4e7d76092c6a550f8ece25fc0ae21c7ecf561e7fd30e736f6124fc0b6d3dd8",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "4a838b63a98712c6e98be29f03b857ba732cb71da02775f273165ae4329f6fac",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 15.405973340006312,
+          "start_unix_ms": 1789956882137,
+          "end_unix_ms": 1789956897543,
+          "proof_bytes": 229871,
+          "proof_sha256": "f1f4e439648a3e6b693fd2f59d7897e164d0573a50600d0fb86a9b9993900e14",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 14.594556404001196,
+          "start_unix_ms": 1789956898013,
+          "end_unix_ms": 1789956912607,
+          "proof_bytes": 229871,
+          "proof_sha256": "f1f4e439648a3e6b693fd2f59d7897e164d0573a50600d0fb86a9b9993900e14",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 14.500035855002352,
+          "start_unix_ms": 1789956913076,
+          "end_unix_ms": 1789956927576,
+          "proof_bytes": 229871,
+          "proof_sha256": "f1f4e439648a3e6b693fd2f59d7897e164d0573a50600d0fb86a9b9993900e14",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.03304664199822582,
+      "status": "PASS",
+      "cgroup_peak_gib": 11.524673461914062,
+      "peak_rss_gib": null,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "peak_requested_gib": 10.283632390201092,
+      "final_live_requested_gib": 0.019707949832081795,
+      "rss_measurement_note": "Process renamed to profiled-prover; early sampler matched original process name. Cgroup and Rust counters valid; RSS unavailable.",
+      "name": "return-staged-repeat",
+      "proving_seconds": [
+        14.874,
+        14.264,
+        14.191
+      ],
+      "virtual_os_seconds": [
+        0.529,
+        0.327,
+        0.304
+      ],
+      "phase_snapshots": [
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956883172.136,
+          "live_requested_gib": 0.8919984381645918,
+          "peak_requested_gib": 1.1498119216412306,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789956890589.15,
+          "live_requested_gib": 3.3287921436131,
+          "peak_requested_gib": 10.283560497686267,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956890604.6938,
+          "live_requested_gib": 0.0650486582890153,
+          "peak_requested_gib": 10.283560497686267,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956891933.574,
+          "live_requested_gib": 1.9030191358178854,
+          "peak_requested_gib": 10.283560497686267,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789956897531.2678,
+          "live_requested_gib": 3.108467699959874,
+          "peak_requested_gib": 10.283560497686267,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=14874",
+          "unix_ms": 1789956897541.758,
+          "live_requested_gib": 0.019636057317256927,
+          "peak_requested_gib": 10.283560497686267,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956898782.5671,
+          "live_requested_gib": 0.9829876469448209,
+          "peak_requested_gib": 10.283560497686267,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789956905781.1511,
+          "live_requested_gib": 2.17011003755033,
+          "peak_requested_gib": 10.2835991717875,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956905797.112,
+          "live_requested_gib": 0.06508733239024878,
+          "peak_requested_gib": 10.2835991717875,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956907189.805,
+          "live_requested_gib": 1.720334998331964,
+          "peak_requested_gib": 10.2835991717875,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789956912595.334,
+          "live_requested_gib": 0.2568338243290782,
+          "peak_requested_gib": 10.2835991717875,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=14264",
+          "unix_ms": 1789956912605.832,
+          "live_requested_gib": 0.2568338243290782,
+          "peak_requested_gib": 10.2835991717875,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Generate the cairo proof",
+          "unix_ms": 1789956913835.305,
+          "live_requested_gib": 0.8842578791081905,
+          "peak_requested_gib": 10.2835991717875,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Cairo stage tree and buffer pool released",
+          "unix_ms": 1789956920811.1829,
+          "live_requested_gib": 0.2087258566170931,
+          "peak_requested_gib": 10.283632390201092,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Prepare the cairo proof for the cairo-circuit verifier",
+          "unix_ms": 1789956920825.9028,
+          "live_requested_gib": 0.05545493867248297,
+          "peak_requested_gib": 10.283632390201092,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Prove the cairo-circuit verifier",
+          "unix_ms": 1789956922167.424,
+          "live_requested_gib": 1.7086493773385882,
+          "peak_requested_gib": 10.283632390201092,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Recursive stage tree and buffer pool released",
+          "unix_ms": 1789956927564.149,
+          "live_requested_gib": 0.019707949832081795,
+          "peak_requested_gib": 10.283632390201092,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        },
+        {
+          "stage": "Proving completed prove_duration_ms=14191",
+          "unix_ms": 1789956927573.342,
+          "live_requested_gib": 0.019707949832081795,
+          "peak_requested_gib": 10.283632390201092,
+          "rss_gib": 0.0,
+          "rss_high_water_gib": 0.0
+        }
+      ],
+      "final_rss_gib": 0.0
+    },
+    {
+      "variant": "stock",
+      "fixture": "return",
+      "cap_gib": 16,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "base_block": 15391363,
+      "binary_sha256": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "4a838b63a98712c6e98be29f03b857ba732cb71da02775f273165ae4329f6fac",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 18.85035454700119,
+          "start_unix_ms": 1789956861657,
+          "end_unix_ms": 1789956880507,
+          "proof_bytes": 229871,
+          "proof_sha256": "f1f4e439648a3e6b693fd2f59d7897e164d0573a50600d0fb86a9b9993900e14",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 1.576637821010081,
+      "status": "PASS",
+      "cgroup_peak_gib": 13.972732543945312,
+      "peak_rss_gib": 14.043319702148438,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "return-stock",
+      "proving_seconds": [
+        12.659
+      ],
+      "virtual_os_seconds": [
+        6.188
+      ]
+    }
+  ],
+  "same_request_comparisons": [
+    {
+      "a": "8-8-4-release-fresh-a",
+      "b": "8-8-4-release-fresh-b",
+      "byte_identical": true
+    },
+    {
+      "a": "8-8-4-release-fresh-a",
+      "b": "8-8-4-release-fresh-c",
+      "byte_identical": true
+    },
+    {
+      "a": "8-8-4-release-fresh-a",
+      "b": "8-8-4-release-native-allocator",
+      "byte_identical": true
+    },
+    {
+      "a": "8-8-4-release-fresh-a",
+      "b": "8-8-4-staged-repeat",
+      "byte_identical": true
+    },
+    {
+      "a": "8-8-4-release-fresh-a",
+      "b": "8-8-4-stock",
+      "byte_identical": true
+    },
+    {
+      "a": "8-8-4-release-fresh-b",
+      "b": "8-8-4-release-fresh-c",
+      "byte_identical": true
+    },
+    {
+      "a": "8-8-4-release-fresh-b",
+      "b": "8-8-4-release-native-allocator",
+      "byte_identical": true
+    },
+    {
+      "a": "8-8-4-release-fresh-b",
+      "b": "8-8-4-staged-repeat",
+      "byte_identical": true
+    },
+    {
+      "a": "8-8-4-release-fresh-b",
+      "b": "8-8-4-stock",
+      "byte_identical": true
+    },
+    {
+      "a": "8-8-4-release-fresh-c",
+      "b": "8-8-4-release-native-allocator",
+      "byte_identical": true
+    },
+    {
+      "a": "8-8-4-release-fresh-c",
+      "b": "8-8-4-staged-repeat",
+      "byte_identical": true
+    },
+    {
+      "a": "8-8-4-release-fresh-c",
+      "b": "8-8-4-stock",
+      "byte_identical": true
+    },
+    {
+      "a": "8-8-4-release-native-allocator",
+      "b": "8-8-4-staged-repeat",
+      "byte_identical": true
+    },
+    {
+      "a": "8-8-4-release-native-allocator",
+      "b": "8-8-4-stock",
+      "byte_identical": true
+    },
+    {
+      "a": "8-8-4-staged-repeat",
+      "b": "8-8-4-stock",
+      "byte_identical": true
+    },
+    {
+      "a": "controlled-release-repeat",
+      "b": "controlled-staged-repeat",
+      "byte_identical": true
+    },
+    {
+      "a": "controlled-release-repeat",
+      "b": "controlled-stock",
+      "byte_identical": true
+    },
+    {
+      "a": "controlled-staged-repeat",
+      "b": "controlled-stock",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-cached-profile",
+      "b": "ordinary-staged-12",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-cached-profile",
+      "b": "ordinary-stock",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-final-profile-smoke",
+      "b": "ordinary-no-coeff-profile",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-final-profile-smoke",
+      "b": "ordinary-one-thread",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-final-profile-smoke",
+      "b": "ordinary-release-repeat",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-final-profile-smoke",
+      "b": "ordinary-staged-repeat",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-no-coeff-profile",
+      "b": "ordinary-one-thread",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-no-coeff-profile",
+      "b": "ordinary-release-repeat",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-no-coeff-profile",
+      "b": "ordinary-staged-repeat",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-one-thread",
+      "b": "ordinary-release-repeat",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-one-thread",
+      "b": "ordinary-staged-repeat",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-release-repeat",
+      "b": "ordinary-staged-repeat",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-staged-12",
+      "b": "ordinary-stock",
+      "byte_identical": true
+    },
+    {
+      "a": "return-release-repeat",
+      "b": "return-staged-repeat",
+      "byte_identical": true
+    },
+    {
+      "a": "return-release-repeat",
+      "b": "return-stock",
+      "byte_identical": true
+    },
+    {
+      "a": "return-staged-repeat",
+      "b": "return-stock",
+      "byte_identical": true
+    }
+  ],
+  "verified_proof_count": 38,
+  "scope": "Local verification of replays; no live submission or physical desktop/browser qualification."
+}

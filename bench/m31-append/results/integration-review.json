@@ -1,0 +1,28 @@
+{
+  "scope": "root integration review; no AIR, transcript, proof parameters, cryptographic implementation, or outer binary changes",
+  "outer_runner_changes": [
+    "persist public binding for later contract staging",
+    "require nonzero digest and effective preserved verifier mutation controls",
+    "record failed-run resource peaks",
+    "expose bounded L2 gas allowance and server memory cap after observed failures"
+  ],
+  "cairo_negative_harness_changes": [
+    "correct serialized output comparison to [8,*public8] and normalize signed representatives",
+    "exclude MemoryOOMGroup metadata from OOM detection",
+    "resolve fresh output paths and pin CPU 0",
+    "pin reviewed Cairo executable",
+    "add noncanonical M31-word rejection"
+  ],
+  "execution": {
+    "cairo_positive_controls": 2,
+    "cairo_mutation_rejections": 27,
+    "real_outer_proofs": 0,
+    "outer_native_verifier_runs": 0,
+    "contract_tests_run": false
+  },
+  "files": {
+    "bench/m31-append/run_outer.py": "c390a29be8b19eefe41820ac51a08fcac4b7e034f64dc89a21162fe85d6ea71a",
+    "bench/m31-append/cairo_negative.py": "8c614fb44615b6d4f3cceb9c9c1af40171a6f3e4e65e7393d292ec5ad230e11a",
+    "bench/m31-append/prepare_contract_facts.py": "64275f85417cba38a391803ad4529c3c98039a09586bace2f9e101f45239479f"
+  }
+}

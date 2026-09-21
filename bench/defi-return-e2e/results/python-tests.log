@@ -1,0 +1,15 @@
+test_actual_amount_can_change_after_receipt_preparation (test_returns.Returns.test_actual_amount_can_change_after_receipt_preparation) ... ok
+test_every_swap_field_changes_authorization (test_returns.Returns.test_every_swap_field_changes_authorization) ... ok
+test_fresh_seed_restore_viewing_and_respend (test_returns.Returns.test_fresh_seed_restore_viewing_and_respend) ... ok
+test_intent_is_bound_by_ownership_statement (test_returns.Returns.test_intent_is_bound_by_ownership_statement) ... ok
+test_missing_history_is_not_a_zero_balance (test_returns.Returns.test_missing_history_is_not_a_zero_balance) ... ok
+test_normal_push_receipt_still_works (test_returns.Returns.test_normal_push_receipt_still_works) ... ok
+test_return_requires_settled_amount (test_returns.Returns.test_return_requires_settled_amount) ... ok
+test_untrusted_archive_cannot_change_amount (test_returns.Returns.test_untrusted_archive_cannot_change_amount) ... ok
+test_wrong_amount_even_with_new_digest_cannot_match_commitment (test_returns.Returns.test_wrong_amount_even_with_new_digest_cannot_match_commitment) ... ok
+test_wrong_receiver_cannot_decrypt_or_spend (test_returns.Returns.test_wrong_receiver_cannot_decrypt_or_spend) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.963s
+
+OK

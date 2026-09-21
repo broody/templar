@@ -1,0 +1,722 @@
+[
+  {
+    "unix_ms": 1789984602070,
+    "processes": [
+      {
+        "pid": 947790,
+        "type": "browser",
+        "cpu_seconds": 0.24,
+        "VmRSS_bytes": 196325376,
+        "VmHWM_bytes": 196325376,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 62240768
+      },
+      {
+        "pid": 947892,
+        "type": "renderer",
+        "cpu_seconds": 0.01,
+        "VmRSS_bytes": 74166272,
+        "VmHWM_bytes": 74166272,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 11151360
+      },
+      {
+        "pid": 947894,
+        "type": "renderer",
+        "cpu_seconds": 0.02,
+        "VmRSS_bytes": 103067648,
+        "VmHWM_bytes": 103067648,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 15195136
+      },
+      {
+        "pid": 947883,
+        "type": "renderer",
+        "cpu_seconds": 0.04,
+        "VmRSS_bytes": 120393728,
+        "VmHWM_bytes": 120393728,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 34274304
+      },
+      {
+        "pid": 947830,
+        "type": "GPU",
+        "cpu_seconds": 0.09,
+        "VmRSS_bytes": 136675328,
+        "VmHWM_bytes": 136675328,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 45674496
+      },
+      {
+        "pid": 947833,
+        "type": "network.mojom.NetworkService",
+        "cpu_seconds": 0.03,
+        "VmRSS_bytes": 111804416,
+        "VmHWM_bytes": 111804416,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 24359936
+      },
+      {
+        "pid": 947842,
+        "type": "storage.mojom.StorageService",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 50806784,
+        "VmHWM_bytes": 50806784,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 5273600
+      }
+    ],
+    "rss_complete": true,
+    "pss_complete": true,
+    "summed_rss_bytes": 793239552,
+    "summed_pss_bytes": 198169600
+  },
+  {
+    "unix_ms": 1789984602585,
+    "processes": [
+      {
+        "pid": 947790,
+        "type": "browser",
+        "cpu_seconds": 0.33,
+        "VmRSS_bytes": 208199680,
+        "VmHWM_bytes": 208199680,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 65289216
+      },
+      {
+        "pid": 947914,
+        "type": "renderer",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 74211328,
+        "VmHWM_bytes": 74211328,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 11068416
+      },
+      {
+        "pid": 947892,
+        "type": "renderer",
+        "cpu_seconds": 0.53,
+        "VmRSS_bytes": 212901888,
+        "VmHWM_bytes": 212901888,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 96221184
+      },
+      {
+        "pid": 947883,
+        "type": "renderer",
+        "cpu_seconds": 0.2,
+        "VmRSS_bytes": 146223104,
+        "VmHWM_bytes": 146223104,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 39523328
+      },
+      {
+        "pid": 947830,
+        "type": "GPU",
+        "cpu_seconds": 0.11,
+        "VmRSS_bytes": 146980864,
+        "VmHWM_bytes": 146980864,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 49775616
+      },
+      {
+        "pid": 947833,
+        "type": "network.mojom.NetworkService",
+        "cpu_seconds": 0.06,
+        "VmRSS_bytes": 119713792,
+        "VmHWM_bytes": 119713792,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 25863168
+      },
+      {
+        "pid": 947842,
+        "type": "storage.mojom.StorageService",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 52137984,
+        "VmHWM_bytes": 52137984,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 5957632
+      }
+    ],
+    "rss_complete": true,
+    "pss_complete": true,
+    "summed_rss_bytes": 960368640,
+    "summed_pss_bytes": 293698560
+  },
+  {
+    "unix_ms": 1789984603102,
+    "processes": [
+      {
+        "pid": 947790,
+        "type": "browser",
+        "cpu_seconds": 0.33,
+        "VmRSS_bytes": 208199680,
+        "VmHWM_bytes": 208199680,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 65289216
+      },
+      {
+        "pid": 947914,
+        "type": "renderer",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 74211328,
+        "VmHWM_bytes": 74211328,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 11068416
+      },
+      {
+        "pid": 947892,
+        "type": "renderer",
+        "cpu_seconds": 1.05,
+        "VmRSS_bytes": 213016576,
+        "VmHWM_bytes": 213016576,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 96358400
+      },
+      {
+        "pid": 947883,
+        "type": "renderer",
+        "cpu_seconds": 0.2,
+        "VmRSS_bytes": 146223104,
+        "VmHWM_bytes": 146223104,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 39523328
+      },
+      {
+        "pid": 947830,
+        "type": "GPU",
+        "cpu_seconds": 0.11,
+        "VmRSS_bytes": 146984960,
+        "VmHWM_bytes": 146984960,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 49779712
+      },
+      {
+        "pid": 947833,
+        "type": "network.mojom.NetworkService",
+        "cpu_seconds": 0.06,
+        "VmRSS_bytes": 119713792,
+        "VmHWM_bytes": 119713792,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 25863168
+      },
+      {
+        "pid": 947842,
+        "type": "storage.mojom.StorageService",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 52137984,
+        "VmHWM_bytes": 52137984,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 5957632
+      }
+    ],
+    "rss_complete": true,
+    "pss_complete": true,
+    "summed_rss_bytes": 960487424,
+    "summed_pss_bytes": 293839872
+  },
+  {
+    "unix_ms": 1789984603618,
+    "processes": [
+      {
+        "pid": 947790,
+        "type": "browser",
+        "cpu_seconds": 0.33,
+        "VmRSS_bytes": 208203776,
+        "VmHWM_bytes": 208203776,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 65293312
+      },
+      {
+        "pid": 947914,
+        "type": "renderer",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 74211328,
+        "VmHWM_bytes": 74211328,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 11068416
+      },
+      {
+        "pid": 947892,
+        "type": "renderer",
+        "cpu_seconds": 1.58,
+        "VmRSS_bytes": 213135360,
+        "VmHWM_bytes": 213135360,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 96432128
+      },
+      {
+        "pid": 947883,
+        "type": "renderer",
+        "cpu_seconds": 0.2,
+        "VmRSS_bytes": 146223104,
+        "VmHWM_bytes": 146223104,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 39523328
+      },
+      {
+        "pid": 947830,
+        "type": "GPU",
+        "cpu_seconds": 0.12,
+        "VmRSS_bytes": 147030016,
+        "VmHWM_bytes": 147030016,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 49802240
+      },
+      {
+        "pid": 947833,
+        "type": "network.mojom.NetworkService",
+        "cpu_seconds": 0.06,
+        "VmRSS_bytes": 119713792,
+        "VmHWM_bytes": 119713792,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 25863168
+      },
+      {
+        "pid": 947842,
+        "type": "storage.mojom.StorageService",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 52137984,
+        "VmHWM_bytes": 52137984,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 5957632
+      }
+    ],
+    "rss_complete": true,
+    "pss_complete": true,
+    "summed_rss_bytes": 960655360,
+    "summed_pss_bytes": 293940224
+  },
+  {
+    "unix_ms": 1789984604134,
+    "processes": [
+      {
+        "pid": 947790,
+        "type": "browser",
+        "cpu_seconds": 0.37,
+        "VmRSS_bytes": 209403904,
+        "VmHWM_bytes": 209403904,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 65843200
+      },
+      {
+        "pid": 947914,
+        "type": "renderer",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 74211328,
+        "VmHWM_bytes": 74211328,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 11069440
+      },
+      {
+        "pid": 947892,
+        "type": "renderer",
+        "cpu_seconds": 2.1,
+        "VmRSS_bytes": 213184512,
+        "VmHWM_bytes": 213184512,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 96480256
+      },
+      {
+        "pid": 947883,
+        "type": "renderer",
+        "cpu_seconds": 0.2,
+        "VmRSS_bytes": 146227200,
+        "VmHWM_bytes": 146227200,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 39525376
+      },
+      {
+        "pid": 947830,
+        "type": "GPU",
+        "cpu_seconds": 0.12,
+        "VmRSS_bytes": 147034112,
+        "VmHWM_bytes": 147034112,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 49783808
+      },
+      {
+        "pid": 947833,
+        "type": "network.mojom.NetworkService",
+        "cpu_seconds": 0.06,
+        "VmRSS_bytes": 122048512,
+        "VmHWM_bytes": 122048512,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 26405888
+      },
+      {
+        "pid": 947842,
+        "type": "storage.mojom.StorageService",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 52137984,
+        "VmHWM_bytes": 52137984,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 5954560
+      }
+    ],
+    "rss_complete": true,
+    "pss_complete": true,
+    "summed_rss_bytes": 964247552,
+    "summed_pss_bytes": 295062528
+  },
+  {
+    "unix_ms": 1789984604651,
+    "processes": [
+      {
+        "pid": 947790,
+        "type": "browser",
+        "cpu_seconds": 0.37,
+        "VmRSS_bytes": 209534976,
+        "VmHWM_bytes": 209534976,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 65887232
+      },
+      {
+        "pid": 947914,
+        "type": "renderer",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 74211328,
+        "VmHWM_bytes": 74211328,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 11069440
+      },
+      {
+        "pid": 947892,
+        "type": "renderer",
+        "cpu_seconds": 2.66,
+        "VmRSS_bytes": 214675456,
+        "VmHWM_bytes": 215658496,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 97970176
+      },
+      {
+        "pid": 947883,
+        "type": "renderer",
+        "cpu_seconds": 0.2,
+        "VmRSS_bytes": 146227200,
+        "VmHWM_bytes": 146227200,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 39524352
+      },
+      {
+        "pid": 947830,
+        "type": "GPU",
+        "cpu_seconds": 0.12,
+        "VmRSS_bytes": 147034112,
+        "VmHWM_bytes": 147034112,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 49783808
+      },
+      {
+        "pid": 947833,
+        "type": "network.mojom.NetworkService",
+        "cpu_seconds": 0.07,
+        "VmRSS_bytes": 122384384,
+        "VmHWM_bytes": 122384384,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 26511360
+      },
+      {
+        "pid": 947842,
+        "type": "storage.mojom.StorageService",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 52137984,
+        "VmHWM_bytes": 52137984,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 5954560
+      }
+    ],
+    "rss_complete": true,
+    "pss_complete": true,
+    "summed_rss_bytes": 966205440,
+    "summed_pss_bytes": 296700928
+  },
+  {
+    "unix_ms": 1789984605165,
+    "processes": [
+      {
+        "pid": 947790,
+        "type": "browser",
+        "cpu_seconds": 0.37,
+        "VmRSS_bytes": 209862656,
+        "VmHWM_bytes": 209862656,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 65983488
+      },
+      {
+        "pid": 947914,
+        "type": "renderer",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 74211328,
+        "VmHWM_bytes": 74211328,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 11069440
+      },
+      {
+        "pid": 947892,
+        "type": "renderer",
+        "cpu_seconds": 3.18,
+        "VmRSS_bytes": 214728704,
+        "VmHWM_bytes": 215658496,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 98023424
+      },
+      {
+        "pid": 947883,
+        "type": "renderer",
+        "cpu_seconds": 0.2,
+        "VmRSS_bytes": 146227200,
+        "VmHWM_bytes": 146227200,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 39524352
+      },
+      {
+        "pid": 947830,
+        "type": "GPU",
+        "cpu_seconds": 0.12,
+        "VmRSS_bytes": 147034112,
+        "VmHWM_bytes": 147034112,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 49783808
+      },
+      {
+        "pid": 947833,
+        "type": "network.mojom.NetworkService",
+        "cpu_seconds": 0.07,
+        "VmRSS_bytes": 122515456,
+        "VmHWM_bytes": 122515456,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 26559488
+      },
+      {
+        "pid": 947842,
+        "type": "storage.mojom.StorageService",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 52137984,
+        "VmHWM_bytes": 52137984,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 5954560
+      }
+    ],
+    "rss_complete": true,
+    "pss_complete": true,
+    "summed_rss_bytes": 966717440,
+    "summed_pss_bytes": 296898560
+  },
+  {
+    "unix_ms": 1789984605683,
+    "processes": [
+      {
+        "pid": 947790,
+        "type": "browser",
+        "cpu_seconds": 0.37,
+        "VmRSS_bytes": 209862656,
+        "VmHWM_bytes": 209862656,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 65983488
+      },
+      {
+        "pid": 947914,
+        "type": "renderer",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 74211328,
+        "VmHWM_bytes": 74211328,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 11069440
+      },
+      {
+        "pid": 947892,
+        "type": "renderer",
+        "cpu_seconds": 3.7,
+        "VmRSS_bytes": 214757376,
+        "VmHWM_bytes": 215658496,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 98052096
+      },
+      {
+        "pid": 947883,
+        "type": "renderer",
+        "cpu_seconds": 0.2,
+        "VmRSS_bytes": 146227200,
+        "VmHWM_bytes": 146227200,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 39524352
+      },
+      {
+        "pid": 947830,
+        "type": "GPU",
+        "cpu_seconds": 0.14,
+        "VmRSS_bytes": 147034112,
+        "VmHWM_bytes": 147034112,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 49783808
+      },
+      {
+        "pid": 947833,
+        "type": "network.mojom.NetworkService",
+        "cpu_seconds": 0.07,
+        "VmRSS_bytes": 122515456,
+        "VmHWM_bytes": 122515456,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 26559488
+      },
+      {
+        "pid": 947842,
+        "type": "storage.mojom.StorageService",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 52137984,
+        "VmHWM_bytes": 52137984,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 5954560
+      }
+    ],
+    "rss_complete": true,
+    "pss_complete": true,
+    "summed_rss_bytes": 966746112,
+    "summed_pss_bytes": 296927232
+  },
+  {
+    "unix_ms": 1789984606194,
+    "processes": [
+      {
+        "pid": 947790,
+        "type": "browser",
+        "cpu_seconds": 0.38,
+        "VmRSS_bytes": 209862656,
+        "VmHWM_bytes": 209862656,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 65983488
+      },
+      {
+        "pid": 947914,
+        "type": "renderer",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 74211328,
+        "VmHWM_bytes": 74211328,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 11069440
+      },
+      {
+        "pid": 947892,
+        "type": "renderer",
+        "cpu_seconds": 4.22,
+        "VmRSS_bytes": 214790144,
+        "VmHWM_bytes": 215658496,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 98084864
+      },
+      {
+        "pid": 947883,
+        "type": "renderer",
+        "cpu_seconds": 0.2,
+        "VmRSS_bytes": 146227200,
+        "VmHWM_bytes": 146227200,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 39524352
+      },
+      {
+        "pid": 947830,
+        "type": "GPU",
+        "cpu_seconds": 0.14,
+        "VmRSS_bytes": 147034112,
+        "VmHWM_bytes": 147034112,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 49783808
+      },
+      {
+        "pid": 947833,
+        "type": "network.mojom.NetworkService",
+        "cpu_seconds": 0.07,
+        "VmRSS_bytes": 122515456,
+        "VmHWM_bytes": 122515456,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 26559488
+      },
+      {
+        "pid": 947842,
+        "type": "storage.mojom.StorageService",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 52137984,
+        "VmHWM_bytes": 52137984,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 5954560
+      }
+    ],
+    "rss_complete": true,
+    "pss_complete": true,
+    "summed_rss_bytes": 966778880,
+    "summed_pss_bytes": 296960000
+  },
+  {
+    "unix_ms": 1789984606728,
+    "processes": [
+      {
+        "pid": 947790,
+        "type": "browser",
+        "cpu_seconds": 0.45,
+        "VmRSS_bytes": 213217280,
+        "VmHWM_bytes": 219959296,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 68504576
+      },
+      {
+        "pid": 947914,
+        "type": "renderer",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 74211328,
+        "VmHWM_bytes": 74211328,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 11068416
+      },
+      {
+        "pid": 947892,
+        "type": "renderer",
+        "cpu_seconds": 4.61,
+        "VmRSS_bytes": 161095680,
+        "VmHWM_bytes": 220897280,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 37600256
+      },
+      {
+        "pid": 947883,
+        "type": "renderer",
+        "cpu_seconds": 0.2,
+        "VmRSS_bytes": 146227200,
+        "VmHWM_bytes": 146227200,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 39514112
+      },
+      {
+        "pid": 947830,
+        "type": "GPU",
+        "cpu_seconds": 0.17,
+        "VmRSS_bytes": 161939456,
+        "VmHWM_bytes": 177975296,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 53497856
+      },
+      {
+        "pid": 947833,
+        "type": "network.mojom.NetworkService",
+        "cpu_seconds": 0.08,
+        "VmRSS_bytes": 122855424,
+        "VmHWM_bytes": 122855424,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 26781696
+      },
+      {
+        "pid": 947842,
+        "type": "storage.mojom.StorageService",
+        "cpu_seconds": 0,
+        "VmRSS_bytes": 52137984,
+        "VmHWM_bytes": 52137984,
+        "VmSwap_bytes": 0,
+        "pss_bytes": 5952512
+      }
+    ],
+    "rss_complete": true,
+    "pss_complete": true,
+    "summed_rss_bytes": 931684352,
+    "summed_pss_bytes": 242919424
+  }
+]

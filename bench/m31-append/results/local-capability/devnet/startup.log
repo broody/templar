@@ -1,0 +1,34 @@
+Running as unit: templar-m31-capability-devnet-1789988643129080666.service; invocation ID: efc0e5f794cb468e9c303b9cc07511b7
+Chain ID: SN_SEPOLIA (0x534e5f5345504f4c4941)
+
+Predeployed FeeToken
+ETH Address: 0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7
+Class Hash: 0x9524A94B41C4440A16FD96D7C1EF6AD6F44C1C013E96662734502CD4EE9B1F
+STRK Address: 0x4718F5A0FC34CC1AF16A1CDEE98FFB20C31F5CD61D6AB07201858F4287C938D
+Class Hash: 0x76791EF97C042F81FBF352AD95F39A22554EE8D7927B2CE3C681F3418B5206A
+
+Predeployed UDC
+Address: 0x2CEED65A4BD731034C01113685C831B01C15D7D432F71AFB1CF1634B53A2125
+Class Hash: 0x1B2DF6D8861670D4A8CA4670433B2418D78169C2947F46DC614E69F333745C8
+
+Predeployed accounts using class Custom with hash: 0x05b4b537eaa2399e3aa99c4e2e0208ebd6c71bc1467938cd52c798c601e43564
+
+| Account address |  0x034ba56f92265f0868c57d3fe72ecab144fc96f97954bbbc4252cef8e8a979ba
+| Private key     |  0x00000000000000000000000000000000b137668388dbe9acdfa3bc734cc2c469
+| Public key      |  0x05a5e37c60e77a0318643b111f88413a76af6233c891a0cfb2804106372006d4
+
+Initial balance of each account: 1000000000000000000000 WEI and FRI
+Seed to replicate this account sequence: 42
+
+[2m2026-09-21T11:04:05.180519Z[0m [32m INFO[0m [2mstarknet_devnet[0m[2m:[0m Starknet Devnet listening on 127.0.0.1:50677
+[2m2026-09-21T11:04:05.324241Z[0m [32m INFO[0m [2mrpc[0m[2m:[0m received method in on_request starknet_specVersion
+[2m2026-09-21T11:04:05.475524Z[0m [32m INFO[0m [2mrpc[0m[2m:[0m received method in on_request starknet_chainId
+[2m2026-09-21T11:04:05.604660Z[0m [32m INFO[0m [2mrpc[0m[2m:[0m received method in on_request starknet_blockNumber
+[2m2026-09-21T11:04:05.735611Z[0m [32m INFO[0m [2mrpc[0m[2m:[0m received method in on_request starknet_getBlockWithTxHashes
+[2m2026-09-21T11:04:05.867001Z[0m [32m INFO[0m [2mrpc[0m[2m:[0m received method in on_request starknet_getStorageProof
+Finished with result: success
+Main processes terminated with: code=killed/status=TERM
+Service runtime: 2.773s
+CPU time consumed: 2.752s
+Memory peak: 318.8M
+Memory swap peak: 0B

@@ -1,0 +1,15 @@
+{
+  "status": "failed",
+  "memory_cap_gib": 16,
+  "cores": 4,
+  "l2_gas_max_amount": 1000000000,
+  "local_node_attachment": false,
+  "native_verification_passed": false,
+  "error": "Remote end closed connection without response",
+  "error_type": "RemoteDisconnected",
+  "peak_rss_gib": 15.77170181274414,
+  "cgroup_peak_bytes": 17179869184,
+  "swap_peak_bytes": 0,
+  "resource_samples": 204,
+  "os_seconds": 4.481
+}

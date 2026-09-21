@@ -1,0 +1,101 @@
+[
+  {
+    "elapsed_seconds": 0.00026172200159635395,
+    "memory.current": "2454061056",
+    "memory.peak": "2723426304",
+    "memory.swap.current": "0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "cpu.stat": "usage_usec 3473404\nuser_usec 2385530\nsystem_usec 1087873\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 15\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "VmHWM_KiB": 2692248,
+    "VmRSS_KiB": 2432692,
+    "VmSwap_KiB": 0
+  },
+  {
+    "elapsed_seconds": 0.10595009700045921,
+    "memory.current": "2462904320",
+    "memory.peak": "2723426304",
+    "memory.swap.current": "0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "cpu.stat": "usage_usec 3571931\nuser_usec 2480785\nsystem_usec 1091146\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 16\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "VmHWM_KiB": 2692248,
+    "VmRSS_KiB": 2443828,
+    "VmSwap_KiB": 0
+  },
+  {
+    "elapsed_seconds": 0.20656633500766475,
+    "memory.current": "2462904320",
+    "memory.peak": "2723426304",
+    "memory.swap.current": "0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "cpu.stat": "usage_usec 3672936\nuser_usec 2581737\nsystem_usec 1091198\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 17\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "VmHWM_KiB": 2692248,
+    "VmRSS_KiB": 2443828,
+    "VmSwap_KiB": 0
+  },
+  {
+    "elapsed_seconds": 0.307381892009289,
+    "memory.current": "2464997376",
+    "memory.peak": "2723426304",
+    "memory.swap.current": "0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "cpu.stat": "usage_usec 3772748\nuser_usec 2680269\nsystem_usec 1092479\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 18\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "VmHWM_KiB": 2692248,
+    "VmRSS_KiB": 2448080,
+    "VmSwap_KiB": 0
+  },
+  {
+    "elapsed_seconds": 0.40804898100032005,
+    "memory.current": "2465492992",
+    "memory.peak": "2723426304",
+    "memory.swap.current": "0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "cpu.stat": "usage_usec 3870316\nuser_usec 2777638\nsystem_usec 1092677\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 19\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "VmHWM_KiB": 2692248,
+    "VmRSS_KiB": 2448088,
+    "VmSwap_KiB": 0
+  },
+  {
+    "elapsed_seconds": 0.5088239420001628,
+    "memory.current": "2497970176",
+    "memory.peak": "2723426304",
+    "memory.swap.current": "0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "cpu.stat": "usage_usec 3962054\nuser_usec 2853717\nsystem_usec 1108336\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 20\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "VmHWM_KiB": 2692248,
+    "VmRSS_KiB": 2481424,
+    "VmSwap_KiB": 0
+  },
+  {
+    "elapsed_seconds": 0.6095374720025575,
+    "memory.current": "2519465984",
+    "memory.peak": "2723426304",
+    "memory.swap.current": "0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "cpu.stat": "usage_usec 4062809\nuser_usec 2943514\nsystem_usec 1119294\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 21\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "VmHWM_KiB": 2692248,
+    "VmRSS_KiB": 2503180,
+    "VmSwap_KiB": 0
+  },
+  {
+    "elapsed_seconds": 0.710085226004594,
+    "memory.current": "2530213888",
+    "memory.peak": "2723426304",
+    "memory.swap.current": "0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "cpu.stat": "usage_usec 4161926\nuser_usec 3035840\nsystem_usec 1126086\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 22\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "VmHWM_KiB": 2692248,
+    "VmRSS_KiB": 2514332,
+    "VmSwap_KiB": 0
+  },
+  {
+    "elapsed_seconds": 0.8107590720028384,
+    "memory.current": "2553475072",
+    "memory.peak": "2723426304",
+    "memory.swap.current": "0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "cpu.stat": "usage_usec 4262912\nuser_usec 3129796\nsystem_usec 1133115\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 23\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "VmHWM_KiB": 2692248,
+    "VmRSS_KiB": 2536828,
+    "VmSwap_KiB": 0
+  }
+]

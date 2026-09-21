@@ -1,0 +1,26 @@
+{
+  "case": "upstream-ekubo-swap",
+  "startup_seconds": 2.00277207698673,
+  "request_seconds": 19.11047640700417,
+  "proving_seconds": 12.217,
+  "virtual_os_seconds": 6.889,
+  "proof_bytes": 237926,
+  "proof_sha256": "568fcdf4cfd65022234ade05daf8360ba40e5fcc49fb3bf7d59fff6579ef6a71",
+  "peak_rss_gib": 13.813159942626953,
+  "swap_peak_bytes": 0,
+  "local_verification_passed": true,
+  "public_binding_matches": true,
+  "public_values": [
+    "0x54454d504c41525f52455455524e5f504f4331",
+    "0x534e5f5345504f4c4941",
+    "0x36636caea4e6d63566de391af83a931365c3a3a2fd48c81c4a456bee10d49c0",
+    "0x2b27d4b967a12d047da296ffb8697b668fb9bfffe5b1a59c482650f1d1f558e",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x69f9b3ff7fcf1672cc21e4755b90aacdf457baa169cd84dd8386a26e90b7254"
+  ],
+  "base_block": 15390063,
+  "memory_cap_gib": 16,
+  "cores": 4
+}

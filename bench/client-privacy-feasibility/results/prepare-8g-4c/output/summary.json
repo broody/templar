@@ -1,0 +1,53 @@
+{
+  "blinding_policy": "unchanged inner witness commitment seed and outer query count",
+  "bounded_cairo_columns": 16,
+  "bounded_circuit_columns": 16,
+  "cairo_interaction_pow_bits": 24,
+  "cairo_pcs_config": {
+    "fri_config": {
+      "fold_step": 4,
+      "log_blowup_factor": 3,
+      "log_last_layer_degree_bound": 0,
+      "n_queries": 23
+    },
+    "lifting_log_size": 23,
+    "pow_bits": 27
+  },
+  "channel": "Blake2sM31",
+  "checkpoint": "local typed CairoProof with auxiliary data and matching output preimage; no config authority",
+  "checkpoint_bytes": 998918,
+  "circuit_interaction_pow_bits": 20,
+  "circuit_output_addresses": [
+    3,
+    4,
+    2
+  ],
+  "circuit_pcs_config": {
+    "fri_config": {
+      "fold_step": 4,
+      "log_blowup_factor": 2,
+      "log_last_layer_degree_bound": 0,
+      "n_queries": 35
+    },
+    "lifting_log_size": 23,
+    "pow_bits": 26
+  },
+  "elapsed_through_artifact_write_seconds": 11.41685055,
+  "input_bytes": 669569,
+  "load_seconds": 0.025384178,
+  "mode": "prepare",
+  "prepare_seconds": 11.389755668,
+  "privacy_qualified_by_measurement": false,
+  "scope": "unchanged fixed Cairo wrapper; synthetic local fixture only",
+  "trusted_circuit_preprocessed_root": [
+    1226144497,
+    1215753816,
+    1261723493,
+    447821635,
+    511752374,
+    214804093,
+    1020993193,
+    1889786400
+  ],
+  "write_seconds": 0.00122575
+}

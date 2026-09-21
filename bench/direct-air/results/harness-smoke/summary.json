@@ -1,0 +1,17 @@
+{
+  "scope": "Harness check only; no proof generated",
+  "command": [
+    "/usr/bin/true"
+  ],
+  "binary_sha256": "7e419b0d95e2ae12993878ad13ad4b911ce5464c15cde7a6adce2fca7ee22706",
+  "cap_gib": 1,
+  "threads": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "elapsed_seconds": 0.051854189005098306,
+  "sampled_peak_rss_gib": 0.0,
+  "sampled_peak_cgroup_gib": 0.0,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0
+}

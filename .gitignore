@@ -1,0 +1,14 @@
+# Build outputs (Scarb/Cairo/Noir/Rust/JS) — all projects keep sources and committed evidence only
+target/
+node_modules/
+dist/
+# NOTE: wasm pkg/ is intentionally NOT ignored — wasm-membership and m31-tree
+# results are verified byte-identical against these preserved artifacts.
+.cache/
+.vocs/
+.waku/
+*.tsbuildinfo
+
+# Local environment / secrets
+.env
+.env.*

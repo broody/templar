@@ -1,0 +1,26 @@
+   Executing push_receive
+Program output:
+8
+28675836988560422058761249697597660021554
+393402133025997798000961
+4660
+5687184766561594091964656737205450539192290076721690826420218863530901899
+0
+0
+0
+-186490869844411106166530370312695438116913429979968170113673225893792801325
+Resources:
+	steps: 7,778
+	max memory address: 10,844
+	memory holes: 148
+	builtins:
+		range_check_builtin: 428
+		poseidon_builtin: 173
+		output_builtin: 9
+		pedersen_builtin: 1
+	memory segments:
+		execution: 5,969
+		poseidon: 1,038
+		range_check: 428
+		output: 9
+		pedersen: 3

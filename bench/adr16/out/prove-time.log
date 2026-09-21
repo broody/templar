@@ -1,0 +1,27 @@
+Scheme is: ultra_honk, num threads: 32 (mem: 7.14 MiB)
+CircuitProve: Proving key computed in 191 ms (mem: 169.75 MiB)
+Public inputs saved to "out/public_inputs" (mem: 203.35 MiB)
+Proof saved to "out/proof" (mem: 203.35 MiB)
+	Command being timed: "bb prove -s ultra_honk --oracle_hash keccak -b target/felt252_poseidon.json -w target/witness.gz -k target/garaga3/vk -o out --verify"
+	User time (seconds): 8.33
+	System time (seconds): 0.99
+	Percent of CPU this job got: 1398%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.66
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 208228
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 60
+	Minor (reclaiming a frame) page faults: 60263
+	Voluntary context switches: 45193
+	Involuntary context switches: 374
+	Swaps: 0
+	File system inputs: 24200
+	File system outputs: 40
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

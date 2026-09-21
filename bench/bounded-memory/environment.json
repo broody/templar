@@ -1,0 +1,18 @@
+{
+  "sequencer_original": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/upstream/sequencer-e6b6fd2e9932909107833579e5b6efd6c75fa0af",
+  "proving_original": "/home/broody/.cargo/git/checkouts/proving-utils-fe3a66dc6b32d5d3/3035dd0",
+  "sequencer_revision": "e6b6fd2e9932909107833579e5b6efd6c75fa0af",
+  "proving_revision": "3035dd00421daa541894297bd754db6e2787807b",
+  "stock_prover": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/rust-target/release/starknet_transaction_prover",
+  "verifier": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/local-verifier",
+  "rustup_home": "/tmp/templar-stwo-privacy-dtgn6e8l/rustup",
+  "build_path": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-test/.cairo-venv/bin:/usr/bin:/home/broody/.cargo/bin:/bin",
+  "work": "/home/broody/development/templar/target/bounded-memory",
+  "stwo_original": "/home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3",
+  "stwo_revision": "489a0f3ee44a59e03944ad9aa4f3e5a91a3d3f08",
+  "baseline_prover": "/home/broody/development/templar/target/bounded-memory/bin/baseline-prover",
+  "stwo_cairo_original": "/home/broody/.cargo/git/checkouts/stwo-cairo-ef02e8e85a2fe399/9b6be27",
+  "previous_work": "/home/broody/development/templar/target/cairo-memory",
+  "previous_benchmark": "/home/broody/development/templar/bench/cairo-memory",
+  "stwo_circuits_original": "/home/broody/.cargo/git/checkouts/stwo-circuits-acca305c7c7af9d7/5ef951a"
+}

@@ -1,0 +1,14 @@
+{
+  "file": "target/wasm-membership/pkg/templar_wasm_membership_bg.wasm",
+  "memories": [
+    {
+      "flags": 1,
+      "shared": false,
+      "memory64": false,
+      "initial_pages": 130,
+      "maximum_pages": 65536,
+      "initial_bytes": 8519680,
+      "maximum_bytes": 4294967296
+    }
+  ]
+}

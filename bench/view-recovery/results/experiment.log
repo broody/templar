@@ -1,0 +1,133 @@
+{
+  "scope": "local state model + Cairo execution; not a deployed pool",
+  "python": "3.12.3",
+  "pynacl": "1.5.0",
+  "payments_received_offline": 2,
+  "recovered_amount": 850,
+  "final_balances": {
+    "Alice": 400,
+    "Bob": 310,
+    "Carol": 250,
+    "Dave": 500
+  },
+  "withdrawn": 40,
+  "plaintext_bytes": 256,
+  "ciphertext_bytes_per_note": 304,
+  "recovery": {
+    "incoming": {
+      "as_of_block": 101,
+      "block_hash": "public-fixture-block-101",
+      "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+      "history_complete": true,
+      "missing_payload_indices": [],
+      "received_indices": [
+        2,
+        4,
+        7
+      ],
+      "received_totals": {
+        "0x5678": 1160
+      },
+      "spent_indices": null,
+      "known_unspent": null,
+      "balances": null,
+      "balance_scope": "recoverable protocol-published notes for this receiving address"
+    },
+    "full_view": {
+      "as_of_block": 101,
+      "block_hash": "public-fixture-block-101",
+      "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+      "history_complete": true,
+      "missing_payload_indices": [],
+      "received_indices": [
+        2,
+        4,
+        7
+      ],
+      "received_totals": {
+        "0x5678": 1160
+      },
+      "spent_indices": [
+        2,
+        4
+      ],
+      "known_unspent": {
+        "0x5678": 310
+      },
+      "balances": {
+        "0x5678": 310
+      },
+      "balance_scope": "recoverable protocol-published notes for this receiving address"
+    },
+    "seed_restore": {
+      "as_of_block": 101,
+      "block_hash": "public-fixture-block-101",
+      "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+      "history_complete": true,
+      "missing_payload_indices": [],
+      "received_indices": [
+        2,
+        4,
+        7
+      ],
+      "received_totals": {
+        "0x5678": 1160
+      },
+      "spent_indices": [
+        2,
+        4
+      ],
+      "known_unspent": {
+        "0x5678": 310
+      },
+      "balances": {
+        "0x5678": 310
+      },
+      "balance_scope": "recoverable protocol-published notes for this receiving address"
+    },
+    "after_restored_owner_spend": {
+      "as_of_block": 102,
+      "block_hash": "public-fixture-block-102",
+      "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+      "history_complete": true,
+      "missing_payload_indices": [],
+      "received_indices": [
+        2,
+        4,
+        7
+      ],
+      "received_totals": {
+        "0x5678": 1160
+      },
+      "spent_indices": [
+        2,
+        4,
+        7
+      ],
+      "known_unspent": {
+        "0x5678": 0
+      },
+      "balances": {
+        "0x5678": 0
+      },
+      "balance_scope": "recoverable protocol-published notes for this receiving address"
+    },
+    "total_withdrawn_after_restored_spend": 350
+  },
+  "discovery": {
+    "events": 10000,
+    "matching": 2,
+    "seconds": [
+      1.0354261210013647,
+      1.032806516996061,
+      1.0336429890012369
+    ],
+    "median_seconds": 1.0336429890012369,
+    "ciphertext_download_bytes": 3040000,
+    "includes_network": false,
+    "consumer_hardware": false
+  },
+  "replay_rejected": true,
+  "swapped_delivery_rejected_before_state_change": true,
+  "keys_are_public_test_fixtures": true
+}

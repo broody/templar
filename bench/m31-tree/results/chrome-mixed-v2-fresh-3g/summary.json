@@ -1,0 +1,31 @@
+{
+  "scope": "headless Chrome WASM proof v2 (1 request(s), one worker); browser+harness under 3 GiB cgroup, no swap, 4 CPU budget; not native/browser timing parity; no consumer-device qualification",
+  "command": [
+    "/usr/bin/node",
+    "bench/m31-tree/run-browser.mjs",
+    "bench/m31-tree/results/chrome-mixed-v2-fresh-3g/browser",
+    "1",
+    "target/m31-tree/pkg",
+    "bench/m31-tree/client/fixtures/mixed.json",
+    "bench/m31-tree/results/native-mixed-v2-3g-r1/proof/proof.bin"
+  ],
+  "binary_sha256": "243fd8938011479f41b3de101842150fa990f33fbbb3f7aabd330857f2d79e1d",
+  "cap_gib": 3,
+  "cpu_budget_cores": 4,
+  "prover_workers": 1,
+  "cpu_affinity": "0 1 2 3",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 81.40589041900239,
+  "sampled_command_peak_rss_gib": 0.1350555419921875,
+  "sampled_peak_cgroup_gib": 2.149555206298828,
+  "effective_peak_cgroup_gib": 2.149555206298828,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 3072,
+  "cgroup_sample_count": 3070,
+  "time_largest_process_peak_rss_gib": 0.20384979248046875
+}

@@ -1,0 +1,25 @@
+{
+  "source_hashes": {
+    "cairo/src/lib.cairo": "1fd09165d9d84aff7535c5235f928096772ab0e9c101de181ca6af216c3fc84b",
+    "cairo/src/pool.cairo": "5a40f66b68d7e06b8b2ee3478925c6ed6c54dc643a1978217e6cf13cac4802d2",
+    "cairo/src/proof_adapter.cairo": "c60ade37a138681c78f093a3ee25d9fccfc9133e1ffa9fcbc4efa21b8ae776e5",
+    "cairo/src/spend.cairo": "961f4dfa12566c4e36a40a4b7921e31b611af9e95f84e902d87d86bd03129126",
+    "cairo/src/statement.cairo": "3dbe922004b0d76fb5212b9312bab96bfa46f5294985b929e3428018227935c4",
+    "cairo/src/statement_account.cairo": "ddbc22452636381e7d6db0983e7ce06aa76695250e7b7e358ba0712fdecfeea4",
+    "cairo/src/swap.cairo": "5bd26403b15be98f86f55868c83178852ab6a333ab1889cdec1d435153ba71eb",
+    "cairo/src/test_token.cairo": "d80a124388d1149e89fa23c1e0158614d46b41a06236eeacb6eee2bf95c93ea4",
+    "cairo/src/tests/golden.cairo": "896ce44b689e259137359c76853b753c4d5a7ce9962e2d03a5e18d211ac14b07",
+    "cairo/src/tests/mock_verifier.cairo": "63841c3b5fe1dd1fda8ec01a8dab0844885ab2df55f3a402c3efd11970bf314b",
+    "cairo/src/tests/test_swap.cairo": "57f4f6e6728350cf1478cb311890d00e465bdc985972c033098f0ca2ed2c56c8",
+    "cairo/src/tests.cairo": "331bf6e25882ef2d3bd466af50f8043eb5321cbd71c5b04c0795c77ca854dae9",
+    "cairo/src/tree.cairo": "995e89a06f6a73bc1831fcea7586ef49128e5fa6649536ea557f1b4de4080dcf"
+  },
+  "classes": {
+    "Pool": "0x0541f2b635fcdd8f6bf738cc8681c6eb2e465332509f2b5fb22ae9e23c1bf582",
+    "StatementAccount": "0x06a0970da35884bdcffc879d6663108872fa16f559f588e62177f5c5e2e404ab",
+    "NativeProofVerifier": "0x06449e41b67abca7d35b06f1fba71d019068a105fe2b0a1281213d70ce197382",
+    "E2EToken": "0x02b858677d25bfd41b805fa3640abf330141a6a7152b8668b038e1b84b5d29da",
+    "MockSwapAdapter": "0x01efd55f11bb88945aa918b6b2cb61c9b116a140e5d83127797e7d582ce9d4ab",
+    "EkuboAdapter": "0x057ae1339a1ccb1396abf78fbd45acf04a65a7d18dd7ee95a08fa20a18b61a18"
+  }
+}

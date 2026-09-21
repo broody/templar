@@ -1,0 +1,11 @@
+
+running 5 tests
+test m31::tests::independent_plonky3_permutation_and_padding_vectors ... ok
+test m31::tests::quadratic_constraints_and_witness ... ok
+test statement::tests::both_workloads_bind_all_public_calls ... ok
+test statement::tests::canonical_encodings_and_oracle_tree_vectors ... ok
+test wire_tests::fixed_encoding_requires_complete_envelope ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+exit=0

@@ -1,0 +1,60 @@
+Running as unit: templar-push-ba957a7afd.service; invocation ID: 67423ed629e949b8b8c38497b02edffb
+
+running 1 test
+test tests::slow_tests::test_privacy_recursive_prove_and_verify ... BENCH_STAGE precompute_start
+[2m2026-09-20T11:50:23.165160Z[0m [32m INFO[0m [1mprepare_privacy_recursiveprover_precomputes[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prepare the twiddles
+[2m2026-09-20T11:50:23.183283Z[0m [32m INFO[0m [1mprepare_privacy_recursiveprover_precomputes[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prepare the cairo prover preprocessed trace and tree
+BENCH_MEMORY precompute_done VmHWM:	 1281460 kB VmRSS:	 1216056 kB
+BENCH_STAGE precompute_done seconds=0.826090
+[2m2026-09-20T11:50:23.495712Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Run privacy bootloader and get the prover input and output preimage
+[2m2026-09-20T11:50:23.499246Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Running the program
+[2m2026-09-20T11:50:23.499278Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::cairo_run[0m[2m:[0m Initializing Cairo runner. [3mlayout[0m[2m=[0mstwo_no_ecop [3mproof_mode[0m[2m=[0mtrue [3mtrace_enabled[0m[2m=[0mtrue [3mdisable_trace_padding[0m[2m=[0mtrue [3mallow_missing_builtins[0m[2m=[0mtrue
+[2m2026-09-20T11:50:23.499289Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Initializing builtins.
+[2m2026-09-20T11:50:23.499300Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Initializing segments.
+[2m2026-09-20T11:50:23.499303Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Initializing main entrypoint.
+[2m2026-09-20T11:50:23.499346Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Initializing zero segments.
+[2m2026-09-20T11:50:23.499349Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Initializing VM.
+[2m2026-09-20T11:50:23.499351Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::cairo_run[0m[2m:[0m Running until PC.
+
+thread 'tests::slow_tests::test_privacy_recursive_prove_and_verify' (316005) panicked at crates/privacy_prove/src/tests.rs:68:70:
+called `Result::unwrap()` on an `Err` value: VmException(VmException { pc: Relocatable { segment_index: 0, offset: 622 }, inst_location: None, inner_exc: Hint((0, CustomHint("Error while building relocation table: Expected relocatable to point to the start of a segment: 1:2"))), error_attr_value: None, traceback: Some("Cairo traceback (most recent call last):\nUnknown location (pc=0:2)\nUnknown location (pc=0:2541)\nUnknown location (pc=0:734)\nUnknown location (pc=0:789)\n") })
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    tests::slow_tests::test_privacy_recursive_prove_and_verify
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.92s
+
+Command exited with non-zero status 101
+	Command being timed: "/tmp/templar-stwo-privacy-dtgn6e8l/source/target/release/deps/privacy_prove-0f4017300f924673 tests::slow_tests::test_privacy_recursive_prove_and_verify --exact --nocapture --test-threads=1"
+	User time (seconds): 1.12
+	System time (seconds): 0.64
+	Percent of CPU this job got: 189%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.93
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1281460
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 450383
+	Voluntary context switches: 168
+	Involuntary context switches: 137
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 101
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=101
+Service runtime: 933ms
+CPU time consumed: 1.769s
+Memory peak: 512.0K
+Memory swap peak: 0B

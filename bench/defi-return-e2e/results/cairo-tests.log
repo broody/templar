@@ -1,0 +1,74 @@
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.11s
+   Compiling test(pool_unittest) pool v0.1.0 (/home/broody/development/templar/bench/defi-return-e2e/cairo/Scarb.toml)
+warn[E2100]: Unused import: `pool::tree::StorageMapReadAccess`
+ --> /home/broody/development/templar/bench/defi-return-e2e/cairo/src/tree.cairo:17:5
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+    ^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StorageMapWriteAccess`
+ --> /home/broody/development/templar/bench/defi-return-e2e/cairo/src/tree.cairo:17:27
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/defi-return-e2e/cairo/src/tree.cairo:17:50
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/defi-return-e2e/cairo/src/tree.cairo:18:5
+    StoragePointerWriteAccess,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::test_token::E2EToken::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/defi-return-e2e/cairo/src/test_token.cairo:9:59
+        Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::test_token::E2EToken::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/defi-return-e2e/cairo/src/test_token.cairo:10:9
+        StoragePointerWriteAccess,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"corelib-internal-use"` with no `#[feature("corelib-internal-use")]` attribute. Note: "Use `starknet` directly"
+ --> /home/broody/development/templar/bench/defi-return-e2e/cairo/src/test_token.cairo:6:15
+    use core::starknet::{get_caller_address, ContractAddress};
+              ^^^^^^^^
+
+warn[E2100]: Unused import: `pool::swap::MockSwapAdapter::get_contract_address`
+ --> /home/broody/development/templar/bench/defi-return-e2e/cairo/src/swap.cairo:89:57
+    use starknet::{ContractAddress, get_caller_address, get_contract_address, SyscallResultTrait};
+                                                        ^^^^^^^^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"deprecated-starknet-consts"` with no `#[feature("deprecated-starknet-consts")]` attribute. Note: "Use `TryInto::try_into` in const context instead."
+ --> /home/broody/development/templar/bench/defi-return-e2e/cairo/src/tests/test_swap.cairo:2:33
+use starknet::{ContractAddress, contract_address_const, get_tx_info, SyscallResultTrait};
+                                ^^^^^^^^^^^^^^^^^^^^^^
+
+    Finished `dev` profile target(s) in 2 seconds
+
+
+Collected 16 test(s) from pool package
+Running 16 test(s) from src/
+[PASS] pool::tests::golden::python_cairo_agree_on_owner_statement_and_swap_intent (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~1050538)
+[PASS] pool::tests::golden::tampered_intent_rejected_by_owner_statement (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~716256)
+[PASS] pool::tests::test_swap::adapter_cannot_be_called_directly (l1_gas: ~0, l1_data_gas: ~8544, l2_gas: ~46095202)
+[PASS] pool::tests::test_swap::changed_output_token_rejected (l1_gas: ~0, l1_data_gas: ~8544, l2_gas: ~48114508)
+[PASS] pool::tests::test_swap::changed_minimum_rejected (l1_gas: ~0, l1_data_gas: ~8544, l2_gas: ~48114508)
+[PASS] pool::tests::test_swap::invalid_withdrawal_budget_rejected (l1_gas: ~0, l1_data_gas: ~8544, l2_gas: ~48274414)
+[PASS] pool::tests::test_swap::standalone_withdrawal_rejected (l1_gas: ~0, l1_data_gas: ~8544, l2_gas: ~46570973)
+[PASS] pool::tests::test_swap::changed_ciphertext_rejected (l1_gas: ~0, l1_data_gas: ~8544, l2_gas: ~48117518)
+[PASS] pool::tests::test_swap::slippage_reverts_input_transfer_and_nullifier (l1_gas: ~0, l1_data_gas: ~8544, l2_gas: ~50277059)
+[PASS] pool::tests::test_swap::expired_swap_rejected (l1_gas: ~0, l1_data_gas: ~8544, l2_gas: ~48860752)
+[PASS] pool::tests::test_swap::reentrant_callback_rolls_back (l1_gas: ~0, l1_data_gas: ~8640, l2_gas: ~51728339)
+[PASS] pool::tests::test_swap::redirected_return_rejected (l1_gas: ~0, l1_data_gas: ~8544, l2_gas: ~48114508)
+[PASS] pool::tests::test_swap::unfunded_return_rolls_back (l1_gas: ~0, l1_data_gas: ~8640, l2_gas: ~51323967)
+[PASS] pool::tests::test_swap::actual_proceeds_fund_final_note (l1_gas: ~0, l1_data_gas: ~9120, l2_gas: ~58081436)
+[PASS] pool::tests::test_swap::false_native_verdict_cannot_fund_return (l1_gas: ~0, l1_data_gas: ~8640, l2_gas: ~49612087)
+[PASS] pool::tests::test_swap::changed_route_rejected (l1_gas: ~0, l1_data_gas: ~8544, l2_gas: ~48114808)
+Tests: 16 passed, 0 failed, 0 ignored, 0 filtered out
+

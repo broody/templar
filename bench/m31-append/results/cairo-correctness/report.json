@@ -1,0 +1,276 @@
+{
+  "cases": [
+    {
+      "actual_program_output": null,
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--unit=templar-m31-cc-bridge-single-1012137",
+        "-p",
+        "WorkingDirectory=/home/broody/development/templar/bench/m31-append/cairo",
+        "-p",
+        "MemoryMax=8G",
+        "-p",
+        "MemorySwapMax=0",
+        "-p",
+        "CPUQuota=100%",
+        "-p",
+        "CPUAffinity=0",
+        "-p",
+        "RuntimeMaxSec=300",
+        "--setenv=PATH=/home/broody/.asdf/installs/scarb/2.18.0/bin:/home/broody/.asdf/installs/starknet-foundry/0.63.0/bin:/usr/bin:/home/broody/.cargo/bin:/bin",
+        "/usr/bin/time",
+        "-v",
+        "/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-append/cairo/Scarb.toml",
+        "execute",
+        "--no-build",
+        "-p",
+        "templar_m31_append_bridge",
+        "--arguments-file",
+        "/home/broody/development/templar/target/m31-append/smoke-single/cairo-arguments.json",
+        "--output",
+        "none",
+        "--print-program-output",
+        "--print-resource-usage"
+      ],
+      "command_shell": "systemd-run --user --wait --pipe --unit=templar-m31-cc-bridge-single-1012137 -p WorkingDirectory=/home/broody/development/templar/bench/m31-append/cairo -p MemoryMax=8G -p MemorySwapMax=0 -p CPUQuota=100% -p CPUAffinity=0 -p RuntimeMaxSec=300 --setenv=PATH=/home/broody/.asdf/installs/scarb/2.18.0/bin:/home/broody/.asdf/installs/starknet-foundry/0.63.0/bin:/usr/bin:/home/broody/.cargo/bin:/bin /usr/bin/time -v /home/broody/.asdf/installs/scarb/2.18.0/bin/scarb --manifest-path /home/broody/development/templar/bench/m31-append/cairo/Scarb.toml execute --no-build -p templar_m31_append_bridge --arguments-file /home/broody/development/templar/target/m31-append/smoke-single/cairo-arguments.json --output none --print-program-output --print-resource-usage",
+      "comparison_exact": false,
+      "completed_at": "2026-09-21T19:26:52.913260+08:00",
+      "exit_code": 1,
+      "expected_program_output": [
+        8,
+        6116411936294045149168452720177,
+        1,
+        1110,
+        194250202315021002790422369058999935285926933295307486729424430452319255097,
+        2139620970,
+        0,
+        81953478838084139214922649031393117662340898249154644072560030397320275174,
+        1
+      ],
+      "id": "bridge-single",
+      "kind": "full Cairo inner-proof verification",
+      "passed": false,
+      "resources": {
+        "cairo_builtins": {},
+        "time_elapsed": "0:00.72",
+        "time_exit_status": 1,
+        "time_max_rss_kib": 153544
+      },
+      "started_at": "2026-09-21T19:26:52.139848+08:00",
+      "stderr_path": "bench/m31-append/results/cairo-correctness/cases/bridge-single/stderr.log",
+      "stdout_path": "bench/m31-append/results/cairo-correctness/cases/bridge-single/stdout.log",
+      "systemd_properties_path": "bench/m31-append/results/cairo-correctness/cases/bridge-single/systemd-properties.txt",
+      "timed_out": false,
+      "unit": "templar-m31-cc-bridge-single-1012137"
+    }
+  ],
+  "completed_at": "2026-09-21T19:26:52.914657+08:00",
+  "counts": {
+    "actual_proof_ood_baselines_expected": 2,
+    "actual_proof_ood_baselines_passed": 0,
+    "actual_proof_ood_mutations_expected": 4,
+    "actual_proof_ood_mutations_passed": 0,
+    "arbitrary_ood_baselines_expected": 2,
+    "arbitrary_ood_baselines_passed": 0,
+    "arbitrary_ood_mutations_expected": 4,
+    "arbitrary_ood_mutations_passed": 0,
+    "bridge_acceptances_expected": 2,
+    "bridge_acceptances_passed": 0,
+    "empty_tree_guarded_negative_tests_expected": 5,
+    "empty_tree_guarded_negative_tests_passed": 0,
+    "empty_tree_positive_tests_expected": 1,
+    "empty_tree_positive_tests_passed": 0,
+    "local_pool_integration_tests_compiled_but_not_run": 14,
+    "native_mutations_not_rerun": {
+      "n1": 23,
+      "n2": 24
+    },
+    "transcript_checkpoints_expected": 8,
+    "transcript_checkpoints_passed": 0
+  },
+  "failure": {
+    "case_id": "bridge-single",
+    "message": "Cairo bridge panicked before producing program output: Empty nodes are not supported",
+    "minimal_reproduction": "systemd-run --user --wait --pipe --unit=templar-m31-cc-bridge-single-1012137 -p WorkingDirectory=/home/broody/development/templar/bench/m31-append/cairo -p MemoryMax=8G -p MemorySwapMax=0 -p CPUQuota=100% -p CPUAffinity=0 -p RuntimeMaxSec=300 --setenv=PATH=/home/broody/.asdf/installs/scarb/2.18.0/bin:/home/broody/.asdf/installs/starknet-foundry/0.63.0/bin:/usr/bin:/home/broody/.cargo/bin:/bin /usr/bin/time -v /home/broody/.asdf/installs/scarb/2.18.0/bin/scarb --manifest-path /home/broody/development/templar/bench/m31-append/cairo/Scarb.toml execute --no-build -p templar_m31_append_bridge --arguments-file /home/broody/development/templar/target/m31-append/smoke-single/cairo-arguments.json --output none --print-program-output --print-resource-usage",
+    "stderr": "Running as unit: templar-m31-cc-bridge-single-1012137.service; invocation ID: 2dced453c2654e4084db7db957135b9b\nCommand exited with non-zero status 1\n\tCommand being timed: \"/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb --manifest-path /home/broody/development/templar/bench/m31-append/cairo/Scarb.toml execute --no-build -p templar_m31_append_bridge --arguments-file /home/broody/development/templar/target/m31-append/smoke-single/cairo-arguments.json --output none --print-program-output --print-resource-usage\"\n\tUser time (seconds): 0.25\n\tSystem time (seconds): 0.44\n\tPercent of CPU this job got: 95%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.72\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 153544\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 46675\n\tVoluntary context switches: 45\n\tInvoluntary context switches: 564\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 4128\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 1\nFinished with result: exit-code\nMain processes terminated with: code=exited/status=1\nService runtime: 728ms\nCPU time consumed: 697ms\nMemory peak: 512.0K\nMemory swap peak: 0B\n",
+    "stdout": "   Executing templar_m31_append_bridge\nerror: Panicked with \"Empty nodes are not supported\".\n"
+  },
+  "hashes": {
+    "bench/m31-append/cairo/Scarb.lock": {
+      "path": "bench/m31-append/cairo/Scarb.lock",
+      "sha256": "1f1e011af9ecf1aa6b9a2ded22f3e2fcb85e9f86e4d1373a23acde8565cd4a9f",
+      "size_bytes": 1531
+    },
+    "bench/m31-append/cairo/Scarb.toml": {
+      "path": "bench/m31-append/cairo/Scarb.toml",
+      "sha256": "ac67661f5d6a6998bd97722f990e6135f63f3d09ad82e5de02d6d8fba1c8cd04",
+      "size_bytes": 441
+    },
+    "bench/m31-append/cairo/bridge/src/air.cairo": {
+      "path": "bench/m31-append/cairo/bridge/src/air.cairo",
+      "sha256": "d29f490e1f1c984fff91fb3589f5d1a8ccc93d3748405435162a293761b50147",
+      "size_bytes": 6258
+    },
+    "bench/m31-append/cairo/bridge/src/constants.cairo": {
+      "path": "bench/m31-append/cairo/bridge/src/constants.cairo",
+      "sha256": "29a3bb96947d2c8bbfb33f08d7bff14259f5655860617f229d1a3ea274985cd5",
+      "size_bytes": 2500
+    },
+    "bench/m31-append/cairo/bridge/src/lib.cairo": {
+      "path": "bench/m31-append/cairo/bridge/src/lib.cairo",
+      "sha256": "f76aaef4e17803b49b0b2d7e384c6436203f13bad5ab60047baba7f6719602fa",
+      "size_bytes": 4025
+    },
+    "bench/m31-append/cairo/bridge/src/statement.cairo": {
+      "path": "bench/m31-append/cairo/bridge/src/statement.cairo",
+      "sha256": "f726dd52783f5046a1bfaaf0e7d92e6740bc0946cb9c03307a1c5b4391781131",
+      "size_bytes": 7652
+    },
+    "bench/m31-append/cairo/bridge/src/test.cairo": {
+      "path": "bench/m31-append/cairo/bridge/src/test.cairo",
+      "sha256": "779cf26a3d2487cbf9ac696a1ad2f6d0c162163c0e13f2d00b5cd9f5f926200c",
+      "size_bytes": 1543
+    },
+    "bench/m31-append/cairo/ood_probe/src/lib.cairo": {
+      "path": "bench/m31-append/cairo/ood_probe/src/lib.cairo",
+      "sha256": "b87b6e28262b5c3a59d9be4dbfdebf7c2aabb96343d1616d990fe96e3303671e",
+      "size_bytes": 851
+    },
+    "bench/m31-append/cairo/target/dev/templar_m31_append_bridge.executable.json": {
+      "path": "bench/m31-append/cairo/target/dev/templar_m31_append_bridge.executable.json",
+      "sha256": "bbca210c4073af9deea29d414473e542edf76f29598208102210f2f89f49b1c0",
+      "size_bytes": 936604
+    },
+    "bench/m31-append/cairo/target/dev/templar_m31_append_ood_probe.executable.json": {
+      "path": "bench/m31-append/cairo/target/dev/templar_m31_append_ood_probe.executable.json",
+      "sha256": "d4d32ba47414cf1452cd038c97c4774099cfb9d5ce36e48741f305383d8eeb3d",
+      "size_bytes": 177995
+    },
+    "bench/m31-append/cairo/target/dev/templar_m31_append_transcript_probe.executable.json": {
+      "path": "bench/m31-append/cairo/target/dev/templar_m31_append_transcript_probe.executable.json",
+      "sha256": "dcbf7bd29362173a488cbc22689ca6309e748a20df6e19f213a9bc0c83c14613",
+      "size_bytes": 127766
+    },
+    "bench/m31-append/cairo/transcript_probe/src/lib.cairo": {
+      "path": "bench/m31-append/cairo/transcript_probe/src/lib.cairo",
+      "sha256": "84d96bd94798a6bc35b7d78e6f02b0078a4db20f848c3c76f2aeb22c04057882",
+      "size_bytes": 989
+    },
+    "target/m31-append/frozen-native-v1/templar-m31-append": {
+      "path": "target/m31-append/frozen-native-v1/templar-m31-append",
+      "sha256": "8acbab38aa2a35f150205ea6546bc56bc643601ff19b98ab40405194b33dfbbd",
+      "size_bytes": 4161448
+    },
+    "target/m31-append/native-handoff.json": {
+      "path": "target/m31-append/native-handoff.json",
+      "sha256": "d3bc44d426901e7faf2a811263baa3468b23b568a8df1c5171f6b5b9183661ec",
+      "size_bytes": 4177
+    },
+    "target/m31-append/smoke-batch/cairo-arguments.json": {
+      "path": "target/m31-append/smoke-batch/cairo-arguments.json",
+      "sha256": "abd3d6e5c8cdb54f64ff03b351a81e33f279c154c2df05cc571602ca65ff000c",
+      "size_bytes": 648527
+    },
+    "target/m31-append/smoke-batch/ood.json": {
+      "path": "target/m31-append/smoke-batch/ood.json",
+      "sha256": "d5c8d5dc7eaf1aed421f28befb81627f518d067945972337da059a818f48dadf",
+      "size_bytes": 418967
+    },
+    "target/m31-append/smoke-batch/public-output.json": {
+      "path": "target/m31-append/smoke-batch/public-output.json",
+      "sha256": "6f3c00b5089a90d1427b8f89bc0306a36f0da12dd6aed64772ee412498f273f6",
+      "size_bytes": 914
+    },
+    "target/m31-append/smoke-batch/statement.json": {
+      "path": "target/m31-append/smoke-batch/statement.json",
+      "sha256": "6cbd2bbd5a0d2b99e9c91fda1051910ba288b944520a31ef24927f094afd290b",
+      "size_bytes": 305443
+    },
+    "target/m31-append/smoke-batch/transcript.json": {
+      "path": "target/m31-append/smoke-batch/transcript.json",
+      "sha256": "1fdc6186403da9a71598423054cc231edb605cdf0e94258f2a53acfd5f673c0b",
+      "size_bytes": 1394513
+    },
+    "target/m31-append/smoke-inputs/ood-arbitrary.json": {
+      "path": "target/m31-append/smoke-inputs/ood-arbitrary.json",
+      "sha256": "45f359d80be1dac322f3887de6e29644ea527d3333f513c1c3f53aff92b04352",
+      "size_bytes": 784377
+    },
+    "target/m31-append/smoke-single/cairo-arguments.json": {
+      "path": "target/m31-append/smoke-single/cairo-arguments.json",
+      "sha256": "8e911cc7ed212d49bb0a60c3c2b5e27f0e5a2770abca9f106d597773cdafb2f6",
+      "size_bytes": 561910
+    },
+    "target/m31-append/smoke-single/ood.json": {
+      "path": "target/m31-append/smoke-single/ood.json",
+      "sha256": "d0cc2fbdb270f42dbdad1ee5b72d298af3ed79861ef019199c2164048bb859e1",
+      "size_bytes": 418834
+    },
+    "target/m31-append/smoke-single/public-output.json": {
+      "path": "target/m31-append/smoke-single/public-output.json",
+      "sha256": "6762ae38fd195e15afc7347be22892a1f4742a30d2d68bd15fcc6651583595e0",
+      "size_bytes": 905
+    },
+    "target/m31-append/smoke-single/statement.json": {
+      "path": "target/m31-append/smoke-single/statement.json",
+      "sha256": "d66497468883e37abcd3aacd2e343694f4a803463fb77b7f6c81cd6ef9b93601",
+      "size_bytes": 152931
+    },
+    "target/m31-append/smoke-single/transcript.json": {
+      "path": "target/m31-append/smoke-single/transcript.json",
+      "sha256": "64a5213c53d1e3b161344e1caea4a67c7caad732aa819c0ae4a2def90a472339",
+      "size_bytes": 699311
+    }
+  },
+  "native_bindings": {
+    "single": {
+      "public8": [
+        6116411936294045149168452720177,
+        1,
+        1110,
+        194250202315021002790422369058999935285926933295307486729424430452319255097,
+        2139620970,
+        0,
+        81953478838084139214922649031393117662340898249154644072560030397320275174,
+        1
+      ],
+      "public_output_path": "target/m31-append/smoke-single/public-output.json",
+      "statement_binding_checks": {
+        "new_packed_matches_file": true,
+        "old_packed_matches_file": true,
+        "preimage_matches_statement": true,
+        "public_batch_length_matches_statement": true,
+        "public_chain_matches_statement": true,
+        "public_digest_matches_file": true,
+        "public_old_count_matches_statement": true,
+        "public_old_root_matches_statement": true,
+        "public_pool_matches_statement": true
+      },
+      "statement_path": "target/m31-append/smoke-single/statement.json"
+    }
+  },
+  "resource_caps": {
+    "cpu_affinity": "0",
+    "cpu_quota": "100%",
+    "explicit_cairo_step_cap": null,
+    "memory_max": "8G",
+    "memory_swap_max": "0",
+    "runtime_max_seconds": 300,
+    "step_cap_note": "scarb execute exposes no explicit maximum-step flag; correctness runs are bounded by systemd memory, swap, CPU, and runtime properties"
+  },
+  "scope": "correctness only; no performance, outer PROOF1, or node-attachment claim",
+  "started_at": "2026-09-21T19:26:51.997262+08:00",
+  "status": "failed",
+  "task": "M31-append Cairo correctness gate",
+  "tool": {
+    "path": "/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb",
+    "sha256": "97eafe061de1e473e6649578e320225d41abaf708784db1858173132811f01d6",
+    "size_bytes": 54193392
+  },
+  "workspace": "bench/m31-append/cairo"
+}

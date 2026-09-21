@@ -1,0 +1,128 @@
+{
+  "scope": "synthetic Cairo interoperability only; no PROOF1, payment or privacy qualification",
+  "scarb_sha256": "97eafe061de1e473e6649578e320225d41abaf708784db1858173132811f01d6",
+  "executor_sha256": "56df7cab57283e2605defab8449c6a366e380789521e4480ae4f21c51a522572",
+  "executable_sha256": "aed07ae9a7cf30ccbde5beddad9f7c324f4f5a55c051bb1f04a5351fa72e7ddb",
+  "expected_output": [
+    421843831,
+    4128775514,
+    1663074689,
+    1933832929,
+    1277994099,
+    15405552,
+    3591458361,
+    3331297516
+  ],
+  "cases": [
+    {
+      "name": "valid-1",
+      "fixture_sha256": "98afa1dd1b33d3b68fad86eb2336ea0be7e97f9db2d442afad63979eebdbfb05",
+      "expected_accept": true,
+      "exit_code": 0,
+      "output_matches": true,
+      "program_rejection": false,
+      "passed": true,
+      "peak_rss_gib": 0.7808494567871094,
+      "elapsed_seconds": 2.249825819002581
+    },
+    {
+      "name": "lifting",
+      "fixture_sha256": "4872b848ab2e01e46166c8e66f647bbc76da04268347ce9344ad872265933805",
+      "expected_accept": false,
+      "exit_code": 1,
+      "output_matches": false,
+      "program_rejection": true,
+      "passed": true,
+      "peak_rss_gib": 0.09251785278320312,
+      "elapsed_seconds": 0.955059314990649
+    },
+    {
+      "name": "ood_value",
+      "fixture_sha256": "7237df04835b3576fda261e68bfa0ff3a41757e40328e81c169222b59de2081a",
+      "expected_accept": false,
+      "exit_code": 1,
+      "output_matches": false,
+      "program_rejection": true,
+      "passed": true,
+      "peak_rss_gib": 0.11886215209960938,
+      "elapsed_seconds": 1.0155514499929268
+    },
+    {
+      "name": "output_count",
+      "fixture_sha256": "9616950d4294b9bcd1153d4a64af9c8483292db66665885131cbb93f91a30fbc",
+      "expected_accept": false,
+      "exit_code": 1,
+      "output_matches": false,
+      "program_rejection": true,
+      "passed": true,
+      "peak_rss_gib": 0.09240341186523438,
+      "elapsed_seconds": 0.9455183559912257
+    },
+    {
+      "name": "pcs_pow",
+      "fixture_sha256": "92f8b1272c7eb88893ff229c06504e1c3747dd787e5395c870349fa7b481acc0",
+      "expected_accept": false,
+      "exit_code": 1,
+      "output_matches": false,
+      "program_rejection": true,
+      "passed": true,
+      "peak_rss_gib": 0.09254074096679688,
+      "elapsed_seconds": 0.9961200980033027
+    },
+    {
+      "name": "preprocessed_root",
+      "fixture_sha256": "9b3c6badbbc63c14a942f45a35840056162b7a36951133f4e3927d359eb7d5bb",
+      "expected_accept": false,
+      "exit_code": 1,
+      "output_matches": false,
+      "program_rejection": true,
+      "passed": true,
+      "peak_rss_gib": 0.09295654296875,
+      "elapsed_seconds": 0.9544047269882867
+    },
+    {
+      "name": "public_output",
+      "fixture_sha256": "ac21e8f426837b692544d2c26c388e56c5f3cd80a6781be69f599607cd4f894c",
+      "expected_accept": false,
+      "exit_code": 1,
+      "output_matches": false,
+      "program_rejection": true,
+      "passed": true,
+      "peak_rss_gib": 0.0932464599609375,
+      "elapsed_seconds": 1.0045135239925003
+    },
+    {
+      "name": "queried_value",
+      "fixture_sha256": "214a995333e12a19a87997ad58d25b2b3b1c28416fdd387400f7fac2d98a103f",
+      "expected_accept": false,
+      "exit_code": 1,
+      "output_matches": false,
+      "program_rejection": true,
+      "passed": true,
+      "peak_rss_gib": 0.12391281127929688,
+      "elapsed_seconds": 0.988748953997856
+    },
+    {
+      "name": "trailing",
+      "fixture_sha256": "7ead3ea2e248dedead73ccdd3131294f3c080e3df3ac81ce2afaa4e00260a2cf",
+      "expected_accept": false,
+      "exit_code": 1,
+      "output_matches": false,
+      "program_rejection": true,
+      "passed": true,
+      "peak_rss_gib": 0.09278488159179688,
+      "elapsed_seconds": 0.9902047179930378
+    },
+    {
+      "name": "truncated",
+      "fixture_sha256": "8132189ede777276090247a31f3d5b27c15b943374a894bb4b659af2040d3f7d",
+      "expected_accept": false,
+      "exit_code": 1,
+      "output_matches": false,
+      "program_rejection": true,
+      "passed": true,
+      "peak_rss_gib": 0.09285354614257812,
+      "elapsed_seconds": 0.932683367995196
+    }
+  ]
+}

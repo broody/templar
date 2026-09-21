@@ -1,0 +1,51 @@
+Running as unit: templar-direct-air-cairo-valid-0-1789966824814802710.service
+   Executing templar_synthetic_circuit_bridge
+Program output:
+421843831
+4128775514
+1663074689
+1933832929
+1277994099
+15405552
+3591458361
+3331297516
+Resources:
+	steps: 4,846,314
+	max memory address: 5,250,751
+	memory holes: 326,274
+	builtins:
+		range_check_builtin: 642,666
+		output_builtin: 8
+	memory segments:
+		execution: 4,135,617
+		range_check: 642,666
+		output: 8
+	Command being timed: "/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb --manifest-path /home/broody/development/templar/bench/direct-air/cairo/Scarb.toml execute --no-build -p templar_synthetic_circuit_bridge --arguments-file /home/broody/development/templar/bench/direct-air/results/eq-one-thread-8g/proof/cairo-arguments-0.json --print-program-output --print-resource-usage"
+	User time (seconds): 1.14
+	System time (seconds): 0.97
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.12
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 806608
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 4
+	Minor (reclaiming a frame) page faults: 342176
+	Voluntary context switches: 49
+	Involuntary context switches: 159
+	Swaps: 0
+	File system inputs: 32
+	File system outputs: 16
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 2.125s
+CPU time consumed: 2.118s
+Memory peak: 6.1M
+Memory swap peak: 0B

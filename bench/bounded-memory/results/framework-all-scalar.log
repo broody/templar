@@ -1,0 +1,35 @@
+   Compiling indexmap v2.10.0
+   Compiling stwo v2.2.0 (/home/broody/development/templar/target/bounded-memory/stwo/crates/stwo)
+warning: the feature `stdarch_x86_avx512` has been stable since 1.89.0 and no longer requires an attribute to enable
+ --> crates/stwo/src/lib.rs:4:13
+  |
+4 |     feature(stdarch_x86_avx512)
+  |             ^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(stable_features)]` on by default
+
+warning: `stwo` (lib) generated 1 warning
+   Compiling stwo-constraint-framework v2.2.0 (/home/broody/development/templar/target/bounded-memory/stwo/crates/constraint-framework)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.13s
+     Running unittests src/lib.rs (/home/broody/development/templar/target/bounded-memory/stwo-test-target/debug/deps/stwo_constraint_framework-0e1df6e60e675635)
+
+running 16 tests
+test expr::assignment::tests::test_eval_expr ... ok
+test expr::degree::tests::test_degree_bound ... ok
+test expr::evaluator::tests::test_constraint_degree_bounds ... ok
+test expr::evaluator::tests::test_constraint_regression ... ok
+test expr::evaluator::tests::test_constraint_regression_fails - should panic ... ok
+test info::tests::test_arithmetic_counter ... ok
+test info::tests::test_logup_count_per_row ... ok
+test logup::tests::test_lookup_elements_combine ... ok
+test expr::evaluator::tests::test_expr_evaluator ... ok
+test prover::component_prover::bounded_tests::bounded_component_columns_cpu ... ok
+test prover::component_prover::bounded_tests::bounded_component_columns_simd ... ok
+test prover::logup::tests::test_col_from_iter ... ok
+test prover::logup::tests::test_frac_writer ... ok
+test expr::simplify::tests::test_simplify_expr ... ok
+test prover::component_prover::bounded_tests::bounded_offset_stark_simd ... ok
+test prover::component_prover::bounded_tests::bounded_offset_stark_cpu ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+

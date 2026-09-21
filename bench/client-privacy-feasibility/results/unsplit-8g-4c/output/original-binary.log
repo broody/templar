@@ -1,0 +1,5 @@
+valid proof: PASS; verification_ms=151
+
+thread 'main' (878353) panicked at verify_saved.rs:15:9:
+mutation accepted: changed message digest
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

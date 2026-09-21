@@ -1,0 +1,41 @@
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.10s
+   Compiling test(m31_tree_bench_unittest) m31_tree_bench v0.1.0 (/home/broody/development/templar/bench/m31-tree/cairo/Scarb.toml)
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:5
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+    ^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:27
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:50
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:18:5
+    StoragePointerWriteAccess,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    Finished `dev` profile target(s) in 0 seconds
+
+
+Collected 1 test(s) from m31_tree_bench package
+Running 1 test(s) from src/
+[PASS] m31_tree_bench::golden::permutation_golden_0 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~30360000)
+        steps: 101661
+        memory holes: 1931
+        builtins: (Builtin(range_check): 18952)
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+Tests: 1 passed, 0 failed, 0 ignored, 46 filtered out
+

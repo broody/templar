@@ -1,0 +1,158 @@
+{
+  "aggregator_rows": 128,
+  "binary_envelope_bytes": 334307,
+  "binary_stark_proof_bytes": 258621,
+  "channel": "Blake2s",
+  "complete_seconds": 8.369771952,
+  "components": [
+    {
+      "interaction_base_columns": 56,
+      "log_rows": 7,
+      "name": "poseidon_aggregator",
+      "rows": 128,
+      "trace_columns": 342
+    },
+    {
+      "interaction_base_columns": 24,
+      "log_rows": 10,
+      "name": "poseidon_full_round_chain",
+      "rows": 1024,
+      "trace_columns": 126
+    },
+    {
+      "interaction_base_columns": 36,
+      "log_rows": 12,
+      "name": "poseidon_3_partial_rounds_chain",
+      "rows": 4096,
+      "trace_columns": 169
+    },
+    {
+      "interaction_base_columns": 200,
+      "log_rows": 14,
+      "name": "cube_252",
+      "rows": 16384,
+      "trace_columns": 141
+    },
+    {
+      "interaction_base_columns": 32,
+      "log_rows": 14,
+      "name": "range_check_252_width_27",
+      "rows": 16384,
+      "trace_columns": 20
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 6,
+      "name": "poseidon_round_keys",
+      "rows": 64,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 15,
+      "name": "range_check_3_3_3_3_3",
+      "rows": 32768,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 16,
+      "name": "range_check_4_4_4_4",
+      "rows": 65536,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 8,
+      "name": "range_check_4_4",
+      "rows": 256,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 16,
+      "log_rows": 18,
+      "name": "range_check_9_9",
+      "rows": 262144,
+      "trace_columns": 8
+    },
+    {
+      "interaction_base_columns": 16,
+      "log_rows": 20,
+      "name": "range_check_20",
+      "rows": 1048576,
+      "trace_columns": 8
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 18,
+      "name": "range_check_18",
+      "rows": 262144,
+      "trace_columns": 2
+    }
+  ],
+  "config_security_metric_bits": 96,
+  "interaction_pow_bits": 24,
+  "json_envelope_bytes": 800821,
+  "json_stark_proof_bytes": 722816,
+  "native_proof_verified": true,
+  "pcs_config": {
+    "fri_config": {
+      "fold_step": 4,
+      "log_blowup_factor": 3,
+      "log_last_layer_degree_bound": 0,
+      "n_queries": 23
+    },
+    "lifting_log_size": 23,
+    "pow_bits": 27
+  },
+  "phases": {
+    "base_commit_seconds": 1.403178038,
+    "base_witness_seconds": 0.391460678,
+    "interaction_commit_and_stark_prove_seconds": 5.231294945,
+    "interaction_pow_and_witness_seconds": 0.413100487,
+    "native_verify_seconds": 0.005832184,
+    "preprocessing_twiddles_and_commit_seconds": 0.913599441,
+    "public_transcript_regeneration_seconds": 0.007422243
+  },
+  "public_memory_boundary_terms": 768,
+  "public_statement_json_bytes": 76996,
+  "reference_parity": true,
+  "requested_permutations": 128,
+  "scope": "validity-only public-transcript two-path membership; no private membership, payment relation, zero knowledge, or WASM qualification",
+  "storage": "upstream cached coefficients and full evaluations; baseline",
+  "trusted_preprocessed_root": [
+    57,
+    219,
+    244,
+    93,
+    12,
+    105,
+    72,
+    3,
+    143,
+    218,
+    230,
+    175,
+    131,
+    166,
+    98,
+    235,
+    110,
+    99,
+    204,
+    240,
+    95,
+    31,
+    88,
+    222,
+    109,
+    246,
+    100,
+    2,
+    53,
+    158,
+    226,
+    207
+  ],
+  "unique_permutations": 126
+}

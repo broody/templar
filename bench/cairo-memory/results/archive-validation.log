@@ -1,0 +1,82 @@
+{
+  "verified_proof_count": 21,
+  "mutation_rejections": 63,
+  "public_messages_and_proven_digests_match_original_fixtures": true,
+  "remote_dependency_versions_unchanged": true,
+  "local_runner_and_verifier_files_unchanged": 61,
+  "dependency_source_files_unchanged": 499,
+  "reviewed_dependency_source_changes": [
+    "stwo/crates/stwo/src/prover/pcs/mod.rs",
+    "stwo-cairo/stwo_cairo_prover/crates/prover/src/prover.rs"
+  ],
+  "no_private_fixture_exports": true,
+  "same_request_comparisons": 16,
+  "previous_experiment_comparisons": [
+    {
+      "run": "8-8-4-repeat-10",
+      "previous_experiment_run": "8-8-4-release-fresh-a",
+      "byte_identical": true,
+      "requests": 1
+    },
+    {
+      "run": "8-8-4-repeat-11",
+      "previous_experiment_run": "8-8-4-release-fresh-a",
+      "byte_identical": true,
+      "requests": 3
+    },
+    {
+      "run": "8-8-4-repeat-11-release",
+      "previous_experiment_run": "8-8-4-release-fresh-a",
+      "byte_identical": true,
+      "requests": 3
+    },
+    {
+      "run": "controlled-repeat-10",
+      "previous_experiment_run": "controlled-release-repeat",
+      "byte_identical": true,
+      "requests": 3
+    },
+    {
+      "run": "ordinary-baseline",
+      "previous_experiment_run": "ordinary-final-profile-smoke",
+      "byte_identical": true,
+      "requests": 1
+    },
+    {
+      "run": "ordinary-keep-trees",
+      "previous_experiment_run": "ordinary-final-profile-smoke",
+      "byte_identical": true,
+      "requests": 1
+    },
+    {
+      "run": "ordinary-recompute",
+      "previous_experiment_run": "ordinary-final-profile-smoke",
+      "byte_identical": true,
+      "requests": 1
+    },
+    {
+      "run": "ordinary-recompute-no-coefficients",
+      "previous_experiment_run": "ordinary-final-profile-smoke",
+      "byte_identical": true,
+      "requests": 1
+    },
+    {
+      "run": "ordinary-recompute-release",
+      "previous_experiment_run": "ordinary-final-profile-smoke",
+      "byte_identical": true,
+      "requests": 1
+    },
+    {
+      "run": "ordinary-repeat-10",
+      "previous_experiment_run": "ordinary-final-profile-smoke",
+      "byte_identical": true,
+      "requests": 3
+    },
+    {
+      "run": "return-repeat-10",
+      "previous_experiment_run": "return-release-repeat",
+      "byte_identical": true,
+      "requests": 3
+    }
+  ]
+}

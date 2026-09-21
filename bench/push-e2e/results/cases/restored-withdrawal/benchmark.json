@@ -1,0 +1,26 @@
+{
+  "case": "restored-withdrawal",
+  "startup_seconds": 2.0028037110023433,
+  "request_seconds": 19.855328360994463,
+  "proving_seconds": 12.568,
+  "virtual_os_seconds": 7.284,
+  "proof_bytes": 236471,
+  "proof_sha256": "0ad71cb61d83426d4fbdbc793e159d3b1259c79f7fdc2358fd876c376853f612",
+  "peak_rss_gib": 14.008407592773438,
+  "swap_peak_bytes": 0,
+  "local_verification_passed": true,
+  "public_binding_matches": true,
+  "public_values": [
+    "0x54454d504c41525f505553485f504f4332",
+    "0x534e5f5345504f4c4941",
+    "0x7430fdfc9121d40c0b92bec1a19265c5f9b2c0fd16aba973f1799beed736a1e",
+    "0x71e091844f6c25caacb8a4efe560737cdd4ae37c21dfa08aba0a39ac8fe8b6f",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x52641f3f4bd87a034d8d9d8cf3200504746b885e175a4a4c0e59b444b1135c1"
+  ],
+  "base_block": 15363854,
+  "memory_cap_gib": 16,
+  "cores": 4
+}

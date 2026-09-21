@@ -1,0 +1,27 @@
+{
+  "label": "bob-restored",
+  "summary": {
+    "as_of_block": 15363791,
+    "block_hash": "0x357e44a6110e9a78992a455ae0ff6acc91974c87553f37e78a7137729869d89",
+    "anchor": "two trusted RPC providers agree on block/class/state; no consensus or state-proof verification",
+    "history_complete": true,
+    "missing_payload_indices": [],
+    "received_indices": [
+      2,
+      4
+    ],
+    "received_totals": {
+      "0x4ad0831f7836c5fab225cf4ff9d06e641f370f29cd76d8ea80b9932e39c00ee": 850
+    },
+    "spent_indices": [],
+    "known_unspent": {
+      "0x4ad0831f7836c5fab225cf4ff9d06e641f370f29cd76d8ea80b9932e39c00ee": 850
+    },
+    "balances": {
+      "0x4ad0831f7836c5fab225cf4ff9d06e641f370f29cd76d8ea80b9932e39c00ee": 850
+    },
+    "balance_scope": "recoverable protocol-published notes for this receiving address"
+  },
+  "sync_seconds": 31.544340772001306,
+  "source": "captured restore.py worker stdout from the completed run"
+}

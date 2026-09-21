@@ -1,0 +1,64 @@
+Running as unit: templar-m31-corr-golden-1789983484.service; invocation ID: 800617aa6fe242c39f2c5a42f81abf48
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.10s
+   Compiling test(m31_tree_bench_unittest) m31_tree_bench v0.1.0 (/home/broody/development/templar/bench/m31-tree/cairo/Scarb.toml)
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:5
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+    ^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:27
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:50
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:18:5
+    StoragePointerWriteAccess,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    Finished `dev` profile target(s) in 0 seconds
+
+
+Collected 24 test(s) from m31_tree_bench package
+Running 24 test(s) from src/
+[PASS] m31_tree_bench::golden::empty_leaf_golden (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12037930)
+[PASS] m31_tree_bench::golden::leaf_golden_1 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12196770)
+[PASS] m31_tree_bench::golden::leaf_golden_3 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12196770)
+[PASS] m31_tree_bench::golden::leaf_golden_0 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12196770)
+[PASS] m31_tree_bench::golden::leaf_golden_4 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12196770)
+[PASS] m31_tree_bench::golden::leaf_golden_5 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12197560)
+[PASS] m31_tree_bench::golden::leaf_golden_6 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12197560)
+[PASS] m31_tree_bench::golden::node_golden_0 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~24254060)
+[PASS] m31_tree_bench::golden::node_golden_1 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~24253120)
+[PASS] m31_tree_bench::golden::permutation_golden_0 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~11735920)
+[PASS] m31_tree_bench::golden::permutation_golden_1 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~11735920)
+[PASS] m31_tree_bench::golden::permutation_golden_2 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~11735920)
+[PASS] m31_tree_bench::golden::sponge_golden_0 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12028660)
+[PASS] m31_tree_bench::golden::sponge_golden_10 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~35624600)
+[PASS] m31_tree_bench::golden::sponge_golden_1 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12030700)
+[PASS] m31_tree_bench::golden::sponge_golden_2 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12037930)
+[PASS] m31_tree_bench::golden::sponge_golden_3 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12059620)
+[PASS] m31_tree_bench::golden::sponge_golden_4 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12062030)
+[PASS] m31_tree_bench::golden::sponge_golden_5 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12066020)
+[PASS] m31_tree_bench::golden::sponge_golden_6 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~23824360)
+[PASS] m31_tree_bench::golden::sponge_golden_7 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~23841640)
+[PASS] m31_tree_bench::golden::sponge_golden_8 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~23861800)
+[PASS] m31_tree_bench::golden::sponge_golden_9 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~23866260)
+[PASS] m31_tree_bench::golden::leaf_golden_2 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12196770)
+Tests: 24 passed, 0 failed, 0 ignored, 28 filtered out
+
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 1.706s
+CPU time consumed: 2.516s
+Memory peak: 1.7M
+Memory swap peak: 0B

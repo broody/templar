@@ -1,0 +1,54 @@
+Running as unit: templar-m31-implementation-mixed-negatives-v2-1789984135058954541.service; invocation ID: 15eddd204c594b6eb2cf09dbff17cca8
+{
+  "discarded_M31_duplicate_multiplicity_rejected": true,
+  "omitted_M31_padding_boundary_rejected": true,
+  "rejected_mutations": [
+    "root",
+    "packed_root",
+    "leaf",
+    "index",
+    "sibling",
+    "domain_kind",
+    "domain_level",
+    "padding",
+    "noncanonical_M31",
+    "component_log",
+    "claimed_sum",
+    "interaction_pow",
+    "PCS_config",
+    "STARK_sample",
+    "preprocessed_root",
+    "structurally_valid_unlinked_M31_output",
+    "structurally_valid_unlinked_Hades_output"
+  ],
+  "wrong_felt_memory_dictionary_rejected": true
+}
+	Command being timed: "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree --verify-tests bench/m31-tree/results/implementation-mixed-smoke-v2/proof/proof.bin bench/m31-tree/results/implementation-mixed-negatives-v2/checks"
+	User time (seconds): 0.53
+	System time (seconds): 0.42
+	Percent of CPU this job got: 97%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.99
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 939800
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 316411
+	Voluntary context switches: 57
+	Involuntary context switches: 580
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 995ms
+CPU time consumed: 967ms
+Memory peak: 2.2M
+Memory swap peak: 0B

@@ -1,0 +1,12 @@
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "error": {
+    "code": 41,
+    "message": "Transaction execution error",
+    "data": {
+      "transaction_index": 0,
+      "execution_error": "Contract address= 0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, Class hash= 0x29927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, Selector= 0x15d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad, Nested error: (0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x50524f4f465f46414354535f4c454e475448 ('PROOF_FACTS_LENGTH'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED'))"
+    }
+  }
+}

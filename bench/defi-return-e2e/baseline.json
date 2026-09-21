@@ -1,0 +1,22 @@
+{
+  "source": "../controlled-push-e2e",
+  "sha256": {
+    "protocol.py": "7f1c0ece5dd57349f2ba3c29726a56bdaf0549e28b9c5e54d77ed528c498ea9e",
+    "reference.py": "02768dd34010df7b1e811c2560eb7e0797e3c2b41713e60af17cf663f5968291",
+    "encoding.py": "1775714d3e5a2f2aa1b7e7d2af013ebd8ab4abc84e85f9e97d201c296f49e060",
+    "recovery.py": "0bc7b0953a3c798c48a092da1b32dd11d8e04eed0f672723740de1aa254d39dd",
+    "common.py": "282dee8083c535a44cc1ed32d6ae689d98cb6b18e75edb7d5d6401e0751608f3",
+    "proving.py": "6ac002a2667b1d5628489230f1130be180a3a48db2a748624dd1d32aaeb9ee63",
+    "init.py": "c4b725ca53ba08a7866e5f41bd86651718788b2e8782e081074dbed763fc5ea6",
+    "cairo/Scarb.toml": "de64e3a9101cfb6d91d9012e35e367542d9413a93f8146bf457c289f8d16553b",
+    "cairo/Scarb.lock": "82d42c8b18251d4a7719437ad6050fa296277c5f6c4ebdff3937d79bd0eaffa1",
+    "cairo/src/spend.cairo": "745c7240a3f750f775c8afcce261cbdf695d92407e8a9ec0015ea7d0dd343558",
+    "cairo/src/statement.cairo": "2e4cb101b72d0376b1cbbacc9f423a64a9e5d832970c926a1a1a7f54349544cc",
+    "cairo/src/statement_account.cairo": "ddbc22452636381e7d6db0983e7ce06aa76695250e7b7e358ba0712fdecfeea4",
+    "cairo/src/pool.cairo": "10d6124035911d1ea07e99a079d31a5ad3f072d9a2862f1496e76031334fc66c",
+    "cairo/src/tree.cairo": "995e89a06f6a73bc1831fcea7586ef49128e5fa6649536ea557f1b4de4080dcf",
+    "cairo/src/proof_adapter.cairo": "c60ade37a138681c78f093a3ee25d9fccfc9133e1ffa9fcbc4efa21b8ae776e5",
+    "cairo/src/controller.cairo": "80fe1a23b7c5f0546a8eb433b4518688458b9e2f3f0edb7e3a8ff97695cca642",
+    "cairo/src/test_token.cairo": "52b812f5a3813af57bc52524741c5f10c5cff963254bd5f071c6deab38b9bc21"
+  }
+}

@@ -1,0 +1,11 @@
+Running as unit: templar-privacy-cost-wrapper-4g-4c-1789979909095137123.service
+   0.045799006s  INFO privacy_prove::checkpoint: Prepare the cairo proof for the cairo-circuit verifier
+   0.047175450s  INFO privacy_prove::checkpoint: Build the cairo-circuit verifier context
+   0.351927026s  INFO privacy_prove::checkpoint: Prepare only the recursive circuit stage
+   1.393871554s  INFO privacy_prove::checkpoint: Prove the cairo-circuit verifier
+Finished with result: oom-kill
+Main processes terminated with: code=killed/status=TERM
+Service runtime: 2.913s
+CPU time consumed: 8.270s
+Memory peak: 4.0G
+Memory swap peak: 0B

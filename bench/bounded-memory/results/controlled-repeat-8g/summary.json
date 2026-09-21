@@ -1,0 +1,54 @@
+{
+  "variant": "staged-release",
+  "fixture": "controlled",
+  "cap_gib": 8,
+  "rayon_threads": 4,
+  "cache_cairo_coefficients": true,
+  "recompute_cairo_commitments": true,
+  "bounded_stages": "both",
+  "fri_column_batch_size": 16,
+  "cpu_cores": 4,
+  "trace_spans": false,
+  "native_allocator_tuning": false,
+  "base_block": 15391278,
+  "binary_sha256": "8eaa1763abd7216f43fff2a935a3646e5643f55763236b41885ee77f5286d471",
+  "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+  "private_request_sha256": "69a787d733377aa89b5c5ef9820d6b58c92ee5df5e895e80d5cb41e85eb81cc5",
+  "public_rpc_cache": true,
+  "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+  "requests": [
+    {
+      "request_seconds": 23.773571468991577,
+      "start_unix_ms": 1789961145472,
+      "end_unix_ms": 1789961169245,
+      "proof_bytes": 231894,
+      "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+      "public_binding_matches": true,
+      "verification_and_three_mutation_rejections": true
+    },
+    {
+      "request_seconds": 23.12606590599171,
+      "start_unix_ms": 1789961169717,
+      "end_unix_ms": 1789961192843,
+      "proof_bytes": 231894,
+      "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+      "public_binding_matches": true,
+      "verification_and_three_mutation_rejections": true
+    },
+    {
+      "request_seconds": 23.408034370004316,
+      "start_unix_ms": 1789961193362,
+      "end_unix_ms": 1789961216770,
+      "proof_bytes": 231894,
+      "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+      "public_binding_matches": true,
+      "verification_and_three_mutation_rejections": true
+    }
+  ],
+  "startup_seconds": 0.07154607199481688,
+  "status": "PASS",
+  "cgroup_peak_gib": 5.823474884033203,
+  "peak_rss_gib": 5.909675598144531,
+  "swap_peak_bytes": 0,
+  "oom_kill": 0
+}

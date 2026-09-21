@@ -1,0 +1,72 @@
+Running as unit: templar-m31-cairo-final-m31-cold-8-16g-1789986011.service; invocation ID: ef02c968049f4beda55dc4454c97a8a4
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.12s
+   Compiling test(m31_tree_bench_unittest) m31_tree_bench v0.1.0 (/home/broody/development/templar/bench/m31-tree/cairo/Scarb.toml)
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:5
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+    ^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:27
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:50
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:18:5
+    StoragePointerWriteAccess,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    Finished `dev` profile target(s) in 0 seconds
+
+
+Collected 1 test(s) from m31_tree_bench package
+Running 1 test(s) from src/
+[PASS] m31_tree_bench::tests::cost_m31_cold_8 (l1_gas: ~0, l1_data_gas: ~17952, l2_gas: ~7159517000)
+        sierra gas: 7084745000
+        syscalls: (StorageRead: 1031, StorageWrite: 657, CallContract: 5, Deploy: 1)
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[test name] m31_tree_bench::tests::cost_m31_cold_8
+├─ [selector] append_batch
+│  └─ [L2 gas] 7083892870
+├─ [selector] get_root
+│  └─ [L2 gas] 52010
+├─ [selector] get_leaf_count
+│  └─ [L2 gas] 27180
+├─ [selector] root_is_known
+│  └─ [L2 gas] 39150
+└─ [selector] root_is_known
+   └─ [L2 gas] 39150
+
+╭-----------------------+------------+------------+------------+---------+---------╮
+| M31TreeBench Contract |            |            |            |         |         |
++==================================================================================+
+| Function Name         | Min        | Max        | Avg        | Std Dev | # Calls |
+|-----------------------+------------+------------+------------+---------+---------|
+| append_batch          | 7083892870 | 7083892870 | 7083892870 | 0       | 1       |
+|-----------------------+------------+------------+------------+---------+---------|
+| get_leaf_count        | 27180      | 27180      | 27180      | 0       | 1       |
+|-----------------------+------------+------------+------------+---------+---------|
+| get_root              | 52010      | 52010      | 52010      | 0       | 1       |
+|-----------------------+------------+------------+------------+---------+---------|
+| root_is_known         | 39150      | 39150      | 39150      | 0       | 2       |
+╰-----------------------+------------+------------+------------+---------+---------╯
+
+Tests: 1 passed, 0 failed, 0 ignored, 51 filtered out
+
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 13.946s
+CPU time consumed: 13.949s
+Memory peak: 512.0K
+Memory swap peak: 0B

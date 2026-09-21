@@ -1,0 +1,48 @@
+{
+  "case": "ordinary",
+  "request_seconds": 18.591558047002763,
+  "proof_bytes": 237232,
+  "base64_bytes": 316312,
+  "proof_sha256": "4e12f09ed67e4d641057a0ddc837200a08dd39a5c19dc08b1d04510f0cdd0e6b",
+  "proof_facts": [
+    "0x50524f4f4631",
+    "0x5649525455414c5f534e4f53",
+    "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+    "0x5649525455414c5f534e4f5330",
+    "0xea55ea",
+    "0x7276f39b56dc62a294828a92376a78db263d811f3d144770b300d60cff2b20e",
+    "0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57",
+    "0x1",
+    "0x4c7a00d60a06157c6f56b5f7f02de3a4f9603a0e5a6dd1e7e4cf364dd01715b"
+  ],
+  "l2_to_l1_messages": [
+    {
+      "from_address": "0x53dc37e936254b8ed9ef597ddd8e84504ea43ee53c128b3869cb322b45fabf2",
+      "to_address": "0x0",
+      "payload": [
+        "0x5f568449caecc9a116012e2e4b110b9689d4dca702fd0bcdfcce923fcde9328",
+        "0x54454d504c41525f5632",
+        "0x534e5f5345504f4c4941",
+        "0x53dc37e936254b8ed9ef597ddd8e84504ea43ee53c128b3869cb322b45fabf2",
+        "0x37bf1a252bc97aac2a2f778a0255ae80c94a99cecfd2e488588a23505eebbef",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x155621d3a9512e7fe73723668c3a873ae98e17d6b964636d6882120c3945abb"
+      ]
+    }
+  ],
+  "peak_rss_kib": 14156488,
+  "memory_limit_bytes": 17179869184,
+  "swap_limit_bytes": 0,
+  "swap_peak_bytes": 0,
+  "proving_seconds": 12.631,
+  "virtual_os_seconds": 5.929,
+  "local_verification_ms": 155,
+  "local_verification_passed": true,
+  "public_binding_passed": true,
+  "peak_rss_gib": 13.500679016113281,
+  "cgroup_peak_bytes": 14419705856,
+  "oom_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+  "startup_seconds": 1.42497
+}

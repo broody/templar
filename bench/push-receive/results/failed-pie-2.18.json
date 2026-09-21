@@ -1,0 +1,52 @@
+{
+  "case": "alice-send",
+  "scope": "earlier staged standalone privacy prover; no virtual OS or native submission",
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--collect",
+    "--unit=templar-push-ba957a7afd",
+    "-p",
+    "WorkingDirectory=/tmp/templar-stwo-privacy-dtgn6e8l/source",
+    "-p",
+    "MemoryMax=10G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUQuota=400%",
+    "-p",
+    "CPUAffinity=0 1 2 3",
+    "-p",
+    "RuntimeMaxSec=180",
+    "--setenv=RAYON_NUM_THREADS=4",
+    "--setenv=RUST_MIN_STACK=4194304",
+    "--setenv=PATH=/usr/bin:/bin",
+    "--setenv=BENCH_STAGED=1",
+    "--setenv=BENCH_NEGATIVE_VERIFY=1",
+    "--setenv=BENCH_PIE=/home/broody/development/templar/bench/push-receive/results/alice-send.pie.zip",
+    "--setenv=BENCH_OUTPUT=/home/broody/development/templar/bench/push-receive/results/alice-send.stwo",
+    "/usr/bin/time",
+    "-v",
+    "/tmp/templar-stwo-privacy-dtgn6e8l/source/target/release/deps/privacy_prove-0f4017300f924673",
+    "tests::slow_tests::test_privacy_recursive_prove_and_verify",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 101,
+  "wall_seconds": 0.961764072002552,
+  "limits": {
+    "memory_gib": 10,
+    "swap": 0,
+    "cores": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "prover_binary_sha256": "b31d54ce9bb32965658b443be44d308626345676e0811fce0b5084a24fc2ffb8",
+  "peak_rss_gib": 1.2220954895019531
+}

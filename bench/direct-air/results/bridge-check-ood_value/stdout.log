@@ -1,0 +1,33 @@
+Running as unit: templar-direct-air-bridge-check-ood_value-1789966894272967360.service
+   Executing templar_synthetic_circuit_bridge
+error: Panicked with "Invalid OODS eval".
+Command exited with non-zero status 1
+	Command being timed: "/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb --manifest-path /home/broody/development/templar/bench/direct-air/cairo/Scarb.toml execute --no-build -p templar_synthetic_circuit_bridge --arguments-file /home/broody/development/templar/bench/direct-air/results/cairo-mutations/ood_value.json --print-program-output --print-resource-usage"
+	User time (seconds): 0.27
+	System time (seconds): 0.51
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.79
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 124636
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 38278
+	Voluntary context switches: 39
+	Involuntary context switches: 84
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 799ms
+CPU time consumed: 795ms
+Memory peak: 4.2M
+Memory swap peak: 0B

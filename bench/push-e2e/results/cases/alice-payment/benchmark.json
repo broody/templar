@@ -1,0 +1,26 @@
+{
+  "case": "alice-payment",
+  "startup_seconds": 2.002400662000582,
+  "request_seconds": 19.18889715100522,
+  "proving_seconds": 12.064,
+  "virtual_os_seconds": 7.12,
+  "proof_bytes": 230242,
+  "proof_sha256": "7f1e050720836377ee740efab3987c3cfc1e8c6563e6ec29baba8c1de0b4942d",
+  "peak_rss_gib": 13.877250671386719,
+  "swap_peak_bytes": 0,
+  "local_verification_passed": true,
+  "public_binding_matches": true,
+  "public_values": [
+    "0x54454d504c41525f505553485f504f4332",
+    "0x534e5f5345504f4c4941",
+    "0x7430fdfc9121d40c0b92bec1a19265c5f9b2c0fd16aba973f1799beed736a1e",
+    "0x5e9f45e91d26a1741703acf8024a2cf387d587e9d6697b528335c1e4524b85a",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x1ff253e935892fc7bc252bc05ec651d7252a9e3f2831a344df7266d62c68d3e"
+  ],
+  "base_block": 15363660,
+  "memory_cap_gib": 16,
+  "cores": 4
+}

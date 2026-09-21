@@ -1,0 +1,103 @@
+{
+  "actual_program_output": [
+    8,
+    6116411936294045149168452720177,
+    1,
+    1110,
+    194250202315021002790422369058999935285926933295307486729424430452319255097,
+    2139620970,
+    0,
+    81953478838084139214922649031393117662340898249154644072560030397320275174,
+    1
+  ],
+  "arguments": {
+    "path": "target/m31-append/smoke-single/cairo-arguments.json",
+    "sha256": "8e911cc7ed212d49bb0a60c3c2b5e27f0e5a2770abca9f106d597773cdafb2f6",
+    "size_bytes": 561910
+  },
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-m31-cc-bridge-single-1017829",
+    "-p",
+    "WorkingDirectory=/home/broody/development/templar/bench/m31-append/cairo",
+    "-p",
+    "MemoryMax=8G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUQuota=100%",
+    "-p",
+    "CPUAffinity=0",
+    "-p",
+    "RuntimeMaxSec=300",
+    "--setenv=PATH=/home/broody/.asdf/installs/scarb/2.18.0/bin:/home/broody/.asdf/installs/starknet-foundry/0.63.0/bin:/usr/bin:/home/broody/.cargo/bin:/bin",
+    "/usr/bin/time",
+    "-v",
+    "/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb",
+    "--manifest-path",
+    "/home/broody/development/templar/bench/m31-append/cairo/Scarb.toml",
+    "execute",
+    "--no-build",
+    "-p",
+    "templar_m31_append_bridge",
+    "--arguments-file",
+    "/home/broody/development/templar/target/m31-append/smoke-single/cairo-arguments.json",
+    "--output",
+    "none",
+    "--print-program-output",
+    "--print-resource-usage"
+  ],
+  "command_shell": "systemd-run --user --wait --pipe --unit=templar-m31-cc-bridge-single-1017829 -p WorkingDirectory=/home/broody/development/templar/bench/m31-append/cairo -p MemoryMax=8G -p MemorySwapMax=0 -p CPUQuota=100% -p CPUAffinity=0 -p RuntimeMaxSec=300 --setenv=PATH=/home/broody/.asdf/installs/scarb/2.18.0/bin:/home/broody/.asdf/installs/starknet-foundry/0.63.0/bin:/usr/bin:/home/broody/.cargo/bin:/bin /usr/bin/time -v /home/broody/.asdf/installs/scarb/2.18.0/bin/scarb --manifest-path /home/broody/development/templar/bench/m31-append/cairo/Scarb.toml execute --no-build -p templar_m31_append_bridge --arguments-file /home/broody/development/templar/target/m31-append/smoke-single/cairo-arguments.json --output none --print-program-output --print-resource-usage",
+  "comparison_exact": true,
+  "completed_at": "2026-09-21T19:34:36.653774+08:00",
+  "decoded_verification_output": {
+    "matches_native_public8": true,
+    "public_values": [
+      6116411936294045149168452720177,
+      1,
+      1110,
+      194250202315021002790422369058999935285926933295307486729424430452319255097,
+      2139620970,
+      0,
+      81953478838084139214922649031393117662340898249154644072560030397320275174,
+      1
+    ],
+    "span_length": 8
+  },
+  "exit_code": 0,
+  "expected_program_output": [
+    8,
+    6116411936294045149168452720177,
+    1,
+    1110,
+    194250202315021002790422369058999935285926933295307486729424430452319255097,
+    2139620970,
+    0,
+    81953478838084139214922649031393117662340898249154644072560030397320275174,
+    1
+  ],
+  "id": "bridge-single",
+  "kind": "full Cairo inner-proof verification",
+  "passed": true,
+  "resources": {
+    "cairo_builtins": {
+      "output_builtin": 9,
+      "poseidon_builtin": 6,
+      "range_check_builtin": 608841
+    },
+    "cairo_max_memory_address": 6288793,
+    "cairo_steps": 6032137,
+    "time_elapsed": "0:02.17",
+    "time_exit_status": 0,
+    "time_max_rss_kib": 903252
+  },
+  "started_at": "2026-09-21T19:34:34.429124+08:00",
+  "stderr_path": "bench/m31-append/results/cairo-correctness-v2/cases/bridge-single/stderr.log",
+  "stdout_path": "bench/m31-append/results/cairo-correctness-v2/cases/bridge-single/stdout.log",
+  "systemd_properties_path": "bench/m31-append/results/cairo-correctness-v2/cases/bridge-single/systemd-properties.txt",
+  "timed_out": false,
+  "unit": "templar-m31-cc-bridge-single-1017829"
+}

@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/home/broody/.asdf/installs/starknet-foundry/0.63.0/bin/sncast",
+    "--json",
+    "utils",
+    "class-hash",
+    "--sierra-file",
+    "/home/broody/development/templar/bench/m31-append/cairo/target/contract/templar_m31_append_statement_M31AppendStatementAccount.contract_class.json"
+  ],
+  "response": {
+    "class_hash": "0x06ef8a6b896fe830b46f08893a54dcc11853331b3f23fd04834349f87a2cfd48",
+    "command": "utils class-hash",
+    "type": "response"
+  },
+  "matches": true
+}

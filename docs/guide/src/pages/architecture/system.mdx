@@ -1,0 +1,61 @@
+---
+showAskAi: false
+title: System & boundaries
+description: The responsibilities of the holder, local prover, Starknet, verifier adapter, and pool.
+---
+
+import { Flow } from '../../components/Flow'
+
+# System & boundaries
+
+Templar separates secret-dependent computation from public settlement. The holder's device works with note openings. Starknet receives a proof and the public actions needed to update the pool.
+
+## The components
+
+| Component | Responsibility |
+| --- | --- |
+| Note client | Derives receiving and viewing keys, creates encrypted outputs, discovers receipts, restores history, and assembles a spend witness. |
+| Local prover | Executes the Cairo spend statement in a virtual Starknet environment and produces the privacy proof. |
+| Statement account | The virtual execution entry point. Checks the spend and emits the public result that the proof commits to. |
+| Transaction sender | Signs and submits the public proof-bearing transaction. It can be a different role from the note owner. |
+| Starknet native verifier | Verifies the cryptographic proof and exposes the resulting proof facts to contract execution. |
+| Native verifier adapter | Checks that those facts describe the approved statement, intended pool and chain, and expected public result. |
+| Pool contract | Enforces root freshness, double-spend protection, exact bundle binding, encrypted publication, fees, and token transfers. |
+| External application adapter | Executes the exact proof-authorized public call and provides funding instructions for return notes. |
+| Public history source | Serves commitments, encrypted payloads, and spent data for verification against a canonical checkpoint. |
+
+“Note client” describes a responsibility, not a released wallet or SDK. The current end-to-end harness performs that role programmatically.
+
+<Flow steps={[
+  { title: 'Holder device', detail: 'Secrets + membership paths → statement execution → privacy proof.' },
+  { title: 'Public transaction', detail: 'Proof + public inputs + action list + transaction signature.' },
+  { title: 'Starknet', detail: 'Native verification → adapter binding checks → pool state changes.' },
+]} caption="The privacy boundary is crossed by the proof and public effects, not by the private witness." />
+
+## Local execution is not a public transaction
+
+The prover runs a **virtual** execution against a selected Starknet base block. This gives the computation a chain context and lets it read the state it needs. The private witness is supplied to this local execution.
+
+The statement account produces a virtual message containing its class hash and the public spend statement. That message is an output committed to by the proof. It does not send the witness to Starknet, and it is not a real bridge withdrawal.
+
+The holder then attaches the proof to a public transaction that calls the pool. This transaction performs the actual state changes and ERC20 transfers.
+
+## Three different forms of authority
+
+**The spending secret establishes ownership.** A payer knows the output opening it created, but cannot spend that output without the recipient's spending secret. A receiving address or transaction signature likewise does not establish private ownership.
+
+**Viewing keys disclose information.** Incoming viewing decrypts receipts. Full viewing additionally derives their nullifiers to track spent status. Neither replaces the spending secret. These capabilities are voluntarily shared and never required by the history service.
+
+**The transaction signature authorizes submission.** It covers the public Starknet transaction and network fees. The architecture can separate this sender from the note owner, but relay infrastructure is not itself a privacy guarantee.
+
+## External dependencies
+
+RPC services provide chain state and transport. The wallet needs a trustworthy canonical checkpoint before it can authenticate downloaded history. The current scanner trusts agreement between two providers; colluding providers could misrepresent state. A provider can also delay requests, correlate queries, or make proving unavailable. Query patterns may expose notes of interest even when the proof hides them.
+
+Historical ciphertext availability is required for recovery. A seed regenerates keys, but cannot reconstruct another payer's random note data. A missing payload must result in an incomplete wallet view.
+
+The token contract controls ERC20 behavior. The pool relies on token transfers behaving as expected; a proof cannot make an incompatible or malicious token safe.
+
+The pool owner can change verifier and fee configuration. That authority is part of the [trust model](/architecture/privacy#configuration-authority), even when proof generation is entirely local.
+
+[Return-note settlement](/architecture/returns) binds external execution and verifies actual incoming funding. The native proof authorizes the call; public execution determines the return amount.

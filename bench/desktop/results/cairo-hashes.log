@@ -1,0 +1,24 @@
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.11s
+   Compiling test(desktop_unittest) desktop v0.1.0 (/home/broody/development/templar/bench/desktop/cairo/Scarb.toml)
+    Finished `dev` profile target(s) in 7 seconds
+
+
+Collected 11 test(s) from desktop package
+Running 11 test(s) from src/
+[PASS] desktop::hash_tests::rejects_noncanonical (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~60780)
+[PASS] desktop::hash_tests::large_inputs (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~1603388)
+[PASS] desktop::hash_tests::starknet_chain_32 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~424384)
+[PASS] desktop::hash_tests::vector_0 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~1516098)
+[PASS] desktop::hash_tests::vector_3 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~1615828)
+[PASS] desktop::hash_tests::vector_2 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~1589888)
+[PASS] desktop::hash_tests::vector_1 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~1563948)
+[PASS] desktop::hash_tests::vector_4 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~3128666)
+[PASS] desktop::hash_tests::vector_7 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~4693384)
+[PASS] desktop::hash_tests::vector_27 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~14133572)
+[PASS] desktop::hash_tests::native_chain_32 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~50474956)
+Tests: 11 passed, 0 failed, 0 ignored, 0 filtered out
+

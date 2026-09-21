@@ -1,0 +1,293 @@
+{
+  "status": "passed",
+  "scope": "public append arithmetic and canonical fixture reconstruction; no private payment, browser qualification, outer proving, or OS rejection claim",
+  "v1_measurements": {
+    "label": "retained v1 measurements; not rerun with v2",
+    "binary_sha256": "8acbab38aa2a35f150205ea6546bc56bc643601ff19b98ab40405194b33dfbbd",
+    "runs": [
+      {
+        "name": "native-single-1",
+        "shape": "single",
+        "status": "passed",
+        "proof_directory": "bench/m31-append/results/native-single-1/proof",
+        "proof_bytes": 192143,
+        "proof_sha256": "955bfb38e456678966def815a9d1c3096c0f4258972006a4a2b1c5692d6f5615",
+        "native_verified": true,
+        "complete_seconds": 4.085298488,
+        "phases_seconds": {
+          "base_commit_seconds": 0.011326378,
+          "interaction_seconds": 0.267043367,
+          "native_verify_seconds": 0.002367658,
+          "stark_prove_seconds": 3.780009166,
+          "twiddles_and_witness_seconds": 0.015558844
+        },
+        "harness_elapsed_seconds": 4.192707955997321,
+        "sampled_command_peak_rss_gib": 0.017513275146484375,
+        "sampled_peak_cgroup_gib": 0.0142974853515625,
+        "effective_peak_cgroup_gib": 0.0142974853515625,
+        "time_largest_process_peak_rss_gib": 0.017093658447265625,
+        "sampled_swap_peak_bytes": 0,
+        "sampled_oom_kill": 0,
+        "cap_gib": 1,
+        "cpu_budget_cores": 1,
+        "prover_workers": 1
+      },
+      {
+        "name": "native-single-2",
+        "shape": "single",
+        "status": "passed",
+        "proof_directory": "bench/m31-append/results/native-single-2/proof",
+        "proof_bytes": 192143,
+        "proof_sha256": "955bfb38e456678966def815a9d1c3096c0f4258972006a4a2b1c5692d6f5615",
+        "native_verified": true,
+        "complete_seconds": 4.073443076,
+        "phases_seconds": {
+          "base_commit_seconds": 0.010766447,
+          "interaction_seconds": 0.269605512,
+          "native_verify_seconds": 0.002353546,
+          "stark_prove_seconds": 3.765623888,
+          "twiddles_and_witness_seconds": 0.016251205
+        },
+        "harness_elapsed_seconds": 4.19697413299582,
+        "sampled_command_peak_rss_gib": 0.01752471923828125,
+        "sampled_peak_cgroup_gib": 0.0145416259765625,
+        "effective_peak_cgroup_gib": 0.0145416259765625,
+        "time_largest_process_peak_rss_gib": 0.0171051025390625,
+        "sampled_swap_peak_bytes": 0,
+        "sampled_oom_kill": 0,
+        "cap_gib": 1,
+        "cpu_budget_cores": 1,
+        "prover_workers": 1
+      },
+      {
+        "name": "native-single-3",
+        "shape": "single",
+        "status": "passed",
+        "proof_directory": "bench/m31-append/results/native-single-3/proof",
+        "proof_bytes": 192143,
+        "proof_sha256": "955bfb38e456678966def815a9d1c3096c0f4258972006a4a2b1c5692d6f5615",
+        "native_verified": true,
+        "complete_seconds": 4.063302771,
+        "phases_seconds": {
+          "base_commit_seconds": 0.011690479,
+          "interaction_seconds": 0.267081713,
+          "native_verify_seconds": 0.002481941,
+          "stark_prove_seconds": 3.756989408,
+          "twiddles_and_witness_seconds": 0.01570097
+        },
+        "harness_elapsed_seconds": 4.195489225996425,
+        "sampled_command_peak_rss_gib": 0.017513275146484375,
+        "sampled_peak_cgroup_gib": 0.0147552490234375,
+        "effective_peak_cgroup_gib": 0.0147552490234375,
+        "time_largest_process_peak_rss_gib": 0.017093658447265625,
+        "sampled_swap_peak_bytes": 0,
+        "sampled_oom_kill": 0,
+        "cap_gib": 1,
+        "cpu_budget_cores": 1,
+        "prover_workers": 1
+      },
+      {
+        "name": "native-batch-1",
+        "shape": "batch",
+        "status": "passed",
+        "proof_directory": "bench/m31-append/results/native-batch-1/proof",
+        "proof_bytes": 223098,
+        "proof_sha256": "7ed80c51ad5a0fd05239675903b515d8b0c46d7e7cfb69ad5f2840902592646e",
+        "native_verified": true,
+        "complete_seconds": 1.9881207650000001,
+        "phases_seconds": {
+          "base_commit_seconds": 0.021587858,
+          "interaction_seconds": 0.065077616,
+          "native_verify_seconds": 0.002830352,
+          "stark_prove_seconds": 1.8608668449999999,
+          "twiddles_and_witness_seconds": 0.027519828
+        },
+        "harness_elapsed_seconds": 2.135122734005563,
+        "sampled_command_peak_rss_gib": 0.030315399169921875,
+        "sampled_peak_cgroup_gib": 0.027172088623046875,
+        "effective_peak_cgroup_gib": 0.027172088623046875,
+        "time_largest_process_peak_rss_gib": 0.03020477294921875,
+        "sampled_swap_peak_bytes": 0,
+        "sampled_oom_kill": 0,
+        "cap_gib": 1,
+        "cpu_budget_cores": 1,
+        "prover_workers": 1
+      },
+      {
+        "name": "native-batch-2",
+        "shape": "batch",
+        "status": "passed",
+        "proof_directory": "bench/m31-append/results/native-batch-2/proof",
+        "proof_bytes": 223098,
+        "proof_sha256": "7ed80c51ad5a0fd05239675903b515d8b0c46d7e7cfb69ad5f2840902592646e",
+        "native_verified": true,
+        "complete_seconds": 2.10285472,
+        "phases_seconds": {
+          "base_commit_seconds": 0.020573179,
+          "interaction_seconds": 0.065226263,
+          "native_verify_seconds": 0.002922178,
+          "stark_prove_seconds": 1.9763341730000001,
+          "twiddles_and_witness_seconds": 0.028767973
+        },
+        "harness_elapsed_seconds": 2.224527090002084,
+        "sampled_command_peak_rss_gib": 0.030292510986328125,
+        "sampled_peak_cgroup_gib": 0.027416229248046875,
+        "effective_peak_cgroup_gib": 0.027416229248046875,
+        "time_largest_process_peak_rss_gib": 0.029998779296875,
+        "sampled_swap_peak_bytes": 0,
+        "sampled_oom_kill": 0,
+        "cap_gib": 1,
+        "cpu_budget_cores": 1,
+        "prover_workers": 1
+      },
+      {
+        "name": "native-batch-3",
+        "shape": "batch",
+        "status": "passed",
+        "proof_directory": "bench/m31-append/results/native-batch-3/proof",
+        "proof_bytes": 223098,
+        "proof_sha256": "7ed80c51ad5a0fd05239675903b515d8b0c46d7e7cfb69ad5f2840902592646e",
+        "native_verified": true,
+        "complete_seconds": 1.9882423299999998,
+        "phases_seconds": {
+          "base_commit_seconds": 0.021753531,
+          "interaction_seconds": 0.064318624,
+          "native_verify_seconds": 0.002789096,
+          "stark_prove_seconds": 1.864988398,
+          "twiddles_and_witness_seconds": 0.025688938
+        },
+        "harness_elapsed_seconds": 2.1313023580005392,
+        "sampled_command_peak_rss_gib": 0.0302886962890625,
+        "sampled_peak_cgroup_gib": 0.031276702880859375,
+        "effective_peak_cgroup_gib": 0.031276702880859375,
+        "time_largest_process_peak_rss_gib": 0.029933929443359375,
+        "sampled_swap_peak_bytes": 0,
+        "sampled_oom_kill": 0,
+        "cap_gib": 1,
+        "cpu_budget_cores": 1,
+        "prover_workers": 1
+      }
+    ],
+    "compatibility_note": "v2 changes only wire serialization; no v2 repetition measurements were performed or inferred"
+  },
+  "v2": {
+    "binary_sha256": "f00da668939c65d71b5e703d4932b6764d6dd0df01c0cd80733b6c2cb1ed4d05",
+    "change": "wire.rs only: accept 1..23 distinct openings from 23 sampled draws while preserving all column cardinalities",
+    "collision_cairo": {
+      "status": "passed",
+      "distinct_openings": 22,
+      "sampled_draws": 23,
+      "comparison_exact": true,
+      "cairo_steps": 5959448,
+      "report": "bench/m31-append/results/collision-cairo/report.json"
+    },
+    "integration_proofs": [
+      {
+        "name": "native-branch12-v2",
+        "proof_directory": "bench/m31-append/results/native-branch12-v2/proof",
+        "proof_bytes": 188303,
+        "proof_sha256": "ecbd472612240d87ae55051d494f15050ee2e8f987300223006f940810d0fd30",
+        "native_verified": true,
+        "complete_seconds": 4.710630428,
+        "effective_peak_cgroup_gib": 0.014499664306640625,
+        "sampled_command_peak_rss_gib": 0.01750946044921875,
+        "swap_peak_bytes": 0,
+        "oom_kill": 0
+      },
+      {
+        "name": "native-branch13",
+        "proof_directory": "bench/m31-append/results/native-branch13/proof",
+        "proof_bytes": 194527,
+        "proof_sha256": "33b22fcd732935f9122e7c34ae157eaafdb54dd595d964e813a60cd8691c9bf5",
+        "native_verified": true,
+        "complete_seconds": 0.939180661,
+        "effective_peak_cgroup_gib": 0.0142974853515625,
+        "sampled_command_peak_rss_gib": 0.017528533935546875,
+        "swap_peak_bytes": 0,
+        "oom_kill": 0
+      },
+      {
+        "name": "native-refresh123",
+        "proof_directory": "bench/m31-append/results/native-refresh123/proof",
+        "proof_bytes": 193647,
+        "proof_sha256": "ac8aad19e3874b28ae553c1071d021f2b1cf9c2f15f046918a223b232562c665",
+        "native_verified": true,
+        "complete_seconds": 0.690017715,
+        "effective_peak_cgroup_gib": 0.014301300048828125,
+        "sampled_command_peak_rss_gib": 0.017581939697265625,
+        "swap_peak_bytes": 0,
+        "oom_kill": 0
+      }
+    ],
+    "branch12_matches_saved_collision_proof": true,
+    "saved_collision_proof_sha256": "ecbd472612240d87ae55051d494f15050ee2e8f987300223006f940810d0fd30"
+  },
+  "verification_rejection_suites": [
+    {
+      "name": "native-verify-single-1",
+      "status": "passed",
+      "suite_kind": "valid verification plus mutation rejection; not pure-verification timing",
+      "rejected_mutations": 23,
+      "boundary_controls": 2,
+      "negative_report": "bench/m31-append/results/native-verify-single-1/checks/negative-tests.json"
+    },
+    {
+      "name": "native-verify-batch-1",
+      "status": "passed",
+      "suite_kind": "valid verification plus mutation rejection; not pure-verification timing",
+      "rejected_mutations": 24,
+      "boundary_controls": 2,
+      "negative_report": "bench/m31-append/results/native-verify-batch-1/checks/negative-tests.json"
+    },
+    {
+      "name": "native-verify-branch12-v2",
+      "status": "passed",
+      "suite_kind": "valid verification plus mutation rejection; not pure-verification timing",
+      "rejected_mutations": 23,
+      "boundary_controls": 2,
+      "negative_report": "bench/m31-append/results/native-verify-branch12-v2/checks/negative-tests.json"
+    }
+  ],
+  "counts": {
+    "v1_measurement_runs_retained": 6,
+    "v2_measurement_repeats": 0,
+    "v2_integration_proofs": 3,
+    "valid_plus_negative_suites": 3,
+    "rejected_mutations": 70,
+    "boundary_controls": 6,
+    "state_fixture_positive": 1,
+    "state_fixture_rejected_controls": 16
+  },
+  "state_fixture_controls": {
+    "scope": "canonical reconstruction validator controls; not OS rejection evidence",
+    "positive": 1,
+    "rejected": 16,
+    "base_fixture_unchanged": true,
+    "base_fixture_sha256": "a0936d5ac143d921ea1900bdde5540b252f615b1f4e6dffc270b9881358bcc2c",
+    "report": "bench/m31-append/results/state-fixture/controls/summary.json"
+  },
+  "outer_ready_proof_directories": [
+    "bench/m31-append/results/native-single-1/proof",
+    "bench/m31-append/results/native-batch-1/proof",
+    "bench/m31-append/results/native-branch12-v2/proof",
+    "bench/m31-append/results/native-branch13/proof",
+    "bench/m31-append/results/native-refresh123/proof"
+  ],
+  "proof_sha256": {
+    "bench/m31-append/results/native-single-1/proof": "955bfb38e456678966def815a9d1c3096c0f4258972006a4a2b1c5692d6f5615",
+    "bench/m31-append/results/native-batch-1/proof": "7ed80c51ad5a0fd05239675903b515d8b0c46d7e7cfb69ad5f2840902592646e",
+    "bench/m31-append/results/native-branch12-v2/proof": "ecbd472612240d87ae55051d494f15050ee2e8f987300223006f940810d0fd30",
+    "bench/m31-append/results/native-branch13/proof": "33b22fcd732935f9122e7c34ae157eaafdb54dd595d964e813a60cd8691c9bf5",
+    "bench/m31-append/results/native-refresh123/proof": "ac8aad19e3874b28ae553c1071d021f2b1cf9c2f15f046918a223b232562c665"
+  },
+  "first_outer_candidate": {
+    "path": "bench/m31-append/results/native-single-1/proof",
+    "context": "SN_SEPOLIA chain 0x534e5f5345504f4c4941, pool 0x456"
+  },
+  "limitations": [
+    "Fixed fixtures and deterministic grinding establish byte stability, not a payment-latency distribution.",
+    "The v1 native_verify_seconds values are phases inside proving processes; no pure-verification memory measurement is claimed.",
+    "No outer service/proving or local-node proof attachment was run."
+  ],
+  "supersedes": "bench/m31-append/results/native-summary.json for completion status; prior failure evidence remains preserved"
+}

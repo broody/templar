@@ -1,0 +1,21 @@
+{
+  "scope": "Matched public-transcript membership storage comparison; complete process, not private payment or WASM",
+  "command": [
+    "/home/broody/development/templar/target/poseidon-membership/client-target/release/templar-poseidon-membership",
+    "/home/broody/development/templar/bench/poseidon-membership/fixtures/two-paths.json",
+    "/home/broody/development/templar/bench/poseidon-membership/results/bounded-2g-1t-repeat1/proof",
+    "--bounded-columns=16"
+  ],
+  "binary_sha256": "9c44542bd838100722358edc8c92f91e08012c4e59ebbf2b6ea35813c95c8974",
+  "cap_gib": 2,
+  "threads": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 1,
+  "elapsed_seconds": 12.837681976001477,
+  "sampled_peak_rss_gib": 1.9915275573730469,
+  "sampled_peak_cgroup_gib": 2.0,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 1,
+  "time_peak_rss_gib": null
+}

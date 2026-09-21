@@ -1,0 +1,15 @@
+{
+  "reference": "/home/broody/development/templar/bench/client-privacy-feasibility/results/unsplit-8g-4c/output",
+  "byte_parity": true,
+  "public_output_parity": true,
+  "proof_bytes": 235734,
+  "proof_sha256": "9326c1eaad137c1b865b417b36d041928b1e5d9ec15b363662f0535eed868153",
+  "preserved_original_verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+  "mutation_adapter_sha256": "b8658ac824cbfe38edd45b35c35d469c5239662a9c305d57713b2dde01b86a28",
+  "verifier_library_modified": false,
+  "mutation": "add one to each changed public field",
+  "exit_code": 0,
+  "external_verification_and_controls_seconds": 0.47518039200804196,
+  "external_verification_excluded_from_wrapper_measurement": true,
+  "privacy_qualified_by_measurement": false
+}

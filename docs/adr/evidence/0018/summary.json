@@ -1,0 +1,20 @@
+{
+  "outcome": "local_proof_verified_live_gateway_rejected",
+  "network": "SN_SEPOLIA",
+  "starknet_version": "0.14.4",
+  "proof_version": "PROOF2",
+  "proof_request_seconds": 15.005986851996568,
+  "recursive_prove_seconds": 11.199,
+  "prover_peak_rss_kib": 14910600,
+  "service_memory_peak_bytes": 15213883392,
+  "memory_cap_bytes": 17179869184,
+  "swap_bytes": 0,
+  "cpu_cores": 4,
+  "proof_bytes": 231955,
+  "proof_sha256": "1e8377bb9e7876b1fd9fb72bb85c5a030254770a4610c5b1e34954e8de430a6f",
+  "local_cryptographic_verifier": "PASS",
+  "live_gateway_error": "StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED",
+  "onchain_accepted_count": 0,
+  "estimated_fee_strk": 1.51905459178275,
+  "estimated_l2_gas": 77143200
+}

@@ -1,0 +1,159 @@
+{
+  "task": "m31-append frozen-build worker preflight",
+  "date": "2026-09-21",
+  "snapshot_status": "provisional: specialist-owned sources and outputs were not declared frozen",
+  "scope": "read-only inventory; no build, test, prover, benchmark, service, or chain command was run by this worker",
+  "sources_read": [
+    "bench/m31-append/README.md",
+    "bench/m31-append/measurement-plan.md",
+    "bench/m31-append/review.md",
+    "bench/m31-append/results/preflight/preflight.json",
+    "bench/m31-append/results/preflight/preflight.md",
+    "bench/m31-append/client/src/main.rs",
+    "bench/m31-append/client/src/lib.rs",
+    "bench/m31-append/client/build.sh",
+    "bench/m31-append/cairo/bridge/src/lib.cairo",
+    "bench/m31-append/cairo/ood_probe/src/lib.cairo",
+    "bench/m31-append/cairo/transcript_probe/src/lib.cairo",
+    "bench/m31-append/cairo/statement_account/src/lib.cairo",
+    "bench/m31-append/cairo/local_pool/src/lib.cairo"
+  ],
+  "tool_versions_from_existing_preflight": {
+    "scarb": {
+      "version": "2.18.0 (Cairo 2.18.0, Sierra 1.8.0)",
+      "path": "/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb"
+    },
+    "snforge": {
+      "version": "0.63.0",
+      "path": "/home/broody/.asdf/installs/starknet-foundry/0.63.0/bin/snforge",
+      "warning": "~/.local/bin/snforge is 0.20.0; use the explicit 0.63.0 path"
+    },
+    "sncast": {
+      "version": "0.63.0",
+      "path": "/home/broody/.asdf/installs/starknet-foundry/0.63.0/bin/sncast",
+      "warning": "~/.local/bin/sncast and the default shim are 0.20.0; use the explicit 0.63.0 path"
+    },
+    "starknet_devnet": {
+      "version": "0.6.0",
+      "path": "/home/broody/.asdf/installs/starknet-devnet/0.6.0/bin/starknet-devnet"
+    },
+    "rust_toolchain_in_build_script": "nightly-2026-01-15"
+  },
+  "preserved_proof1_pins": {
+    "prover": {
+      "path": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/rust-target/release/starknet_transaction_prover",
+      "size_bytes": 175008672,
+      "sha256": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5",
+      "status": "present; identity agrees with existing preflight; /tmp is ephemeral"
+    },
+    "verifier": {
+      "path": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/local-verifier",
+      "size_bytes": 37615176,
+      "sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "status": "present; identity agrees with existing preflight; /tmp is ephemeral"
+    },
+    "source_pins_from_preflight": {
+      "sequencer": "e6b6fd2e9932909107833579e5b6efd6c75fa0af",
+      "proving_utils": "3035dd00421daa541894297bd754db6e2787807b"
+    }
+  },
+  "current_new_artifacts": {
+    "source_fixture": [
+      {"path": "bench/m31-append/client/fixtures/golden-vectors.json", "size_bytes": 41662, "sha256": "4c461658f5d4e23cdfdc3ed7a79e7a2fdac33d4d1346f7a31151ce595867920e"}
+    ],
+    "native_binary": [
+      {"path": "target/m31-append/client-target/release/templar-m31-append", "size_bytes": 4161448, "sha256": "8acbab38aa2a35f150205ea6546bc56bc643601ff19b98ab40405194b33dfbbd", "status": "provisional mutable build output"}
+    ],
+    "cairo_bridge_build_outputs": [
+      {"path": "bench/m31-append/cairo/target/dev/templar_m31_append_bridge.executable.json", "size_bytes": 937022, "sha256": "2dbd7c21a326a9106c2bacb39b212a1dc321db3c0c3442e03fd4cf78ff0249ea", "status": "provisional mutable build output"},
+      {"path": "bench/m31-append/cairo/target/dev/templar_m31_append_bridge.sierra.json", "size_bytes": 11281835, "sha256": "143e6d274a0e79a8238597822cb490803015252f5b1f032d3d25e84d4c578e8d", "status": "provisional mutable build output"}
+    ],
+    "generated_smoke_inputs": [
+      {"path": "target/m31-append/smoke-inputs/batch-empty-to-two-transcript.json", "size_bytes": 1393876, "sha256": "7e4f3c6b92877b048feb1bfbb1005622e92605a34d2e1c62a0c2d3230802ae89"},
+      {"path": "target/m31-append/smoke-inputs/batch-empty-to-two.json", "size_bytes": 305443, "sha256": "6cbd2bbd5a0d2b99e9c91fda1051910ba288b944520a31ef24927f094afd290b"},
+      {"path": "target/m31-append/smoke-inputs/concurrent-a-to-b-transcript.json", "size_bytes": 698860, "sha256": "8f01f297ee49a50bdd0ff848bd9c3f4cbb9a048ceac73293071cf97340f17310"},
+      {"path": "target/m31-append/smoke-inputs/concurrent-a-to-b.json", "size_bytes": 152956, "sha256": "067b395c145e4737def57e7e8bd8bf6d2a885b5225e9597b4b04d649b62d4bb8"},
+      {"path": "target/m31-append/smoke-inputs/concurrent-a-to-c-transcript.json", "size_bytes": 698700, "sha256": "9044e588cc902ef90885fe1f7e6562aa417d1c6221be5743a5a7c38623978973"},
+      {"path": "target/m31-append/smoke-inputs/concurrent-a-to-c.json", "size_bytes": 152944, "sha256": "ef334fbaf66c798ab33483f97da4575b46f327c93be5d8b9a0aba184e81d49ce"},
+      {"path": "target/m31-append/smoke-inputs/ood-arbitrary.json", "size_bytes": 784377, "sha256": "45f359d80be1dac322f3887de6e29644ea527d3333f513c1c3f53aff92b04352"},
+      {"path": "target/m31-append/smoke-inputs/refresh-b-to-d-transcript.json", "size_bytes": 699088, "sha256": "415294762474c6fb82a736512c9319d30288b8bf62e538af63766cf3561b2138"},
+      {"path": "target/m31-append/smoke-inputs/refresh-b-to-d.json", "size_bytes": 153036, "sha256": "b8cbcd1a132bf0f1948ea81ca34c05dcdb89b6ece87552c47574d30ada389993"},
+      {"path": "target/m31-append/smoke-inputs/single-empty-to-one-transcript.json", "size_bytes": 698671, "sha256": "ba01d50522253d7c4bde372509a50e0971d3358a2154d949ae7e03d287f77ddf"},
+      {"path": "target/m31-append/smoke-inputs/single-empty-to-one.json", "size_bytes": 152931, "sha256": "d66497468883e37abcd3aacd2e343694f4a803463fb77b7f6c81cd6ef9b93601"}
+    ],
+    "generated_single_smoke_outputs": [
+      {"path": "target/m31-append/smoke-single/cairo-arguments.json", "size_bytes": 561910, "sha256": "8e911cc7ed212d49bb0a60c3c2b5e27f0e5a2770abca9f106d597773cdafb2f6"},
+      {"path": "target/m31-append/smoke-single/cairo-proof.json", "size_bytes": 561901, "sha256": "185878973978e8aeae0213f72ca068059bad6677c9fe8dcbbce27627eaeee46f"},
+      {"path": "target/m31-append/smoke-single/ood.json", "size_bytes": 418834, "sha256": "d0cc2fbdb270f42dbdad1ee5b72d298af3ed79861ef019199c2164048bb859e1"},
+      {"path": "target/m31-append/smoke-single/proof.bin", "size_bytes": 193724, "sha256": "4bfcc51ad6b6581ca5861527ff754d665568360923f1a545341c918e7eeaec1a"},
+      {"path": "target/m31-append/smoke-single/proof.json", "size_bytes": 478559, "sha256": "50bb3dc2f15591b8784d2e80fa3ffae1ae40b84446245bfbd8a8d0369f630a78"},
+      {"path": "target/m31-append/smoke-single/public-output.json", "size_bytes": 905, "sha256": "6762ae38fd195e15afc7347be22892a1f4742a30d2d68bd15fcc6651583595e0"},
+      {"path": "target/m31-append/smoke-single/statement.json", "size_bytes": 152931, "sha256": "d66497468883e37abcd3aacd2e343694f4a803463fb77b7f6c81cd6ef9b93601"},
+      {"path": "target/m31-append/smoke-single/summary.json", "size_bytes": 1118, "sha256": "1c0a0bbd048f193681d1b553bc749098b4d5eb31e09d0465a10420da9d481775"},
+      {"path": "target/m31-append/smoke-single/transcript.json", "size_bytes": 699311, "sha256": "64a5213c53d1e3b161344e1caea4a67c7caad732aa819c0ae4a2def90a472339"}
+    ],
+    "generated_batch_smoke_outputs": [
+      {"path": "target/m31-append/smoke-batch/cairo-arguments.json", "size_bytes": 648527, "sha256": "abd3d6e5c8cdb54f64ff03b351a81e33f279c154c2df05cc571602ca65ff000c"},
+      {"path": "target/m31-append/smoke-batch/cairo-proof.json", "size_bytes": 648518, "sha256": "4cdfb2f2c2109d9935e662fde40b92d5a79fcdd99f886aa40a84ca35f6992ff8"},
+      {"path": "target/m31-append/smoke-batch/ood.json", "size_bytes": 418967, "sha256": "d5c8d5dc7eaf1aed421f28befb81627f518d067945972337da059a818f48dadf"},
+      {"path": "target/m31-append/smoke-batch/proof.bin", "size_bytes": 222823, "sha256": "0cd0aaa99179d84d8f6ea1c6a4f7c98fe7f23975e26369a3fafac575c94b2dc3"},
+      {"path": "target/m31-append/smoke-batch/proof.json", "size_bytes": 549181, "sha256": "37e4a94a5ce1a44aca1bd82fc8d8c556e7276d9e7bf53c04581833d965511046"},
+      {"path": "target/m31-append/smoke-batch/public-output.json", "size_bytes": 914, "sha256": "6f3c00b5089a90d1427b8f89bc0306a36f0da12dd6aed64772ee412498f273f6"},
+      {"path": "target/m31-append/smoke-batch/statement.json", "size_bytes": 305443, "sha256": "6cbd2bbd5a0d2b99e9c91fda1051910ba288b944520a31ef24927f094afd290b"},
+      {"path": "target/m31-append/smoke-batch/summary.json", "size_bytes": 1116, "sha256": "4b023d7198ceb82de36c2e206aeb858b5df9678386eca702b8bb789262ecb0b7"},
+      {"path": "target/m31-append/smoke-batch/transcript.json", "size_bytes": 1394513, "sha256": "1fdc6186403da9a71598423054cc231edb605cdf0e94258f2a53acfd5f673c0b"}
+    ]
+  },
+  "observed_output_contracts": {
+    "make_fixtures": "fresh directory containing five statement JSON files, five *-transcript.json files, and ood-arbitrary.json",
+    "prove_fixture": "fresh directory containing proof.bin, proof.json, cairo-arguments.json, cairo-proof.json, statement.json, public-output.json, transcript.json, ood.json, and summary.json; summary JSON is also printed to stdout",
+    "negative_tests": "fresh directory containing negative-tests.json; the same JSON report is printed to stdout",
+    "cairo_bridge_input": "one JSON array [proof_felt_count, ...serialized_proof_felts]",
+    "cairo_bridge_output": "VerificationOutput with an eight-felt public_values span; it must equal public-output.json.public8",
+    "ood_probe_output": "one QM31 value (four M31 limbs) compared with the selected expected_*_numerator field",
+    "transcript_probe_output": "eight u32 words compared with prefix_checkpoints[stage]"
+  },
+  "evidence_levels": {
+    "inner_native_stwo": {
+      "status": "observed prior result, not rerun",
+      "evidence": [
+        "target/m31-append/build-test.log records 5 passed Rust tests",
+        "target/m31-append/smoke-single/summary.json records native_verified=true for n=1",
+        "target/m31-append/smoke-batch/summary.json records native_verified=true for n=2"
+      ],
+      "limitation": "smoke timings are not controlled measurements and this is not PROOF1 acceptance"
+    },
+    "original_native_proof1_verifier": {
+      "status": "not demonstrated for m31-append",
+      "evidence": "preserved prover/verifier binaries are present and pinned, but no m31-append PROOF1 artifact or local-verification log is present"
+    },
+    "full_node_proof_attachment": {
+      "status": "not demonstrated",
+      "evidence": "existing capability probe says devnet returns error 42 for getStorageProof and Katana RPC 0.9 headers omit fields required by the pinned prover"
+    },
+    "snforge_fact_consumption": {
+      "status": "not demonstrated",
+      "evidence": "local_pool source consumes proof_facts, but no local_pool tests or snforge result artifacts are present",
+      "limitation": "even passing cheat-fact tests would establish contract fact consumption only, not node-level proof attachment"
+    }
+  },
+  "missing_or_unfinished": [
+    "specialist freeze declaration and final source/artifact hash manifest",
+    "compiled statement_account contract_class and compiled_contract_class artifacts",
+    "compiled local_pool contract_class and compiled_contract_class artifacts",
+    "recorded Cairo full-proof acceptance for both n=1 and n=2",
+    "recorded Cairo transcript and arbitrary-OOD differential executions",
+    "Cairo unchanged-proof mutation fixtures/results beyond the focused empty-tree source tests",
+    "local_pool snforge acceptance/rejection/atomicity/stale-refresh tests and result logs",
+    "M31-append PROOF1 response, proof facts, message binding record, proof binary, and preserved-verifier acceptance log",
+    "compatible authenticated local RPC/base-state fixture or a node supporting the pinned prover RPC requirements",
+    "evidence of actual full-node attached-proof acceptance",
+    "authorized final chain ID, pool address, statement address/class hash, base block, and program authority pins",
+    "frozen measurement harness with CPU, memory, zero-swap, isolation, and fresh-process controls"
+  ],
+  "handoff_readiness": {
+    "frozen_correctness_execution": false,
+    "resource_measurement": false,
+    "reason": "useful provisional native/Cairo artifacts exist, but the build is not frozen and required Cairo, contract, PROOF1, and local-node evidence is incomplete"
+  }
+}

@@ -1,0 +1,210 @@
+{
+  "scarb": "scarb 2.18.0 (e6144df0f 2026-04-21)\ncairo: 2.18.0 (https://crates.io/crates/cairo-lang-compiler/2.18.0)\nsierra: 1.8.0\narch: x86_64-unknown-linux-gnu",
+  "pie_executor": "execute 2.14.0",
+  "pie_executor_sha256": "fd066d3dd65affa3a5593dc3b6ea3942542aeebc05adea826122b907d6f422f3",
+  "source_sha256": "a5e75def0de83c6a8c77e6b65d13282a8d975a4b351dbdecff095367591c5808",
+  "cases": [
+    {
+      "case": "alice-send",
+      "exit_code": 0,
+      "seconds": 0.038697582996974234,
+      "public_matches": true,
+      "steps": 4908,
+      "poseidon": 107,
+      "pie_output": [
+        8,
+        28675836988560422058761249697597660021554,
+        393402133025997798000961,
+        4660,
+        671986600516922986475221536746509635149228182138264835741355335274856825110,
+        0,
+        0,
+        0,
+        922353113659103318382005919199474530324209960410144843552327734491409086315
+      ],
+      "pie_sha256": "8d5422a83ae958b6a940689e135d30711684aec7d81aec87a23635660f13c85a"
+    },
+    {
+      "case": "carol-send",
+      "exit_code": 0,
+      "seconds": 0.04507284900319064,
+      "public_matches": true,
+      "steps": 4907,
+      "poseidon": 107,
+      "pie_output": [
+        8,
+        28675836988560422058761249697597660021554,
+        393402133025997798000961,
+        4660,
+        1366641230606194433032222511176136953400106483674986221108375642205367060636,
+        0,
+        0,
+        0,
+        308416069242513051459421985960305466445105292232275682404851240306760396174
+      ],
+      "pie_sha256": "4e1f8559032e2f1d5de25b143b2c8ab32235b63d75b89bed93d345e63455b3e3"
+    },
+    {
+      "case": "bob-spend",
+      "exit_code": 0,
+      "seconds": 0.05127593900397187,
+      "public_matches": true,
+      "steps": 8199,
+      "poseidon": 187,
+      "pie_output": [
+        8,
+        28675836988560422058761249697597660021554,
+        393402133025997798000961,
+        4660,
+        2833934357907393178851376080386322449787394121343902930856791613487097352856,
+        0,
+        0,
+        0,
+        1592148618821228204737968787893268062761015737978957535429568357016174836462
+      ],
+      "pie_sha256": "d2b618f010ad0b93270dbb3480c429ad6d4c270e8e7e4752be656de7883ea52c"
+    },
+    {
+      "case": "sender-key",
+      "exit_code": 1,
+      "seconds": 0.04627964700193843,
+      "rejected_at": "MEMBERSHIP"
+    },
+    {
+      "case": "view-key",
+      "exit_code": 1,
+      "seconds": 0.04289252899616258,
+      "rejected_at": "MEMBERSHIP"
+    },
+    {
+      "case": "full-view-authority-key",
+      "exit_code": 1,
+      "seconds": 0.04398024900001474,
+      "rejected_at": "MEMBERSHIP"
+    },
+    {
+      "case": "full-view-nullifier-key",
+      "exit_code": 1,
+      "seconds": 0.04566160099784611,
+      "rejected_at": "MEMBERSHIP"
+    },
+    {
+      "case": "old-protocol-version",
+      "exit_code": 1,
+      "seconds": 0.04975978600123199,
+      "rejected_at": "VERSION"
+    },
+    {
+      "case": "bad-path",
+      "exit_code": 1,
+      "seconds": 0.03852101899974514,
+      "rejected_at": "MEMBERSHIP"
+    },
+    {
+      "case": "bad-nullifier",
+      "exit_code": 1,
+      "seconds": 0.04081028899963712,
+      "rejected_at": "NULLIFIER"
+    },
+    {
+      "case": "bad-amount-range",
+      "exit_code": 1,
+      "seconds": 0.03819697000290034,
+      "rejected_at": "AMOUNT_RANGE"
+    },
+    {
+      "case": "zero-rho",
+      "exit_code": 1,
+      "seconds": 0.0395074160041986,
+      "rejected_at": "ZERO_NOTE"
+    },
+    {
+      "case": "redirect-withdrawal",
+      "exit_code": 1,
+      "seconds": 0.044151929003419355,
+      "rejected_at": "BINDING"
+    },
+    {
+      "case": "zero-withdrawal-address",
+      "exit_code": 1,
+      "seconds": 0.04745956500119064,
+      "rejected_at": "RECIPIENT"
+    },
+    {
+      "case": "out-of-range-withdrawal-address",
+      "exit_code": 1,
+      "seconds": 0.04733723000390455,
+      "rejected_at": "RECIPIENT"
+    },
+    {
+      "case": "replace-delivery",
+      "exit_code": 1,
+      "seconds": 0.04732333600259153,
+      "rejected_at": "BINDING"
+    },
+    {
+      "case": "wrong-output-owner",
+      "exit_code": 1,
+      "seconds": 0.04662382400420029,
+      "rejected_at": "OUTPUT"
+    },
+    {
+      "case": "rebound-false-nullifier",
+      "exit_code": 1,
+      "seconds": 0.04472706699743867,
+      "rejected_at": "NULLIFIER"
+    },
+    {
+      "case": "duplicate-input",
+      "exit_code": 1,
+      "seconds": 0.045321133999095764,
+      "rejected_at": "DUPLICATE_INPUT"
+    },
+    {
+      "case": "inflation",
+      "exit_code": 1,
+      "seconds": 0.04500203600036912,
+      "rejected_at": "CONSERVATION"
+    },
+    {
+      "case": "funded-duplicate-commitments",
+      "exit_code": 0,
+      "seconds": 0.048540755997237284,
+      "public_matches": true,
+      "steps": 7778,
+      "poseidon": 173,
+      "pie_output": [
+        8,
+        28675836988560422058761249697597660021554,
+        393402133025997798000961,
+        4660,
+        5687184766561594091964656737205450539192290076721690826420218863530901899,
+        0,
+        0,
+        0,
+        3432011918821720107530792412782374667506193785351628529859418830242079219156
+      ],
+      "pie_sha256": "5be797e1dfa8ce24b56cfe13a73217d696db46a04f33377619b30e9b02e75dc3"
+    },
+    {
+      "case": "restored-owner-spend",
+      "exit_code": 0,
+      "seconds": 0.04410555899812607,
+      "public_matches": true,
+      "steps": 4505,
+      "poseidon": 93,
+      "pie_output": [
+        8,
+        28675836988560422058761249697597660021554,
+        393402133025997798000961,
+        4660,
+        3170067450543820308215063695070273295155422405273053134581470341164080322277,
+        0,
+        0,
+        0,
+        805091324682738023264197686435347763615011803661273389892563862437454499469
+      ],
+      "pie_sha256": "49734af7b651b2ff251b6e0ff6a11c60cee752c285fae8839308bf82f60c4c79"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+---
+showAskAi: false
+title: Proofs & verification
+description: What the private statement proves and how ciphertexts and withdrawals are bound to settlement.
+---
+
+# Proofs & verification
+
+A zero-knowledge proof lets a holder demonstrate that a program accepted a private input without revealing that input. Templar uses it to authorize a specific operation while keeping input ownership, note amounts, and membership paths private.
+
+**Soundness** means an invalid claim should not verify. **Zero knowledge** means the proof should not disclose private witness information beyond the public statement. Both depend on the selected proving pipeline and correct application checks.
+
+## The spend statement
+
+The Cairo statement consumes input spending secrets, note randomness and amounts, leaf positions and membership paths, and the new output openings. It verifies that:
+
+- Each spending secret derives the receiving identity committed into its input note.
+- Each input commitment belongs to the selected tree root.
+- Each nullifier is correctly derived from the owner's nullifier key, commitment, and authenticated leaf index; duplicate inputs are rejected.
+- Each output commitment matches its receiving identity, randomness, amount, and chain/pool/token context.
+- Amounts satisfy range checks and conservation for one token.
+- Controller conditions match every input and output; controlled spends bind their actual amounts, policies, destinations and delivery into the approved transition.
+- The binding matches the ordered nullifiers, output commitment/delivery-digest pairs, and withdrawal destination/amount pairs.
+
+Encryption happens in the wallet outside this statement. The proof binds delivery digests but does not prove correct encryption or recipient receipt. The pool recomputes those digests from the actual published ciphertexts. Recipients verify decrypted openings before crediting notes.
+
+The pool also checks whether each nullifier is unused in current state. A valid membership proof is not sufficient because spent leaves remain in the tree.
+
+## The public result
+
+The controlled-push statement exports eight scalars:
+
+```text
+[protocol_version, chain_id, pool_address, tree_root,
+ controller, deadline, transition_digest, statement_binding]
+```
+
+Controller, deadline and transition digest are zero for ordinary spends. Controlled spends require approval of the transition and an unexpired block-number deadline. The approved statement identity and protocol version determine how the adapter interprets the result.
+
+**Eight proof outputs do not mean only eight public values.** The public transaction also contains the token, nullifiers, new commitments, ciphertexts, and any withdrawal destinations and amounts. The binding connects that data to the compact proof result.
+
+## Bind ciphertext and withdrawal destinations
+
+Conceptually, the reference binding is:
+
+```text
+statement_binding = H(
+  domain, protocol, chain, pool, root, token,
+  controller, deadline, nonce, transition_digest,
+  input_count, nullifiers_padded_to_4,
+  output_count, (commitment, delivery_digest)_pairs_padded_to_4,
+  withdrawal_count, (recipient, amount)_pairs_padded_to_2
+)
+```
+
+Pairs are flattened and unused slots are zero. Counts and padding make the encoding unambiguous. The pool computes each delivery digest from the canonical bytes supplied in the transaction, then computes the same binding as the statement.
+
+Changing a payload or withdrawal destination invalidates the expected binding. Recomputing the binding for changed data cannot rescue an old proof: the adapter requires the exact public result committed to by that proof. This is also why encrypted publication is part of the protocol rather than an optional off-chain message.
+
+## The proving pipeline
+
+The holder's local prover executes the statement account in a virtual Starknet OS and proves that execution using S-two's recursive privacy pipeline. Blinding in the selected zero-knowledge construction protects the private execution information. The choice of S-two alone does not establish privacy for every possible prover configuration.
+
+The native format is **PROOF1**. It identifies a supported proof and output format, not an application policy. The proof travels on the public transaction rather than as a large Cairo argument to the pool's verifier interface.
+
+The statement account produces a virtual message containing its class hash and public result. This is an output committed to by the proof, not a real bridge withdrawal or publication of its private witness.
+
+## Desktop and browser targets
+
+Reducing local proving memory is the current engineering priority. The native
+prototype prepares the Cairo and recursive proving stages separately so their
+large buffers do not remain allocated together. An optional memory mode keeps
+polynomial coefficients and regenerates expanded evaluations as needed in both
+stages. It processes components and FRI input batches separately and rebuilds
+Merkle trees for openings, trading additional computation for lower memory use.
+The current implementation still materializes one complete commitment tree at
+a time. Proof security parameters and verification remain unchanged; desktop
+qualification is still in progress.
+
+Browser proving through WebAssembly is a longer-term target, not a current
+capability or release requirement. Reaching it requires a substantially smaller
+working set and a browser-compatible execution core. Native memory measurements
+alone do not establish that a proof will fit or run well in a browser.
+
+## Verification has three layers
+
+| Layer | Question it answers |
+| --- | --- |
+| Starknet native verifier | Is the cryptographic proof valid for its claimed computation and output? |
+| Native adapter | Is this the approved virtual OS and statement, with the expected message for this pool, chain, and spend? |
+| Pool | Is the root accepted, are nullifiers unused, does the actual bundle match, is any required controller approval valid, and do fees and token transfers succeed? |
+
+The adapter checks statement address and class, proof format, virtual OS identity, output layout, message count and digest, and base-block age. A valid proof of an unrelated program cannot authorize a spend.
+
+The `IVerifier` interface's proof span is empty for this adapter because the real proof is attached to the transaction. The adapter reads verified facts from the execution context and compares them with the supplied public scalars.
+
+A valid proof can still encounter an expired root, spent nullifier, invalid withdrawal, or failed token transfer. Settlement requires every layer to accept the operation. Measurement and deployment qualifications are on the [status page](/status).

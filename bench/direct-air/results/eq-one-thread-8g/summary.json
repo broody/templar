@@ -1,0 +1,19 @@
+{
+  "scope": "Synthetic Eq disclosure diagnostic: baseline upstream circuit path, two fresh-seed proofs; increased cap after 2GiB OOM, not a payment prover or privacy qualification",
+  "command": [
+    "/home/broody/development/templar/target/direct-air/client-target/release/templar-direct-circuit-diagnostic",
+    "/home/broody/development/templar/bench/direct-air/results/eq-one-thread-8g/proof"
+  ],
+  "binary_sha256": "983364f741c19b1530cb656eb780dc3879a91bb810f87632db8a927a3deb255b",
+  "cap_gib": 8,
+  "threads": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "elapsed_seconds": 12.507058448012685,
+  "sampled_peak_rss_gib": 2.6053848266601562,
+  "sampled_peak_cgroup_gib": 2.6075363159179688,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "time_peak_rss_gib": 2.6053848266601562
+}

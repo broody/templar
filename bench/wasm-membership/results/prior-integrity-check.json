@@ -1,0 +1,42 @@
+[
+  {
+    "archive": "bench/poseidon-membership",
+    "files": 141,
+    "manifest_unchanged": true,
+    "contents_verified": true
+  },
+  {
+    "archive": "bench/direct-air",
+    "files": 267,
+    "manifest_unchanged": true,
+    "contents_verified": true
+  },
+  {
+    "archive": "bench/bounded-memory",
+    "files": 180,
+    "manifest_unchanged": true,
+    "contents_verified": true
+  },
+  {
+    "archive": "bench/cairo-memory",
+    "files": 195,
+    "manifest_unchanged": true,
+    "contents_verified": true
+  },
+  {
+    "archive": "bench/prover-memory",
+    "files": 337,
+    "manifest_unchanged": true,
+    "contents_verified": true
+  },
+  {
+    "dependency_original": "stwo",
+    "files": 203,
+    "contents_verified": true
+  },
+  {
+    "dependency_original": "stwo-cairo",
+    "files": 322,
+    "contents_verified": true
+  }
+]

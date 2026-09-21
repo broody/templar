@@ -1,0 +1,116 @@
+Running as unit: templar-push-6ef8509e80.service; invocation ID: 94c0caf00dd54a80bf51915d66227d44
+
+running 1 test
+test tests::slow_tests::test_privacy_recursive_prove_and_verify ... BENCH_STAGE precompute_start
+[2m2026-09-20T11:56:02.255764Z[0m [32m INFO[0m [1mprepare_privacy_recursiveprover_precomputes[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prepare the twiddles
+[2m2026-09-20T11:56:02.272626Z[0m [32m INFO[0m [1mprepare_privacy_recursiveprover_precomputes[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prepare the cairo prover preprocessed trace and tree
+BENCH_MEMORY precompute_done VmHWM:	 1277756 kB VmRSS:	 1212628 kB
+BENCH_STAGE precompute_done seconds=0.793221
+[2m2026-09-20T11:56:02.590660Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Run privacy bootloader and get the prover input and output preimage
+[2m2026-09-20T11:56:02.594051Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Running the program
+[2m2026-09-20T11:56:02.594091Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::cairo_run[0m[2m:[0m Initializing Cairo runner. [3mlayout[0m[2m=[0mstwo_no_ecop [3mproof_mode[0m[2m=[0mtrue [3mtrace_enabled[0m[2m=[0mtrue [3mdisable_trace_padding[0m[2m=[0mtrue [3mallow_missing_builtins[0m[2m=[0mtrue
+[2m2026-09-20T11:56:02.594099Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Initializing builtins.
+[2m2026-09-20T11:56:02.594109Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Initializing segments.
+[2m2026-09-20T11:56:02.594112Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Initializing main entrypoint.
+[2m2026-09-20T11:56:02.594158Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Initializing zero segments.
+[2m2026-09-20T11:56:02.594160Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Initializing VM.
+[2m2026-09-20T11:56:02.594163Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::cairo_run[0m[2m:[0m Running until PC.
+[2m2026-09-20T11:56:02.606946Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::cairo_run[0m[2m:[0m Ending run. [3mdisable_trace_padding[0m[2m=[0mtrue [3mfill_holes[0m[2m=[0mtrue
+[2m2026-09-20T11:56:02.606961Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Relocating memory.
+[2m2026-09-20T11:56:02.608300Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Computing effective sizes of segments.
+[2m2026-09-20T11:56:02.608311Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::cairo_run[0m[2m:[0m Reading return values.
+[2m2026-09-20T11:56:02.608327Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::cairo_run[0m[2m:[0m In proof mode, finalizing segments.
+[2m2026-09-20T11:56:02.608340Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::cairo_run[0m[2m:[0m Relocating. [3mrelocate_mem[0m[2m=[0mfalse [3mrelocate_trace[0m[2m=[0mfalse
+[2m2026-09-20T11:56:02.608352Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Reading the bootloader output preimage
+[2m2026-09-20T11:56:02.608377Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Adapting the runner output for the prover
+[2m2026-09-20T11:56:02.608385Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1madapt[0m[2m:[0m [2mstwo_cairo_adapter::adapter[0m[2m:[0m Num steps: 52096
+[2m2026-09-20T11:56:02.608954Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1madapt[0m[2m:[0m[1mpad_relocatble_builtin_segments[0m[2m:[0m [2mstwo_cairo_adapter::builtins[0m[2m:[0m Padded builtin segment 'pedersen_builtin' from 1 to 16 instances.
+[2m2026-09-20T11:56:02.608977Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1madapt[0m[2m:[0m[1mpad_relocatble_builtin_segments[0m[2m:[0m [2mstwo_cairo_adapter::builtins[0m[2m:[0m Padded builtin segment 'range_check_builtin' from 3117 to 4096 instances.
+[2m2026-09-20T11:56:02.608980Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1madapt[0m[2m:[0m[1mpad_relocatble_builtin_segments[0m[2m:[0m [2mstwo_cairo_adapter::builtins[0m[2m:[0m Padded builtin segment 'bitwise_builtin' from 1 to 16 instances.
+[2m2026-09-20T11:56:02.608987Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1madapt[0m[2m:[0m[1mpad_relocatble_builtin_segments[0m[2m:[0m [2mstwo_cairo_adapter::builtins[0m[2m:[0m Padded builtin segment 'poseidon_builtin' from 179 to 256 instances.
+[2m2026-09-20T11:56:02.611146Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1madapt[0m[2m:[0m [2mstwo_cairo_adapter::adapter[0m[2m:[0m Builtin segments: BuiltinSegments { add_mod_builtin: None, bitwise_builtin: Some(MemorySegmentAddresses { begin_addr: 44903, stop_ptr: 44983 }), output: Some(MemorySegmentAddresses { begin_addr: 40757, stop_ptr: 40759 }), mul_mod_builtin: None, pedersen_builtin: Some(MemorySegmentAddresses { begin_addr: 40759, stop_ptr: 40807 }), poseidon_builtin: Some(MemorySegmentAddresses { begin_addr: 44983, stop_ptr: 46519 }), range_check96_builtin: None, range_check_builtin: Some(MemorySegmentAddresses { begin_addr: 40807, stop_ptr: 44903 }), ec_op_builtin: None }
+[2m2026-09-20T11:56:02.616970Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m[1madapt[0m[2m:[0m [2mstwo_cairo_adapter::adapter[0m[2m:[0m Opcode counts: [("generic_opcode", 0), ("add_ap_opcode", 2954), ("add_opcode", 5413), ("add_opcode_small", 12950), ("assert_eq_opcode", 1992), ("assert_eq_opcode_double_deref", 13602), ("assert_eq_opcode_imm", 3108), ("call_opcode_abs", 1), ("call_opcode_rel_imm", 465), ("jnz_opcode_non_taken", 421), ("jnz_opcode_taken", 3661), ("jump_opcode_rel_imm", 2987), ("jump_opcode_rel", 1), ("jump_opcode_double_deref", 2), ("jump_opcode_abs", 2), ("mul_opcode_small", 3248), ("mul_opcode", 439), ("ret_opcode", 466), ("blake_compress_opcode", 383), ("qm_31_add_mul_opcode", 0)]
+BENCH_MEMORY cairo_start VmHWM:	 1277756 kB VmRSS:	 1227444 kB
+[2m2026-09-20T11:56:02.617763Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Generate the cairo proof
+[2m2026-09-20T11:56:03.640055Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m [2mstwo_cairo_prover::prover[0m[2m:[0m Witness trace cells: [10161776, 38079536, 66303680]
+[2m2026-09-20T11:56:05.740253Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 13: 722
+[2m2026-09-20T11:56:05.740286Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 21: 50
+[2m2026-09-20T11:56:05.740290Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 15: 872
+[2m2026-09-20T11:56:05.740293Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 19: 19
+[2m2026-09-20T11:56:05.740295Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 8: 1
+[2m2026-09-20T11:56:05.740298Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 12: 626
+[2m2026-09-20T11:56:05.740301Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 18: 161
+[2m2026-09-20T11:56:05.740304Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 9: 41
+[2m2026-09-20T11:56:05.740307Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 16: 124
+[2m2026-09-20T11:56:05.740310Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 14: 120
+[2m2026-09-20T11:56:05.740312Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 22: 1
+[2m2026-09-20T11:56:05.740315Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 20: 1
+[2m2026-09-20T11:56:05.740318Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 11: 43
+[2m2026-09-20T11:56:05.740321Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 23: 84
+[2m2026-09-20T11:56:05.740323Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 7: 592
+[2m2026-09-20T11:56:05.740326Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 10: 406
+[2m2026-09-20T11:56:05.740329Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 17: 525
+[2m2026-09-20T11:56:06.204391Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover[0m[2m:[0m [3mproof_size_estimate[0m[2m=[0m576712
+BENCH_MEMORY cairo_done VmHWM:	 7489972 kB VmRSS:	 5482544 kB
+BENCH_MEMORY cairo_caches_dropped VmHWM:	 7489972 kB VmRSS:	 2270932 kB
+BENCH_MEMORY outer_precompute_done VmHWM:	 7489972 kB VmRSS:	 2729696 kB
+[2m2026-09-20T11:56:06.826678Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prepare the cairo proof for the cairo-circuit verifier
+[2m2026-09-20T11:56:06.828397Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Build the cairo-circuit verifier context
+BENCH_MEMORY outer_start VmHWM:	 7489972 kB VmRSS:	 2914648 kB
+[2m2026-09-20T11:56:07.058465Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prove the cairo-circuit verifier
+[2m2026-09-20T11:56:11.641230Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 20: 27
+[2m2026-09-20T11:56:11.641261Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 23: 36
+[2m2026-09-20T11:56:11.641264Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 18: 15
+[2m2026-09-20T11:56:11.641266Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 22: 166
+[2m2026-09-20T11:56:11.641268Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 10: 8
+[2m2026-09-20T11:56:11.641271Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 16: 8
+[2m2026-09-20T11:56:11.641273Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 19: 59
+[2m2026-09-20T11:56:12.233845Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover[0m[2m:[0m [3mproof_size_estimate[0m[2m=[0m194348
+BENCH_MEMORY outer_done VmHWM:	 9326300 kB VmRSS:	 6333856 kB
+[2m2026-09-20T11:56:12.234193Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prepare the circuit proof for the circuit verifier
+[2m2026-09-20T11:56:12.234962Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Serialize and compress the proof
+BENCH_STAGE prove_done seconds=9.722198 proof_bytes=237523
+[2m2026-09-20T11:56:12.313125Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Decompress and deserialize the proof
+[2m2026-09-20T11:56:12.313604Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Compute the output values
+[2m2026-09-20T11:56:12.313622Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Call the verifier
+[2m2026-09-20T11:56:12.511980Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Decompress and deserialize the proof
+[2m2026-09-20T11:56:12.512479Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Compute the output values
+[2m2026-09-20T11:56:12.512495Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Call the verifier
+[2m2026-09-20T11:56:12.620315Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Decompress and deserialize the proof
+[2m2026-09-20T11:56:12.620777Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Compute the output values
+[2m2026-09-20T11:56:12.620799Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Call the verifier
+BENCH_CHECK modified_statement_and_program_rejected
+BENCH_STAGE verify_done seconds=0.415342 total_seconds=10.930964
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 10.97s
+
+	Command being timed: "/tmp/templar-stwo-privacy-dtgn6e8l/source/target/release/deps/privacy_prove-0f4017300f924673 tests::slow_tests::test_privacy_recursive_prove_and_verify --exact --nocapture --test-threads=1"
+	User time (seconds): 29.97
+	System time (seconds): 6.72
+	Percent of CPU this job got: 330%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:11.10
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 9326300
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 5020113
+	Voluntary context switches: 3522
+	Involuntary context switches: 2996
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 512
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 11.111s
+CPU time consumed: 36.698s
+Memory peak: 768.0K
+Memory swap peak: 0B

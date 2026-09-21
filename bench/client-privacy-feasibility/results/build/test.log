@@ -1,0 +1,34 @@
+warning: patch `cairo-program-runner v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/proving-utils/crates/cairo-program-runner)` was not used in the crate graph
+warning: patch `stwo-run-and-prove v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/proving-utils/crates/stwo_run_and_prove)` was not used in the crate graph
+warning: patch `stwo-vm-runner v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/proving-utils/crates/vm_runner)` was not used in the crate graph
+warning: patch `stwo-cairo-dev-utils v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/dev_utils)` was not used in the crate graph
+warning: patch `stwo-cairo-utils v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/utils)` was not used in the crate graph
+warning: patch `std-shims v1.0.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo/crates/std-shims)` was not used in the crate graph
+warning: patch `stwo-examples v2.2.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo/crates/examples)` was not used in the crate graph
+warning: patch `circuit-cairo-serialize v0.1.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-circuits/crates/circuit_cairo_serialize)` was not used in the crate graph
+warning: patch `circuit-multiverifier v0.1.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-circuits/crates/circuit_multiverifier)` was not used in the crate graph
+warning: patch `circuits-stark-verifier-examples v0.1.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-circuits/crates/stark_verifier_examples)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+warning: the feature `stdarch_x86_avx512` has been stable since 1.89.0 and no longer requires an attribute to enable
+ --> /home/broody/development/templar/target/client-privacy-feasibility/stwo/crates/stwo/src/lib.rs:4:13
+  |
+4 |     feature(stdarch_x86_avx512)
+  |             ^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(stable_features)]` on by default
+
+warning: `stwo` (lib) generated 1 warning
+   Compiling templar-client-privacy-feasibility v0.1.0 (/home/broody/development/templar/bench/client-privacy-feasibility/client)
+    Finished `release` profile [optimized] target(s) in 0.82s
+     Running unittests src/main.rs (target/client-privacy-feasibility/client-target/release/deps/templar_client_privacy_feasibility-984b970692e191a5)
+
+running 3 tests
+test tests::checkpoint_rejects_trailing_and_truncated_data ... ok
+test tests::checkpoint_rejects_wrong_format ... ok
+test tests::checkpoint_roundtrip ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

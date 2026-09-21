@@ -1,0 +1,20 @@
+   Compiling stwo v2.2.0 (/home/broody/development/templar/target/bounded-memory/stwo/crates/stwo)
+warning: the feature `stdarch_x86_avx512` has been stable since 1.89.0 and no longer requires an attribute to enable
+ --> crates/stwo/src/lib.rs:4:13
+  |
+4 |     feature(stdarch_x86_avx512)
+  |             ^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(stable_features)]` on by default
+
+warning: `stwo` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.87s
+     Running unittests src/lib.rs (/home/broody/development/templar/target/bounded-memory/stwo-test-target/debug/deps/stwo-640c3eaa17a086ad)
+
+running 3 tests
+test prover::backend::simd::blake2s_lifted::tests::test_streamed_merkle_rejects_invalid_provider ... ok
+test prover::backend::simd::blake2s_lifted::tests::test_streamed_merkle_plain ... ok
+test prover::backend::simd::blake2s_lifted::tests::test_streamed_merkle_m31 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 264 filtered out; finished in 1.13s
+

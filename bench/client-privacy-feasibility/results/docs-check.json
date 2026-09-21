@@ -1,0 +1,13 @@
+{
+  "command": "npm run typecheck && npm run build",
+  "cwd": "/home/broody/development/templar/docs/guide",
+  "exit_code": 0,
+  "typecheck": "PASS",
+  "vocs_build": "PASS",
+  "static_files_generated": 35,
+  "source_sha256": {
+    "TODO.md": "79c109539b4ee21c1c4b516f7e8a2d67494fc0c0fdad3458cd71c5146f33a4a2",
+    "docs/prover-memory-review.md": "4de3d3f54177122ecf03aa128fc7bfc6c21e8701edfae690a0ad26d7bf98a587",
+    "docs/guide/src/pages/status.mdx": "e47e0794662c9bab7c6d6145ca8370e99e7e06959e1f00b3eaa7e9a9dd177176"
+  }
+}

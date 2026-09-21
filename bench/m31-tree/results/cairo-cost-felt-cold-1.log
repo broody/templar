@@ -1,0 +1,63 @@
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.11s
+   Compiling test(m31_tree_bench_unittest) m31_tree_bench v0.1.0 (/home/broody/development/templar/bench/m31-tree/cairo/Scarb.toml)
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:5
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+    ^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:27
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:50
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:18:5
+    StoragePointerWriteAccess,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    Finished `dev` profile target(s) in 0 seconds
+
+
+Collected 1 test(s) from m31_tree_bench package
+Running 1 test(s) from src/
+[PASS] m31_tree_bench::tests::cost_felt_cold_1 (l1_gas: ~0, l1_data_gas: ~7104, l2_gas: ~38002328)
+        sierra gas: 8656328
+        syscalls: (StorageWrite: 76, StorageRead: 71, CallContract: 4, Deploy: 1)
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[test name] m31_tree_bench::tests::cost_felt_cold_1
+├─ [selector] append_batch
+│  └─ [L2 gas] 8000008
+├─ [selector] get_root
+│  └─ [L2 gas] 26640
+├─ [selector] get_leaf_count
+│  └─ [L2 gas] 27180
+└─ [selector] root_is_known
+   └─ [L2 gas] 34200
+
+╭------------------------+---------+---------+---------+---------+---------╮
+| FeltTreeBench Contract |         |         |         |         |         |
++==========================================================================+
+| Function Name          | Min     | Max     | Avg     | Std Dev | # Calls |
+|------------------------+---------+---------+---------+---------+---------|
+| append_batch           | 8000008 | 8000008 | 8000008 | 0       | 1       |
+|------------------------+---------+---------+---------+---------+---------|
+| get_leaf_count         | 27180   | 27180   | 27180   | 0       | 1       |
+|------------------------+---------+---------+---------+---------+---------|
+| get_root               | 26640   | 26640   | 26640   | 0       | 1       |
+|------------------------+---------+---------+---------+---------+---------|
+| root_is_known          | 34200   | 34200   | 34200   | 0       | 1       |
+╰------------------------+---------+---------+---------+---------+---------╯
+
+Tests: 1 passed, 0 failed, 0 ignored, 46 filtered out
+

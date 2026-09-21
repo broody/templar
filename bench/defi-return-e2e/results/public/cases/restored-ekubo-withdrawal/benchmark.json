@@ -1,0 +1,26 @@
+{
+  "case": "restored-ekubo-withdrawal",
+  "startup_seconds": 2.0023190040010377,
+  "request_seconds": 21.699135080001724,
+  "proving_seconds": 14.071,
+  "virtual_os_seconds": 7.624,
+  "proof_bytes": 234432,
+  "proof_sha256": "d0a5118818b86bb3c2d067d04bba5d05661b9e294e27bb8fb17b2b57210b56e2",
+  "peak_rss_gib": 13.791877746582031,
+  "swap_peak_bytes": 0,
+  "local_verification_passed": true,
+  "public_binding_matches": true,
+  "public_values": [
+    "0x54454d504c41525f444546495f504f4331",
+    "0x534e5f5345504f4c4941",
+    "0x7dd89fb990e470c913a77a9b1cc96f652e1812f7d71d2be6b356a03e4baeeae",
+    "0x7bf8496343526e314425b51c78d9b82ec2802b709966efa2709de9fe41c3563",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x314976b3f8c9c39a71329901164b17ec599879d1785ae74391d519a96af0e94"
+  ],
+  "base_block": 15388336,
+  "memory_cap_gib": 16,
+  "cores": 4
+}

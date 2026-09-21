@@ -1,0 +1,12 @@
+{
+  "name": "contract-class-hash-one",
+  "expected": "reject",
+  "exit_code": 101,
+  "passed": true,
+  "input": "bench/m31-append/results/state-fixture/controls/contract-class-hash-one/fixture.json",
+  "input_sha256": "9bfb2a4c593273aff340c4a5592a47b68386e8c52526dd246f67f62538922ef2",
+  "report_path": null,
+  "stdout": "bench/m31-append/results/state-fixture/controls/contract-class-hash-one/stdout.log",
+  "stderr": "bench/m31-append/results/state-fixture/controls/contract-class-hash-one/stderr.log",
+  "cgroup": "bench/m31-append/results/state-fixture/controls/contract-class-hash-one/cgroup.txt"
+}

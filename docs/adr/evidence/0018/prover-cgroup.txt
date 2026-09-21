@@ -1,0 +1,9 @@
+ControlGroup=/user.slice/user-1000.slice/user@1000.service/app.slice/templar-sepolia-prover.service
+MemoryCurrent=11787210752
+MemoryPeak=15213883392
+MemorySwapPeak=0
+CPUUsageNSec=44848099000
+AllowedCPUs=
+MemoryMax=17179869184
+MemorySwapMax=0
+CPUAffinity=0-3

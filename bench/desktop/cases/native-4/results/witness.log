@@ -1,0 +1,33 @@
+Running as unit: templar-bench-65ba1bf5b9e0.service; invocation ID: abaa7b1c707b4beeac9ecf9af28d802f
+[bench] Circuit witness successfully solved
+[bench] Witness saved to target/witness.gz
+[bench] Circuit output: 0x2eeb97aacd2e70fac6bb1c4eeb152040725a03785a89545168e63fe72e1e4d49
+	Command being timed: "/home/broody/.nargo/bin/nargo execute witness"
+	User time (seconds): 0.11
+	System time (seconds): 0.02
+	Percent of CPU this job got: 119%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.11
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 59584
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 11955
+	Voluntary context switches: 97
+	Involuntary context switches: 66
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 123ms
+CPU time consumed: 147ms
+Memory peak: 1.7M
+Memory swap peak: 0B

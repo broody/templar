@@ -1,0 +1,41 @@
+{
+  "status": "source-reviewed binaries frozen; authorized serial correctness and measurement plan",
+  "implementation_handoff": "/home/broody/development/templar/target/m31-tree/implementation-handoff.json",
+  "handoff_sha256": "c0e15a02330d27659d73fc68199388bc352d41c9bea2b77901de119b42eb10d5",
+  "cairo_source_review": "Math Reviewer accepted final snapshot test source; runtime evidence pending",
+  "native_binary": "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree",
+  "unit_test_binary": "/home/broody/development/templar/target/m31-tree/client-target/release/deps/templar_m31_tree-89b0d6a18384b4b6",
+  "pkg": "/home/broody/development/templar/target/m31-tree/pkg",
+  "fixtures": [
+    {
+      "path": "bench/m31-tree/client/fixtures/tree-only.json",
+      "bytes": 209009,
+      "sha256": "826822cd0ea6d44d3850ed23a0bec210b52c0e5b82b1a570502b591115d9f9e2"
+    },
+    {
+      "path": "bench/m31-tree/client/fixtures/mixed.json",
+      "bytes": 251401,
+      "sha256": "b035acbdfa2e997a9053f71fb9151f7e63bce06675025042ec117e1a71449693"
+    },
+    {
+      "path": "bench/m31-tree/client/fixtures/golden-vectors.json",
+      "bytes": 41662,
+      "sha256": "4c461658f5d4e23cdfdc3ed7a79e7a2fdac33d4d1346f7a31151ce595867920e"
+    }
+  ],
+  "archive_instruction": "Copy final implementation-handoff.json, client-source-manifest.json, copied-source-manifest.json and build logs to results/build-v2/. Copy final pkg to bench/m31-tree/pkg. Archive v1 client sources/manifests/logs under results/build-v1. Bulky v1 binaries may remain under target. Preserve hashes and all failed-run evidence.",
+  "revision": "v2",
+  "unit_test_count": 6,
+  "expected_checks": {
+    "tree_only": {
+      "unchanged_proof_mutations": 19,
+      "boundary_controls": 2
+    },
+    "mixed": {
+      "unchanged_proof_mutations": 17,
+      "boundary_controls": 3
+    }
+  },
+  "review_note": "Empty preprocessing adapter reviewed; 6 units and full native tree/mixed implementation smokes pass. Smoke timings excluded from measurement.",
+  "previous_source_archive": "target/m31-tree/frozen-v1"
+}

@@ -1,0 +1,22 @@
+   Compiling snforge_scarb_plugin v0.57.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.09s
+   Compiling test(honk_verifier_unittest) honk_verifier v0.1.0 (/home/broody/development/templar/bench/adr16/honk_verifier/Scarb.toml)
+   Compiling test(honk_verifier_integrationtest) honk_verifier_integrationtest v0.1.0 (/home/broody/development/templar/bench/adr16/honk_verifier/Scarb.toml)
+    Finished `dev` profile target(s) in 11 seconds
+[WARNING] Package snforge_std version does not meet the recommended version requirement ^0.63.0, it might result in unexpected behaviour
+
+
+Collected 1 test(s) from honk_verifier package
+Running 1 test(s) from tests/
+[PASS] honk_verifier_integrationtest::test_contract::test_verify_ultra_keccak_zk_honk_proof (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~269913831)
+        sierra gas: 269913831
+        syscalls: (Keccak: 92, LibraryCall: 1)
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+Running 0 test(s) from src/
+Tests: 1 passed, 0 failed, 0 ignored, 0 filtered out
+

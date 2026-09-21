@@ -1,0 +1,12 @@
+{
+  "name": "block-new-root-xor1",
+  "expected": "reject",
+  "exit_code": 101,
+  "passed": true,
+  "input": "bench/m31-append/results/state-fixture/controls/block-new-root-xor1/fixture.json",
+  "input_sha256": "7ef8d53dfe488be413c05959de5ffc97fddfc0fc07cb5c50ca07c8d908830ded",
+  "report_path": null,
+  "stdout": "bench/m31-append/results/state-fixture/controls/block-new-root-xor1/stdout.log",
+  "stderr": "bench/m31-append/results/state-fixture/controls/block-new-root-xor1/stderr.log",
+  "cgroup": "bench/m31-append/results/state-fixture/controls/block-new-root-xor1/cgroup.txt"
+}

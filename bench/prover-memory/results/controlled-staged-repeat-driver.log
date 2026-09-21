@@ -1,0 +1,55 @@
+{"name": "controlled-staged-repeat", "request": 0, "request_seconds": 15.760068820003653, "start_unix_ms": 1789956736782, "end_unix_ms": 1789956752542, "proof_bytes": 231894, "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280", "public_binding_matches": true, "verification_and_three_mutation_rejections": true}
+{"name": "controlled-staged-repeat", "request": 1, "request_seconds": 15.388933131005615, "start_unix_ms": 1789956753013, "end_unix_ms": 1789956768402, "proof_bytes": 231894, "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280", "public_binding_matches": true, "verification_and_three_mutation_rejections": true}
+{"name": "controlled-staged-repeat", "request": 2, "request_seconds": 15.187884736005799, "start_unix_ms": 1789956768868, "end_unix_ms": 1789956784056, "proof_bytes": 231894, "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280", "public_binding_matches": true, "verification_and_three_mutation_rejections": true}
+{
+  "variant": "staged",
+  "fixture": "controlled",
+  "cap_gib": 12,
+  "rayon_threads": 4,
+  "cache_cairo_coefficients": true,
+  "cpu_cores": 4,
+  "trace_spans": false,
+  "base_block": 15391278,
+  "binary_sha256": "1f4e7d76092c6a550f8ece25fc0ae21c7ecf561e7fd30e736f6124fc0b6d3dd8",
+  "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+  "private_request_sha256": "69a787d733377aa89b5c5ef9820d6b58c92ee5df5e895e80d5cb41e85eb81cc5",
+  "public_rpc_cache": true,
+  "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+  "requests": [
+    {
+      "request_seconds": 15.760068820003653,
+      "start_unix_ms": 1789956736782,
+      "end_unix_ms": 1789956752542,
+      "proof_bytes": 231894,
+      "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+      "public_binding_matches": true,
+      "verification_and_three_mutation_rejections": true
+    },
+    {
+      "request_seconds": 15.388933131005615,
+      "start_unix_ms": 1789956753013,
+      "end_unix_ms": 1789956768402,
+      "proof_bytes": 231894,
+      "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+      "public_binding_matches": true,
+      "verification_and_three_mutation_rejections": true
+    },
+    {
+      "request_seconds": 15.187884736005799,
+      "start_unix_ms": 1789956768868,
+      "end_unix_ms": 1789956784056,
+      "proof_bytes": 231894,
+      "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+      "public_binding_matches": true,
+      "verification_and_three_mutation_rejections": true
+    }
+  ],
+  "startup_seconds": 0.07346148999931756,
+  "status": "PASS",
+  "cgroup_peak_gib": 10.941596984863281,
+  "peak_rss_gib": 11.017024993896484,
+  "swap_peak_bytes": 0,
+  "oom_kill": 0,
+  "peak_requested_gib": 10.283641481772065,
+  "final_live_requested_gib": 0.019703732803463936
+}

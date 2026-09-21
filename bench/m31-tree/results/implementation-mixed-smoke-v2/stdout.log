@@ -1,0 +1,216 @@
+Running as unit: templar-m31-implementation-mixed-smoke-v2-1789984085600696907.service; invocation ID: e5c46d4ec34244b2911f34691f71d01d
+public transcript regenerated and fixture parity passed
+preprocessing commitment complete; generating witness
+base witness complete; committing trace
+base commitment complete; interaction PoW and witness
+interaction witness complete; commitment and STARK proving
+proof generated; verifying serialized public envelope
+{
+  "algorithm": "Plonky3-00fe0a98/Poseidon2-M31-width24-RF8-RP22/Pad10-rate15-digest9/Templar-frame-v1",
+  "binary_envelope_bytes": 464900,
+  "binary_stark_proof_bytes": 404305,
+  "binding_root_relationship": "mixed residual binding root independent of M31 root; workload union, no migrated payment statement",
+  "channel": "Blake2s",
+  "complete_seconds": 17.13973345,
+  "components": [
+    {
+      "interaction_base_columns": 56,
+      "log_rows": 6,
+      "name": "poseidon_aggregator",
+      "rows": 64,
+      "trace_columns": 342
+    },
+    {
+      "interaction_base_columns": 24,
+      "log_rows": 9,
+      "name": "poseidon_full_round_chain",
+      "rows": 512,
+      "trace_columns": 126
+    },
+    {
+      "interaction_base_columns": 36,
+      "log_rows": 11,
+      "name": "poseidon_3_partial_rounds_chain",
+      "rows": 2048,
+      "trace_columns": 169
+    },
+    {
+      "interaction_base_columns": 200,
+      "log_rows": 13,
+      "name": "cube_252",
+      "rows": 8192,
+      "trace_columns": 141
+    },
+    {
+      "interaction_base_columns": 32,
+      "log_rows": 13,
+      "name": "range_check_252_width_27",
+      "rows": 8192,
+      "trace_columns": 20
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 6,
+      "name": "poseidon_round_keys",
+      "rows": 64,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 15,
+      "name": "range_check_3_3_3_3_3",
+      "rows": 32768,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 16,
+      "name": "range_check_4_4_4_4",
+      "rows": 65536,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 8,
+      "name": "range_check_4_4",
+      "rows": 256,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 16,
+      "log_rows": 18,
+      "name": "range_check_9_9",
+      "rows": 262144,
+      "trace_columns": 8
+    },
+    {
+      "interaction_base_columns": 16,
+      "log_rows": 20,
+      "name": "range_check_20",
+      "rows": 1048576,
+      "trace_columns": 8
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 18,
+      "name": "range_check_18",
+      "rows": 262144,
+      "trace_columns": 2
+    },
+    {
+      "constraint_degree": 2,
+      "interaction_base_columns": 4,
+      "log_rows": 8,
+      "name": "poseidon2_m31_width24",
+      "rows": 256,
+      "trace_columns": 1172
+    }
+  ],
+  "config_security_metric_bits": 96,
+  "execution_target": "x86_64",
+  "felt252_aggregator_padded_rows": 64,
+  "felt252_aggregator_unique_rows": 56,
+  "felt252_public_memory_boundary_terms": 384,
+  "felt252_residual_hash_calls": 17,
+  "felt252_residual_permutations": 62,
+  "fri_pow_nonce": "1520419120596",
+  "interaction_pow_bits": 24,
+  "interaction_pow_nonce": "107374667080",
+  "json_envelope_bytes": 1170023,
+  "m31_padding_repeats": 126,
+  "m31_tree_requests": 130,
+  "m31_tree_rows_with_padding": 256,
+  "max_fri_columns": 16,
+  "mode": "mixed",
+  "native_proof_verified": true,
+  "pcs_config": {
+    "fri_config": {
+      "fold_step": 4,
+      "log_blowup_factor": 3,
+      "log_last_layer_degree_bound": 0,
+      "n_queries": 23
+    },
+    "lifting_log_size": 23,
+    "pow_bits": 27
+  },
+  "phases": {
+    "base_commit_seconds": 1.306365778,
+    "base_witness_seconds": 0.257785695,
+    "interaction_commit_and_stark_prove_seconds": 14.148556557,
+    "interaction_pow_and_witness_seconds": 0.443840821,
+    "preprocessing_twiddles_and_commit_seconds": 0.969633497,
+    "public_transcript_regeneration_seconds": 0.003170786,
+    "verify_seconds": 0.007965714
+  },
+  "plonky3_pin": "00fe0a985b398d3ef1f10d69543ca2b8f9f236da",
+  "proof_verified_in_runtime": true,
+  "public_statement_json_bytes": 101658,
+  "reference_parity": true,
+  "runtime": "native shared in-memory core",
+  "scope": "public synthetic M31 membership; mixed mode adds exact RTN residual hash union workload; no private/payment proof or protocol migration",
+  "security_metric_note": "existing configured metric, not a new exact soundness bound for small domains",
+  "trusted_preprocessed_root": [
+    178,
+    97,
+    89,
+    138,
+    49,
+    115,
+    237,
+    36,
+    206,
+    59,
+    164,
+    3,
+    105,
+    98,
+    54,
+    177,
+    193,
+    101,
+    203,
+    79,
+    82,
+    33,
+    135,
+    155,
+    21,
+    220,
+    232,
+    141,
+    85,
+    46,
+    209,
+    100
+  ],
+  "wasm_linear_memory_bytes": null
+}
+	Command being timed: "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree bench/m31-tree/client/fixtures/mixed.json bench/m31-tree/results/implementation-mixed-smoke-v2/proof"
+	User time (seconds): 12.88
+	System time (seconds): 3.81
+	Percent of CPU this job got: 97%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:17.18
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1991532
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 2785852
+	Voluntary context switches: 5932
+	Involuntary context switches: 14813
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 3240
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 17.188s
+CPU time consumed: 16.693s
+Memory peak: 1.2M
+Memory swap peak: 0B

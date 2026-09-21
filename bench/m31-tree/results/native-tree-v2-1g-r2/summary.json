@@ -1,0 +1,27 @@
+{
+  "scope": "tree-only native proof v2 repeat 2; same fixture/caps as r1; deterministic-fixture runtime stability, not a PoW distribution",
+  "command": [
+    "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree",
+    "bench/m31-tree/client/fixtures/tree-only.json",
+    "bench/m31-tree/results/native-tree-v2-1g-r2/proof"
+  ],
+  "binary_sha256": "afd206ceed8ebe44127840d4a3a908c48550934408e1c1a38bcba2dde0af6fc6",
+  "cap_gib": 1,
+  "cpu_budget_cores": 1,
+  "prover_workers": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 0.6049734580010409,
+  "sampled_command_peak_rss_gib": 0.015804290771484375,
+  "sampled_peak_cgroup_gib": 0.011871337890625,
+  "effective_peak_cgroup_gib": 0.011871337890625,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 20,
+  "cgroup_sample_count": 19,
+  "time_largest_process_peak_rss_gib": 0.017009735107421875
+}

@@ -1,0 +1,19 @@
+{
+  "scope": "Synthetic Eq disclosure diagnostic: two fresh-seed proofs of the same private value; not a payment prover or privacy qualification",
+  "command": [
+    "/home/broody/development/templar/target/direct-air/client-target/release/templar-direct-circuit-diagnostic",
+    "/home/broody/development/templar/bench/direct-air/results/eq-one-thread/proof"
+  ],
+  "binary_sha256": "983364f741c19b1530cb656eb780dc3879a91bb810f87632db8a927a3deb255b",
+  "cap_gib": 2,
+  "threads": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 1,
+  "elapsed_seconds": 3.485141160999774,
+  "sampled_peak_rss_gib": 1.9450225830078125,
+  "sampled_peak_cgroup_gib": 2.0,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 1,
+  "time_peak_rss_gib": null
+}

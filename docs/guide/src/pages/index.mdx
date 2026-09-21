@@ -1,0 +1,55 @@
+---
+showAskAi: false
+title: Overview
+description: Understand Templar's private note model and how a spend reaches Starknet.
+---
+
+import { Flow } from '../components/Flow'
+
+<div className="guide-eyebrow">Templar / Architecture</div>
+
+# Private value. Public verification.
+
+<p className="guide-lead">Templar is a private token pool on Starknet with push payments to reusable cloaked receiving addresses. Share a cloaked address, receive while offline, and prove spends locally without publishing your private note data.</p>
+
+Templar is based on [StarkWare's starknet-privacy](https://github.com/starkware-libs/starknet-privacy), with its auditor and deposit-screening roles removed and proving moved to the user's device. No central proving operator needs to receive users' secrets. The [trust model](/architecture/privacy#trusted-roles-removed) explains these boundaries and the remaining authority of optional note controllers and pool configuration.
+
+The [Starknet Privacy comparison](/comparison) shows how the two architectures differ in trust, note handling, supported flows, and client responsibilities.
+
+The pool holds ERC20 tokens. A user's private balance is the sum of the unspent **notes** they control. Each note describes some value and a spending condition. The chain stores a cryptographic commitment to the note rather than a private balance indexed by wallet address.
+
+To pay someone, a holder consumes existing notes and creates fresh encrypted notes for the recipient and, when needed, change. A zero-knowledge proof establishes ownership, membership in the pool, and conservation of value. The pool binds the proof to the exact operation and publishes the encrypted outputs atomically. The recipient discovers them later using their wallet keys.
+
+<Flow steps={[
+  { title: 'Prepare privately', detail: 'Select notes, enter a cloaked address and amount, and encrypt fresh outputs.' },
+  { title: 'Prove locally', detail: 'Execute the spend checks and produce a zero-knowledge proof.' },
+  { title: 'Settle on Starknet', detail: 'Verify the proof, mark inputs spent, and publish encrypted outputs or withdraw.' },
+]} caption="One public spend transaction follows local preparation and proving. Note openings stay on the holder's device." />
+
+## Four ideas to keep in mind
+
+| Idea | What it means in Templar |
+| --- | --- |
+| A note is a claim on pooled value | Spending requires its opening and the owner's spending secret. |
+| A commitment records creation | A hash binds the note's value and spending conditions into the pool's tree. |
+| A nullifier records consumption | A derived public identifier can be used only once, without directly naming the consumed tree leaf. |
+| A proof authorizes specific changes | The proof is bound to the pool, chain, public statement, and exact action list. |
+
+These concepts are similar to consuming and creating outputs in a UTXO system. The additional work is proving which hidden inputs are valid without disclosing their openings or their positions in the tree.
+
+## Explore the architecture
+
+<div className="guide-grid">
+  <a className="guide-card" href="/architecture/system"><strong>System & boundaries →</strong><span>Which component does what, and where private data travels.</span></a>
+  <a className="guide-card" href="/architecture/notes"><strong>Notes & ownership →</strong><span>How a recipient can be paid without sharing a spending secret.</span></a>
+  <a className="guide-card" href="/architecture/receiving"><strong>Receiving & recovery →</strong><span>Offline receipt, optional viewing keys, and restoration from a wallet backup.</span></a>
+  <a className="guide-card" href="/architecture/privacy"><strong>Privacy & trust →</strong><span>What an address reveals, what is public, and which dependencies remain.</span></a>
+  <a className="guide-card" href="/architecture/lifecycle"><strong>Transaction lifecycle →</strong><span>Follow a deposit, payment, recipient spend, and withdrawal.</span></a>
+  <a className="guide-card" href="/architecture/proofs"><strong>Proofs & verification →</strong><span>What S-two proves and what the pool must still check.</span></a>
+</div>
+
+## Scope
+
+This guide explains the architecture and its security boundaries. The proving path uses S-two's recursive zero-knowledge privacy pipeline with the PROOF1 format and Starknet's native proof verification. The current reference supports up to four inputs, four outputs, and two withdrawals for one public token. Larger native statements are evaluated separately on the [status page](/status#spend-capacity-pathfinding).
+
+Ordinary and controlled push payments, watch-only balances, seed recovery, recovered-note spends, and withdrawals have been demonstrated through isolated Sepolia deployments. Controlled spends require both owner proofs and real controller signatures. Production integration, controller operation, and desktop qualification remain open. The [implementation status](/status) page identifies what is demonstrated and what remains unqualified.

@@ -1,0 +1,6 @@
+warn: in context of a workspace, only the `cairo` set in the workspace manifest is applied,
+but the `templar_synthetic_statement_account` package also defines `cairo` in the manifest
+
+   Compiling lib(templar_synthetic_circuit_bridge) templar_synthetic_circuit_bridge v0.1.0 (/home/broody/development/templar/bench/direct-air/cairo/bridge/Scarb.toml)
+   Compiling executable(templar_synthetic_circuit_bridge) templar_synthetic_circuit_bridge v0.1.0 (/home/broody/development/templar/bench/direct-air/cairo/bridge/Scarb.toml)
+    Finished `dev` profile target(s) in 10 seconds

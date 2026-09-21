@@ -1,0 +1,35 @@
+{
+  "variant": "staged",
+  "fixture": "ordinary",
+  "cap_gib": 12,
+  "rayon_threads": 4,
+  "cache_cairo_coefficients": true,
+  "cpu_cores": 4,
+  "trace_spans": false,
+  "native_allocator_tuning": false,
+  "base_block": 15391165,
+  "binary_sha256": "ea3e10530cb4749b614e7a3b1cbfbab48f489cb6362bbb9396960f1338207720",
+  "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+  "private_request_sha256": "52d1af98342f8ca9cfbfbb175398ca4215a7a7a85d9e3f2ea4c6d7d21721bdf0",
+  "public_rpc_cache": true,
+  "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+  "requests": [
+    {
+      "request_seconds": 16.271875587990507,
+      "start_unix_ms": 1789957531506,
+      "end_unix_ms": 1789957547778,
+      "proof_bytes": 228273,
+      "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+      "public_binding_matches": true,
+      "verification_and_three_mutation_rejections": true
+    }
+  ],
+  "startup_seconds": 0.067598163994262,
+  "status": "PASS",
+  "cgroup_peak_gib": 10.53409194946289,
+  "peak_rss_gib": 10.607845306396484,
+  "swap_peak_bytes": 0,
+  "oom_kill": 0,
+  "peak_requested_gib": 10.266800735145807,
+  "final_live_requested_gib": 0.01963184028863907
+}

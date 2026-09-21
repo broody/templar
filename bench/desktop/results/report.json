@@ -1,0 +1,295 @@
+{
+  "cases": [
+    {
+      "case": "felt-1",
+      "complete": true,
+      "gates": 81912,
+      "prove_median_s": 1.28,
+      "prove_max_rss_mib": 175.27734375,
+      "proof_bytes": 9408,
+      "compile_s": 4.51,
+      "compile_rss_mib": 381.99609375,
+      "witness_s": 0.94,
+      "witness_rss_mib": 150.515625
+    },
+    {
+      "case": "felt-16",
+      "complete": true,
+      "gates": 1256684,
+      "prove_median_s": 22.11,
+      "prove_max_rss_mib": 2501.96484375,
+      "proof_bytes": 10944,
+      "compile_s": 120.75,
+      "compile_rss_mib": 11122.48046875,
+      "witness_s": 11.58,
+      "witness_rss_mib": 605.02734375
+    },
+    {
+      "case": "felt-2",
+      "complete": true,
+      "gates": 160229,
+      "prove_median_s": 2.38,
+      "prove_max_rss_mib": 331.77734375,
+      "proof_bytes": 9792,
+      "compile_s": 8.82,
+      "compile_rss_mib": 694.7890625,
+      "witness_s": 1.87,
+      "witness_rss_mib": 184.5703125
+    },
+    {
+      "case": "felt-32",
+      "complete": false,
+      "gates": null,
+      "prove_median_s": null,
+      "prove_max_rss_mib": null,
+      "proof_bytes": null,
+      "compile_s": null,
+      "compile_rss_mib": null,
+      "failure": {
+        "stage": "compile",
+        "command": [
+          "/home/broody/.nargo/bin/nargo",
+          "compile"
+        ],
+        "exit_code": 1,
+        "wall_seconds": null,
+        "driver_wall_seconds": 169.0167546470002,
+        "max_rss_kib": null,
+        "memory_limit": "32G",
+        "cpu_affinity": "0-3",
+        "cpu_quota": "400%",
+        "swap_limit": 0,
+        "timeout_seconds": 300,
+        "systemd_result": "oom-kill",
+        "cgroup_peak": "32.0G"
+      },
+      "witness_s": null,
+      "witness_rss_mib": null
+    },
+    {
+      "case": "felt-4",
+      "complete": true,
+      "gates": 316865,
+      "prove_median_s": 4.59,
+      "prove_max_rss_mib": 643.76171875,
+      "proof_bytes": 10176,
+      "compile_s": 19.76,
+      "compile_rss_mib": 1422.68359375,
+      "witness_s": 3.31,
+      "witness_rss_mib": 201.6328125
+    },
+    {
+      "case": "felt-8",
+      "complete": true,
+      "gates": 630138,
+      "prove_median_s": 9.18,
+      "prove_max_rss_mib": 1267.7421875,
+      "proof_bytes": 10560,
+      "compile_s": 48.99,
+      "compile_rss_mib": 3718.078125,
+      "witness_s": 5.93,
+      "witness_rss_mib": 351.2421875
+    },
+    {
+      "case": "native-1",
+      "complete": true,
+      "gates": 130,
+      "prove_median_s": 0.03,
+      "prove_max_rss_mib": 18.18359375,
+      "proof_bytes": 5952,
+      "compile_s": 0.12,
+      "compile_rss_mib": 58.8984375,
+      "witness_s": 0.12,
+      "witness_rss_mib": 57.94921875
+    },
+    {
+      "case": "native-16",
+      "complete": true,
+      "gates": 1240,
+      "prove_median_s": 0.08,
+      "prove_max_rss_mib": 20.35546875,
+      "proof_bytes": 7104,
+      "compile_s": 0.11,
+      "compile_rss_mib": 59.02734375,
+      "witness_s": 0.11,
+      "witness_rss_mib": 58.125
+    },
+    {
+      "case": "native-2",
+      "complete": true,
+      "gates": 204,
+      "prove_median_s": 0.03,
+      "prove_max_rss_mib": 18.1640625,
+      "proof_bytes": 5952,
+      "compile_s": 0.11,
+      "compile_rss_mib": 59.3984375,
+      "witness_s": 0.11,
+      "witness_rss_mib": 58.53515625
+    },
+    {
+      "case": "native-256",
+      "complete": true,
+      "gates": 19000,
+      "prove_median_s": 0.4,
+      "prove_max_rss_mib": 54.5859375,
+      "proof_bytes": 8640,
+      "compile_s": 0.12,
+      "compile_rss_mib": 60.86328125,
+      "witness_s": 0.12,
+      "witness_rss_mib": 58.41015625
+    },
+    {
+      "case": "native-32",
+      "complete": true,
+      "gates": 2424,
+      "prove_median_s": 0.1,
+      "prove_max_rss_mib": 22.69140625,
+      "proof_bytes": 7488,
+      "compile_s": 0.12,
+      "compile_rss_mib": 59.42578125,
+      "witness_s": 0.12,
+      "witness_rss_mib": 58.68359375
+    },
+    {
+      "case": "native-4",
+      "complete": true,
+      "gates": 352,
+      "prove_median_s": 0.04,
+      "prove_max_rss_mib": 18.234375,
+      "proof_bytes": 6336,
+      "compile_s": 0.11,
+      "compile_rss_mib": 59.09765625,
+      "witness_s": 0.11,
+      "witness_rss_mib": 58.1875
+    },
+    {
+      "case": "native-64",
+      "complete": true,
+      "gates": 4792,
+      "prove_median_s": 0.15,
+      "prove_max_rss_mib": 27.71875,
+      "proof_bytes": 7872,
+      "compile_s": 0.12,
+      "compile_rss_mib": 59.53515625,
+      "witness_s": 0.11,
+      "witness_rss_mib": 58.3125
+    },
+    {
+      "case": "native-8",
+      "complete": true,
+      "gates": 648,
+      "prove_median_s": 0.05,
+      "prove_max_rss_mib": 18.53515625,
+      "proof_bytes": 6720,
+      "compile_s": 0.11,
+      "compile_rss_mib": 59.04296875,
+      "witness_s": 0.11,
+      "witness_rss_mib": 58.48046875
+    },
+    {
+      "case": "statement-felt",
+      "complete": false,
+      "gates": null,
+      "prove_median_s": null,
+      "prove_max_rss_mib": null,
+      "proof_bytes": null,
+      "compile_s": null,
+      "compile_rss_mib": null,
+      "failure": {
+        "stage": "compile",
+        "command": [
+          "/home/broody/.nargo/bin/nargo",
+          "compile"
+        ],
+        "exit_code": 1,
+        "wall_seconds": null,
+        "driver_wall_seconds": 194.96896597399973,
+        "max_rss_kib": null,
+        "memory_limit": "32G",
+        "cpu_affinity": "0-3",
+        "cpu_quota": "400%",
+        "swap_limit": 0,
+        "timeout_seconds": 300,
+        "systemd_result": "oom-kill",
+        "cgroup_peak": "32.0G"
+      },
+      "witness_s": null,
+      "witness_rss_mib": null
+    },
+    {
+      "case": "statement-native",
+      "complete": true,
+      "gates": 12965,
+      "prove_median_s": 0.26,
+      "prove_max_rss_mib": 39.171875,
+      "proof_bytes": 8256,
+      "compile_s": 0.15,
+      "compile_rss_mib": 63.40625,
+      "witness_s": 0.12,
+      "witness_rss_mib": 59.65234375
+    },
+    {
+      "case": "statement-native-wide",
+      "complete": true,
+      "gates": 20336,
+      "prove_median_s": 0.4,
+      "prove_max_rss_mib": 56.9140625,
+      "proof_bytes": 8640,
+      "compile_s": 0.2,
+      "compile_rss_mib": 65.29296875,
+      "witness_s": 0.13,
+      "witness_rss_mib": 60.3125
+    }
+  ],
+  "flow_gas_raw": {
+    "export_context": 90056706,
+    "funded_baseline": 243498470,
+    "redirected_withdrawal_rejected": 517015515,
+    "alice_payment": 639773937,
+    "replay_rejected": 908852212,
+    "deposit_payment_withdrawal": 910908220
+  },
+  "flow_gas_deltas": {
+    "two_deposits": 153441764,
+    "alice_payment": 396275467,
+    "bob_withdrawal": 271134283
+  },
+  "flow_artifacts": {
+    "alice": {
+      "proof": {
+        "bytes": 8256,
+        "sha256": "df235c8bb7d405d7316862bfea5cf3aecdef05aba3c3eb41ef780a6adef23fc9"
+      },
+      "public_inputs": {
+        "bytes": 256,
+        "sha256": "3d27adb06bf40ed0d0b9cad61f2b44a81b64b0f4bb6bd3a1a72efffcb31f4cd1"
+      },
+      "proof_calldata.txt": {
+        "bytes": 73785,
+        "sha256": "e5cae4e5b3d6ceebe173c659cce8feea5f7077a83c5777490cb2cc875663f014"
+      },
+      "calldata_felts": 2953
+    },
+    "bob": {
+      "proof": {
+        "bytes": 8256,
+        "sha256": "88493f2d536785663c4b34905bd47935c34beb833431e77a999d41920706cabf"
+      },
+      "public_inputs": {
+        "bytes": 256,
+        "sha256": "e1c5af29d082d491be760d5ef83d2dfec5b24ac9f1dbc28b9498b3526b315a84"
+      },
+      "proof_calldata.txt": {
+        "bytes": 74115,
+        "sha256": "ea6312b163ac6383104a4883b64937d33d8eefd53801f12472d8867b4a36d70a"
+      },
+      "calldata_felts": 2953
+    }
+  },
+  "limitations": [
+    "Native CLI on a constrained i9, not a consumer-machine or browser measurement.",
+    "Sweep stages overlapped a separate compiler experiment; indicative timings.",
+    "Fork test gas deltas exclude account validation, transaction calldata pricing and production fee market.",
+    "Experimental ordinary pool only; production migration, controllers and audit remain outstanding."
+  ]
+}

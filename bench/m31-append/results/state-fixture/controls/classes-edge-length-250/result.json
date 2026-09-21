@@ -1,0 +1,12 @@
+{
+  "name": "classes-edge-length-250",
+  "expected": "reject",
+  "exit_code": 101,
+  "passed": true,
+  "input": "bench/m31-append/results/state-fixture/controls/classes-edge-length-250/fixture.json",
+  "input_sha256": "9c23ded6b19210a34306a927b3056a36d340bf851323936d6a1a1e1cddbbf38f",
+  "report_path": null,
+  "stdout": "bench/m31-append/results/state-fixture/controls/classes-edge-length-250/stdout.log",
+  "stderr": "bench/m31-append/results/state-fixture/controls/classes-edge-length-250/stderr.log",
+  "cgroup": "bench/m31-append/results/state-fixture/controls/classes-edge-length-250/cgroup.txt"
+}

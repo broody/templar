@@ -1,0 +1,12 @@
+Running as unit: templar-m31-capability-katana-1789988645928472060.service; invocation ID: b07cb7fefb634763b60fdda9738efb3a
+[2m2026-09-21 19:04:06.076 +08:00[0m [32m INFO[0m [2mkatana::core::backend[0m[2m:[0m Block mined. [3mblock_number[0m[2m=[0m0 [3mtx_count[0m[2m=[0m0
+[2m2026-09-21 19:04:06.077 +08:00[0m [32m INFO[0m [2mkatana_core::backend[0m[2m:[0m Genesis initialized [3mgenesis_hash[0m[2m=[0m3555955789854555835624497976340046126806273503130334051723898778022408747416
+[2m2026-09-21 19:04:06.080 +08:00[0m [32m INFO[0m [2mkatana_node[0m[2m:[0m Starting node. [3mchain[0m[2m=[0m0x4b4154414e41
+[2m2026-09-21 19:04:06.080 +08:00[0m [32m INFO[0m [2mrpc[0m[2m:[0m RPC server started. [3maddr[0m[2m=[0m127.0.0.1:50303
+[2m2026-09-21 19:04:06.192 +08:00[0m [32m INFO[0m [2mkatana_cli::args[0m[2m:[0m Shutting down.
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 252ms
+CPU time consumed: 191ms
+Memory peak: 80.5M
+Memory swap peak: 0B

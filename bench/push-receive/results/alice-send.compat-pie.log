@@ -1,0 +1,27 @@
+   Executing push_receive
+Program output:
+8
+28675836988560422058761249697597660021553
+393402133025997798000961
+4660
+-1641900413261015279674996524274095376075505244977908003373138134591129378871
+0
+0
+0
+-690461836267168219512990963612720034032574083882138013561633658174108463840
+Resources:
+	steps: 4,796
+	max memory address: 7,255
+	memory holes: 140
+	builtins:
+		range_check_builtin: 229
+		poseidon_builtin: 103
+		output_builtin: 9
+		pedersen_builtin: 1
+	memory segments:
+		execution: 3,738
+		poseidon: 618
+		range_check: 229
+		output: 9
+		pedersen: 3
+Saving output to: target/execute/push_receive/execution20/cairo_pie.zip

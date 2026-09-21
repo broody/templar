@@ -1,0 +1,27 @@
+   Compiling pool v0.1.0 (/home/broody/development/templar/packages/pool/Scarb.toml)
+warn[E2066]: Usage of deprecated feature `"corelib-internal-use"` with no `#[feature("corelib-internal-use")]` attribute. Note: "Use `starknet` directly"
+ --> /home/broody/development/templar/packages/pool/src/pool.cairo:54:15
+    use core::starknet::{
+              ^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StorageMapReadAccess`
+ --> /home/broody/development/templar/packages/pool/src/tree.cairo:17:5
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+    ^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StorageMapWriteAccess`
+ --> /home/broody/development/templar/packages/pool/src/tree.cairo:17:27
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StoragePointerReadAccess`
+ --> /home/broody/development/templar/packages/pool/src/tree.cairo:17:50
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/packages/pool/src/tree.cairo:18:5
+    StoragePointerWriteAccess,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    Finished `dev` profile target(s) in 2 seconds

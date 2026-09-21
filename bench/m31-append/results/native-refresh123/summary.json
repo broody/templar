@@ -1,0 +1,27 @@
+{
+  "scope": "public synthetic M31 append integration fixture; correctness/resource observation only; no private payment or browser qualification",
+  "command": [
+    "/home/broody/development/templar/target/m31-append/frozen-native-v2/templar-m31-append",
+    "/home/broody/development/templar/bench/m31-append/results/native-inputs/refresh-b-to-d.json",
+    "/home/broody/development/templar/bench/m31-append/results/native-refresh123/proof"
+  ],
+  "binary_sha256": "f00da668939c65d71b5e703d4932b6764d6dd0df01c0cd80733b6c2cb1ed4d05",
+  "cap_gib": 1,
+  "cpu_budget_cores": 1,
+  "prover_workers": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 0.8309730870096246,
+  "sampled_command_peak_rss_gib": 0.017581939697265625,
+  "sampled_peak_cgroup_gib": 0.014301300048828125,
+  "effective_peak_cgroup_gib": 0.014301300048828125,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 30,
+  "cgroup_sample_count": 28,
+  "time_largest_process_peak_rss_gib": 0.01727294921875
+}

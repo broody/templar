@@ -1,0 +1,59 @@
+{
+  "actual_fee": {
+    "amount": "0x81d0255bb558b0",
+    "unit": "FRI"
+  },
+  "block_hash": "0x78c37d6241e1a9730e52d22867d3313a534662895cd020b35ea6aa1ea831701",
+  "block_number": 15363561,
+  "events": [
+    {
+      "data": [
+        "0x800a1430732f7dd5ff8b3625f72ab6472cca11510485c8a70a81e88761c397",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x0",
+        "0x4bb35e76e76109ea06d5e74cf39a6f7c35fae61f502c3ef6f904af2e3b5cbe3",
+        "0x1",
+        "0x7430fdfc9121d40c0b92bec1a19265c5f9b2c0fd16aba973f1799beed736a1e",
+        "0xa45a7dca6a0df1b9870f0a0d8c3b668f93a7eb92bcf7bf96108d4201ef443c"
+      ],
+      "from_address": "0x2ceed65a4bd731034c01113685c831b01c15d7d432f71afb1cf1634b53a2125",
+      "keys": [
+        "0x26b160f10156dea0639bec90696772c640b9706a47f5b8c52ea1abe5858b34d"
+      ]
+    },
+    {
+      "data": [
+        "0x1",
+        "0x1",
+        "0x800a1430732f7dd5ff8b3625f72ab6472cca11510485c8a70a81e88761c397"
+      ],
+      "from_address": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+      "keys": [
+        "0x1dcde06aabdbca2f80aa51392b345d7549d7757aa855f7e37f5d335ac8243b1",
+        "0x31006029a92b9deecac77efee2dff494c1396a172a358c54d0649f8c6c3a902"
+      ]
+    },
+    {
+      "data": [
+        "0x81d0255bb558b0",
+        "0x0"
+      ],
+      "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+      "keys": [
+        "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8"
+      ]
+    }
+  ],
+  "execution_resources": {
+    "l1_data_gas": 320,
+    "l1_gas": 0,
+    "l2_gas": 1900240
+  },
+  "execution_status": "SUCCEEDED",
+  "finality_status": "ACCEPTED_ON_L2",
+  "messages_sent": [],
+  "transaction_hash": "0x31006029a92b9deecac77efee2dff494c1396a172a358c54d0649f8c6c3a902",
+  "type": "INVOKE"
+}

@@ -1,0 +1,27 @@
+{
+  "test": "cost_felt_cold_1",
+  "argv": [
+    "/home/broody/.asdf/installs/starknet-foundry/0.63.0/bin/snforge",
+    "test",
+    "--exact",
+    "m31_tree_bench::tests::cost_felt_cold_1",
+    "--max-threads",
+    "1",
+    "--max-n-steps",
+    "80000000",
+    "--detailed-resources",
+    "--gas-report",
+    "--trace-components",
+    "gas"
+  ],
+  "exit_code": 0,
+  "unit": "templar-m31-cairo-final-felt-cold-1-1789985090",
+  "caps": {
+    "MemoryMax": "8G",
+    "MemorySwapMax": "0",
+    "RuntimeMaxSec": 300,
+    "CPUQuota": "400%",
+    "CPUAffinity": "0 1 2 3"
+  },
+  "note": "cgroup.txt records systemd unit properties only; post-exit MemoryPeak is not a Cairo RAM measurement"
+}

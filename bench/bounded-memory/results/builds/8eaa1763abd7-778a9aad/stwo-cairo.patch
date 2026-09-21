@@ -1,0 +1,65 @@
+--- a/stwo_cairo_prover/crates/prover/src/debug_tools/relation_tracker.rs
++++ b/stwo_cairo_prover/crates/prover/src/debug_tools/relation_tracker.rs
+@@ -42,7 +42,14 @@
+         interaction_tree
+             .iter()
+             .map(|poly| {
+-                let coeffs = reduce_degree(poly.evals.clone().interpolate());
++                let coeffs = reduce_degree(if let Some(evals) = &poly.evals {
++                    evals.clone().interpolate()
++                } else {
++                    poly.coeffs
++                        .as_ref()
++                        .expect("Polynomial representation is missing")
++                        .clone()
++                });
+                 coeffs
+                     .evaluate(CanonicCoset::new(coeffs.log_size()).circle_domain())
+                     .values
+--- a/stwo_cairo_prover/crates/prover/src/prover.rs
++++ b/stwo_cairo_prover/crates/prover/src/prover.rs
+@@ -158,6 +158,33 @@
+ where
+     SimdBackend: BackendForChannel<MC>,
+ {
++    prove_cairo_with_precompute_bounded_memory::<MC>(
++        base_column_pool,
++        twiddles,
++        preprocessed_trace,
++        preprocessed_tree,
++        input,
++        prover_params,
++        low_memory_mode,
++        None,
++    )
++}
++
++/// Selects coefficient-backed storage and bounded FRI batches without changing verifier
++/// parameters. `None` preserves the existing retained-evaluation behavior.
++pub fn prove_cairo_with_precompute_bounded_memory<'a, MC: MerkleChannel>(
++    base_column_pool: &BaseColumnPool<SimdBackend>,
++    twiddles: &TwiddleTree<SimdBackend>,
++    preprocessed_trace: Arc<PreProcessedTrace>,
++    preprocessed_tree: MaybeOwned<'a, CommitmentTreeProver<SimdBackend, MC>>,
++    input: ProverInput,
++    prover_params: ProverParameters,
++    low_memory_mode: bool,
++    max_fri_columns: Option<usize>,
++) -> Result<CairoProof<MC::H>, ProvingError>
++where
++    SimdBackend: BackendForChannel<MC>,
++{
+     let _span = span!(Level::INFO, "prove_cairo").entered();
+     let ProverParameters {
+         channel_hash: _,
+@@ -179,7 +206,9 @@
+         twiddles,
+         base_column_pool,
+     );
+-    if low_memory_mode {
++    if let Some(max_columns) = max_fri_columns {
++        commitment_scheme.set_bounded_memory_mode(max_columns);
++    } else if low_memory_mode {
+         commitment_scheme.set_low_memory_mode();
+     }
+     if store_polynomials_coefficients {

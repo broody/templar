@@ -1,0 +1,14 @@
+{
+  "source_package": "packages/pool",
+  "copied_pool_files": {
+    "src/pool.cairo": "441f33ae8ff5290455300845e4a2a8aa8a09f66f0ceaad7d96d8c71d6bb7a3e9",
+    "src/spend.cairo": "1b7fe176139b911661b5ae945656aa475483d203e3f8ff0353f9ba01be4c5e9c",
+    "src/tree.cairo": "995e89a06f6a73bc1831fcea7586ef49128e5fa6649536ea557f1b4de4080dcf",
+    "src/hashes.cairo": "a1c47c45f1700a96fe1b5a9fe3c4ef1ac0d6e4269d534e37376e43054d7404c1"
+  },
+  "prover_sha256": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5",
+  "sequencer_revision": "e6b6fd2e9932909107833579e5b6efd6c75fa0af",
+  "proving_utils_revision": "3035dd00421daa541894297bd754db6e2787807b",
+  "compiler": "Scarb 2.18.0",
+  "foundry": "0.63.0"
+}

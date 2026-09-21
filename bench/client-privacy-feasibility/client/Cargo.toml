@@ -1,0 +1,59 @@
+[package]
+name = "templar-client-privacy-feasibility"
+version = "0.1.0"
+edition = "2024"
+
+[workspace]
+
+[dependencies]
+privacy-prove = { path = "../../../target/client-privacy-feasibility/proving-utils/crates/privacy_prove" }
+privacy-circuit-verify = { path = "../../../target/client-privacy-feasibility/proving-utils/crates/privacy_circuit_verify" }
+cairo-vm = { version = "=3.2.0", features = ["extensive_hints", "mod_builtin", "clap"] }
+starknet-types-core = { version = "=0.2.4", features = ["serde"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+bincode = "1.3.3"
+sha2 = "0.10"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[patch."https://github.com/starkware-libs/stwo"]
+stwo-air-utils = { path = "../../../target/client-privacy-feasibility/stwo/crates/air-utils" }
+stwo-air-utils-derive = { path = "../../../target/client-privacy-feasibility/stwo/crates/air-utils-derive" }
+stwo-constraint-framework = { path = "../../../target/client-privacy-feasibility/stwo/crates/constraint-framework" }
+stwo-examples = { path = "../../../target/client-privacy-feasibility/stwo/crates/examples" }
+std-shims = { path = "../../../target/client-privacy-feasibility/stwo/crates/std-shims" }
+stwo = { path = "../../../target/client-privacy-feasibility/stwo/crates/stwo" }
+
+[patch."https://github.com/starkware-libs/stwo-cairo"]
+stwo-cairo-adapter = { path = "../../../target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/adapter" }
+cairo-air = { path = "../../../target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/cairo-air" }
+stwo-cairo-serialize = { path = "../../../target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize" }
+stwo-cairo-serialize-derive = { path = "../../../target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize-derive" }
+stwo-cairo-common = { path = "../../../target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/common" }
+stwo-cairo-dev-utils = { path = "../../../target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/dev_utils" }
+stwo-cairo-prover = { path = "../../../target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/prover" }
+stwo-cairo-utils = { path = "../../../target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/utils" }
+
+[patch."https://github.com/starkware-libs/stwo-circuits"]
+circuit-cairo-verifier = { path = "../../../target/client-privacy-feasibility/stwo-circuits/crates/cairo_verifier" }
+circuit-cairo-serialize = { path = "../../../target/client-privacy-feasibility/stwo-circuits/crates/circuit_cairo_serialize" }
+circuit-common = { path = "../../../target/client-privacy-feasibility/stwo-circuits/crates/circuit_common" }
+circuit-multiverifier = { path = "../../../target/client-privacy-feasibility/stwo-circuits/crates/circuit_multiverifier" }
+circuit-prover = { path = "../../../target/client-privacy-feasibility/stwo-circuits/crates/circuit_prover" }
+circuit-serialize = { path = "../../../target/client-privacy-feasibility/stwo-circuits/crates/circuit_serialize" }
+circuit-verifier = { path = "../../../target/client-privacy-feasibility/stwo-circuits/crates/circuit_verifier" }
+circuits = { path = "../../../target/client-privacy-feasibility/stwo-circuits/crates/circuits" }
+circuits-stark-verifier = { path = "../../../target/client-privacy-feasibility/stwo-circuits/crates/stark_verifier" }
+circuits-stark-verifier-examples = { path = "../../../target/client-privacy-feasibility/stwo-circuits/crates/stark_verifier_examples" }
+
+[patch."https://github.com/starkware-libs/proving-utils"]
+cairo-program-runner = { path = "../../../target/client-privacy-feasibility/proving-utils/crates/cairo-program-runner" }
+cairo-program-runner-lib = { path = "../../../target/client-privacy-feasibility/proving-utils/crates/cairo-program-runner-lib" }
+privacy-circuit-verify = { path = "../../../target/client-privacy-feasibility/proving-utils/crates/privacy_circuit_verify" }
+privacy-prove = { path = "../../../target/client-privacy-feasibility/proving-utils/crates/privacy_prove" }
+stwo-run-and-prove = { path = "../../../target/client-privacy-feasibility/proving-utils/crates/stwo_run_and_prove" }
+stwo-vm-runner = { path = "../../../target/client-privacy-feasibility/proving-utils/crates/vm_runner" }
+
+[profile.release]
+debug = false

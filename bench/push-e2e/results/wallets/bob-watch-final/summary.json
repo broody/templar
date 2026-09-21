@@ -1,0 +1,27 @@
+{
+  "as_of_block": 15363881,
+  "block_hash": "0x6bf9506013190603ce374d278e09b545baeac1da941894fd760bb06ad73bb10",
+  "anchor": "two trusted RPC providers agree on block/class/state; no consensus or state-proof verification",
+  "history_complete": true,
+  "missing_payload_indices": [],
+  "received_indices": [
+    2,
+    4,
+    7
+  ],
+  "received_totals": {
+    "0x4ad0831f7836c5fab225cf4ff9d06e641f370f29cd76d8ea80b9932e39c00ee": 1160
+  },
+  "spent_indices": [
+    2,
+    4,
+    7
+  ],
+  "known_unspent": {
+    "0x4ad0831f7836c5fab225cf4ff9d06e641f370f29cd76d8ea80b9932e39c00ee": 0
+  },
+  "balances": {
+    "0x4ad0831f7836c5fab225cf4ff9d06e641f370f29cd76d8ea80b9932e39c00ee": 0
+  },
+  "balance_scope": "recoverable protocol-published notes for this receiving address"
+}

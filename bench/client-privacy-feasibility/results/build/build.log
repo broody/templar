@@ -1,0 +1,188 @@
+warning: patch `stwo-cairo-dev-utils v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/dev_utils)` was not used in the crate graph
+warning: patch `stwo-cairo-utils v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/utils)` was not used in the crate graph
+warning: patch `cairo-program-runner v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/proving-utils/crates/cairo-program-runner)` was not used in the crate graph
+warning: patch `stwo-run-and-prove v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/proving-utils/crates/stwo_run_and_prove)` was not used in the crate graph
+warning: patch `stwo-vm-runner v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/proving-utils/crates/vm_runner)` was not used in the crate graph
+warning: patch `std-shims v1.0.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo/crates/std-shims)` was not used in the crate graph
+warning: patch `stwo-examples v2.2.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo/crates/examples)` was not used in the crate graph
+warning: patch `circuit-cairo-serialize v0.1.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-circuits/crates/circuit_cairo_serialize)` was not used in the crate graph
+warning: patch `circuit-multiverifier v0.1.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-circuits/crates/circuit_multiverifier)` was not used in the crate graph
+warning: patch `circuits-stark-verifier-examples v0.1.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-circuits/crates/stark_verifier_examples)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+     Locking 2 packages to latest Rust 1.94.0-nightly compatible versions
+      Adding stwo-air-utils v2.2.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo/crates/air-utils)
+      Adding stwo-air-utils-derive v2.2.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo/crates/air-utils-derive)
+   Compiling serde_core v1.0.228
+   Compiling num-traits v0.2.19
+   Compiling syn v2.0.110
+   Compiling crypto-common v0.1.7
+   Compiling deranged v0.5.5
+   Compiling serde_json v1.0.145
+   Compiling digest v0.10.7
+   Compiling serde v1.0.228
+   Compiling rand v0.8.5
+   Compiling sha2 v0.10.9
+   Compiling blake2 v0.10.6
+   Compiling sha3 v0.10.8
+   Compiling num-integer v0.1.46
+   Compiling hmac v0.12.1
+   Compiling rfc6979 v0.4.0
+   Compiling ark-std v0.4.0
+   Compiling ark-serialize v0.4.2
+   Compiling time v0.3.44
+   Compiling crypto-bigint v0.5.5
+   Compiling hex v0.4.3
+   Compiling num-complex v0.4.6
+   Compiling clap_builder v4.5.51
+   Compiling flate2 v1.1.5
+   Compiling ndarray v0.17.1
+   Compiling zip v0.6.6
+   Compiling rust_decimal v1.39.0
+   Compiling hashbrown v0.17.1
+   Compiling indexmap v2.14.0
+   Compiling synstructure v0.13.2
+   Compiling serde_derive_internals v0.29.1
+   Compiling smol_str v0.3.4
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling serde_spanned v1.1.1
+   Compiling toml v1.1.2+spec-1.1.0
+   Compiling semver v1.0.27
+   Compiling vector-map v1.0.2
+   Compiling petgraph v0.8.3
+   Compiling erased-serde v0.4.9
+   Compiling serde_derive v1.0.228
+   Compiling tracing-attributes v0.1.30
+   Compiling thiserror-impl v2.0.17
+   Compiling zeroize_derive v1.4.2
+   Compiling tracing v0.1.41
+   Compiling tracing-subscriber v0.3.20
+   Compiling thiserror v2.0.17
+   Compiling ref-cast-impl v1.0.25
+   Compiling zeroize v1.8.2
+   Compiling salsa-macros v0.26.2
+   Compiling schemars_derive v1.1.0
+   Compiling ref-cast v1.0.25
+   Compiling enum-ordinalize-derive v4.3.2
+   Compiling num-bigint v0.4.6
+   Compiling hashbrown v0.15.5
+   Compiling schemars v1.1.0
+   Compiling enum-ordinalize v4.3.2
+   Compiling salsa v0.26.2
+   Compiling hashlink v0.10.0
+   Compiling ark-ff v0.4.2
+   Compiling lambdaworks-math v0.13.0
+   Compiling cairo-lang-utils v2.19.0-rc.3
+   Compiling cairo-lang-debug v2.19.0-rc.3
+   Compiling lambdaworks-crypto v0.13.0
+   Compiling starknet-types-core v0.2.4
+   Compiling starknet-ff v0.3.7
+   Compiling cairo-lang-proc-macros v2.19.0-rc.3
+   Compiling starknet-curve v0.4.2
+   Compiling starknet-crypto-codegen v0.3.3
+   Compiling cairo-lang-filesystem v2.19.0-rc.3
+   Compiling genco-macros v0.19.0
+   Compiling bytemuck_derive v1.10.2
+   Compiling genco v0.19.0
+   Compiling bytemuck v1.24.0
+   Compiling educe v0.5.11
+   Compiling starknet-curve v0.6.0
+   Compiling unescaper v0.1.6
+   Compiling lalrpop v0.23.1
+   Compiling cairo-lang-syntax v2.19.0-rc.3
+   Compiling cairo-lang-diagnostics v2.19.0-rc.3
+   Compiling cairo-lang-syntax-codegen v2.19.0-rc.3
+   Compiling clap_derive v4.5.49
+   Compiling clap v4.5.51
+   Compiling sprs v0.11.4
+   Compiling num-modular v0.5.1
+   Compiling lru v0.12.5
+   Compiling heapless v0.7.17
+   Compiling cobs v0.3.0
+   Compiling typetag-impl v0.2.21
+   Compiling microlp v0.2.11
+   Compiling stwo-cairo-serialize-derive v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize-derive)
+   Compiling typetag v0.2.21
+   Compiling postcard v1.1.3
+   Compiling good_lp v1.14.2
+   Compiling num-prime v0.4.4
+   Compiling starknet-crypto v0.8.1
+   Compiling starknet-crypto v0.6.2
+   Compiling cairo-lang-sierra v2.19.0-rc.3
+   Compiling stwo v2.2.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo/crates/stwo)
+warning: the feature `stdarch_x86_avx512` has been stable since 1.89.0 and no longer requires an attribute to enable
+ --> /home/broody/development/templar/target/client-privacy-feasibility/stwo/crates/stwo/src/lib.rs:4:13
+  |
+4 |     feature(stdarch_x86_avx512)
+  |             ^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(stable_features)]` on by default
+
+   Compiling serde_arrays v0.1.0
+   Compiling diffy v0.5.0
+   Compiling cairo-lang-parser v2.19.0-rc.3
+   Compiling cairo-vm v3.2.0
+   Compiling cairo-lang-eq-solver v2.19.0-rc.3
+   Compiling cairo-lang-casm v2.19.0-rc.3
+   Compiling cairo-lang-defs v2.19.0-rc.3
+   Compiling stwo-constraint-framework v2.2.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo/crates/constraint-framework)
+   Compiling stwo-cairo-serialize v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize)
+   Compiling stwo-cairo-common v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/common)
+   Compiling cairo-lang-sierra-type-size v2.19.0-rc.3
+   Compiling cairo-lang-formatter v2.19.0-rc.3
+   Compiling cairo-lang-test-utils v2.19.0-rc.3
+   Compiling cairo-lang-plugins v2.19.0-rc.3
+   Compiling cairo-lang-semantic v2.19.0-rc.3
+   Compiling cairo-lang-sierra-ap-change v2.19.0-rc.3
+   Compiling cairo-lang-sierra-gas v2.19.0-rc.3
+   Compiling ark-serialize-derive v0.6.0
+   Compiling ark-std v0.6.0
+   Compiling ark-serialize v0.6.0
+   Compiling cairo-lang-sierra-to-casm v2.19.0-rc.3
+   Compiling educe v0.6.0
+warning: `stwo` (lib) generated 1 warning
+   Compiling ark-ff-macros v0.6.0
+   Compiling ark-ff-asm v0.6.0
+   Compiling faststr v0.2.32
+   Compiling circuits v0.1.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-circuits/crates/circuits)
+   Compiling ark-ff v0.6.0
+   Compiling sonic-rs v0.3.17
+   Compiling circuits-stark-verifier v0.1.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-circuits/crates/stark_verifier)
+   Compiling cairo-lang-runnable-utils v2.19.0-rc.3
+   Compiling cairo-lang-project v2.19.0-rc.3
+   Compiling bincode v1.3.3
+   Compiling cairo-air v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/cairo-air)
+   Compiling circuit-common v0.1.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-circuits/crates/circuit_common)
+   Compiling ark-poly v0.6.0
+   Compiling cairo-lang-starknet-classes v2.19.0-rc.3
+   Compiling bincode v2.0.1
+   Compiling ark-ec v0.6.0
+   Compiling stwo-air-utils-derive v2.2.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo/crates/air-utils-derive)
+   Compiling getrandom v0.3.4
+   Compiling stwo-cairo-adapter v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/adapter)
+   Compiling ark-secp256r1 v0.6.0
+   Compiling ark-secp256k1 v0.6.0
+   Compiling stwo-air-utils v2.2.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo/crates/air-utils)
+   Compiling circuit-verifier v0.1.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-circuits/crates/circuit_verifier)
+   Compiling cairo-lang-lowering v2.19.0-rc.3
+   Compiling cairo-lang-executable-plugin v2.19.0-rc.3
+   Compiling thiserror-impl v1.0.69
+   Compiling circuit-cairo-verifier v0.1.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-circuits/crates/cairo_verifier)
+   Compiling thiserror v1.0.69
+   Compiling stwo-cairo-prover v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-cairo/stwo_cairo_prover/crates/prover)
+   Compiling circuit-serialize v0.1.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-circuits/crates/circuit_serialize)
+   Compiling tempfile v3.23.0
+   Compiling privacy-circuit-verify v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/proving-utils/crates/privacy_circuit_verify)
+   Compiling cairo-lang-sierra-generator v2.19.0-rc.3
+   Compiling cairo-lang-compiler v2.19.0-rc.3
+   Compiling cairo-lang-starknet v2.19.0-rc.3
+   Compiling cairo-lang-executable v2.19.0-rc.3
+   Compiling cairo-lang-runner v2.19.0-rc.3
+   Compiling cairo-lang-execute-utils v2.19.0-rc.3
+   Compiling circuit-prover v0.1.0 (/home/broody/development/templar/target/client-privacy-feasibility/stwo-circuits/crates/circuit_prover)
+   Compiling cairo-program-runner-lib v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/proving-utils/crates/cairo-program-runner-lib)
+   Compiling privacy-prove v1.2.2 (/home/broody/development/templar/target/client-privacy-feasibility/proving-utils/crates/privacy_prove)
+   Compiling templar-client-privacy-feasibility v0.1.0 (/home/broody/development/templar/bench/client-privacy-feasibility/client)
+    Finished `release` profile [optimized] target(s) in 3m 06s

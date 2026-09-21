@@ -1,0 +1,35 @@
+{
+  "as_of_block": 15385435,
+  "block_hash": "0x3d378a2fde9f896c68cf0c5a7348ff77d4bd9dbc80ae22a9949012828fcbc95",
+  "anchor": "two trusted RPC providers agree on block/class/state; no consensus or state-proof verification",
+  "history_complete": true,
+  "missing_payload_indices": [],
+  "received_indices": [
+    2,
+    5
+  ],
+  "received_totals": {
+    "0x5e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e": 660
+  },
+  "spent_indices": [
+    2
+  ],
+  "known_unspent": {
+    "0x5e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e": 60
+  },
+  "balances": {
+    "0x5e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e": 60
+  },
+  "balance_scope": "recoverable protocol-published notes for this receiving address",
+  "balance_semantics": "unspent value; controlled notes additionally require controller approval",
+  "note_conditions": {
+    "2": {
+      "controller": "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+      "policy": "0x12e90908742ac8b4b2886280f8f4269eacbd0769ca08fc14018ea714c2ffe01"
+    },
+    "5": {
+      "controller": "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+      "policy": "0x12e90908742ac8b4b2886280f8f4269eacbd0769ca08fc14018ea714c2ffe01"
+    }
+  }
+}

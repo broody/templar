@@ -1,0 +1,30 @@
+Running as unit: templar-bench-b5012befb5ef.service; invocation ID: 4aea66ad99444b839e6cd63a880dd898
+	Command being timed: "/home/broody/.nargo/bin/nargo compile"
+	User time (seconds): 46.43
+	System time (seconds): 2.57
+	Percent of CPU this job got: 100%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:48.99
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3807312
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 1822280
+	Voluntary context switches: 167
+	Involuntary context switches: 942
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 12368
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 49.008s
+CPU time consumed: 49.016s
+Memory peak: 1.5M
+Memory swap peak: 0B

@@ -1,0 +1,28 @@
+{
+  "scope": "Chrome153 public synthetic membership; one WASM worker; three proofs in one instance; 4GiB declared linear memory maximum; no privacy or consumer-desktop qualification",
+  "command": [
+    "/home/broody/.nvm/versions/node/v22.22.1/bin/node",
+    "bench/wasm-membership/run-browser.mjs",
+    "bench/wasm-membership/results/chrome-three-runs-8g/browser",
+    "3"
+  ],
+  "binary_sha256": "243fd8938011479f41b3de101842150fa990f33fbbb3f7aabd330857f2d79e1d",
+  "cap_gib": 8,
+  "cpu_budget_cores": 4,
+  "prover_workers": 1,
+  "cpu_affinity": "0 1 2 3",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 1,
+  "systemd_result": "exit-code",
+  "final_cgroup_peak_bytes": 2854912,
+  "final_cgroup_swap_peak_bytes": 0,
+  "elapsed_seconds": 0.8843458799965447,
+  "sampled_harness_peak_rss_gib": 0.119476318359375,
+  "sampled_peak_cgroup_gib": 0.17539596557617188,
+  "effective_peak_cgroup_gib": 0.17539596557617188,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 20,
+  "cgroup_sample_count": 19,
+  "time_largest_process_peak_rss_gib": 0.14167022705078125
+}

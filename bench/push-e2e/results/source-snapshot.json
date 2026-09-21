@@ -1,0 +1,50 @@
+{
+  "source_hashes": {
+    "cairo/src/lib.cairo": "cb84d632b85a66105e1196d60c2cce1977fa93232ed3572285cf08c37953a1bf",
+    "cairo/src/pool.cairo": "2dcd286a0b2a6f0e40bead19d341e6d99205d86fae00a356cf5a9e98c2ee6f59",
+    "cairo/src/proof_adapter.cairo": "c60ade37a138681c78f093a3ee25d9fccfc9133e1ffa9fcbc4efa21b8ae776e5",
+    "cairo/src/spend.cairo": "d1d7d95229967c991910524ba6c6a0b5decda86726f65f5bffea6ac223e14514",
+    "cairo/src/statement.cairo": "9b442c7a7423820d126924d1a3ed7b5ed5705c9ff342b35724d3d928026d3ec4",
+    "cairo/src/statement_account.cairo": "ddbc22452636381e7d6db0983e7ce06aa76695250e7b7e358ba0712fdecfeea4",
+    "cairo/src/test_token.cairo": "52b812f5a3813af57bc52524741c5f10c5cff963254bd5f071c6deab38b9bc21",
+    "cairo/src/tests/golden.cairo": "a881d6894e73f0a8260ce177b65d1f3ea1cbef212e9cc24e8b1084c3edf1dbe6",
+    "cairo/src/tests/mock_tree.cairo": "bb41eaaa67682563f9748fc622237f76675eca76e0d7b852595a32fd3d64fbb5",
+    "cairo/src/tests/mock_verifier.cairo": "63841c3b5fe1dd1fda8ec01a8dab0844885ab2df55f3a402c3efd11970bf314b",
+    "cairo/src/tests/test_proof_adapter.cairo": "0c5ed9c93f73e851ee5086a79809f355c650a4e401ebcdd5b05ffa48916f7159",
+    "cairo/src/tests/test_push.cairo": "3aad974b89e4cdec8995b43ab6422132af1ddc3ee1fd84f50927125c31bc7865",
+    "cairo/src/tests/test_tree.cairo": "b1d9c6945ca6b093e6982c084a25c2a3a367708e6396799d23854a12a60705d9",
+    "cairo/src/tests.cairo": "3aea9c955505bd3482e274e0dbcc50e4e36eea2dc69177e8ae498179a7ec3ec5",
+    "cairo/src/tree.cairo": "995e89a06f6a73bc1831fcea7586ef49128e5fa6649536ea557f1b4de4080dcf"
+  },
+  "classes": {
+    "Pool": "0x1718e7070d933ac667a49d8312236241636d6decfda9562581f6ad4f1da044a",
+    "StatementAccount": "0x4bb35e76e76109ea06d5e74cf39a6f7c35fae61f502c3ef6f904af2e3b5cbe3",
+    "NativeProofVerifier": "0x3b091ac51d5eb913ab9ddb4317858681134a0ac7be8eaa61125331ecffbdb90",
+    "E2EToken": "0xfb29a47941892d91a25179de02aee7564db6631cea9173e4763f07432a6f43"
+  },
+  "manifest": {
+    "prover": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/rust-target/release/starknet_transaction_prover",
+    "verifier": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/local-verifier",
+    "upstream": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/upstream/sequencer-e6b6fd2e9932909107833579e5b6efd6c75fa0af",
+    "toolchain": "Scarb 2.18.0 / snforge 0.63.0",
+    "runtime": "/tmp/templar-push-e2e-qxvu3y1w",
+    "deployment_salt_base": "0xa45a7dca6a0df1b9870f0a0d8beb113c4b48a66077984c21af18dc9489d5c8",
+    "protocol": "TEMPLAR_PUSH_POC2",
+    "prover_sha256": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5",
+    "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+    "baseline_snapshot": {
+      "source_package": "packages/pool",
+      "copied_pool_files": {
+        "src/pool.cairo": "441f33ae8ff5290455300845e4a2a8aa8a09f66f0ceaad7d96d8c71d6bb7a3e9",
+        "src/spend.cairo": "1b7fe176139b911661b5ae945656aa475483d203e3f8ff0353f9ba01be4c5e9c",
+        "src/tree.cairo": "995e89a06f6a73bc1831fcea7586ef49128e5fa6649536ea557f1b4de4080dcf",
+        "src/hashes.cairo": "a1c47c45f1700a96fe1b5a9fe3c4ef1ac0d6e4269d534e37376e43054d7404c1"
+      },
+      "prover_sha256": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5",
+      "sequencer_revision": "e6b6fd2e9932909107833579e5b6efd6c75fa0af",
+      "proving_utils_revision": "3035dd00421daa541894297bd754db6e2787807b",
+      "compiler": "Scarb 2.18.0",
+      "foundry": "0.63.0"
+    }
+  }
+}

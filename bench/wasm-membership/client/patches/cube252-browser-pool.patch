@@ -1,0 +1,30 @@
+--- a/stwo_cairo_prover/crates/prover/src/witness/components/cube_252.rs
++++ b/stwo_cairo_prover/crates/prover/src/witness/components/cube_252.rs
+@@ -41,18 +41,25 @@
+         // NOTE: This is not autogened, when updating the code, re-add this.
+         // TODO(Ohad): remove.
+         const RAYON_THREAD_STACK_SIZE: usize = 1024 * 1024 * 8;
++        #[cfg(not(target_arch = "wasm32"))]
+         let pool = rayon::ThreadPoolBuilder::new()
+             .stack_size(RAYON_THREAD_STACK_SIZE)
+             .build()
+             .unwrap();
+-        let (trace, lookup_data, sub_component_inputs) = pool.install(|| {
++        let write = || {
+             write_trace_simd(
+                 self.packed_inputs,
+                 n_rows,
+                 range_check_9_9_state,
+                 range_check_20_state,
+             )
+-        });
++        };
++        #[cfg(not(target_arch = "wasm32"))]
++        let (trace, lookup_data, sub_component_inputs) = pool.install(write);
++        // A browser worker cannot spawn the native private pool. Run exactly the same witness
++        // closure on its initialized single-thread global Rayon pool.
++        #[cfg(target_arch = "wasm32")]
++        let (trace, lookup_data, sub_component_inputs) = write();
+         for inputs in sub_component_inputs.range_check_9_9 {
+             range_check_9_9_state.add_packed_inputs(&inputs, 0);
+         }

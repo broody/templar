@@ -1,0 +1,18 @@
+{
+  "protocol": "TEMPLAR_SHAPES_DYN1",
+  "maximum_shape": [
+    64,
+    64,
+    32
+  ],
+  "statement_class": "0x7c4cdc4c908c5fe327e06018d9171940263948b796e701ce979d3c6af1124fc",
+  "statement": "0x01511fec967efeb49c5c8e993fccdc33a4a12fc92b8e839bf3f07d43cd73bade",
+  "synthetic_membership_only": true,
+  "no_pool_verifier_or_funds_changed": true,
+  "source_hashes": {
+    "cairo/src/lib.cairo": "738a5c96ec8485006fb38f914859d362398207ba9549a547a95ead3cfa6b5ff6",
+    "cairo/src/spend.cairo": "945251747639be328e66cbe39a975eb7a6f277ff74b7b337caf0f591020e9c3a",
+    "cairo/src/statement.cairo": "02fbd9d8fd5a602f88b4806cd069d72a81ad53def18e36d7d1d077eab18d88c6",
+    "cairo/src/statement_account.cairo": "ddbc22452636381e7d6db0983e7ce06aa76695250e7b7e358ba0712fdecfeea4"
+  }
+}

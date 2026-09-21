@@ -1,0 +1,27 @@
+{
+  "scope": "tree-only native proof: 2 public depth-32 M31 paths, 130 permutations padded to 256 rows, lifting log 11; 1 GiB cgroup, no swap, 1 pinned CPU, 1 prover worker",
+  "command": [
+    "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree",
+    "bench/m31-tree/client/fixtures/tree-only.json",
+    "bench/m31-tree/results/native-tree-1g-r1/proof"
+  ],
+  "binary_sha256": "f5a9d8c44a51eceabc11e7afab7815ec9cb1511b9d0ad69414926fa89b1eba0f",
+  "cap_gib": 1,
+  "cpu_budget_cores": 1,
+  "prover_workers": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 1,
+  "systemd_result": "exit-code",
+  "final_cgroup_peak_bytes": 3047424,
+  "final_cgroup_swap_peak_bytes": 0,
+  "elapsed_seconds": 0.601146692992188,
+  "sampled_command_peak_rss_gib": 0.01586151123046875,
+  "sampled_peak_cgroup_gib": 0.011871337890625,
+  "effective_peak_cgroup_gib": 0.011871337890625,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 21,
+  "cgroup_sample_count": 20,
+  "time_largest_process_peak_rss_gib": 0.017059326171875
+}

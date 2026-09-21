@@ -1,0 +1,3510 @@
+{
+  "started_utc": "2026-09-21T07:20:04.109Z",
+  "scope": "Public synthetic membership in one browser worker; no payment/privacy qualification",
+  "repeat": 3,
+  "pkg": "/home/broody/development/templar/target/wasm-membership/pkg",
+  "url": "http://127.0.0.1:45883/",
+  "host_is_consumer_desktop": false,
+  "status": "passed",
+  "browser_version": "153.0.8010.47",
+  "browser_command_protocol_note": "Error: cdpSession.send: Protocol error (Browser.getBrowserCommandLine): Command line not returned because --enable-automation not set.",
+  "browser_command": {
+    "arguments": [
+      "/opt/google/chrome/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-MQg36V --remote-debugging-pipe --no-startup-window --noerrdialogs --ozone-platform=headless --ozone-override-screen-size=800,600 --use-angle=swiftshader-webgl"
+    ]
+  },
+  "runtime": {
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+    "hardware_concurrency": 4,
+    "cross_origin_isolated": true
+  },
+  "ok": true,
+  "result": {
+    "type": "complete",
+    "checks": {
+      "report": {
+        "discarded_duplicate_multiplicity_rejected": true,
+        "omitted_padding_boundary_rejected": true,
+        "rejected_mutations": [
+          "root",
+          "leaf",
+          "index",
+          "sibling",
+          "padding",
+          "call_order",
+          "aggregator_log",
+          "claimed_sum",
+          "interaction_pow",
+          "PCS_config",
+          "STARK_sample",
+          "preprocessed_root",
+          "structurally_valid_unlinked_permutation_output"
+        ],
+        "wrong_memory_dictionary_rejected": true
+      },
+      "elapsed_ms": 2437.810000002384,
+      "linear_memory_bytes": 2308505600
+    },
+    "proving_linear_memory_high_water_bytes": 2308505600,
+    "linear_memory_high_water_after_checks_bytes": 2308505600,
+    "runs": [
+      {
+        "type": "run",
+        "run": 1,
+        "instance_state": "first proof in fresh worker/module",
+        "elapsed_ms": 41719.89499999583,
+        "memory_before_bytes": 8519680,
+        "memory_after_bytes": 2308505600,
+        "memory_after_result_free_bytes": 2308505600,
+        "proof_bytes": 334307,
+        "proof_sha256": "7883c50e7125e608365e7887b50df589ac57bcc91438fe2f1f660caf56a9631e",
+        "matches_native": true,
+        "summary": {
+          "aggregator_rows": 128,
+          "binary_envelope_bytes": 334307,
+          "binary_stark_proof_bytes": 258621,
+          "channel": "Blake2s",
+          "complete_seconds": 41.70864,
+          "components": [
+            {
+              "interaction_base_columns": 56,
+              "log_rows": 7,
+              "name": "poseidon_aggregator",
+              "rows": 128,
+              "trace_columns": 342
+            },
+            {
+              "interaction_base_columns": 24,
+              "log_rows": 10,
+              "name": "poseidon_full_round_chain",
+              "rows": 1024,
+              "trace_columns": 126
+            },
+            {
+              "interaction_base_columns": 36,
+              "log_rows": 12,
+              "name": "poseidon_3_partial_rounds_chain",
+              "rows": 4096,
+              "trace_columns": 169
+            },
+            {
+              "interaction_base_columns": 200,
+              "log_rows": 14,
+              "name": "cube_252",
+              "rows": 16384,
+              "trace_columns": 141
+            },
+            {
+              "interaction_base_columns": 32,
+              "log_rows": 14,
+              "name": "range_check_252_width_27",
+              "rows": 16384,
+              "trace_columns": 20
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 6,
+              "name": "poseidon_round_keys",
+              "rows": 64,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 15,
+              "name": "range_check_3_3_3_3_3",
+              "rows": 32768,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 16,
+              "name": "range_check_4_4_4_4",
+              "rows": 65536,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "range_check_4_4",
+              "rows": 256,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 18,
+              "name": "range_check_9_9",
+              "rows": 262144,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 20,
+              "name": "range_check_20",
+              "rows": 1048576,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 18,
+              "name": "range_check_18",
+              "rows": 262144,
+              "trace_columns": 2
+            }
+          ],
+          "config_security_metric_bits": 96,
+          "execution_target": "wasm32",
+          "interaction_pow_bits": 24,
+          "json_envelope_bytes": 800821,
+          "json_stark_proof_bytes": 722816,
+          "max_fri_columns": 16,
+          "native_proof_verified": false,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 23,
+            "pow_bits": 27
+          },
+          "phases": {
+            "base_commit_seconds": 4.826425,
+            "base_witness_seconds": 0.45687,
+            "interaction_commit_and_stark_prove_seconds": 30.902885,
+            "interaction_pow_and_witness_seconds": 2.74582,
+            "native_verify_seconds": 0.01236,
+            "preprocessing_twiddles_and_commit_seconds": 2.736225,
+            "public_transcript_regeneration_seconds": 0.016195
+          },
+          "proof_verified_in_runtime": true,
+          "public_memory_boundary_terms": 768,
+          "public_statement_json_bytes": 76996,
+          "reference_parity": true,
+          "requested_permutations": 128,
+          "runtime": "wasm32 single worker simd128",
+          "scope": "validity-only public-transcript two-path membership; no private membership, payment relation, zero knowledge, or WASM qualification",
+          "storage": "coefficient-backed owned trees; one-tree commit/open regeneration and bounded FRI",
+          "trusted_preprocessed_root": [
+            57,
+            219,
+            244,
+            93,
+            12,
+            105,
+            72,
+            3,
+            143,
+            218,
+            230,
+            175,
+            131,
+            166,
+            98,
+            235,
+            110,
+            99,
+            204,
+            240,
+            95,
+            31,
+            88,
+            222,
+            109,
+            246,
+            100,
+            2,
+            53,
+            158,
+            226,
+            207
+          ],
+          "unique_permutations": 126,
+          "wasm_linear_memory_bytes": 2308505600
+        },
+        "shape": {
+          "components": [
+            {
+              "interaction_base_columns": 56,
+              "log_rows": 7,
+              "name": "poseidon_aggregator",
+              "rows": 128,
+              "trace_columns": 342
+            },
+            {
+              "interaction_base_columns": 24,
+              "log_rows": 10,
+              "name": "poseidon_full_round_chain",
+              "rows": 1024,
+              "trace_columns": 126
+            },
+            {
+              "interaction_base_columns": 36,
+              "log_rows": 12,
+              "name": "poseidon_3_partial_rounds_chain",
+              "rows": 4096,
+              "trace_columns": 169
+            },
+            {
+              "interaction_base_columns": 200,
+              "log_rows": 14,
+              "name": "cube_252",
+              "rows": 16384,
+              "trace_columns": 141
+            },
+            {
+              "interaction_base_columns": 32,
+              "log_rows": 14,
+              "name": "range_check_252_width_27",
+              "rows": 16384,
+              "trace_columns": 20
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 6,
+              "name": "poseidon_round_keys",
+              "rows": 64,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 15,
+              "name": "range_check_3_3_3_3_3",
+              "rows": 32768,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 16,
+              "name": "range_check_4_4_4_4",
+              "rows": 65536,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "range_check_4_4",
+              "rows": 256,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 18,
+              "name": "range_check_9_9",
+              "rows": 262144,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 20,
+              "name": "range_check_20",
+              "rows": 1048576,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 18,
+              "name": "range_check_18",
+              "rows": 262144,
+              "trace_columns": 2
+            }
+          ],
+          "interaction_pow_bits": 24,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 23,
+            "pow_bits": 27
+          },
+          "preprocessed": [
+            {
+              "id": "seq_6",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_0",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_1",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_2",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_3",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_4",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_5",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_6",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_7",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_8",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_9",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_10",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_11",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_12",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_13",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_14",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_15",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_16",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_17",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_18",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_19",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_20",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_21",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_22",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_23",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_24",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_25",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_26",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_27",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_28",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_29",
+              "log_size": 6
+            },
+            {
+              "id": "seq_7",
+              "log_size": 7
+            },
+            {
+              "id": "range_check_4_4_column_0",
+              "log_size": 8
+            },
+            {
+              "id": "range_check_4_4_column_1",
+              "log_size": 8
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_0",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_1",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_2",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_3",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_4",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_4_4_4_4_column_0",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_1",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_2",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_3",
+              "log_size": 16
+            },
+            {
+              "id": "seq_18",
+              "log_size": 18
+            },
+            {
+              "id": "range_check_9_9_column_0",
+              "log_size": 18
+            },
+            {
+              "id": "range_check_9_9_column_1",
+              "log_size": 18
+            },
+            {
+              "id": "seq_20",
+              "log_size": 20
+            }
+          ],
+          "trusted_preprocessed_root": [
+            57,
+            219,
+            244,
+            93,
+            12,
+            105,
+            72,
+            3,
+            143,
+            218,
+            230,
+            175,
+            131,
+            166,
+            98,
+            235,
+            110,
+            99,
+            204,
+            240,
+            95,
+            31,
+            88,
+            222,
+            109,
+            246,
+            100,
+            2,
+            53,
+            158,
+            226,
+            207
+          ]
+        },
+        "phases": [
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "public transcript regenerated and fixture parity passed",
+            "worker_ms": 99.50999999046326,
+            "linear_memory_bytes": 9109504
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "preprocessing commitment complete; generating witness",
+            "worker_ms": 2838.169999986887,
+            "linear_memory_bytes": 966000640
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "base witness complete; committing trace",
+            "worker_ms": 3296.204999998212,
+            "linear_memory_bytes": 966000640
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "base commitment complete; interaction PoW and witness",
+            "worker_ms": 8122.684999987483,
+            "linear_memory_bytes": 1771503616
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "interaction witness complete; commitment and STARK proving",
+            "worker_ms": 10868.489999994636,
+            "linear_memory_bytes": 1771503616
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "proof generated; verifying serialized public envelope",
+            "worker_ms": 41772.47999998927,
+            "linear_memory_bytes": 2308505600
+          }
+        ]
+      },
+      {
+        "type": "run",
+        "run": 2,
+        "instance_state": "warm repeat in same worker/module",
+        "elapsed_ms": 41182.51999999583,
+        "memory_before_bytes": 2308505600,
+        "memory_after_bytes": 2308505600,
+        "memory_after_result_free_bytes": 2308505600,
+        "proof_bytes": 334307,
+        "proof_sha256": "7883c50e7125e608365e7887b50df589ac57bcc91438fe2f1f660caf56a9631e",
+        "matches_native": true,
+        "summary": {
+          "aggregator_rows": 128,
+          "binary_envelope_bytes": 334307,
+          "binary_stark_proof_bytes": 258621,
+          "channel": "Blake2s",
+          "complete_seconds": 41.178185,
+          "components": [
+            {
+              "interaction_base_columns": 56,
+              "log_rows": 7,
+              "name": "poseidon_aggregator",
+              "rows": 128,
+              "trace_columns": 342
+            },
+            {
+              "interaction_base_columns": 24,
+              "log_rows": 10,
+              "name": "poseidon_full_round_chain",
+              "rows": 1024,
+              "trace_columns": 126
+            },
+            {
+              "interaction_base_columns": 36,
+              "log_rows": 12,
+              "name": "poseidon_3_partial_rounds_chain",
+              "rows": 4096,
+              "trace_columns": 169
+            },
+            {
+              "interaction_base_columns": 200,
+              "log_rows": 14,
+              "name": "cube_252",
+              "rows": 16384,
+              "trace_columns": 141
+            },
+            {
+              "interaction_base_columns": 32,
+              "log_rows": 14,
+              "name": "range_check_252_width_27",
+              "rows": 16384,
+              "trace_columns": 20
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 6,
+              "name": "poseidon_round_keys",
+              "rows": 64,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 15,
+              "name": "range_check_3_3_3_3_3",
+              "rows": 32768,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 16,
+              "name": "range_check_4_4_4_4",
+              "rows": 65536,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "range_check_4_4",
+              "rows": 256,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 18,
+              "name": "range_check_9_9",
+              "rows": 262144,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 20,
+              "name": "range_check_20",
+              "rows": 1048576,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 18,
+              "name": "range_check_18",
+              "rows": 262144,
+              "trace_columns": 2
+            }
+          ],
+          "config_security_metric_bits": 96,
+          "execution_target": "wasm32",
+          "interaction_pow_bits": 24,
+          "json_envelope_bytes": 800821,
+          "json_stark_proof_bytes": 722816,
+          "max_fri_columns": 16,
+          "native_proof_verified": false,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 23,
+            "pow_bits": 27
+          },
+          "phases": {
+            "base_commit_seconds": 4.737285,
+            "base_witness_seconds": 0.389585,
+            "interaction_commit_and_stark_prove_seconds": 30.98481,
+            "interaction_pow_and_witness_seconds": 2.69958,
+            "native_verify_seconds": 0.008765,
+            "preprocessing_twiddles_and_commit_seconds": 2.34027,
+            "public_transcript_regeneration_seconds": 0.0133
+          },
+          "proof_verified_in_runtime": true,
+          "public_memory_boundary_terms": 768,
+          "public_statement_json_bytes": 76996,
+          "reference_parity": true,
+          "requested_permutations": 128,
+          "runtime": "wasm32 single worker simd128",
+          "scope": "validity-only public-transcript two-path membership; no private membership, payment relation, zero knowledge, or WASM qualification",
+          "storage": "coefficient-backed owned trees; one-tree commit/open regeneration and bounded FRI",
+          "trusted_preprocessed_root": [
+            57,
+            219,
+            244,
+            93,
+            12,
+            105,
+            72,
+            3,
+            143,
+            218,
+            230,
+            175,
+            131,
+            166,
+            98,
+            235,
+            110,
+            99,
+            204,
+            240,
+            95,
+            31,
+            88,
+            222,
+            109,
+            246,
+            100,
+            2,
+            53,
+            158,
+            226,
+            207
+          ],
+          "unique_permutations": 126,
+          "wasm_linear_memory_bytes": 2308505600
+        },
+        "shape": {
+          "components": [
+            {
+              "interaction_base_columns": 56,
+              "log_rows": 7,
+              "name": "poseidon_aggregator",
+              "rows": 128,
+              "trace_columns": 342
+            },
+            {
+              "interaction_base_columns": 24,
+              "log_rows": 10,
+              "name": "poseidon_full_round_chain",
+              "rows": 1024,
+              "trace_columns": 126
+            },
+            {
+              "interaction_base_columns": 36,
+              "log_rows": 12,
+              "name": "poseidon_3_partial_rounds_chain",
+              "rows": 4096,
+              "trace_columns": 169
+            },
+            {
+              "interaction_base_columns": 200,
+              "log_rows": 14,
+              "name": "cube_252",
+              "rows": 16384,
+              "trace_columns": 141
+            },
+            {
+              "interaction_base_columns": 32,
+              "log_rows": 14,
+              "name": "range_check_252_width_27",
+              "rows": 16384,
+              "trace_columns": 20
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 6,
+              "name": "poseidon_round_keys",
+              "rows": 64,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 15,
+              "name": "range_check_3_3_3_3_3",
+              "rows": 32768,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 16,
+              "name": "range_check_4_4_4_4",
+              "rows": 65536,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "range_check_4_4",
+              "rows": 256,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 18,
+              "name": "range_check_9_9",
+              "rows": 262144,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 20,
+              "name": "range_check_20",
+              "rows": 1048576,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 18,
+              "name": "range_check_18",
+              "rows": 262144,
+              "trace_columns": 2
+            }
+          ],
+          "interaction_pow_bits": 24,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 23,
+            "pow_bits": 27
+          },
+          "preprocessed": [
+            {
+              "id": "seq_6",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_0",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_1",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_2",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_3",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_4",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_5",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_6",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_7",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_8",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_9",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_10",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_11",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_12",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_13",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_14",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_15",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_16",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_17",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_18",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_19",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_20",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_21",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_22",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_23",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_24",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_25",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_26",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_27",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_28",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_29",
+              "log_size": 6
+            },
+            {
+              "id": "seq_7",
+              "log_size": 7
+            },
+            {
+              "id": "range_check_4_4_column_0",
+              "log_size": 8
+            },
+            {
+              "id": "range_check_4_4_column_1",
+              "log_size": 8
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_0",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_1",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_2",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_3",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_4",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_4_4_4_4_column_0",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_1",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_2",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_3",
+              "log_size": 16
+            },
+            {
+              "id": "seq_18",
+              "log_size": 18
+            },
+            {
+              "id": "range_check_9_9_column_0",
+              "log_size": 18
+            },
+            {
+              "id": "range_check_9_9_column_1",
+              "log_size": 18
+            },
+            {
+              "id": "seq_20",
+              "log_size": 20
+            }
+          ],
+          "trusted_preprocessed_root": [
+            57,
+            219,
+            244,
+            93,
+            12,
+            105,
+            72,
+            3,
+            143,
+            218,
+            230,
+            175,
+            131,
+            166,
+            98,
+            235,
+            110,
+            99,
+            204,
+            240,
+            95,
+            31,
+            88,
+            222,
+            109,
+            246,
+            100,
+            2,
+            53,
+            158,
+            226,
+            207
+          ]
+        },
+        "phases": [
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "public transcript regenerated and fixture parity passed",
+            "worker_ms": 41928.67999999225,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "preprocessing commitment complete; generating witness",
+            "worker_ms": 44269.20999999344,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "base witness complete; committing trace",
+            "worker_ms": 44659.01999999583,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "base commitment complete; interaction PoW and witness",
+            "worker_ms": 49396.314999997616,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "interaction witness complete; commitment and STARK proving",
+            "worker_ms": 52095.88499999046,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "proof generated; verifying serialized public envelope",
+            "worker_ms": 83080.69999998808,
+            "linear_memory_bytes": 2308505600
+          }
+        ]
+      },
+      {
+        "type": "run",
+        "run": 3,
+        "instance_state": "warm repeat in same worker/module",
+        "elapsed_ms": 40931.45000000298,
+        "memory_before_bytes": 2308505600,
+        "memory_after_bytes": 2308505600,
+        "memory_after_result_free_bytes": 2308505600,
+        "proof_bytes": 334307,
+        "proof_sha256": "7883c50e7125e608365e7887b50df589ac57bcc91438fe2f1f660caf56a9631e",
+        "matches_native": true,
+        "summary": {
+          "aggregator_rows": 128,
+          "binary_envelope_bytes": 334307,
+          "binary_stark_proof_bytes": 258621,
+          "channel": "Blake2s",
+          "complete_seconds": 40.92704,
+          "components": [
+            {
+              "interaction_base_columns": 56,
+              "log_rows": 7,
+              "name": "poseidon_aggregator",
+              "rows": 128,
+              "trace_columns": 342
+            },
+            {
+              "interaction_base_columns": 24,
+              "log_rows": 10,
+              "name": "poseidon_full_round_chain",
+              "rows": 1024,
+              "trace_columns": 126
+            },
+            {
+              "interaction_base_columns": 36,
+              "log_rows": 12,
+              "name": "poseidon_3_partial_rounds_chain",
+              "rows": 4096,
+              "trace_columns": 169
+            },
+            {
+              "interaction_base_columns": 200,
+              "log_rows": 14,
+              "name": "cube_252",
+              "rows": 16384,
+              "trace_columns": 141
+            },
+            {
+              "interaction_base_columns": 32,
+              "log_rows": 14,
+              "name": "range_check_252_width_27",
+              "rows": 16384,
+              "trace_columns": 20
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 6,
+              "name": "poseidon_round_keys",
+              "rows": 64,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 15,
+              "name": "range_check_3_3_3_3_3",
+              "rows": 32768,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 16,
+              "name": "range_check_4_4_4_4",
+              "rows": 65536,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "range_check_4_4",
+              "rows": 256,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 18,
+              "name": "range_check_9_9",
+              "rows": 262144,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 20,
+              "name": "range_check_20",
+              "rows": 1048576,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 18,
+              "name": "range_check_18",
+              "rows": 262144,
+              "trace_columns": 2
+            }
+          ],
+          "config_security_metric_bits": 96,
+          "execution_target": "wasm32",
+          "interaction_pow_bits": 24,
+          "json_envelope_bytes": 800821,
+          "json_stark_proof_bytes": 722816,
+          "max_fri_columns": 16,
+          "native_proof_verified": false,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 23,
+            "pow_bits": 27
+          },
+          "phases": {
+            "base_commit_seconds": 4.69914,
+            "base_witness_seconds": 0.38294,
+            "interaction_commit_and_stark_prove_seconds": 30.789895,
+            "interaction_pow_and_witness_seconds": 2.691355,
+            "native_verify_seconds": 0.008355,
+            "preprocessing_twiddles_and_commit_seconds": 2.340435,
+            "public_transcript_regeneration_seconds": 0.01008
+          },
+          "proof_verified_in_runtime": true,
+          "public_memory_boundary_terms": 768,
+          "public_statement_json_bytes": 76996,
+          "reference_parity": true,
+          "requested_permutations": 128,
+          "runtime": "wasm32 single worker simd128",
+          "scope": "validity-only public-transcript two-path membership; no private membership, payment relation, zero knowledge, or WASM qualification",
+          "storage": "coefficient-backed owned trees; one-tree commit/open regeneration and bounded FRI",
+          "trusted_preprocessed_root": [
+            57,
+            219,
+            244,
+            93,
+            12,
+            105,
+            72,
+            3,
+            143,
+            218,
+            230,
+            175,
+            131,
+            166,
+            98,
+            235,
+            110,
+            99,
+            204,
+            240,
+            95,
+            31,
+            88,
+            222,
+            109,
+            246,
+            100,
+            2,
+            53,
+            158,
+            226,
+            207
+          ],
+          "unique_permutations": 126,
+          "wasm_linear_memory_bytes": 2308505600
+        },
+        "shape": {
+          "components": [
+            {
+              "interaction_base_columns": 56,
+              "log_rows": 7,
+              "name": "poseidon_aggregator",
+              "rows": 128,
+              "trace_columns": 342
+            },
+            {
+              "interaction_base_columns": 24,
+              "log_rows": 10,
+              "name": "poseidon_full_round_chain",
+              "rows": 1024,
+              "trace_columns": 126
+            },
+            {
+              "interaction_base_columns": 36,
+              "log_rows": 12,
+              "name": "poseidon_3_partial_rounds_chain",
+              "rows": 4096,
+              "trace_columns": 169
+            },
+            {
+              "interaction_base_columns": 200,
+              "log_rows": 14,
+              "name": "cube_252",
+              "rows": 16384,
+              "trace_columns": 141
+            },
+            {
+              "interaction_base_columns": 32,
+              "log_rows": 14,
+              "name": "range_check_252_width_27",
+              "rows": 16384,
+              "trace_columns": 20
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 6,
+              "name": "poseidon_round_keys",
+              "rows": 64,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 15,
+              "name": "range_check_3_3_3_3_3",
+              "rows": 32768,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 16,
+              "name": "range_check_4_4_4_4",
+              "rows": 65536,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "range_check_4_4",
+              "rows": 256,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 18,
+              "name": "range_check_9_9",
+              "rows": 262144,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 20,
+              "name": "range_check_20",
+              "rows": 1048576,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 18,
+              "name": "range_check_18",
+              "rows": 262144,
+              "trace_columns": 2
+            }
+          ],
+          "interaction_pow_bits": 24,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 23,
+            "pow_bits": 27
+          },
+          "preprocessed": [
+            {
+              "id": "seq_6",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_0",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_1",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_2",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_3",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_4",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_5",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_6",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_7",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_8",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_9",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_10",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_11",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_12",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_13",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_14",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_15",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_16",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_17",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_18",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_19",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_20",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_21",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_22",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_23",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_24",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_25",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_26",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_27",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_28",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_29",
+              "log_size": 6
+            },
+            {
+              "id": "seq_7",
+              "log_size": 7
+            },
+            {
+              "id": "range_check_4_4_column_0",
+              "log_size": 8
+            },
+            {
+              "id": "range_check_4_4_column_1",
+              "log_size": 8
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_0",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_1",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_2",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_3",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_4",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_4_4_4_4_column_0",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_1",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_2",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_3",
+              "log_size": 16
+            },
+            {
+              "id": "seq_18",
+              "log_size": 18
+            },
+            {
+              "id": "range_check_9_9_column_0",
+              "log_size": 18
+            },
+            {
+              "id": "range_check_9_9_column_1",
+              "log_size": 18
+            },
+            {
+              "id": "seq_20",
+              "log_size": 20
+            }
+          ],
+          "trusted_preprocessed_root": [
+            57,
+            219,
+            244,
+            93,
+            12,
+            105,
+            72,
+            3,
+            143,
+            218,
+            230,
+            175,
+            131,
+            166,
+            98,
+            235,
+            110,
+            99,
+            204,
+            240,
+            95,
+            31,
+            88,
+            222,
+            109,
+            246,
+            100,
+            2,
+            53,
+            158,
+            226,
+            207
+          ]
+        },
+        "phases": [
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "public transcript regenerated and fixture parity passed",
+            "worker_ms": 83224.40499998629,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "preprocessing commitment complete; generating witness",
+            "worker_ms": 85565.07999999821,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "base witness complete; committing trace",
+            "worker_ms": 85948.28999999166,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "base commitment complete; interaction PoW and witness",
+            "worker_ms": 90647.43499998748,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "interaction witness complete; commitment and STARK proving",
+            "worker_ms": 93338.81499999762,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "proof generated; verifying serialized public envelope",
+            "worker_ms": 124128.71499998868,
+            "linear_memory_bytes": 2308505600
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ready",
+        "initialization_and_fixture_ms": 58.564999997615814,
+        "initialization_timer_note": "Includes WASM init and fixture/reference loading and reference hash; excludes JS module import.",
+        "linear_memory_bytes": 8519680,
+        "fixture_sha256": "019395a2feb2b2e7d49336bdef71c854acad3e57834c7fd95ccb7398f68fcf9a",
+        "reference_sha256": "7883c50e7125e608365e7887b50df589ac57bcc91438fe2f1f660caf56a9631e",
+        "cross_origin_isolated": true
+      },
+      {
+        "type": "phase",
+        "run": 1,
+        "phase": "public transcript regenerated and fixture parity passed",
+        "worker_ms": 99.50999999046326,
+        "linear_memory_bytes": 9109504
+      },
+      {
+        "type": "phase",
+        "run": 1,
+        "phase": "preprocessing commitment complete; generating witness",
+        "worker_ms": 2838.169999986887,
+        "linear_memory_bytes": 966000640
+      },
+      {
+        "type": "phase",
+        "run": 1,
+        "phase": "base witness complete; committing trace",
+        "worker_ms": 3296.204999998212,
+        "linear_memory_bytes": 966000640
+      },
+      {
+        "type": "phase",
+        "run": 1,
+        "phase": "base commitment complete; interaction PoW and witness",
+        "worker_ms": 8122.684999987483,
+        "linear_memory_bytes": 1771503616
+      },
+      {
+        "type": "phase",
+        "run": 1,
+        "phase": "interaction witness complete; commitment and STARK proving",
+        "worker_ms": 10868.489999994636,
+        "linear_memory_bytes": 1771503616
+      },
+      {
+        "type": "phase",
+        "run": 1,
+        "phase": "proof generated; verifying serialized public envelope",
+        "worker_ms": 41772.47999998927,
+        "linear_memory_bytes": 2308505600
+      },
+      {
+        "type": "run",
+        "run": 1,
+        "instance_state": "first proof in fresh worker/module",
+        "elapsed_ms": 41719.89499999583,
+        "memory_before_bytes": 8519680,
+        "memory_after_bytes": 2308505600,
+        "memory_after_result_free_bytes": 2308505600,
+        "proof_bytes": 334307,
+        "proof_sha256": "7883c50e7125e608365e7887b50df589ac57bcc91438fe2f1f660caf56a9631e",
+        "matches_native": true,
+        "summary": {
+          "aggregator_rows": 128,
+          "binary_envelope_bytes": 334307,
+          "binary_stark_proof_bytes": 258621,
+          "channel": "Blake2s",
+          "complete_seconds": 41.70864,
+          "components": [
+            {
+              "interaction_base_columns": 56,
+              "log_rows": 7,
+              "name": "poseidon_aggregator",
+              "rows": 128,
+              "trace_columns": 342
+            },
+            {
+              "interaction_base_columns": 24,
+              "log_rows": 10,
+              "name": "poseidon_full_round_chain",
+              "rows": 1024,
+              "trace_columns": 126
+            },
+            {
+              "interaction_base_columns": 36,
+              "log_rows": 12,
+              "name": "poseidon_3_partial_rounds_chain",
+              "rows": 4096,
+              "trace_columns": 169
+            },
+            {
+              "interaction_base_columns": 200,
+              "log_rows": 14,
+              "name": "cube_252",
+              "rows": 16384,
+              "trace_columns": 141
+            },
+            {
+              "interaction_base_columns": 32,
+              "log_rows": 14,
+              "name": "range_check_252_width_27",
+              "rows": 16384,
+              "trace_columns": 20
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 6,
+              "name": "poseidon_round_keys",
+              "rows": 64,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 15,
+              "name": "range_check_3_3_3_3_3",
+              "rows": 32768,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 16,
+              "name": "range_check_4_4_4_4",
+              "rows": 65536,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "range_check_4_4",
+              "rows": 256,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 18,
+              "name": "range_check_9_9",
+              "rows": 262144,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 20,
+              "name": "range_check_20",
+              "rows": 1048576,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 18,
+              "name": "range_check_18",
+              "rows": 262144,
+              "trace_columns": 2
+            }
+          ],
+          "config_security_metric_bits": 96,
+          "execution_target": "wasm32",
+          "interaction_pow_bits": 24,
+          "json_envelope_bytes": 800821,
+          "json_stark_proof_bytes": 722816,
+          "max_fri_columns": 16,
+          "native_proof_verified": false,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 23,
+            "pow_bits": 27
+          },
+          "phases": {
+            "base_commit_seconds": 4.826425,
+            "base_witness_seconds": 0.45687,
+            "interaction_commit_and_stark_prove_seconds": 30.902885,
+            "interaction_pow_and_witness_seconds": 2.74582,
+            "native_verify_seconds": 0.01236,
+            "preprocessing_twiddles_and_commit_seconds": 2.736225,
+            "public_transcript_regeneration_seconds": 0.016195
+          },
+          "proof_verified_in_runtime": true,
+          "public_memory_boundary_terms": 768,
+          "public_statement_json_bytes": 76996,
+          "reference_parity": true,
+          "requested_permutations": 128,
+          "runtime": "wasm32 single worker simd128",
+          "scope": "validity-only public-transcript two-path membership; no private membership, payment relation, zero knowledge, or WASM qualification",
+          "storage": "coefficient-backed owned trees; one-tree commit/open regeneration and bounded FRI",
+          "trusted_preprocessed_root": [
+            57,
+            219,
+            244,
+            93,
+            12,
+            105,
+            72,
+            3,
+            143,
+            218,
+            230,
+            175,
+            131,
+            166,
+            98,
+            235,
+            110,
+            99,
+            204,
+            240,
+            95,
+            31,
+            88,
+            222,
+            109,
+            246,
+            100,
+            2,
+            53,
+            158,
+            226,
+            207
+          ],
+          "unique_permutations": 126,
+          "wasm_linear_memory_bytes": 2308505600
+        },
+        "shape": {
+          "components": [
+            {
+              "interaction_base_columns": 56,
+              "log_rows": 7,
+              "name": "poseidon_aggregator",
+              "rows": 128,
+              "trace_columns": 342
+            },
+            {
+              "interaction_base_columns": 24,
+              "log_rows": 10,
+              "name": "poseidon_full_round_chain",
+              "rows": 1024,
+              "trace_columns": 126
+            },
+            {
+              "interaction_base_columns": 36,
+              "log_rows": 12,
+              "name": "poseidon_3_partial_rounds_chain",
+              "rows": 4096,
+              "trace_columns": 169
+            },
+            {
+              "interaction_base_columns": 200,
+              "log_rows": 14,
+              "name": "cube_252",
+              "rows": 16384,
+              "trace_columns": 141
+            },
+            {
+              "interaction_base_columns": 32,
+              "log_rows": 14,
+              "name": "range_check_252_width_27",
+              "rows": 16384,
+              "trace_columns": 20
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 6,
+              "name": "poseidon_round_keys",
+              "rows": 64,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 15,
+              "name": "range_check_3_3_3_3_3",
+              "rows": 32768,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 16,
+              "name": "range_check_4_4_4_4",
+              "rows": 65536,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "range_check_4_4",
+              "rows": 256,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 18,
+              "name": "range_check_9_9",
+              "rows": 262144,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 20,
+              "name": "range_check_20",
+              "rows": 1048576,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 18,
+              "name": "range_check_18",
+              "rows": 262144,
+              "trace_columns": 2
+            }
+          ],
+          "interaction_pow_bits": 24,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 23,
+            "pow_bits": 27
+          },
+          "preprocessed": [
+            {
+              "id": "seq_6",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_0",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_1",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_2",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_3",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_4",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_5",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_6",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_7",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_8",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_9",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_10",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_11",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_12",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_13",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_14",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_15",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_16",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_17",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_18",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_19",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_20",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_21",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_22",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_23",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_24",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_25",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_26",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_27",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_28",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_29",
+              "log_size": 6
+            },
+            {
+              "id": "seq_7",
+              "log_size": 7
+            },
+            {
+              "id": "range_check_4_4_column_0",
+              "log_size": 8
+            },
+            {
+              "id": "range_check_4_4_column_1",
+              "log_size": 8
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_0",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_1",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_2",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_3",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_4",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_4_4_4_4_column_0",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_1",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_2",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_3",
+              "log_size": 16
+            },
+            {
+              "id": "seq_18",
+              "log_size": 18
+            },
+            {
+              "id": "range_check_9_9_column_0",
+              "log_size": 18
+            },
+            {
+              "id": "range_check_9_9_column_1",
+              "log_size": 18
+            },
+            {
+              "id": "seq_20",
+              "log_size": 20
+            }
+          ],
+          "trusted_preprocessed_root": [
+            57,
+            219,
+            244,
+            93,
+            12,
+            105,
+            72,
+            3,
+            143,
+            218,
+            230,
+            175,
+            131,
+            166,
+            98,
+            235,
+            110,
+            99,
+            204,
+            240,
+            95,
+            31,
+            88,
+            222,
+            109,
+            246,
+            100,
+            2,
+            53,
+            158,
+            226,
+            207
+          ]
+        },
+        "phases": [
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "public transcript regenerated and fixture parity passed",
+            "worker_ms": 99.50999999046326,
+            "linear_memory_bytes": 9109504
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "preprocessing commitment complete; generating witness",
+            "worker_ms": 2838.169999986887,
+            "linear_memory_bytes": 966000640
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "base witness complete; committing trace",
+            "worker_ms": 3296.204999998212,
+            "linear_memory_bytes": 966000640
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "base commitment complete; interaction PoW and witness",
+            "worker_ms": 8122.684999987483,
+            "linear_memory_bytes": 1771503616
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "interaction witness complete; commitment and STARK proving",
+            "worker_ms": 10868.489999994636,
+            "linear_memory_bytes": 1771503616
+          },
+          {
+            "type": "phase",
+            "run": 1,
+            "phase": "proof generated; verifying serialized public envelope",
+            "worker_ms": 41772.47999998927,
+            "linear_memory_bytes": 2308505600
+          }
+        ]
+      },
+      {
+        "type": "phase",
+        "run": 2,
+        "phase": "public transcript regenerated and fixture parity passed",
+        "worker_ms": 41928.67999999225,
+        "linear_memory_bytes": 2308505600
+      },
+      {
+        "type": "phase",
+        "run": 2,
+        "phase": "preprocessing commitment complete; generating witness",
+        "worker_ms": 44269.20999999344,
+        "linear_memory_bytes": 2308505600
+      },
+      {
+        "type": "phase",
+        "run": 2,
+        "phase": "base witness complete; committing trace",
+        "worker_ms": 44659.01999999583,
+        "linear_memory_bytes": 2308505600
+      },
+      {
+        "type": "phase",
+        "run": 2,
+        "phase": "base commitment complete; interaction PoW and witness",
+        "worker_ms": 49396.314999997616,
+        "linear_memory_bytes": 2308505600
+      },
+      {
+        "type": "phase",
+        "run": 2,
+        "phase": "interaction witness complete; commitment and STARK proving",
+        "worker_ms": 52095.88499999046,
+        "linear_memory_bytes": 2308505600
+      },
+      {
+        "type": "phase",
+        "run": 2,
+        "phase": "proof generated; verifying serialized public envelope",
+        "worker_ms": 83080.69999998808,
+        "linear_memory_bytes": 2308505600
+      },
+      {
+        "type": "run",
+        "run": 2,
+        "instance_state": "warm repeat in same worker/module",
+        "elapsed_ms": 41182.51999999583,
+        "memory_before_bytes": 2308505600,
+        "memory_after_bytes": 2308505600,
+        "memory_after_result_free_bytes": 2308505600,
+        "proof_bytes": 334307,
+        "proof_sha256": "7883c50e7125e608365e7887b50df589ac57bcc91438fe2f1f660caf56a9631e",
+        "matches_native": true,
+        "summary": {
+          "aggregator_rows": 128,
+          "binary_envelope_bytes": 334307,
+          "binary_stark_proof_bytes": 258621,
+          "channel": "Blake2s",
+          "complete_seconds": 41.178185,
+          "components": [
+            {
+              "interaction_base_columns": 56,
+              "log_rows": 7,
+              "name": "poseidon_aggregator",
+              "rows": 128,
+              "trace_columns": 342
+            },
+            {
+              "interaction_base_columns": 24,
+              "log_rows": 10,
+              "name": "poseidon_full_round_chain",
+              "rows": 1024,
+              "trace_columns": 126
+            },
+            {
+              "interaction_base_columns": 36,
+              "log_rows": 12,
+              "name": "poseidon_3_partial_rounds_chain",
+              "rows": 4096,
+              "trace_columns": 169
+            },
+            {
+              "interaction_base_columns": 200,
+              "log_rows": 14,
+              "name": "cube_252",
+              "rows": 16384,
+              "trace_columns": 141
+            },
+            {
+              "interaction_base_columns": 32,
+              "log_rows": 14,
+              "name": "range_check_252_width_27",
+              "rows": 16384,
+              "trace_columns": 20
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 6,
+              "name": "poseidon_round_keys",
+              "rows": 64,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 15,
+              "name": "range_check_3_3_3_3_3",
+              "rows": 32768,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 16,
+              "name": "range_check_4_4_4_4",
+              "rows": 65536,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "range_check_4_4",
+              "rows": 256,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 18,
+              "name": "range_check_9_9",
+              "rows": 262144,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 20,
+              "name": "range_check_20",
+              "rows": 1048576,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 18,
+              "name": "range_check_18",
+              "rows": 262144,
+              "trace_columns": 2
+            }
+          ],
+          "config_security_metric_bits": 96,
+          "execution_target": "wasm32",
+          "interaction_pow_bits": 24,
+          "json_envelope_bytes": 800821,
+          "json_stark_proof_bytes": 722816,
+          "max_fri_columns": 16,
+          "native_proof_verified": false,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 23,
+            "pow_bits": 27
+          },
+          "phases": {
+            "base_commit_seconds": 4.737285,
+            "base_witness_seconds": 0.389585,
+            "interaction_commit_and_stark_prove_seconds": 30.98481,
+            "interaction_pow_and_witness_seconds": 2.69958,
+            "native_verify_seconds": 0.008765,
+            "preprocessing_twiddles_and_commit_seconds": 2.34027,
+            "public_transcript_regeneration_seconds": 0.0133
+          },
+          "proof_verified_in_runtime": true,
+          "public_memory_boundary_terms": 768,
+          "public_statement_json_bytes": 76996,
+          "reference_parity": true,
+          "requested_permutations": 128,
+          "runtime": "wasm32 single worker simd128",
+          "scope": "validity-only public-transcript two-path membership; no private membership, payment relation, zero knowledge, or WASM qualification",
+          "storage": "coefficient-backed owned trees; one-tree commit/open regeneration and bounded FRI",
+          "trusted_preprocessed_root": [
+            57,
+            219,
+            244,
+            93,
+            12,
+            105,
+            72,
+            3,
+            143,
+            218,
+            230,
+            175,
+            131,
+            166,
+            98,
+            235,
+            110,
+            99,
+            204,
+            240,
+            95,
+            31,
+            88,
+            222,
+            109,
+            246,
+            100,
+            2,
+            53,
+            158,
+            226,
+            207
+          ],
+          "unique_permutations": 126,
+          "wasm_linear_memory_bytes": 2308505600
+        },
+        "shape": {
+          "components": [
+            {
+              "interaction_base_columns": 56,
+              "log_rows": 7,
+              "name": "poseidon_aggregator",
+              "rows": 128,
+              "trace_columns": 342
+            },
+            {
+              "interaction_base_columns": 24,
+              "log_rows": 10,
+              "name": "poseidon_full_round_chain",
+              "rows": 1024,
+              "trace_columns": 126
+            },
+            {
+              "interaction_base_columns": 36,
+              "log_rows": 12,
+              "name": "poseidon_3_partial_rounds_chain",
+              "rows": 4096,
+              "trace_columns": 169
+            },
+            {
+              "interaction_base_columns": 200,
+              "log_rows": 14,
+              "name": "cube_252",
+              "rows": 16384,
+              "trace_columns": 141
+            },
+            {
+              "interaction_base_columns": 32,
+              "log_rows": 14,
+              "name": "range_check_252_width_27",
+              "rows": 16384,
+              "trace_columns": 20
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 6,
+              "name": "poseidon_round_keys",
+              "rows": 64,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 15,
+              "name": "range_check_3_3_3_3_3",
+              "rows": 32768,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 16,
+              "name": "range_check_4_4_4_4",
+              "rows": 65536,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "range_check_4_4",
+              "rows": 256,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 18,
+              "name": "range_check_9_9",
+              "rows": 262144,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 20,
+              "name": "range_check_20",
+              "rows": 1048576,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 18,
+              "name": "range_check_18",
+              "rows": 262144,
+              "trace_columns": 2
+            }
+          ],
+          "interaction_pow_bits": 24,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 23,
+            "pow_bits": 27
+          },
+          "preprocessed": [
+            {
+              "id": "seq_6",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_0",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_1",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_2",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_3",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_4",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_5",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_6",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_7",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_8",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_9",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_10",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_11",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_12",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_13",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_14",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_15",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_16",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_17",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_18",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_19",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_20",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_21",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_22",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_23",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_24",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_25",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_26",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_27",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_28",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_29",
+              "log_size": 6
+            },
+            {
+              "id": "seq_7",
+              "log_size": 7
+            },
+            {
+              "id": "range_check_4_4_column_0",
+              "log_size": 8
+            },
+            {
+              "id": "range_check_4_4_column_1",
+              "log_size": 8
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_0",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_1",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_2",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_3",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_4",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_4_4_4_4_column_0",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_1",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_2",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_3",
+              "log_size": 16
+            },
+            {
+              "id": "seq_18",
+              "log_size": 18
+            },
+            {
+              "id": "range_check_9_9_column_0",
+              "log_size": 18
+            },
+            {
+              "id": "range_check_9_9_column_1",
+              "log_size": 18
+            },
+            {
+              "id": "seq_20",
+              "log_size": 20
+            }
+          ],
+          "trusted_preprocessed_root": [
+            57,
+            219,
+            244,
+            93,
+            12,
+            105,
+            72,
+            3,
+            143,
+            218,
+            230,
+            175,
+            131,
+            166,
+            98,
+            235,
+            110,
+            99,
+            204,
+            240,
+            95,
+            31,
+            88,
+            222,
+            109,
+            246,
+            100,
+            2,
+            53,
+            158,
+            226,
+            207
+          ]
+        },
+        "phases": [
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "public transcript regenerated and fixture parity passed",
+            "worker_ms": 41928.67999999225,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "preprocessing commitment complete; generating witness",
+            "worker_ms": 44269.20999999344,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "base witness complete; committing trace",
+            "worker_ms": 44659.01999999583,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "base commitment complete; interaction PoW and witness",
+            "worker_ms": 49396.314999997616,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "interaction witness complete; commitment and STARK proving",
+            "worker_ms": 52095.88499999046,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 2,
+            "phase": "proof generated; verifying serialized public envelope",
+            "worker_ms": 83080.69999998808,
+            "linear_memory_bytes": 2308505600
+          }
+        ]
+      },
+      {
+        "type": "phase",
+        "run": 3,
+        "phase": "public transcript regenerated and fixture parity passed",
+        "worker_ms": 83224.40499998629,
+        "linear_memory_bytes": 2308505600
+      },
+      {
+        "type": "phase",
+        "run": 3,
+        "phase": "preprocessing commitment complete; generating witness",
+        "worker_ms": 85565.07999999821,
+        "linear_memory_bytes": 2308505600
+      },
+      {
+        "type": "phase",
+        "run": 3,
+        "phase": "base witness complete; committing trace",
+        "worker_ms": 85948.28999999166,
+        "linear_memory_bytes": 2308505600
+      },
+      {
+        "type": "phase",
+        "run": 3,
+        "phase": "base commitment complete; interaction PoW and witness",
+        "worker_ms": 90647.43499998748,
+        "linear_memory_bytes": 2308505600
+      },
+      {
+        "type": "phase",
+        "run": 3,
+        "phase": "interaction witness complete; commitment and STARK proving",
+        "worker_ms": 93338.81499999762,
+        "linear_memory_bytes": 2308505600
+      },
+      {
+        "type": "phase",
+        "run": 3,
+        "phase": "proof generated; verifying serialized public envelope",
+        "worker_ms": 124128.71499998868,
+        "linear_memory_bytes": 2308505600
+      },
+      {
+        "type": "run",
+        "run": 3,
+        "instance_state": "warm repeat in same worker/module",
+        "elapsed_ms": 40931.45000000298,
+        "memory_before_bytes": 2308505600,
+        "memory_after_bytes": 2308505600,
+        "memory_after_result_free_bytes": 2308505600,
+        "proof_bytes": 334307,
+        "proof_sha256": "7883c50e7125e608365e7887b50df589ac57bcc91438fe2f1f660caf56a9631e",
+        "matches_native": true,
+        "summary": {
+          "aggregator_rows": 128,
+          "binary_envelope_bytes": 334307,
+          "binary_stark_proof_bytes": 258621,
+          "channel": "Blake2s",
+          "complete_seconds": 40.92704,
+          "components": [
+            {
+              "interaction_base_columns": 56,
+              "log_rows": 7,
+              "name": "poseidon_aggregator",
+              "rows": 128,
+              "trace_columns": 342
+            },
+            {
+              "interaction_base_columns": 24,
+              "log_rows": 10,
+              "name": "poseidon_full_round_chain",
+              "rows": 1024,
+              "trace_columns": 126
+            },
+            {
+              "interaction_base_columns": 36,
+              "log_rows": 12,
+              "name": "poseidon_3_partial_rounds_chain",
+              "rows": 4096,
+              "trace_columns": 169
+            },
+            {
+              "interaction_base_columns": 200,
+              "log_rows": 14,
+              "name": "cube_252",
+              "rows": 16384,
+              "trace_columns": 141
+            },
+            {
+              "interaction_base_columns": 32,
+              "log_rows": 14,
+              "name": "range_check_252_width_27",
+              "rows": 16384,
+              "trace_columns": 20
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 6,
+              "name": "poseidon_round_keys",
+              "rows": 64,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 15,
+              "name": "range_check_3_3_3_3_3",
+              "rows": 32768,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 16,
+              "name": "range_check_4_4_4_4",
+              "rows": 65536,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "range_check_4_4",
+              "rows": 256,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 18,
+              "name": "range_check_9_9",
+              "rows": 262144,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 20,
+              "name": "range_check_20",
+              "rows": 1048576,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 18,
+              "name": "range_check_18",
+              "rows": 262144,
+              "trace_columns": 2
+            }
+          ],
+          "config_security_metric_bits": 96,
+          "execution_target": "wasm32",
+          "interaction_pow_bits": 24,
+          "json_envelope_bytes": 800821,
+          "json_stark_proof_bytes": 722816,
+          "max_fri_columns": 16,
+          "native_proof_verified": false,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 23,
+            "pow_bits": 27
+          },
+          "phases": {
+            "base_commit_seconds": 4.69914,
+            "base_witness_seconds": 0.38294,
+            "interaction_commit_and_stark_prove_seconds": 30.789895,
+            "interaction_pow_and_witness_seconds": 2.691355,
+            "native_verify_seconds": 0.008355,
+            "preprocessing_twiddles_and_commit_seconds": 2.340435,
+            "public_transcript_regeneration_seconds": 0.01008
+          },
+          "proof_verified_in_runtime": true,
+          "public_memory_boundary_terms": 768,
+          "public_statement_json_bytes": 76996,
+          "reference_parity": true,
+          "requested_permutations": 128,
+          "runtime": "wasm32 single worker simd128",
+          "scope": "validity-only public-transcript two-path membership; no private membership, payment relation, zero knowledge, or WASM qualification",
+          "storage": "coefficient-backed owned trees; one-tree commit/open regeneration and bounded FRI",
+          "trusted_preprocessed_root": [
+            57,
+            219,
+            244,
+            93,
+            12,
+            105,
+            72,
+            3,
+            143,
+            218,
+            230,
+            175,
+            131,
+            166,
+            98,
+            235,
+            110,
+            99,
+            204,
+            240,
+            95,
+            31,
+            88,
+            222,
+            109,
+            246,
+            100,
+            2,
+            53,
+            158,
+            226,
+            207
+          ],
+          "unique_permutations": 126,
+          "wasm_linear_memory_bytes": 2308505600
+        },
+        "shape": {
+          "components": [
+            {
+              "interaction_base_columns": 56,
+              "log_rows": 7,
+              "name": "poseidon_aggregator",
+              "rows": 128,
+              "trace_columns": 342
+            },
+            {
+              "interaction_base_columns": 24,
+              "log_rows": 10,
+              "name": "poseidon_full_round_chain",
+              "rows": 1024,
+              "trace_columns": 126
+            },
+            {
+              "interaction_base_columns": 36,
+              "log_rows": 12,
+              "name": "poseidon_3_partial_rounds_chain",
+              "rows": 4096,
+              "trace_columns": 169
+            },
+            {
+              "interaction_base_columns": 200,
+              "log_rows": 14,
+              "name": "cube_252",
+              "rows": 16384,
+              "trace_columns": 141
+            },
+            {
+              "interaction_base_columns": 32,
+              "log_rows": 14,
+              "name": "range_check_252_width_27",
+              "rows": 16384,
+              "trace_columns": 20
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 6,
+              "name": "poseidon_round_keys",
+              "rows": 64,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 15,
+              "name": "range_check_3_3_3_3_3",
+              "rows": 32768,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 16,
+              "name": "range_check_4_4_4_4",
+              "rows": 65536,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 8,
+              "name": "range_check_4_4",
+              "rows": 256,
+              "trace_columns": 1
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 18,
+              "name": "range_check_9_9",
+              "rows": 262144,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 16,
+              "log_rows": 20,
+              "name": "range_check_20",
+              "rows": 1048576,
+              "trace_columns": 8
+            },
+            {
+              "interaction_base_columns": 4,
+              "log_rows": 18,
+              "name": "range_check_18",
+              "rows": 262144,
+              "trace_columns": 2
+            }
+          ],
+          "interaction_pow_bits": 24,
+          "pcs_config": {
+            "fri_config": {
+              "fold_step": 4,
+              "log_blowup_factor": 3,
+              "log_last_layer_degree_bound": 0,
+              "n_queries": 23
+            },
+            "lifting_log_size": 23,
+            "pow_bits": 27
+          },
+          "preprocessed": [
+            {
+              "id": "seq_6",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_0",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_1",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_2",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_3",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_4",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_5",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_6",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_7",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_8",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_9",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_10",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_11",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_12",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_13",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_14",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_15",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_16",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_17",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_18",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_19",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_20",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_21",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_22",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_23",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_24",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_25",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_26",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_27",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_28",
+              "log_size": 6
+            },
+            {
+              "id": "poseidon_round_keys_29",
+              "log_size": 6
+            },
+            {
+              "id": "seq_7",
+              "log_size": 7
+            },
+            {
+              "id": "range_check_4_4_column_0",
+              "log_size": 8
+            },
+            {
+              "id": "range_check_4_4_column_1",
+              "log_size": 8
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_0",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_1",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_2",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_3",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_3_3_3_3_3_column_4",
+              "log_size": 15
+            },
+            {
+              "id": "range_check_4_4_4_4_column_0",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_1",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_2",
+              "log_size": 16
+            },
+            {
+              "id": "range_check_4_4_4_4_column_3",
+              "log_size": 16
+            },
+            {
+              "id": "seq_18",
+              "log_size": 18
+            },
+            {
+              "id": "range_check_9_9_column_0",
+              "log_size": 18
+            },
+            {
+              "id": "range_check_9_9_column_1",
+              "log_size": 18
+            },
+            {
+              "id": "seq_20",
+              "log_size": 20
+            }
+          ],
+          "trusted_preprocessed_root": [
+            57,
+            219,
+            244,
+            93,
+            12,
+            105,
+            72,
+            3,
+            143,
+            218,
+            230,
+            175,
+            131,
+            166,
+            98,
+            235,
+            110,
+            99,
+            204,
+            240,
+            95,
+            31,
+            88,
+            222,
+            109,
+            246,
+            100,
+            2,
+            53,
+            158,
+            226,
+            207
+          ]
+        },
+        "phases": [
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "public transcript regenerated and fixture parity passed",
+            "worker_ms": 83224.40499998629,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "preprocessing commitment complete; generating witness",
+            "worker_ms": 85565.07999999821,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "base witness complete; committing trace",
+            "worker_ms": 85948.28999999166,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "base commitment complete; interaction PoW and witness",
+            "worker_ms": 90647.43499998748,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "interaction witness complete; commitment and STARK proving",
+            "worker_ms": 93338.81499999762,
+            "linear_memory_bytes": 2308505600
+          },
+          {
+            "type": "phase",
+            "run": 3,
+            "phase": "proof generated; verifying serialized public envelope",
+            "worker_ms": 124128.71499998868,
+            "linear_memory_bytes": 2308505600
+          }
+        ]
+      },
+      {
+        "type": "checks",
+        "report": {
+          "discarded_duplicate_multiplicity_rejected": true,
+          "omitted_padding_boundary_rejected": true,
+          "rejected_mutations": [
+            "root",
+            "leaf",
+            "index",
+            "sibling",
+            "padding",
+            "call_order",
+            "aggregator_log",
+            "claimed_sum",
+            "interaction_pow",
+            "PCS_config",
+            "STARK_sample",
+            "preprocessed_root",
+            "structurally_valid_unlinked_permutation_output"
+          ],
+          "wrong_memory_dictionary_rejected": true
+        },
+        "elapsed_ms": 2437.810000002384,
+        "linear_memory_bytes": 2308505600
+      },
+      {
+        "type": "complete",
+        "checks": {
+          "report": {
+            "discarded_duplicate_multiplicity_rejected": true,
+            "omitted_padding_boundary_rejected": true,
+            "rejected_mutations": [
+              "root",
+              "leaf",
+              "index",
+              "sibling",
+              "padding",
+              "call_order",
+              "aggregator_log",
+              "claimed_sum",
+              "interaction_pow",
+              "PCS_config",
+              "STARK_sample",
+              "preprocessed_root",
+              "structurally_valid_unlinked_permutation_output"
+            ],
+            "wrong_memory_dictionary_rejected": true
+          },
+          "elapsed_ms": 2437.810000002384,
+          "linear_memory_bytes": 2308505600
+        },
+        "proving_linear_memory_high_water_bytes": 2308505600,
+        "linear_memory_high_water_after_checks_bytes": 2308505600
+      }
+    ],
+    "page_heartbeat_ticks": 1267,
+    "page_max_heartbeat_gap_ms": 120.78499999642372,
+    "page_elapsed_ms": 126699.70500001311
+  },
+  "server_error": null,
+  "completed_utc": "2026-09-21T07:22:11.783Z",
+  "sampled_browser_peak_summed_rss_bytes": 3037622272,
+  "sampled_browser_peak_summed_pss_bytes": 2356516864,
+  "memory_sample_coverage": {
+    "total": 235,
+    "rss_complete": 235,
+    "pss_complete": 235,
+    "cdp_errors": 0
+  },
+  "memory_metric_note": "PSS/RSS cover processes reported by Chrome CDP; summed RSS double-counts shared pages. The outer cgroup includes browser plus Node harness/server. WASM linear memory is separate."
+}

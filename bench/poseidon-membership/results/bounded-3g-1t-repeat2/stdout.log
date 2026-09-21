@@ -1,0 +1,195 @@
+Running as unit: templar-membership-bounded-3g-1t-repeat2-1789973609551797552.service; invocation ID: da1c65d845af48af8cf0f52a60ce122a
+public transcript regenerated and fixture parity passed
+preprocessing commitment complete; generating witness
+base witness complete; committing trace
+base commitment complete; interaction PoW and witness
+interaction witness complete; commitment and STARK proving
+proof generated; verifying serialized public envelope
+{
+  "aggregator_rows": 128,
+  "binary_envelope_bytes": 334307,
+  "binary_stark_proof_bytes": 258621,
+  "channel": "Blake2s",
+  "complete_seconds": 13.919524624,
+  "components": [
+    {
+      "interaction_base_columns": 56,
+      "log_rows": 7,
+      "name": "poseidon_aggregator",
+      "rows": 128,
+      "trace_columns": 342
+    },
+    {
+      "interaction_base_columns": 24,
+      "log_rows": 10,
+      "name": "poseidon_full_round_chain",
+      "rows": 1024,
+      "trace_columns": 126
+    },
+    {
+      "interaction_base_columns": 36,
+      "log_rows": 12,
+      "name": "poseidon_3_partial_rounds_chain",
+      "rows": 4096,
+      "trace_columns": 169
+    },
+    {
+      "interaction_base_columns": 200,
+      "log_rows": 14,
+      "name": "cube_252",
+      "rows": 16384,
+      "trace_columns": 141
+    },
+    {
+      "interaction_base_columns": 32,
+      "log_rows": 14,
+      "name": "range_check_252_width_27",
+      "rows": 16384,
+      "trace_columns": 20
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 6,
+      "name": "poseidon_round_keys",
+      "rows": 64,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 15,
+      "name": "range_check_3_3_3_3_3",
+      "rows": 32768,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 16,
+      "name": "range_check_4_4_4_4",
+      "rows": 65536,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 8,
+      "name": "range_check_4_4",
+      "rows": 256,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 16,
+      "log_rows": 18,
+      "name": "range_check_9_9",
+      "rows": 262144,
+      "trace_columns": 8
+    },
+    {
+      "interaction_base_columns": 16,
+      "log_rows": 20,
+      "name": "range_check_20",
+      "rows": 1048576,
+      "trace_columns": 8
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 18,
+      "name": "range_check_18",
+      "rows": 262144,
+      "trace_columns": 2
+    }
+  ],
+  "config_security_metric_bits": 96,
+  "interaction_pow_bits": 24,
+  "json_envelope_bytes": 800821,
+  "json_stark_proof_bytes": 722816,
+  "max_fri_columns": 16,
+  "native_proof_verified": true,
+  "pcs_config": {
+    "fri_config": {
+      "fold_step": 4,
+      "log_blowup_factor": 3,
+      "log_last_layer_degree_bound": 0,
+      "n_queries": 23
+    },
+    "lifting_log_size": 23,
+    "pow_bits": 27
+  },
+  "phases": {
+    "base_commit_seconds": 1.4991636019999999,
+    "base_witness_seconds": 0.381588329,
+    "interaction_commit_and_stark_prove_seconds": 10.638869933,
+    "interaction_pow_and_witness_seconds": 0.411828676,
+    "native_verify_seconds": 0.005506375,
+    "preprocessing_twiddles_and_commit_seconds": 0.975223728,
+    "public_transcript_regeneration_seconds": 0.003796007
+  },
+  "public_memory_boundary_terms": 768,
+  "public_statement_json_bytes": 76996,
+  "reference_parity": true,
+  "requested_permutations": 128,
+  "scope": "validity-only public-transcript two-path membership; no private membership, payment relation, zero knowledge, or WASM qualification",
+  "storage": "coefficient-backed owned trees; one-tree commit/open regeneration and bounded FRI",
+  "trusted_preprocessed_root": [
+    57,
+    219,
+    244,
+    93,
+    12,
+    105,
+    72,
+    3,
+    143,
+    218,
+    230,
+    175,
+    131,
+    166,
+    98,
+    235,
+    110,
+    99,
+    204,
+    240,
+    95,
+    31,
+    88,
+    222,
+    109,
+    246,
+    100,
+    2,
+    53,
+    158,
+    226,
+    207
+  ],
+  "unique_permutations": 126
+}
+	Command being timed: "/home/broody/development/templar/target/poseidon-membership/client-target/release/templar-poseidon-membership /home/broody/development/templar/bench/poseidon-membership/fixtures/two-paths.json /home/broody/development/templar/bench/poseidon-membership/results/bounded-3g-1t-repeat2/proof --bounded-columns=16"
+	User time (seconds): 9.52
+	System time (seconds): 3.90
+	Percent of CPU this job got: 96%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:13.96
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 2065824
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 2908532
+	Voluntary context switches: 5965
+	Involuntary context switches: 13741
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 2248
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 13.968s
+CPU time consumed: 13.431s
+Memory peak: 996.0K
+Memory swap peak: 0B

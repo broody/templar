@@ -1,0 +1,28 @@
+{
+  "scope": "native valid verification plus mutation rejection suite; combined process, not pure-verification timing or memory",
+  "command": [
+    "/home/broody/development/templar/target/m31-append/frozen-native-v2/templar-m31-append",
+    "--verify-tests",
+    "/home/broody/development/templar/bench/m31-append/results/native-branch12-v2/proof/proof.bin",
+    "/home/broody/development/templar/bench/m31-append/results/native-verify-branch12-v2/checks"
+  ],
+  "binary_sha256": "f00da668939c65d71b5e703d4932b6764d6dd0df01c0cd80733b6c2cb1ed4d05",
+  "cap_gib": 1,
+  "cpu_budget_cores": 1,
+  "prover_workers": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 0.0643561050092103,
+  "sampled_command_peak_rss_gib": null,
+  "sampled_peak_cgroup_gib": null,
+  "effective_peak_cgroup_gib": null,
+  "sampled_swap_peak_bytes": null,
+  "sampled_oom_kill": null,
+  "sample_count": 1,
+  "cgroup_sample_count": 0,
+  "time_largest_process_peak_rss_gib": 0.0049896240234375
+}

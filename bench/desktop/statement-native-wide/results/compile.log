@@ -1,0 +1,39 @@
+Running as unit: templar-bench-44e907659695.service; invocation ID: 3feeec8dfd564ce6972b75e05cd10475
+warning: Return variable contains a constant value
+   ┌─ src/main.nr:56:5
+   │
+56 │     [VERSION,chain,pool,root,0,0,0,binding]
+   │     --------------------------------------- This variable contains a value which is constrained to be a constant. Consider removing this value as additional return values increase proving/verification time
+   │
+   = Call stack:
+     1. src/main.nr:56:5
+
+	Command being timed: "/home/broody/.nargo/bin/nargo compile"
+	User time (seconds): 0.19
+	System time (seconds): 0.02
+	Percent of CPU this job got: 111%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.20
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 66860
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 13590
+	Voluntary context switches: 91
+	Involuntary context switches: 75
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 136
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 206ms
+CPU time consumed: 228ms
+Memory peak: 1.7M
+Memory swap peak: 0B

@@ -1,0 +1,20 @@
+{
+  "command": [
+    "env",
+    "RAYON_NUM_THREADS=1",
+    "taskset",
+    "-c",
+    "0",
+    "/home/broody/development/templar/target/wasm-membership/client-target/release/templar-wasm-membership",
+    "bench/poseidon-membership/fixtures/two-paths.json",
+    "/home/broody/development/templar/bench/wasm-membership/results/port-native-parity/proof"
+  ],
+  "classification": "regression validation; not a performance benchmark",
+  "binary_sha256": "28bc5c1467ead725eef519cf235b5a7bf54b294776dde09f1890dff93134db30",
+  "reference_path": "bench/poseidon-membership/results/baseline-8g-1t/proof/proof.bin",
+  "reference_sha256": "7883c50e7125e608365e7887b50df589ac57bcc91438fe2f1f660caf56a9631e",
+  "exit_code": 0,
+  "envelope_bytes": 334307,
+  "envelope_sha256": "7883c50e7125e608365e7887b50df589ac57bcc91438fe2f1f660caf56a9631e",
+  "exact_reference_equality": true
+}

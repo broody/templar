@@ -1,0 +1,29 @@
+{
+  "source": "../defi-return-e2e",
+  "sha256": {
+    "common.py": "84f9d9181e2d71a4fb1990bf57829c8359cd2542e3972a4ac7817bc04c8c50cb",
+    "init.py": "c49f8e8b9715a9af5bff05bf25806101ad8acb0a9272dad5f69466fb0fb17512",
+    "proving.py": "797c932f6b371ed5c64ef87403930676d4d8fb33bfb8a2cf176a9a679a1cd2f2",
+    "encoding.py": "ea88d2eb79c3150b4101d607fe741650a1adcc5fc7c5f24c07adcba8ddb68eca",
+    "protocol.py": "4889b911efc404b6c1086c837265b05a46424946549e4dd5607247e201e6b7be",
+    "recovery.py": "b632e9a755a07e6c776cda63915c90304102b00db177ffd2caef314daa22a366",
+    "sync.py": "5ede4f0b8b9c98f160e5145c57bee7944513c888a83c459c1721d450ec4c41fe",
+    "restore.py": "e7e56db3ce0b87a7bceefbc85c9f0a98c8003fc398896e20a6cd196a0663428d",
+    "reference.py": "02768dd34010df7b1e811c2560eb7e0797e3c2b41713e60af17cf663f5968291",
+    "test_returns.py": "6ca939d8abb354f10f1891b726a1e0bcd3dcac7cfba469cf039e62d67cd1a610",
+    "generate_vectors.py": "d7223dc32821bd3a3a956ec572afcd60b2b874f324dd7ec94f2deae280b20f5b",
+    "inspect_ekubo.py": "abbeccb4ef24b12a166fe52a6e58b758d86660505bca74196dfb7b2b43938fb5",
+    "cairo/src/tests.cairo": "331bf6e25882ef2d3bd466af50f8043eb5321cbd71c5b04c0795c77ca854dae9",
+    "cairo/src/pool.cairo": "5a40f66b68d7e06b8b2ee3478925c6ed6c54dc643a1978217e6cf13cac4802d2",
+    "cairo/src/statement_account.cairo": "ddbc22452636381e7d6db0983e7ce06aa76695250e7b7e358ba0712fdecfeea4",
+    "cairo/src/statement.cairo": "3dbe922004b0d76fb5212b9312bab96bfa46f5294985b929e3428018227935c4",
+    "cairo/src/proof_adapter.cairo": "c60ade37a138681c78f093a3ee25d9fccfc9133e1ffa9fcbc4efa21b8ae776e5",
+    "cairo/src/spend.cairo": "961f4dfa12566c4e36a40a4b7921e31b611af9e95f84e902d87d86bd03129126",
+    "cairo/src/test_token.cairo": "d80a124388d1149e89fa23c1e0158614d46b41a06236eeacb6eee2bf95c93ea4",
+    "cairo/src/lib.cairo": "1fd09165d9d84aff7535c5235f928096772ab0e9c101de181ca6af216c3fc84b",
+    "cairo/src/tree.cairo": "995e89a06f6a73bc1831fcea7586ef49128e5fa6649536ea557f1b4de4080dcf",
+    "cairo/src/tests/mock_verifier.cairo": "63841c3b5fe1dd1fda8ec01a8dab0844885ab2df55f3a402c3efd11970bf314b",
+    "cairo/src/tests/golden.cairo": "896ce44b689e259137359c76853b753c4d5a7ce9962e2d03a5e18d211ac14b07",
+    "cairo/Scarb.toml": "de64e3a9101cfb6d91d9012e35e367542d9413a93f8146bf457c289f8d16553b"
+  }
+}

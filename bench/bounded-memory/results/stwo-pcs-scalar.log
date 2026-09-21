@@ -1,0 +1,29 @@
+warning: the feature `stdarch_x86_avx512` has been stable since 1.89.0 and no longer requires an attribute to enable
+ --> crates/stwo/src/lib.rs:4:13
+  |
+4 |     feature(stdarch_x86_avx512)
+  |             ^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(stable_features)]` on by default
+
+warning: `stwo` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running unittests src/lib.rs (/home/broody/development/templar/target/bounded-memory/stwo-test-target/debug/deps/stwo-640c3eaa17a086ad)
+
+running 13 tests
+test prover::pcs::low_memory_tests::low_memory_pcs_simd ... ok
+test prover::pcs::low_memory_tests::low_memory_tree_cpu ... ok
+test prover::pcs::low_memory_tests::low_memory_tree_simd ... ok
+test prover::pcs::low_memory_tests::bounded_pcs_simd ... ok
+test prover::pcs::quotient_ops::tests::bounded_quotients_simd ... ok
+test prover::pcs::quotient_ops::tests::test_pcs_prove_and_verify_cpu ... ok
+test prover::pcs::low_memory_tests::low_memory_pcs_cpu ... ok
+test prover::pcs::quotient_ops::tests::bounded_quotients_cpu ... ok
+test prover::pcs::quotient_ops::tests::test_quotients_are_low_degree ... ok
+test prover::pcs::quotient_ops::tests::test_simd_quotients_are_low_degree_small_trace ... ok
+test prover::pcs::quotient_ops::tests::test_pcs_prove_and_verify_simd ... ok
+test prover::pcs::quotient_ops::tests::test_pcs_prove_and_verify_simd_with_barycentric ... ok
+test prover::pcs::low_memory_tests::bounded_pcs_cpu ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 254 filtered out; finished in 0.47s
+

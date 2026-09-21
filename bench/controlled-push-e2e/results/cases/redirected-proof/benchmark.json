@@ -1,0 +1,26 @@
+{
+  "case": "redirected-proof",
+  "startup_seconds": 2.0030459340050584,
+  "request_seconds": 18.438562956005626,
+  "proving_seconds": 12.339,
+  "virtual_os_seconds": 6.096,
+  "proof_bytes": 233712,
+  "proof_sha256": "4bd1cb8a92d9b717edaf87184efaa5756fcae231756c4c76a9ffa34e6c4c5234",
+  "peak_rss_gib": 13.446990966796875,
+  "swap_peak_bytes": 0,
+  "local_verification_passed": true,
+  "public_binding_matches": true,
+  "public_values": [
+    "0x54454d504c41525f434f4e54524f4c5f504f4331",
+    "0x534e5f5345504f4c4941",
+    "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+    "0x4821b7fcb940bf09105407efc3e884a386aa476cf1dda4f546547f39e8af2ad",
+    "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+    "0xeaca21",
+    "0x4fcd42962d2f9857994aa31299c4a4e7d835d3d90a3edcddaec7d3f3dc7aa0c",
+    "0x3e683d5a2061f69acce31645a44d8621993c7585ba9d32a4ba47b4b932aee69"
+  ],
+  "base_block": 15385381,
+  "memory_cap_gib": 16,
+  "cores": 4
+}

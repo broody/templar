@@ -1,0 +1,18 @@
+Declare Pool
+{"tx": "0x05fa411e6253650feb5803862f99d00774e1fb81678b2c79835c0c83cad818bf", "status": "SUCCEEDED", "block": 15363427, "fee_test_STRK": 11.81065044845563, "revert_reason": null}
+Declare StatementAccount
+{"tx": "0x02960eafac828ad28dea0155f9a5cb5474c92c2c497d6153e347d83d8cda1350", "status": "SUCCEEDED", "block": 15363445, "fee_test_STRK": 5.379089735940583, "revert_reason": null}
+Declare NativeProofVerifier
+Traceback (most recent call last):
+  File "/home/broody/development/templar/bench/push-e2e/deploy.py", line 20, in <module>
+    v=normal_tx('declare-'+contract,['declare','--contract-name',contract,*bounds(850_000_000 if contract=='Pool' else 600_000_000)])
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/broody/development/templar/bench/push-e2e/common.py", line 69, in normal_tx
+    rows=sncast(name,args+['--url',RPC]);v=next(x for x in rows if x.get('type')=='response');save(path,v)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/broody/development/templar/bench/push-e2e/common.py", line 61, in sncast
+    if p.returncode and not expected_error:raise RuntimeError((out/'stderr.log').read_text()[-1800:]+'\n'+str(lines)[-1800:])
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: {"command":"declare","error":"Error while calling RPC method spec_version: error sending request for url (https://api.zan.top/public/starknet-sepolia/rpc/v0_10)","type":"error"}
+
+[]

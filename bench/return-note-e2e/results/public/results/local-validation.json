@@ -1,0 +1,11 @@
+{
+  "python_tests": 11,
+  "python_passed": true,
+  "cairo_tests": 24,
+  "cairo_passed": true,
+  "real_statement_vectors": 2,
+  "unchanged_vesu_adapter_mock_vault_round_trip": true,
+  "cairo_log_sha256": "cddaa2cec4a7a30698934a1126deb7fc40934f30d1d6e1fb09365e1cb1faafc8",
+  "python_command": "python3 -m unittest -v test_returns",
+  "cairo_command": "snforge 0.63.0 test"
+}

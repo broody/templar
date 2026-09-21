@@ -1,0 +1,50 @@
+{
+  "pool": "0x07dd89fb990e470c913a77a9b1cc96f652e1812f7d71d2be6b356a03e4baeeae",
+  "statement": "0x02527dd90f1e5a82a27841a751ff9697f03ee5b4bb66ddb8844c07a18f453aa2",
+  "statement_class": "0x06a0970da35884bdcffc879d6663108872fa16f559f588e62177f5c5e2e404ab",
+  "verifier": "0x07335ae7153200a073dac7825cb3ce377991fec55372a15f6cdb7d1a9adddce6",
+  "token": "0x039f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8",
+  "token_a": "0x039f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8",
+  "token_b": "0x0328b0b5dfb7eb09efcf36ac4af4b1da407cbe90ca9519e6f4d02d677e28a044",
+  "mock": "0x02efc6fef2e59d6d732e2ee7e4ffe54651dba4d869536667ad0ca7dc32a425dc",
+  "adapter": "0x01e46e38b3ac36c2daa104f0aa5e1fd9229513d77c3359c8a983b1ea2108c8da",
+  "relayer": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+  "start_block": 15387958,
+  "classes": {
+    "Pool": "0x0541f2b635fcdd8f6bf738cc8681c6eb2e465332509f2b5fb22ae9e23c1bf582",
+    "StatementAccount": "0x06a0970da35884bdcffc879d6663108872fa16f559f588e62177f5c5e2e404ab",
+    "NativeProofVerifier": "0x06449e41b67abca7d35b06f1fba71d019068a105fe2b0a1281213d70ce197382",
+    "E2EToken": "0x02b858677d25bfd41b805fa3640abf330141a6a7152b8668b038e1b84b5d29da",
+    "MockSwapAdapter": "0x01efd55f11bb88945aa918b6b2cb61c9b116a140e5d83127797e7d582ce9d4ab",
+    "EkuboAdapter": "0x057ae1339a1ccb1396abf78fbd45acf04a65a7d18dd7ee95a08fa20a18b61a18"
+  },
+  "ekubo": {
+    "core": {
+      "address": "0x0444a09d96389aa7148f1aada508e30b71299ffe650d9c97fdaae38cb9a23384",
+      "class_hash": "0x577604a2611c851e9cfc4da2ba7f7fc1d44a9327cc734d68b2b271340a6551c"
+    },
+    "router": {
+      "address": "0x0045f933adf0607292468ad1c1dedaa74d5ad166392590e72676a34d01d7b763",
+      "class_hash": "0x137a5970f752fd80649fb38d684b090decebec4f2853396617e4f2f01e5396a"
+    },
+    "positions": {
+      "address": "0x06a2aee84bb0ed5dded4384ddd0e40e9c1372b818668375ab8e3ec08807417e5",
+      "class_hash": "0xc12f7c0a0bf73e3675345a8d28d26c83db3b13605f2aa33cba8344a0f582b5"
+    }
+  },
+  "pool_key": [
+    1428832039008617000195820088556908623791563621072455733433048352489604685892,
+    1638482101400834274803790307942338246874949356461610145982088101307546600888,
+    0,
+    1000,
+    0
+  ],
+  "route": [
+    0,
+    1000,
+    0,
+    0
+  ],
+  "protocol": "TEMPLAR_DEFI_POC1",
+  "ordinary_notes_only": true
+}

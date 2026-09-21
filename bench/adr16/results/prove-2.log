@@ -1,0 +1,27 @@
+Scheme is: ultra_honk, num threads: 32 (mem: 7.48 MiB)
+CircuitProve: Proving key computed in 176 ms (mem: 170.15 MiB)
+Public inputs saved to "/home/broody/development/templar/bench/adr16/results/public_inputs" (mem: 207.09 MiB)
+Proof saved to "/home/broody/development/templar/bench/adr16/results/proof" (mem: 207.09 MiB)
+	Command being timed: "bb prove -s ultra_honk --oracle_hash keccak -b /home/broody/development/templar/bench/adr16/target/felt252_poseidon.json -w /home/broody/development/templar/bench/adr16/target/witness.gz -k /home/broody/development/templar/bench/adr16/results/vk -o /home/broody/development/templar/bench/adr16/results"
+	User time (seconds): 8.37
+	System time (seconds): 0.91
+	Percent of CPU this job got: 1439%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.64
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 212056
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 59734
+	Voluntary context switches: 43634
+	Involuntary context switches: 394
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 40
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

@@ -1,0 +1,13 @@
+{
+  "status": "stopped to avoid exhausting host memory; no compiled artifact or proof obtained",
+  "command": "nargo compile",
+  "project": "bench/adr16-scale",
+  "chain_length": 64,
+  "permutations": 128,
+  "process": "    PID     ELAPSED   RSS COMMAND\n 136847       09:12 104099868 nargo compile\n",
+  "memory": [
+    "VmPeak:\t111463728 kB",
+    "VmHWM:\t104096228 kB",
+    "VmRSS:\t104096228 kB"
+  ]
+}

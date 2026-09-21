@@ -1,0 +1,16 @@
+ [1mGenerating Smart Contract project for [0m[1mProofSystem.UltraKeccakZKHonk[0m[1m using [0m[1mvk[0m[1m...[0m
+Done!
+Smart Contract project created:
+/home/broody/development/templar/desktop_verifier/
+├── .tool-versions
+├── Scarb.toml
+├── src/
+│   ├── honk_verifier.cairo
+│   ├── honk_verifier_circuits.cairo
+│   ├── honk_verifier_constants.cairo
+│   └── lib.cairo
+└── tests/
+    └── test_contract.cairo
+You can now test the main endpoint of the verifier using a proof and `garaga 
+calldata` command.
+The detected versions of bb and nargo are correctly aligned with garaga 1.1.0. 

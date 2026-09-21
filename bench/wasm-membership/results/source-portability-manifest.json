@@ -1,0 +1,29 @@
+{
+  "source_trees": {
+    "stwo": {
+      "original_tree_sha256": "92495d24bc5eeb3b220bd407aeef91fef45327b8c22cb2d631cd8f91a77b82de",
+      "copied_tree_sha256": "92495d24bc5eeb3b220bd407aeef91fef45327b8c22cb2d631cd8f91a77b82de",
+      "original_file_count": 263,
+      "copied_file_count": 263,
+      "changed_files": []
+    },
+    "stwo-cairo": {
+      "original_tree_sha256": "3ce964a2759bf05cbd2119529ecca9f1ef89e7e4420049edfbd5039e91a3996e",
+      "copied_tree_sha256": "f3335f2b14ed65c3d338bb69c49d058ebae9f8e5b263c4aa150e07679f6e0117",
+      "original_file_count": 656,
+      "copied_file_count": 656,
+      "changed_files": [
+        {
+          "path": "stwo_cairo_prover/crates/prover/src/witness/components/cube_252.rs",
+          "original_sha256": "04a2d9e00b0ad6b4d583a6d9da411873dd1bcf03acabf3d4aaa476299fcd791d",
+          "copied_sha256": "b0b1a3678a34f2b25ae4a67e69ff52f0a4dfea12eaa3b04d2f53972594a6017f"
+        }
+      ]
+    }
+  },
+  "rustc": "rustc 1.94.0-nightly (86a49fd71 2026-01-14)\nbinary: rustc\ncommit-hash: 86a49fd71fecd25b0fd20247db0ba95eeceaba28\ncommit-date: 2026-01-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.94.0-nightly\nLLVM version: 21.1.8\n",
+  "cargo": "cargo 1.94.0-nightly (6d1bd93c4 2026-01-10)",
+  "wasm_bindgen": "wasm-bindgen 0.2.128",
+  "patch_sha256": "d30049fcd6098b63b093e28098f7a57ba8ef2b3e6244a7a2755d384f640a9b6b",
+  "build_script_sha256": "048895559b9d4d7545faf5b88e856ed3624a7f49e9dc149d4e2ade7580905f11"
+}

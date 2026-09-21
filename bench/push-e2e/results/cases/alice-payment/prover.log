@@ -1,0 +1,34 @@
+Running as unit: templar-push-e2e-alice-payment.service; invocation ID: 633055e584a84479a02e13dc68f6c1c0
+[2m2026-09-20T13:11:29.665352Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: rpc_node_url: <unset> -> https://api.zan.top
+[2m2026-09-20T13:11:29.665380Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: chain_id: SN_MAIN -> SN_SEPOLIA
+[2m2026-09-20T13:11:29.665386Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: port: 3000 -> 31458
+[2m2026-09-20T13:11:29.665390Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: ip: 0.0.0.0 -> 127.0.0.1
+[2m2026-09-20T13:11:29.665392Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: max_concurrent_requests: 2 -> 1
+[2m2026-09-20T13:11:29.665394Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: max_queued_requests: 8 -> 0
+[2m2026-09-20T13:11:29.665396Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: compiled_class_cache_size: 600 -> 16
+[2m2026-09-20T13:11:29.665408Z[0m [32m INFO[0m [2mstarknet_transaction_prover[0m[2m:[0m Starting Starknet transaction prover. [3mversion[0m[2m=[0m"0.19.0-rc.2" [3mgit_sha[0m[2m=[0m"unknown" [3mchain_id[0m[2m=[0mSN_SEPOLIA [3mrpc_node_host[0m[2m=[0mhttps://api.zan.top [3mvalidate_zero_fee_fields[0m[2m=[0mtrue [3mblocking_check_enabled[0m[2m=[0mfalse [3mblocking_check_fail_open[0m[2m=[0mfalse [3mohttp_enabled[0m[2m=[0mfalse
+[2m2026-09-20T13:11:30.172712Z[0m [32m INFO[0m [1mprepare_privacy_recursiveprover_precomputes[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prepare the twiddles
+[2m2026-09-20T13:11:30.193156Z[0m [32m INFO[0m [1mprepare_privacy_recursiveprover_precomputes[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prepare the cairo prover preprocessed trace and tree
+[2m2026-09-20T13:11:30.526197Z[0m [32m INFO[0m [1mprepare_privacy_recursiveprover_precomputes[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prepare the circuit prover preprocessed trace and tree
+[2m2026-09-20T13:11:31.060917Z[0m [32m INFO[0m [2mstarknet_transaction_prover[0m[2m:[0m JSON-RPC proving server is running. [3mlocal_address[0m[2m=[0m127.0.0.1:31458 [3mscheme[0m[2m=[0m"http" [3mmax_concurrent_requests[0m[2m=[0m1 [3mmax_connections[0m[2m=[0m10 [3mcors_mode[0m[2m=[0m"disabled" [3mcors_allow_origin[0m[2m=[0m[] [3mohttp_enabled[0m[2m=[0mfalse
+[2m2026-09-20T13:11:32.594954Z[0m [32m INFO[0m [1mprove_transaction[0m[1m{[0m[3mblock_id[0m[2m=[0mNumber(BlockNumber(15363660)) [3mtx_hash[0m[2m=[0m0x4f4510f6352440393da3c8cd5100e7a6212c30c362517cd97c20535f3bf1938[1m}[0m[2m:[0m [2mstarknet_transaction_prover::running::runner[0m[2m:[0m Starting transaction proving
+[2m2026-09-20T13:11:39.664426Z[0m [32m INFO[0m [1mprove_transaction[0m[1m{[0m[3mblock_id[0m[2m=[0mNumber(BlockNumber(15363660)) [3mtx_hash[0m[2m=[0m0x4f4510f6352440393da3c8cd5100e7a6212c30c362517cd97c20535f3bf1938[1m}[0m[2m:[0m [2mstarknet_transaction_prover::running::runner[0m[2m:[0m Virtual OS execution resources [3mn_steps[0m[2m=[0m94388 [3mn_memory_holes[0m[2m=[0m649 [3mbuiltins[0m[2m=[0m{output: 6, range_check: 5060, pedersen: 52, ecdsa: 0, keccak: 0, bitwise: 0, ec_op: 0, poseidon: 210, range_check96: 0, add_mod: 0, mul_mod: 0}
+[2m2026-09-20T13:11:39.664485Z[0m [32m INFO[0m [1mprove_transaction[0m[1m{[0m[3mblock_id[0m[2m=[0mNumber(BlockNumber(15363660)) [3mtx_hash[0m[2m=[0m0x4f4510f6352440393da3c8cd5100e7a6212c30c362517cd97c20535f3bf1938[1m}[0m[2m:[0m [2mstarknet_transaction_prover::proving::virtual_snos_prover[0m[2m:[0m OS execution completed [3mos_duration_ms[0m[2m=[0m7120
+[2m2026-09-20T13:11:39.664646Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Run privacy bootloader and get the prover input and output preimage
+[2m2026-09-20T13:11:39.678942Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Running the program
+[2m2026-09-20T13:11:39.755202Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Reading the bootloader output preimage
+[2m2026-09-20T13:11:39.755275Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Adapting the runner output for the prover
+[2m2026-09-20T13:11:39.802919Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Generate the cairo proof
+[2m2026-09-20T13:11:46.248312Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prepare the cairo proof for the cairo-circuit verifier
+[2m2026-09-20T13:11:46.249959Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Build the cairo-circuit verifier context
+[2m2026-09-20T13:11:46.516161Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prove the cairo-circuit verifier
+[2m2026-09-20T13:11:51.709449Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prepare the circuit proof for the circuit verifier
+[2m2026-09-20T13:11:51.719107Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Serialize and compress the proof
+[2m2026-09-20T13:11:51.728525Z[0m [32m INFO[0m [1mprove_transaction[0m[1m{[0m[3mblock_id[0m[2m=[0mNumber(BlockNumber(15363660)) [3mtx_hash[0m[2m=[0m0x4f4510f6352440393da3c8cd5100e7a6212c30c362517cd97c20535f3bf1938[1m}[0m[2m:[0m [2mstarknet_transaction_prover::proving::virtual_snos_prover[0m[2m:[0m Proving completed [3mprove_duration_ms[0m[2m=[0m12064
+[2m2026-09-20T13:11:51.728562Z[0m [32m INFO[0m [1mprove_transaction[0m[1m{[0m[3mblock_id[0m[2m=[0mNumber(BlockNumber(15363660)) [3mtx_hash[0m[2m=[0m0x4f4510f6352440393da3c8cd5100e7a6212c30c362517cd97c20535f3bf1938[1m}[0m[2m:[0m [2mstarknet_transaction_prover::proving::virtual_snos_prover[0m[2m:[0m prove_transaction completed [3mtotal_duration_ms[0m[2m=[0m19184
+Finished with result: success
+Main processes terminated with: code=killed/status=TERM
+Service runtime: 22.599s
+CPU time consumed: 47.931s
+Memory peak: 13.8G
+Memory swap peak: 0B

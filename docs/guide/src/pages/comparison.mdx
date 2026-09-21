@@ -1,0 +1,90 @@
+---
+showAskAi: false
+title: Starknet Privacy comparison
+description: Compare Templar and StarkWare's privacy pool across trust, proving, notes, supported flows, and operational responsibilities.
+---
+
+import { Flow } from '../components/Flow'
+
+# Compared with Starknet Privacy
+
+Templar is based on **StarkWare's Starknet Privacy pool**. Its defining change is to remove the auditor and screening roles and keep private spend inputs on the holder's device. That choice also changes the note model, client responsibilities, and application surface.
+
+This comparison describes upstream source at [commit `b40bf10`](https://github.com/starkware-libs/starknet-privacy/tree/b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106), checked against `main` on **20 September 2026**. It is a comparison of implementations, not a claim about every deployed pool's configuration. Templar's native proving integration remains an [isolated implementation with demonstrated push payments and recovery](/status).
+
+## What they share
+
+Both are token pools on Starknet with private note ownership, nullifiers to prevent reuse, off-chain computation, and public settlement. Both use Cairo, Poseidon-based derivations, and native proof verification with proof facts connecting a proven virtual execution to contract actions. Upstream describes this division in its [architecture overview](https://github.com/starkware-libs/starknet-privacy/blob/b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106/README.md#architecture).
+
+Templar uses the S-two recursive zero-knowledge privacy pipeline. The key privacy distinction here is **who receives the private inputs before proving**. A zero-knowledge proof can hide a witness from public observers while the service generating that proof still sees it.
+
+## Trust and data access
+
+| Boundary | Starknet Privacy | Templar |
+| --- | --- | --- |
+| Auditor | Viewing-key registration encrypts the user's private viewing key to a configured auditor key. | No global auditor key or mandatory auditor disclosure path. |
+| Deposit screening | Regular pool deposits require a screener attestation; open-note funding uses configured screening policies. | No screener key or screening-attestation check. |
+| Proving | The documented SDK flow sends private invocation inputs to a proving service. | The holder supplies the witness to a local prover. |
+| Discovery | The supplied discovery service accepts per-request decryption keys and returns decrypted results. | Recipients download encrypted public outputs and decrypt locally; full viewers track spent status. Scalable private synchronization remains unqualified. |
+| Administrative authority | Role-based governors, pausing, and contract replaceability are present. | The prototype owner can change verifiers and fee settings. Configuration trust remains. |
+
+The auditor path is explicit in [viewing-key registration](https://github.com/starkware-libs/starknet-privacy/blob/b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106/packages/privacy/src/privacy.cairo#L319-L356). The SDK includes `user.viewingKey` in [proof invocation calldata](https://github.com/starkware-libs/starknet-privacy/blob/b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106/sdk/src/internal/proof-invocation-factory.ts#L136-L149). Discovery documents its [per-request keys and decryption boundary](https://github.com/starkware-libs/starknet-privacy/blob/b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106/crates/discovery-service/README.md#key-design-decisions), while the contract documentation describes [administrative controls](https://github.com/starkware-libs/starknet-privacy/blob/b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106/packages/privacy/README.md#security).
+
+### Screening has a specific scope
+
+Upstream derives a screening subject from the applied actions. A regular deposit selects its funding address; an operation with no screening subject does not require an attestation. Open-note funding has `Required`, `Exempt`, and `Delegated` policies. It would be inaccurate to describe every upstream private transfer as needing a screener's approval. See the [action checks](https://github.com/starkware-libs/starknet-privacy/blob/b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106/packages/privacy/src/privacy.cairo#L858-L943) and [screening service documentation](https://github.com/starkware-libs/starknet-privacy/blob/b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106/proof-interceptor/README.md).
+
+Templar removes that protocol role. Optional [note controllers](/architecture/controllers) are a separate, explicit authorization condition on particular notes; ordinary notes have none.
+
+## Where a spend runs
+
+### Starknet Privacy's documented service flow
+
+<Flow steps={[
+  { title: 'Wallet & SDK', detail: 'Prepare client actions and a private proof invocation.' },
+  { title: 'Proving service', detail: 'Execute the invocation in a virtual block and return a proof and facts.' },
+  { title: 'Starknet pool', detail: 'Verify the proof natively and apply the bound server actions.' },
+]} caption="In the documented hosted flow, private invocation inputs cross from the client to the proving service." />
+
+The upstream service flow is described in the [repository overview](https://github.com/starkware-libs/starknet-privacy/blob/b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106/README.md). The operator is trusted with input confidentiality and service availability; cryptographic validity is still checked by Starknet. Running the service yourself changes who operates that boundary, but does not remove the contract's auditor or screening rules.
+
+### Templar's local flow
+
+<Flow steps={[
+  { title: 'Note client', detail: 'Keep openings locally and construct the spend witness.' },
+  { title: 'Local prover', detail: 'Execute the statement and produce the PROOF1 privacy proof.' },
+  { title: 'Starknet pool', detail: 'Verify natively, bind the approved statement, and apply exact actions.' },
+]} caption="In Templar, the private witness stays on the holder's device; only the proof and public settlement data are submitted." />
+
+Templar's adapter pins the virtual OS and statement identity and matches the proven public message to the intended pool and spend. The pool separately checks accepted roots, unused nullifiers, actions, fees, and transfers. See [proofs and verification](/architecture/proofs).
+
+Transport privacy is a different layer. Upstream's [OHTTP support](https://github.com/starkware-libs/starknet-privacy/blob/b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106/crates/discovery-service/README.md#ohttp-oblivious-http) can separate client IP information from request contents; the destination service still receives the contents it must process. Templar likewise needs to address RPC query patterns and network metadata even with local proving.
+
+## Notes and supported flows
+
+| Area | Starknet Privacy | Templar |
+| --- | --- | --- |
+| Receiving a payment | Registered viewing keys, sender/recipient channels, and token subchannels | Recipient shares a locally derived cloaked receiving address, with no pool registration; payer creates and publishes an independently encrypted note |
+| Note storage | Notes are stored in a map and read during virtual execution | Commitments are leaves in a depth-32 tree; private membership paths prove inclusion |
+| Spending ownership | The owner's private key participates in nullifier derivation | The receiving identity binds spending-derived authority and nullifier material; spending still requires the private spending secret |
+| Deposits | Deposit actions in the proven flow and internal funding of open notes from adapter responses | Standalone proofless deposit that transfers funds, computes the commitment, and publishes the encrypted note |
+| External applications | External invoke/anonymizer flows and open notes | Proof-bound external calls with return notes; upstream-compatible adapter responses become ordinary funded tree notes |
+| Spend shape | Client action phases cover registration, channels, deposits, notes, withdrawals, and invokes | Up to 4 inputs, 4 outputs, and 2 withdrawals for one public token; ordinary and optionally controlled notes |
+
+Upstream's [contract interfaces and action phases](https://github.com/starkware-libs/starknet-privacy/blob/b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106/packages/privacy/README.md#client-action-phases) describe these flows. Its [note lookup](https://github.com/starkware-libs/starknet-privacy/blob/b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106/packages/privacy/src/privacy.cairo#L607-L630) and [nullifier formula](https://github.com/starkware-libs/starknet-privacy/blob/b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106/packages/privacy/src/hashes.cairo#L224-L235) show that recipient ownership is already enforced there. Both designs enforce recipient ownership: creating a note for someone does not give its payer the right to spend it. Templar separates that ownership rule from independent encrypted delivery to a reusable address.
+
+The tree and delivery design solve different problems. Templar's commitment tree supports proving membership without naming the consumed note; receiving keys and encrypted publication enable asynchronous delivery. Map storage does not inherently require channels, and a Merkle tree alone does not provide push payments. Templar's tree itself uses storage maps.
+
+For Templar's side of the comparison, see [notes and ownership](/architecture/notes), [pool state](/architecture/state), and the [transaction lifecycle](/architecture/lifecycle).
+
+## What the trade-offs mean for developers
+
+**More work moves to the client.** Local proving removes the need to entrust a proving service with the witness, but the user's machine must supply the compute and memory. Templar's local memory experiment passes three successive proofs each for ordinary, controlled, return-note and synthetic 8/8/4 workloads under an 8 GiB prover cap, using 5.84–6.31 GiB peak RSS and about 23–24 seconds of proving on the measured host. Physical desktop and browser qualification remain open. There is no matched upstream benchmark here, so these figures do not establish a speed or cost advantage. [Measurement scope](/status#measured-resource-envelope).
+
+**Receiving uses public encrypted history.** Templar publishes encrypted openings with funded commitments. Recipients can receive offline and recover from seed plus history. The wallet must authenticate and synchronize that history efficiently; the current small-pool scanner is not a scalable private discovery service. Upstream supplies channel-based discovery infrastructure, and its SDK can open channels automatically as part of preparing a payment. Channels therefore do not inherently require a separate user-visible handshake.
+
+**Application scope is explicit.** Templar's [return notes](/architecture/returns) support atomic external funding through the upstream adapter interface. `ReturnNote` is a transaction-local destination; the funded result is an ordinary tree note. Upstream fills stored open notes during its action flow. Neither interface alone establishes support for arbitrary DeFi, asynchronous positions or production tokens. Controlled-note authorization remains a separate capability.
+
+**Security evidence has its own scope.** Upstream publishes an [audit record for a specific contract revision](https://github.com/starkware-libs/starknet-privacy/blob/b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106/docs/audit/README.md). That review does not automatically cover Templar's statement, commitment model, or adapter. Templar's current evidence is an isolated Sepolia push-payment and recovery lifecycle and scoped return-note integration plus local checks, with governance, client, token, and production qualification still required. [Current status](/status).
+
+Both systems also expose public settlement metadata. Removing trusted privacy actors does not hide deposit and withdrawal timing, eliminate transaction-sender correlation, or remove reliance on Starknet and token contracts. Those boundaries are described in [privacy and trust](/architecture/privacy).

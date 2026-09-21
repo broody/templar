@@ -1,0 +1,11 @@
+{
+  "features": "stwo_proving",
+  "binary_sha256": "507f638f27fdac1b4e5b48ced1d32ca700a497084a5e6376511fc1a8a3f13b36",
+  "source_sha256": {
+    "proving-utils.patch": "f734ee25de5dd1dbebd897263cfa34904e8a08b9d08c2c66a0a4f0b31092888f",
+    "sequencer.patch": "3b74b556258fa0d4667cec829038df1fd37e72c14b712bc7b4cf704faa8b55d4",
+    "overlay/low_memory.rs": "ada99860bab4959b45193d752a246cc0b70135d1da492575f03dfd128bcd0de7",
+    "overlay/memory_profile.rs": "ab043d2267e6361ac529a1dc8d32a197fd8b2188047eaa7450396cae1eb71b6e"
+  },
+  "cargo_lock_sha256": "7f79fc03d3e58629121321915db44b54ac68cd8f4fb2aed5bcf084a37a96ff5d"
+}

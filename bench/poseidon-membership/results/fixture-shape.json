@@ -1,0 +1,14 @@
+{
+  "paths": 2,
+  "depth": 32,
+  "hash_pairs": 64,
+  "permutation_occurrences": 128,
+  "distinct_permutation_requests": 126,
+  "padded_aggregator_rows": 128,
+  "unconditional_aggregator_memory_reads": 768,
+  "indices": [
+    324508639,
+    3970458656
+  ],
+  "classification": "fixture bookkeeping only; implementation must independently derive these quantities"
+}

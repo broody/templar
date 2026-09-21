@@ -1,0 +1,31 @@
+{
+  "scope": "synthetic statements; no funded pool settlement; not physical-desktop qualification",
+  "statement_only": true,
+  "fixed_upper_bound": [
+    64,
+    64,
+    32
+  ],
+  "memory_cap_gib": 16,
+  "cores": 4,
+  "swap_allowed": false,
+  "prover_sha256": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5",
+  "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+  "source_hashes": {
+    "protocol.py": "aa369665cd4503def52e7f1733839d2cc9a578e03c6e9ed1e161c7d7f89350c5",
+    "encoding.py": "1775714d3e5a2f2aa1b7e7d2af013ebd8ab4abc84e85f9e97d201c296f49e060",
+    "common.py": "c98844880770b083ceca5dcd914455b4906298397a7abe79fcc17ef5c00d9e3a",
+    "reference.py": "02768dd34010df7b1e811c2560eb7e0797e3c2b41713e60af17cf663f5968291",
+    "report.py": "44bccc30e5235f886237efe76d884f486df794285326b2f136edc262ea80314b",
+    "deploy.py": "e614c15ff4b7470a73eb9d0153b3904e0c87a84cb94b0ad877d23e27a3f0fb1b",
+    "bench.py": "ff56a56fb78c018b61a08fd8b2fda51294037db653981798f679da6292706fdd",
+    "proving.py": "369193ee5c7997835a2cf81805d00a7e6dc1553a825bb0d2c9de61a1099c3df0",
+    "README.md": "f5888f98c266fde02d413a9802342852c9b21bb43a47e4907ee5da9f7d5fa341",
+    "cairo/Scarb.toml": "de64e3a9101cfb6d91d9012e35e367542d9413a93f8146bf457c289f8d16553b",
+    "cairo/Scarb.lock": "82d42c8b18251d4a7719437ad6050fa296277c5f6c4ebdff3937d79bd0eaffa1",
+    "cairo/src/statement_account.cairo": "ddbc22452636381e7d6db0983e7ce06aa76695250e7b7e358ba0712fdecfeea4",
+    "cairo/src/statement.cairo": "02fbd9d8fd5a602f88b4806cd069d72a81ad53def18e36d7d1d077eab18d88c6",
+    "cairo/src/spend.cairo": "945251747639be328e66cbe39a975eb7a6f277ff74b7b337caf0f591020e9c3a",
+    "cairo/src/lib.cairo": "738a5c96ec8485006fb38f914859d362398207ba9549a547a95ead3cfa6b5ff6"
+  }
+}

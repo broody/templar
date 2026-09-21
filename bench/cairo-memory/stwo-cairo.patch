@@ -1,0 +1,44 @@
+--- a/stwo_cairo_prover/crates/prover/src/prover.rs
++++ b/stwo_cairo_prover/crates/prover/src/prover.rs
+@@ -133,6 +133,31 @@
+ where
+     SimdBackend: BackendForChannel<MC>,
+ {
++    prove_cairo_with_precompute_memory_mode::<MC>(
++        base_column_pool,
++        twiddles,
++        preprocessed_trace,
++        preprocessed_tree,
++        input,
++        prover_params,
++        false,
++    )
++}
++
++/// Proves with the same protocol as [`prove_cairo_with_precompute`], optionally reducing retained
++/// memory by recomputing owned commitment trees when opening them. Borrowed trees stay cached.
++pub fn prove_cairo_with_precompute_memory_mode<'a, MC: MerkleChannel>(
++    base_column_pool: &BaseColumnPool<SimdBackend>,
++    twiddles: &TwiddleTree<SimdBackend>,
++    preprocessed_trace: Arc<PreProcessedTrace>,
++    preprocessed_tree: MaybeOwned<'a, CommitmentTreeProver<SimdBackend, MC>>,
++    input: ProverInput,
++    prover_params: ProverParameters,
++    low_memory_mode: bool,
++) -> Result<CairoProof<MC::H>, ProvingError>
++where
++    SimdBackend: BackendForChannel<MC>,
++{
+     let _span = span!(Level::INFO, "prove_cairo").entered();
+     let ProverParameters {
+         channel_hash: _,
+@@ -154,6 +179,9 @@
+         twiddles,
+         base_column_pool,
+     );
++    if low_memory_mode {
++        commitment_scheme.set_low_memory_mode();
++    }
+     if store_polynomials_coefficients {
+         commitment_scheme.set_store_polynomials_coefficients();
+     }

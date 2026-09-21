@@ -1,0 +1,889 @@
+{
+  "results": [
+    {
+      "variant": "staged-release",
+      "fixture": "8-8-4",
+      "cap_gib": 10,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "recompute_cairo_commitments": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "native_allocator_tuning": false,
+      "base_block": 15391320,
+      "binary_sha256": "d45f739393d497087381fc179391897445d36e983b00278b68c301460896bd7d",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "9f44a25285a13d3a38f6f79ff2e18b4e9799b25dce41d66adb6cea4e3b7cac5d",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 17.217475287994603,
+          "start_unix_ms": 1789959230528,
+          "end_unix_ms": 1789959247746,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.06902557700232137,
+      "error": "Remote end closed connection without response",
+      "status": "FAILED",
+      "cgroup_peak_gib": 10.0,
+      "peak_rss_gib": 9.945114135742188,
+      "swap_peak_bytes": 0,
+      "oom_kill": 1,
+      "name": "8-8-4-repeat-10",
+      "proving_seconds": [
+        16.653
+      ],
+      "virtual_os_seconds": [
+        0.559,
+        0.328
+      ],
+      "sampled_stage_peak_rss_gib": {
+        "cairo": 9.742584228515625,
+        "recursive": 9.945114135742188
+      }
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "8-8-4",
+      "cap_gib": 11,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "recompute_cairo_commitments": true,
+      "cpu_cores": 4,
+      "trace_spans": true,
+      "native_allocator_tuning": false,
+      "base_block": 15391320,
+      "binary_sha256": "d45f739393d497087381fc179391897445d36e983b00278b68c301460896bd7d",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "9f44a25285a13d3a38f6f79ff2e18b4e9799b25dce41d66adb6cea4e3b7cac5d",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 17.562976034008898,
+          "start_unix_ms": 1789959334625,
+          "end_unix_ms": 1789959352188,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 16.655648022002424,
+          "start_unix_ms": 1789959352707,
+          "end_unix_ms": 1789959369363,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 16.564922624005703,
+          "start_unix_ms": 1789959369829,
+          "end_unix_ms": 1789959386394,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.13605361900408752,
+      "status": "PASS",
+      "cgroup_peak_gib": 9.636600494384766,
+      "peak_rss_gib": 9.71469497680664,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "8-8-4-repeat-11",
+      "proving_seconds": [
+        16.984,
+        16.295,
+        16.195
+      ],
+      "virtual_os_seconds": [
+        0.575,
+        0.357,
+        0.365
+      ],
+      "sampled_stage_peak_rss_gib": {
+        "cairo": 9.650367736816406,
+        "recursive": 9.394538879394531
+      },
+      "cairo_committed_evaluations": {
+        "columns_by_log_size": {
+          "10": 8,
+          "19": 867,
+          "11": 21,
+          "18": 401,
+          "8": 1,
+          "9": 310,
+          "23": 84,
+          "20": 116,
+          "14": 28,
+          "7": 323,
+          "21": 50,
+          "15": 1146,
+          "13": 1,
+          "12": 399,
+          "22": 90,
+          "17": 513,
+          "16": 30
+        },
+        "gib": 7.366430759429932
+      }
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "8-8-4",
+      "cap_gib": 11,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "recompute_cairo_commitments": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "native_allocator_tuning": false,
+      "base_block": 15391320,
+      "binary_sha256": "d45f739393d497087381fc179391897445d36e983b00278b68c301460896bd7d",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "9f44a25285a13d3a38f6f79ff2e18b4e9799b25dce41d66adb6cea4e3b7cac5d",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 17.14705474700895,
+          "start_unix_ms": 1789959436478,
+          "end_unix_ms": 1789959453625,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 16.599320934998104,
+          "start_unix_ms": 1789959454095,
+          "end_unix_ms": 1789959470695,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 16.664868762993137,
+          "start_unix_ms": 1789959471161,
+          "end_unix_ms": 1789959487826,
+          "proof_bytes": 228839,
+          "proof_sha256": "b8d5b61c18537b7f47a93807c3512100c16c4f839776f9ac9661d9af70f947df",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.0661434839857975,
+      "status": "PASS",
+      "cgroup_peak_gib": 9.922771453857422,
+      "peak_rss_gib": 10.0010986328125,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "8-8-4-repeat-11-release",
+      "proving_seconds": [
+        16.603,
+        16.27,
+        16.326
+      ],
+      "virtual_os_seconds": [
+        0.539,
+        0.323,
+        0.335
+      ],
+      "sampled_stage_peak_rss_gib": {
+        "cairo": 9.93985366821289,
+        "recursive": 9.516342163085938
+      }
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "controlled",
+      "cap_gib": 10,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "recompute_cairo_commitments": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "native_allocator_tuning": false,
+      "base_block": 15391278,
+      "binary_sha256": "d45f739393d497087381fc179391897445d36e983b00278b68c301460896bd7d",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "69a787d733377aa89b5c5ef9820d6b58c92ee5df5e895e80d5cb41e85eb81cc5",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 16.61702089299797,
+          "start_unix_ms": 1789959178670,
+          "end_unix_ms": 1789959195287,
+          "proof_bytes": 231894,
+          "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 16.33902178199787,
+          "start_unix_ms": 1789959195754,
+          "end_unix_ms": 1789959212093,
+          "proof_bytes": 231894,
+          "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 16.252039628991042,
+          "start_unix_ms": 1789959212561,
+          "end_unix_ms": 1789959228813,
+          "proof_bytes": 231894,
+          "proof_sha256": "31740df815d0fd438b0211291bf150ce58cbe5d53ff8542059f90eae60ea3280",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.13314319399069063,
+      "status": "PASS",
+      "cgroup_peak_gib": 9.562641143798828,
+      "peak_rss_gib": 9.64046859741211,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "controlled-repeat-10",
+      "proving_seconds": [
+        16.057,
+        16.011,
+        15.922
+      ],
+      "virtual_os_seconds": [
+        0.557,
+        0.324,
+        0.327
+      ],
+      "sampled_stage_peak_rss_gib": {
+        "cairo": 9.243240356445312,
+        "recursive": 9.571792602539062
+      }
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "invalid-intent",
+      "cap_gib": 10,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "recompute_cairo_commitments": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "native_allocator_tuning": false,
+      "base_block": 15391363,
+      "binary_sha256": "d45f739393d497087381fc179391897445d36e983b00278b68c301460896bd7d",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "041230eadc4d76467f1eca7fb6614940e91252492670e4bdf95f750488b46516",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [],
+      "startup_seconds": 0.1299508469965076,
+      "error": "{\"code\": -32603, \"message\": \"Internal error\", \"data\": \"Reverted transactions are not supported; hash: TransactionHash(0x48ff53e4875ed83b8c637a7d4ac3c8c3be4c741ba77dc0df2d18d7275f78b0e), revert reason: Transaction execution has failed:\\n0: Error in the called contract (contract address: 0x01ccc0ef53fa9e37cc4ebc85487d1927279f0cd1d958c854dc38b461a58512f6, class hash: 0x00e876a4750d6dcbb0ff0cc029dbd839be297a45a0ed48dc9eb24fcb59600f9b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\\nExecution failed. Failure reason:\\nError in contract (contract address: 0x01ccc0ef53fa9e37cc4ebc85487d1927279f0cd1d958c854dc38b461a58512f6, class hash: 0x00e876a4750d6dcbb0ff0cc029dbd839be297a45a0ed48dc9eb24fcb59600f9b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\\n0x42494e44494e47 ('BINDING').\\n\"}",
+      "status": "REJECTED",
+      "cgroup_peak_gib": 0.01605987548828125,
+      "peak_rss_gib": 0.03583526611328125,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "invalid-intent",
+      "proving_seconds": [],
+      "virtual_os_seconds": []
+    },
+    {
+      "variant": "baseline",
+      "fixture": "ordinary",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "native_allocator_tuning": false,
+      "base_block": 15391165,
+      "binary_sha256": "507f638f27fdac1b4e5b48ced1d32ca700a497084a5e6376511fc1a8a3f13b36",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "52d1af98342f8ca9cfbfbb175398ca4215a7a7a85d9e3f2ea4c6d7d21721bdf0",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 14.92076455699862,
+          "start_unix_ms": 1789958195036,
+          "end_unix_ms": 1789958209957,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.12796969299961347,
+      "status": "PASS",
+      "cgroup_peak_gib": 10.550216674804688,
+      "peak_rss_gib": 10.623405456542969,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "ordinary-baseline",
+      "proving_seconds": [
+        14.382
+      ],
+      "virtual_os_seconds": [
+        0.535
+      ],
+      "sampled_stage_peak_rss_gib": {
+        "cairo": 10.557327270507812,
+        "recursive": 9.186470031738281
+      }
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "ordinary",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "recompute_cairo_commitments": false,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "native_allocator_tuning": false,
+      "base_block": 15391165,
+      "binary_sha256": "d45f739393d497087381fc179391897445d36e983b00278b68c301460896bd7d",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "52d1af98342f8ca9cfbfbb175398ca4215a7a7a85d9e3f2ea4c6d7d21721bdf0",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 15.087130179992528,
+          "start_unix_ms": 1789959110507,
+          "end_unix_ms": 1789959125595,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.1319387740077218,
+      "status": "PASS",
+      "cgroup_peak_gib": 10.547161102294922,
+      "peak_rss_gib": 10.62087631225586,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "ordinary-keep-trees",
+      "proving_seconds": [
+        14.565
+      ],
+      "virtual_os_seconds": [
+        0.518
+      ],
+      "sampled_stage_peak_rss_gib": {
+        "cairo": 10.53165054321289,
+        "recursive": 9.140068054199219
+      }
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "ordinary",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "recompute_cairo_commitments": true,
+      "cpu_cores": 4,
+      "trace_spans": true,
+      "native_allocator_tuning": false,
+      "base_block": 15391165,
+      "binary_sha256": "d45f739393d497087381fc179391897445d36e983b00278b68c301460896bd7d",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "52d1af98342f8ca9cfbfbb175398ca4215a7a7a85d9e3f2ea4c6d7d21721bdf0",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 17.419356160011375,
+          "start_unix_ms": 1789958964435,
+          "end_unix_ms": 1789958981855,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.06981150800129399,
+      "status": "PASS",
+      "cgroup_peak_gib": 9.188838958740234,
+      "peak_rss_gib": 9.267890930175781,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "ordinary-recompute",
+      "proving_seconds": [
+        16.883
+      ],
+      "virtual_os_seconds": [
+        0.533
+      ],
+      "sampled_stage_peak_rss_gib": {
+        "cairo": 8.897552490234375,
+        "recursive": 9.252723693847656
+      },
+      "cairo_committed_evaluations": {
+        "columns_by_log_size": {
+          "19": 474,
+          "9": 310,
+          "13": 1,
+          "23": 84,
+          "7": 323,
+          "15": 996,
+          "17": 223,
+          "11": 441,
+          "21": 50,
+          "16": 320,
+          "18": 794,
+          "20": 116,
+          "22": 90,
+          "12": 1,
+          "14": 156,
+          "8": 1,
+          "10": 8
+        },
+        "gib": 6.898474216461182
+      }
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "ordinary",
+      "cap_gib": 8,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "recompute_cairo_commitments": true,
+      "cpu_cores": 4,
+      "trace_spans": true,
+      "native_allocator_tuning": false,
+      "base_block": 15391165,
+      "binary_sha256": "d45f739393d497087381fc179391897445d36e983b00278b68c301460896bd7d",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "52d1af98342f8ca9cfbfbb175398ca4215a7a7a85d9e3f2ea4c6d7d21721bdf0",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [],
+      "startup_seconds": 0.06437271799950395,
+      "error": "Remote end closed connection without response",
+      "status": "FAILED",
+      "cgroup_peak_gib": 8.0,
+      "peak_rss_gib": 7.871242523193359,
+      "swap_peak_bytes": 0,
+      "oom_kill": 1,
+      "name": "ordinary-recompute-8",
+      "proving_seconds": [],
+      "virtual_os_seconds": [
+        0.561
+      ],
+      "sampled_stage_peak_rss_gib": {
+        "cairo": 7.871242523193359
+      }
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "ordinary",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": false,
+      "recompute_cairo_commitments": true,
+      "cpu_cores": 4,
+      "trace_spans": true,
+      "native_allocator_tuning": false,
+      "base_block": 15391165,
+      "binary_sha256": "d45f739393d497087381fc179391897445d36e983b00278b68c301460896bd7d",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "52d1af98342f8ca9cfbfbb175398ca4215a7a7a85d9e3f2ea4c6d7d21721bdf0",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 22.516111595003167,
+          "start_unix_ms": 1789959067883,
+          "end_unix_ms": 1789959090399,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.07026291599322576,
+      "status": "PASS",
+      "cgroup_peak_gib": 9.172924041748047,
+      "peak_rss_gib": 9.251422882080078,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "ordinary-recompute-no-coefficients",
+      "proving_seconds": [
+        21.984
+      ],
+      "virtual_os_seconds": [
+        0.529
+      ],
+      "sampled_stage_peak_rss_gib": {
+        "cairo": 8.254875183105469,
+        "recursive": 9.197410583496094
+      },
+      "cairo_committed_evaluations": {
+        "columns_by_log_size": {
+          "16": 320,
+          "8": 1,
+          "21": 50,
+          "12": 1,
+          "7": 323,
+          "17": 223,
+          "11": 441,
+          "18": 794,
+          "22": 90,
+          "13": 1,
+          "23": 84,
+          "14": 156,
+          "15": 996,
+          "10": 8,
+          "20": 116,
+          "19": 474,
+          "9": 310
+        },
+        "gib": 6.898474216461182
+      }
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "ordinary",
+      "cap_gib": 12,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "recompute_cairo_commitments": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "native_allocator_tuning": false,
+      "base_block": 15391165,
+      "binary_sha256": "d45f739393d497087381fc179391897445d36e983b00278b68c301460896bd7d",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "52d1af98342f8ca9cfbfbb175398ca4215a7a7a85d9e3f2ea4c6d7d21721bdf0",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 16.661325822002254,
+          "start_unix_ms": 1789959489602,
+          "end_unix_ms": 1789959506263,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.03861651700572111,
+      "status": "PASS",
+      "cgroup_peak_gib": 9.30694580078125,
+      "peak_rss_gib": 9.38601303100586,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "ordinary-recompute-release",
+      "proving_seconds": [
+        16.139
+      ],
+      "virtual_os_seconds": [
+        0.519
+      ],
+      "sampled_stage_peak_rss_gib": {
+        "cairo": 8.975650787353516,
+        "recursive": 9.336601257324219
+      }
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "ordinary",
+      "cap_gib": 10,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "recompute_cairo_commitments": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "native_allocator_tuning": false,
+      "base_block": 15391165,
+      "binary_sha256": "d45f739393d497087381fc179391897445d36e983b00278b68c301460896bd7d",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "52d1af98342f8ca9cfbfbb175398ca4215a7a7a85d9e3f2ea4c6d7d21721bdf0",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 16.845776530986768,
+          "start_unix_ms": 1789959127157,
+          "end_unix_ms": 1789959144003,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 16.175315999993472,
+          "start_unix_ms": 1789959144470,
+          "end_unix_ms": 1789959160645,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 16.01738149501034,
+          "start_unix_ms": 1789959161113,
+          "end_unix_ms": 1789959177130,
+          "proof_bytes": 228273,
+          "proof_sha256": "46ba68487dbe2e76297ad2709499a4c7aba524808bc2e2cf5039773787f6a729",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.13603359200351406,
+      "status": "PASS",
+      "cgroup_peak_gib": 9.326168060302734,
+      "peak_rss_gib": 9.405353546142578,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "ordinary-repeat-10",
+      "proving_seconds": [
+        16.31,
+        15.835,
+        15.685
+      ],
+      "virtual_os_seconds": [
+        0.533,
+        0.336,
+        0.329
+      ],
+      "sampled_stage_peak_rss_gib": {
+        "cairo": 9.256996154785156,
+        "recursive": 9.356815338134766
+      }
+    },
+    {
+      "variant": "staged-release",
+      "fixture": "return",
+      "cap_gib": 10,
+      "rayon_threads": 4,
+      "cache_cairo_coefficients": true,
+      "recompute_cairo_commitments": true,
+      "cpu_cores": 4,
+      "trace_spans": false,
+      "native_allocator_tuning": false,
+      "base_block": 15391363,
+      "binary_sha256": "d45f739393d497087381fc179391897445d36e983b00278b68c301460896bd7d",
+      "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "private_request_sha256": "4a838b63a98712c6e98be29f03b857ba732cb71da02775f273165ae4329f6fac",
+      "public_rpc_cache": true,
+      "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+      "requests": [
+        {
+          "request_seconds": 16.558298907999415,
+          "start_unix_ms": 1789959265183,
+          "end_unix_ms": 1789959281742,
+          "proof_bytes": 229871,
+          "proof_sha256": "f1f4e439648a3e6b693fd2f59d7897e164d0573a50600d0fb86a9b9993900e14",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 15.833129302991438,
+          "start_unix_ms": 1789959282213,
+          "end_unix_ms": 1789959298047,
+          "proof_bytes": 229871,
+          "proof_sha256": "f1f4e439648a3e6b693fd2f59d7897e164d0573a50600d0fb86a9b9993900e14",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        },
+        {
+          "request_seconds": 15.773981552003534,
+          "start_unix_ms": 1789959298514,
+          "end_unix_ms": 1789959314288,
+          "proof_bytes": 229871,
+          "proof_sha256": "f1f4e439648a3e6b693fd2f59d7897e164d0573a50600d0fb86a9b9993900e14",
+          "public_binding_matches": true,
+          "verification_and_three_mutation_rejections": true
+        }
+      ],
+      "startup_seconds": 0.07628598601149861,
+      "status": "PASS",
+      "cgroup_peak_gib": 9.395465850830078,
+      "peak_rss_gib": 9.474281311035156,
+      "swap_peak_bytes": 0,
+      "oom_kill": 0,
+      "name": "return-repeat-10",
+      "proving_seconds": [
+        16.008,
+        15.533,
+        15.463
+      ],
+      "virtual_os_seconds": [
+        0.546,
+        0.296,
+        0.306
+      ],
+      "sampled_stage_peak_rss_gib": {
+        "cairo": 9.24167251586914,
+        "recursive": 9.441661834716797
+      }
+    }
+  ],
+  "same_request_comparisons": [
+    {
+      "a": "8-8-4-repeat-11",
+      "b": "8-8-4-repeat-11-release",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-baseline",
+      "b": "ordinary-keep-trees",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-baseline",
+      "b": "ordinary-recompute",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-baseline",
+      "b": "ordinary-recompute-no-coefficients",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-baseline",
+      "b": "ordinary-recompute-release",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-baseline",
+      "b": "ordinary-repeat-10",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-keep-trees",
+      "b": "ordinary-recompute",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-keep-trees",
+      "b": "ordinary-recompute-no-coefficients",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-keep-trees",
+      "b": "ordinary-recompute-release",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-keep-trees",
+      "b": "ordinary-repeat-10",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-recompute",
+      "b": "ordinary-recompute-no-coefficients",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-recompute",
+      "b": "ordinary-recompute-release",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-recompute",
+      "b": "ordinary-repeat-10",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-recompute-no-coefficients",
+      "b": "ordinary-recompute-release",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-recompute-no-coefficients",
+      "b": "ordinary-repeat-10",
+      "byte_identical": true
+    },
+    {
+      "a": "ordinary-recompute-release",
+      "b": "ordinary-repeat-10",
+      "byte_identical": true
+    }
+  ],
+  "previous_experiment_comparisons": [
+    {
+      "run": "8-8-4-repeat-10",
+      "previous_experiment_run": "8-8-4-release-fresh-a",
+      "byte_identical": true,
+      "requests": 1
+    },
+    {
+      "run": "8-8-4-repeat-11",
+      "previous_experiment_run": "8-8-4-release-fresh-a",
+      "byte_identical": true,
+      "requests": 3
+    },
+    {
+      "run": "8-8-4-repeat-11-release",
+      "previous_experiment_run": "8-8-4-release-fresh-a",
+      "byte_identical": true,
+      "requests": 3
+    },
+    {
+      "run": "controlled-repeat-10",
+      "previous_experiment_run": "controlled-release-repeat",
+      "byte_identical": true,
+      "requests": 3
+    },
+    {
+      "run": "ordinary-baseline",
+      "previous_experiment_run": "ordinary-final-profile-smoke",
+      "byte_identical": true,
+      "requests": 1
+    },
+    {
+      "run": "ordinary-keep-trees",
+      "previous_experiment_run": "ordinary-final-profile-smoke",
+      "byte_identical": true,
+      "requests": 1
+    },
+    {
+      "run": "ordinary-recompute",
+      "previous_experiment_run": "ordinary-final-profile-smoke",
+      "byte_identical": true,
+      "requests": 1
+    },
+    {
+      "run": "ordinary-recompute-no-coefficients",
+      "previous_experiment_run": "ordinary-final-profile-smoke",
+      "byte_identical": true,
+      "requests": 1
+    },
+    {
+      "run": "ordinary-recompute-release",
+      "previous_experiment_run": "ordinary-final-profile-smoke",
+      "byte_identical": true,
+      "requests": 1
+    },
+    {
+      "run": "ordinary-repeat-10",
+      "previous_experiment_run": "ordinary-final-profile-smoke",
+      "byte_identical": true,
+      "requests": 3
+    },
+    {
+      "run": "return-repeat-10",
+      "previous_experiment_run": "return-release-repeat",
+      "byte_identical": true,
+      "requests": 3
+    }
+  ],
+  "verified_proof_count": 21,
+  "scope": "Local verification of replays; no live submission or physical desktop/browser qualification."
+}

@@ -1,0 +1,24 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "0-7",
+    "/home/broody/.cargo/bin/cargo",
+    "+nightly-2026-01-15",
+    "build",
+    "--offline",
+    "--release",
+    "--manifest-path",
+    "/home/broody/development/templar/bench/direct-air/client/Cargo.toml"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 135.51561163499719,
+  "environment": {
+    "PATH": "/usr/bin:/home/broody/.cargo/bin:/bin",
+    "RUSTUP_HOME": "/tmp/templar-stwo-privacy-dtgn6e8l/rustup",
+    "RUSTC_WRAPPER": "",
+    "RUSTFLAGS": "-Ctarget-cpu=native",
+    "CARGO_TARGET_DIR": "/home/broody/development/templar/target/direct-air/client-target",
+    "CARGO_BUILD_JOBS": "8"
+  }
+}

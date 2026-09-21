@@ -1,0 +1,45 @@
+Running as unit: templar-m31-corr-snapshot-1789983667.service; invocation ID: b3c268097d1046018365993b897f62d6
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.12s
+   Compiling test(m31_tree_bench_unittest) m31_tree_bench v0.1.0 (/home/broody/development/templar/bench/m31-tree/cairo/Scarb.toml)
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:5
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+    ^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:27
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:50
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:18:5
+    StoragePointerWriteAccess,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    Finished `dev` profile target(s) in 0 seconds
+
+
+Collected 5 test(s) from m31_tree_bench package
+Running 5 test(s) from src/
+[PASS] m31_tree_bench::tests::snapshot_felt_prefix2 (l1_gas: ~0, l1_data_gas: ~14784, l2_gas: ~108261012)
+[PASS] m31_tree_bench::tests::snapshot_felt_prefix8 (l1_gas: ~0, l1_data_gas: ~19008, l2_gas: ~159312536)
+[PASS] m31_tree_bench::tests::snapshot_m31_prefix2 (l1_gas: ~0, l1_data_gas: ~28608, l2_gas: ~2537204640)
+[PASS] m31_tree_bench::tests::snapshot_felt_prefix1 (l1_gas: ~0, l1_data_gas: ~14208, l2_gas: ~100367718)
+[PASS] m31_tree_bench::tests::snapshot_m31_prefix1 (l1_gas: ~0, l1_data_gas: ~27648, l2_gas: ~1745019000)
+Tests: 5 passed, 0 failed, 0 ignored, 47 filtered out
+
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 7.819s
+CPU time consumed: 8.060s
+Memory peak: 512.0K
+Memory swap peak: 0B

@@ -1,0 +1,34 @@
+Running as unit: templar-bench-959413428317.service; invocation ID: a32b44d34a5943e29c99c238ad5fc399
+Scheme is: ultra_honk, num threads: 4 (mem: 7.71 MiB)
+CircuitProve: Proving key computed in 2956 ms (mem: 2073.08 MiB)
+Public inputs saved to "/home/broody/development/templar/bench/desktop/cases/felt-16/results/public_inputs" (mem: 2501.96 MiB)
+Proof saved to "/home/broody/development/templar/bench/desktop/cases/felt-16/results/proof" (mem: 2501.96 MiB)
+	Command being timed: "/home/broody/.bb/bb prove -s ultra_honk --oracle_hash keccak -b /home/broody/development/templar/bench/desktop/cases/felt-16/target/bench.json -w /home/broody/development/templar/bench/desktop/cases/felt-16/target/witness.gz -k /home/broody/development/templar/bench/desktop/cases/felt-16/results/vk -o /home/broody/development/templar/bench/desktop/cases/felt-16/results"
+	User time (seconds): 49.70
+	System time (seconds): 1.80
+	Percent of CPU this job got: 298%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:17.23
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 2562012
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 1100069
+	Voluntary context switches: 3039
+	Involuntary context switches: 381
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 32
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 17.246s
+CPU time consumed: 51.518s
+Memory peak: 1.7M
+Memory swap peak: 0B

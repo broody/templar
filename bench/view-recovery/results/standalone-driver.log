@@ -1,0 +1,96 @@
+{
+  "case": "alice-send",
+  "scope": "earlier staged standalone privacy prover; no virtual OS or native submission",
+  "exit_code": 0,
+  "wall_seconds": 11.739859314002388,
+  "limits": {
+    "memory_gib": 10,
+    "swap": 0,
+    "cores": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "prover_binary_sha256": "b31d54ce9bb32965658b443be44d308626345676e0811fce0b5084a24fc2ffb8",
+  "peak_rss_gib": 8.744029998779297,
+  "verified": true,
+  "modified_output_and_program_rejected": true,
+  "public_matches": true,
+  "statement_program_hash": "0x4ab8d7753c61a9b678e6abf40dae8696999e8aeaaca5dd39188e5855eada60e",
+  "proof_bytes": 231043,
+  "proof_sha256": "d475a29e0ebf21b13b156ff69fced2da223cb1801ec587cc88d84d8ceacb083a"
+}
+{
+  "case": "carol-send",
+  "scope": "earlier staged standalone privacy prover; no virtual OS or native submission",
+  "exit_code": 0,
+  "wall_seconds": 11.284715372996288,
+  "limits": {
+    "memory_gib": 10,
+    "swap": 0,
+    "cores": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "prover_binary_sha256": "b31d54ce9bb32965658b443be44d308626345676e0811fce0b5084a24fc2ffb8",
+  "peak_rss_gib": 8.683464050292969,
+  "verified": true,
+  "modified_output_and_program_rejected": true,
+  "public_matches": true,
+  "statement_program_hash": "0x4ab8d7753c61a9b678e6abf40dae8696999e8aeaaca5dd39188e5855eada60e",
+  "proof_bytes": 224510,
+  "proof_sha256": "6663e12186ba649c80c12278711f849d8e5345c01dbc83d00900a473b6cbfeaf"
+}
+{
+  "case": "bob-spend",
+  "scope": "earlier staged standalone privacy prover; no virtual OS or native submission",
+  "exit_code": 0,
+  "wall_seconds": 11.484515518997796,
+  "limits": {
+    "memory_gib": 10,
+    "swap": 0,
+    "cores": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "prover_binary_sha256": "b31d54ce9bb32965658b443be44d308626345676e0811fce0b5084a24fc2ffb8",
+  "peak_rss_gib": 8.642799377441406,
+  "verified": true,
+  "modified_output_and_program_rejected": true,
+  "public_matches": true,
+  "statement_program_hash": "0x4ab8d7753c61a9b678e6abf40dae8696999e8aeaaca5dd39188e5855eada60e",
+  "proof_bytes": 236443,
+  "proof_sha256": "af25f8eb4c6f3716c9fec451427a8f06b4a475f0af1d2e382aaa21fd5c05c979"
+}
+{
+  "case": "restored-owner-spend",
+  "scope": "earlier staged standalone privacy prover; no virtual OS or native submission",
+  "exit_code": 0,
+  "wall_seconds": 11.203204011995695,
+  "limits": {
+    "memory_gib": 10,
+    "swap": 0,
+    "cores": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "prover_binary_sha256": "b31d54ce9bb32965658b443be44d308626345676e0811fce0b5084a24fc2ffb8",
+  "peak_rss_gib": 8.786811828613281,
+  "verified": true,
+  "modified_output_and_program_rejected": true,
+  "public_matches": true,
+  "statement_program_hash": "0x4ab8d7753c61a9b678e6abf40dae8696999e8aeaaca5dd39188e5855eada60e",
+  "proof_bytes": 226733,
+  "proof_sha256": "e91a0e9589cc34cdc8e04aece638fe07de7c230b0fd88944a9171747ff169d5f"
+}

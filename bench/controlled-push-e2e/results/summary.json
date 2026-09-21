@@ -1,0 +1,369 @@
+{
+  "status": "PASS",
+  "stage": 5,
+  "deployment": {
+    "controller": "0x02683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+    "controller_public_key": "0x12652c25b53b2c930fdc2b4d7318ad17bbfc4cfc6affbe5eba85cc7d577c51c",
+    "pool": "0x06d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+    "statement": "0x048597bcd6ed2c4441c4804777e70477ab05fc5c003239fc11f14361e4bb0f24",
+    "verifier": "0x0728285fd9a46d256411b18c62bc2d621c6fa097665494f8cc0cef960079341e",
+    "token": "0x05e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e",
+    "statement_class": "0x053ec0d3c42e65ab7794371a21f20ada7348ab7ba8d1f437ce047fa2a6387b7e",
+    "fee_collector": "0xfee",
+    "bob_withdrawal_address": "0xb0b",
+    "relayer": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+    "max_proof_age": 4096,
+    "fee_amount": 5,
+    "classes": {
+      "Pool": "0x075a9d07d648c7313627fad670f676200425d0a00ba326a52703ddb73517705a",
+      "StatementAccount": "0x053ec0d3c42e65ab7794371a21f20ada7348ab7ba8d1f437ce047fa2a6387b7e",
+      "NativeProofVerifier": "0x04f3492ad0c0a1947d6e5a365b4d62209f8cf2a62f0a433c06696a2d42e99b5f",
+      "E2EToken": "0xfb29a47941892d91a25179de02aee7564db6631cea9173e4763f07432a6f43",
+      "SignatureController": "0x010b7b74d0fdb5c6adbedb6109838a5249f92b5e5681408dd68eecbee8c23fc7"
+    },
+    "start_block": 15385149
+  },
+  "policy_commitment": "0x12e90908742ac8b4b2886280f8f4269eacbd0769ca08fc14018ea714c2ffe01",
+  "negative_tests": [
+    "missing-approval",
+    "wrong-signer",
+    "expired-approval",
+    "replay-payment",
+    "redirected-withdrawal"
+  ],
+  "final_state": {
+    "root": 1968034940927001452893076463726200704567882712106929100634833725197957585010,
+    "leaf_count": 8,
+    "relayer": 8680,
+    "pool": 1200,
+    "bob": 100,
+    "collector": 20,
+    "block_number": 15385529,
+    "block_hash": "0x65db98e7390c5c6a44aa0d302738c59924fd12cb4d19382cf5e8728d35ec2f1"
+  },
+  "proofs": {
+    "controlled-payment": {
+      "case": "controlled-payment",
+      "startup_seconds": 2.0028193239995744,
+      "request_seconds": 19.257147561998863,
+      "proving_seconds": 12.726,
+      "virtual_os_seconds": 6.527,
+      "proof_bytes": 238717,
+      "proof_sha256": "583d65eaa70421be6d10d832e53a1080656eaa23d939aa742ef24bb8be1d031b",
+      "peak_rss_gib": 13.829452514648438,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f434f4e54524f4c5f504f4331",
+        "0x534e5f5345504f4c4941",
+        "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+        "0x5df4156066c08c183fc28260be0978dde7a2c6fba2bd8ece1e42c3c7b520542",
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+        "0xeac9a4",
+        "0x68c1533fc62b3c17cb185406402698b8ef36081e68037bbfddfb58433ab4a52",
+        "0x5ff6ad66d5ad41888c2735cbef6104fdaf6ed714bbc906762d687ef44efb130"
+      ],
+      "base_block": 15385246,
+      "memory_cap_gib": 16,
+      "cores": 4
+    },
+    "controlled-respend": {
+      "case": "controlled-respend",
+      "startup_seconds": 2.002784607997455,
+      "request_seconds": 19.105294052002137,
+      "proving_seconds": 12.933,
+      "virtual_os_seconds": 6.168,
+      "proof_bytes": 231382,
+      "proof_sha256": "a377b8ddf514a5404b7503a9c0906a54340d7498ce68df278405b910faf46d49",
+      "peak_rss_gib": 13.616386413574219,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f434f4e54524f4c5f504f4331",
+        "0x534e5f5345504f4c4941",
+        "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+        "0x4821b7fcb940bf09105407efc3e884a386aa476cf1dda4f546547f39e8af2ad",
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+        "0xeaca21",
+        "0x48197d5166f5de383b67bdb67611bd726f52bfc82f044bc9f7f28926de941cb",
+        "0xb29973d3d311a39b456207e1d67d1edfc15d40c39b1946740466f71ac6953e"
+      ],
+      "base_block": 15385409,
+      "memory_cap_gib": 16,
+      "cores": 4
+    },
+    "controlled-withdrawal": {
+      "case": "controlled-withdrawal",
+      "startup_seconds": 2.0019238569948357,
+      "request_seconds": 19.163246286996582,
+      "proving_seconds": 12.433,
+      "virtual_os_seconds": 6.725,
+      "proof_bytes": 232634,
+      "proof_sha256": "f7302733292dbe48dcfdb4cea76b6bba98a3aef247dccf3a2be706a1c1f42b02",
+      "peak_rss_gib": 13.873775482177734,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f434f4e54524f4c5f504f4331",
+        "0x534e5f5345504f4c4941",
+        "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+        "0x51c51399b48c0189801f5e15c7fbd01fbfea0b6403c17b6ad020bcf543c61cf",
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+        "0xeaca73",
+        "0x19864e396c45221514077b34365f7770cecab27d3449504ac0e530d6a6fb025",
+        "0x6f6690a284496499d41f22fd6b2a096bf5031b11e52dfe2b899674c9703d515"
+      ],
+      "base_block": 15385454,
+      "memory_cap_gib": 16,
+      "cores": 4
+    },
+    "ordinary-payment": {
+      "case": "ordinary-payment",
+      "startup_seconds": 2.002786955999909,
+      "request_seconds": 19.469373981999524,
+      "proving_seconds": 12.173,
+      "virtual_os_seconds": 7.292,
+      "proof_bytes": 231833,
+      "proof_sha256": "b6a0970e8ae4abd1db953dd8ea4a74bc9867fa9b780cf6457c703f11ef0612af",
+      "peak_rss_gib": 13.957599639892578,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f434f4e54524f4c5f504f4331",
+        "0x534e5f5345504f4c4941",
+        "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+        "0x51c51399b48c0189801f5e15c7fbd01fbfea0b6403c17b6ad020bcf543c61cf",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x335cad01146fee4e15fe56978a97f47f21a871c7d329deea3937cf2c13c2cc9"
+      ],
+      "base_block": 15385508,
+      "memory_cap_gib": 16,
+      "cores": 4
+    },
+    "expired-proof": {
+      "case": "expired-proof",
+      "startup_seconds": 2.0028200870001456,
+      "request_seconds": 18.93689098500181,
+      "proving_seconds": 12.581,
+      "virtual_os_seconds": 6.353,
+      "proof_bytes": 237633,
+      "proof_sha256": "4dc5ce82f65aef2fee38ad32fbea2c4f27cfe66873a894eade87ed2d644f4103",
+      "peak_rss_gib": 13.843528747558594,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f434f4e54524f4c5f504f4331",
+        "0x534e5f5345504f4c4941",
+        "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+        "0x5df4156066c08c183fc28260be0978dde7a2c6fba2bd8ece1e42c3c7b520542",
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+        "0xeac2cd",
+        "0x56fe19c68da22c82cea6dca93d9427455ad393c2fffe463e014da4cf4570b3a",
+        "0x6d47d9c22361286087faf71d8859bd4ba8cac6e8d2b36749842d2c7c96f65ef"
+      ],
+      "base_block": 15385296,
+      "memory_cap_gib": 16,
+      "cores": 4
+    },
+    "redirected-proof": {
+      "case": "redirected-proof",
+      "startup_seconds": 2.0030459340050584,
+      "request_seconds": 18.438562956005626,
+      "proving_seconds": 12.339,
+      "virtual_os_seconds": 6.096,
+      "proof_bytes": 233712,
+      "proof_sha256": "4bd1cb8a92d9b717edaf87184efaa5756fcae231756c4c76a9ffa34e6c4c5234",
+      "peak_rss_gib": 13.446990966796875,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f434f4e54524f4c5f504f4331",
+        "0x534e5f5345504f4c4941",
+        "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+        "0x4821b7fcb940bf09105407efc3e884a386aa476cf1dda4f546547f39e8af2ad",
+        "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+        "0xeaca21",
+        "0x4fcd42962d2f9857994aa31299c4a4e7d835d3d90a3edcddaec7d3f3dc7aa0c",
+        "0x3e683d5a2061f69acce31645a44d8621993c7585ba9d32a4ba47b4b932aee69"
+      ],
+      "base_block": 15385381,
+      "memory_cap_gib": 16,
+      "cores": 4
+    }
+  },
+  "transactions": {
+    "deposit-alice": {
+      "transaction_hash": "0x34f9179711e7d4a41a7acf9d7cef3995eb189c2d1848532ad07d608e9ce0250",
+      "execution_status": "SUCCEEDED",
+      "block_number": 15385227,
+      "actual_fee": {
+        "amount": "0x5dc29525eb788e0",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 4160,
+        "l1_gas": 0,
+        "l2_gas": 23401760
+      },
+      "revert_reason": null
+    },
+    "deposit-carol": {
+      "transaction_hash": "0x2327714a32e14fd140fb47df74fc879cab8d427ccce0f3de1c59dd47ff963ee",
+      "execution_status": "SUCCEEDED",
+      "block_number": 15385232,
+      "actual_fee": {
+        "amount": "0x272164838b07080",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 3072,
+        "l1_gas": 0,
+        "l2_gas": 9733760
+      },
+      "revert_reason": null
+    },
+    "controlled-payment": {
+      "transaction_hash": "0x493cb458f647e8db63315023791eefe256efa17ddcb420fb6519fe420dde484",
+      "execution_status": "SUCCEEDED",
+      "block_number": 15385333,
+      "actual_fee": {
+        "amount": "0x176d81afa4197370",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 3616,
+        "l1_gas": 0,
+        "l2_gas": 93878640
+      },
+      "revert_reason": null
+    },
+    "controlled-respend": {
+      "transaction_hash": "0x799cd54914feee7f6d05ea54db83411b5fc12b67b5c38adc7fbcb30613f2a62",
+      "execution_status": "SUCCEEDED",
+      "block_number": 15385430,
+      "actual_fee": {
+        "amount": "0x17ad71f4d24b7b00",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 3776,
+        "l1_gas": 0,
+        "l2_gas": 94876480
+      },
+      "revert_reason": null
+    },
+    "controlled-withdrawal": {
+      "transaction_hash": "0x333ec85e15371ad83d799ef0e5542f33183742454d297ced883cf41f492e443",
+      "execution_status": "SUCCEEDED",
+      "block_number": 15385474,
+      "actual_fee": {
+        "amount": "0x13c311b6e5b5abb0",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 672,
+        "l1_gas": 0,
+        "l2_gas": 79247760
+      },
+      "revert_reason": null
+    },
+    "ordinary-payment": {
+      "transaction_hash": "0x58318f7eb7d0ffb5abf63c804e269a122065f21b0e6aa27cd24242dfb3bb785",
+      "execution_status": "SUCCEEDED",
+      "block_number": 15385528,
+      "actual_fee": {
+        "amount": "0x1747073f43a62960",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 3584,
+        "l1_gas": 0,
+        "l2_gas": 93276640
+      },
+      "revert_reason": null
+    },
+    "missing-approval": {
+      "transaction_hash": "0x268b2125c4c7a82e5d024888c6bd26bfaf2fc614c49f328442381c35227ffb9",
+      "execution_status": "REVERTED",
+      "block_number": 15385271,
+      "actual_fee": {
+        "amount": "0x1330a0e4c8bd38c0",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 128,
+        "l1_gas": 0,
+        "l2_gas": 76966720
+      },
+      "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x434f4e54524f4c5f5349474e4154555245 ('CONTROL_SIGNATURE'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n"
+    },
+    "wrong-signer": {
+      "transaction_hash": "0x2e9e52b6602c3f10a13b9512868409d75307427271f1b1728ac7c42123349b8",
+      "execution_status": "REVERTED",
+      "block_number": 15385288,
+      "actual_fee": {
+        "amount": "0x13332e76ea875300",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 128,
+        "l1_gas": 0,
+        "l2_gas": 77006720
+      },
+      "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x434f4e54524f4c5f5349474e4154555245 ('CONTROL_SIGNATURE'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n"
+    },
+    "expired-approval": {
+      "transaction_hash": "0x4560cb175caa11306a11d7b1416493c0b26c6caf7fd462dcde44708a845d324",
+      "execution_status": "REVERTED",
+      "block_number": 15385320,
+      "actual_fee": {
+        "amount": "0x1330a0df96263ac0",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 128,
+        "l1_gas": 0,
+        "l2_gas": 76966720
+      },
+      "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x434f4e54524f4c5f45585049524544 ('CONTROL_EXPIRED'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n"
+    },
+    "replay-payment": {
+      "transaction_hash": "0x36dca192bd6deb49abdc7cf5ce27d429c91fdbb958ccff70db3b2e31117cbfa",
+      "execution_status": "REVERTED",
+      "block_number": 15385349,
+      "actual_fee": {
+        "amount": "0x1335bbf86c5169c0",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 128,
+        "l1_gas": 0,
+        "l2_gas": 77046720
+      },
+      "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x4e554c4c49464945525f55534544 ('NULLIFIER_USED'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n"
+    },
+    "redirected-withdrawal": {
+      "transaction_hash": "0x4d6f9ddabebeebd1da2ce84a52dd5c567f17e8d705a6278f5435e807cad0d4e",
+      "execution_status": "REVERTED",
+      "block_number": 15385404,
+      "actual_fee": {
+        "amount": "0x1333d5c1e067be80",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 128,
+        "l1_gas": 0,
+        "l2_gas": 77016960
+      },
+      "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x434f4e54524f4c5f5349474e4154555245 ('CONTROL_SIGNATURE'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n"
+    }
+  }
+}

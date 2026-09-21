@@ -1,0 +1,18 @@
+Running as unit: templar-memory-invalid-intent-1789959315879911838.service; invocation ID: 6c1103991b764f6aa9a838a0eba846e7
+[2m2026-09-21T02:55:15.910513Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: rpc_node_url: <unset> -> http://127.0.0.1:33683
+[2m2026-09-21T02:55:15.910545Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: chain_id: SN_MAIN -> SN_SEPOLIA
+[2m2026-09-21T02:55:15.910550Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: port: 3000 -> 31461
+[2m2026-09-21T02:55:15.910554Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: ip: 0.0.0.0 -> 127.0.0.1
+[2m2026-09-21T02:55:15.910557Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: max_concurrent_requests: 2 -> 1
+[2m2026-09-21T02:55:15.910559Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: max_queued_requests: 8 -> 0
+[2m2026-09-21T02:55:15.910562Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: compiled_class_cache_size: 600 -> 16
+[2m2026-09-21T02:55:15.910578Z[0m [32m INFO[0m [2mstarknet_transaction_prover[0m[2m:[0m Starting Starknet transaction prover. [3mversion[0m[2m=[0m"0.19.0-rc.2" [3mgit_sha[0m[2m=[0m"unknown" [3mchain_id[0m[2m=[0mSN_SEPOLIA [3mrpc_node_host[0m[2m=[0mhttp://127.0.0.1:33683 [3mvalidate_zero_fee_fields[0m[2m=[0mtrue [3mblocking_check_enabled[0m[2m=[0mfalse [3mblocking_check_fail_open[0m[2m=[0mfalse [3mohttp_enabled[0m[2m=[0mfalse
+[2m2026-09-21T02:55:15.910644Z[0m [32m INFO[0m [2mstarknet_transaction_prover[0m[2m:[0m JSON-RPC proving server is running. [3mlocal_address[0m[2m=[0m127.0.0.1:31461 [3mscheme[0m[2m=[0m"http" [3mmax_concurrent_requests[0m[2m=[0m1 [3mmax_connections[0m[2m=[0m10 [3mcors_mode[0m[2m=[0m"disabled" [3mcors_allow_origin[0m[2m=[0m[] [3mohttp_enabled[0m[2m=[0mfalse
+[2m2026-09-21T02:55:16.070670Z[0m [32m INFO[0m [1mprove_transaction[0m[1m{[0m[3mblock_id[0m[2m=[0mNumber(BlockNumber(15391363)) [3mtx_hash[0m[2m=[0m0x48ff53e4875ed83b8c637a7d4ac3c8c3be4c741ba77dc0df2d18d7275f78b0e[1m}[0m[2m:[0m [2mstarknet_transaction_prover::running::runner[0m[2m:[0m Starting transaction proving
+[2m2026-09-21T02:55:16.319590Z[0m [33m WARN[0m [2mstarknet_transaction_prover::server::rpc_impl[0m[2m:[0m prove_transaction failed: RunnerError(VirtualBlockExecutor(TransactionReverted(TransactionHash(0x48ff53e4875ed83b8c637a7d4ac3c8c3be4c741ba77dc0df2d18d7275f78b0e), "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x01ccc0ef53fa9e37cc4ebc85487d1927279f0cd1d958c854dc38b461a58512f6, class hash: 0x00e876a4750d6dcbb0ff0cc029dbd839be297a45a0ed48dc9eb24fcb59600f9b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\nError in contract (contract address: 0x01ccc0ef53fa9e37cc4ebc85487d1927279f0cd1d958c854dc38b461a58512f6, class hash: 0x00e876a4750d6dcbb0ff0cc029dbd839be297a45a0ed48dc9eb24fcb59600f9b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\n0x42494e44494e47 ('BINDING').\n")))
+Finished with result: success
+Main processes terminated with: code=killed/status=TERM
+Service runtime: 580ms
+CPU time consumed: 307ms
+Memory peak: 16.4M
+Memory swap peak: 0B

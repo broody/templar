@@ -1,0 +1,17 @@
+{"case": "alice-send", "exit_code": 0, "seconds": 0.03804332599975169, "public_matches": true, "steps": 4799, "poseidon": 103, "pie_output": [8, 28675836988560422058761249697597660021553, 393402133025997798000961, 4660, 1506871763498638732286195080686787552425999412315483503448939049950041011733, 0, 0, 0, 2787896220955956246346344746802068376974748083450075399091847600533757704224], "pie_sha256": "55aa07a25b1206b9a010fe7b7d8f6e4841328a10ec39af63ea5a5305e6cf05d8"}
+{"case": "carol-send", "exit_code": 0, "seconds": 0.04520545700506773, "public_matches": true, "steps": 4798, "poseidon": 103, "pie_output": [8, 28675836988560422058761249697597660021553, 393402133025997798000961, 4660, 2928293624884629748766946376157513842608872598797299831891204400583542939810, 0, 0, 0, 2240208578024115220954376351346491975996411798839283746206094139872796398180], "pie_sha256": "334e179f8022edcafaa39c30944393f6284c195f3b9550b58163dfd9e506a8cf"}
+{"case": "bob-spend", "exit_code": 0, "seconds": 0.05297962100303266, "public_matches": true, "steps": 7981, "poseidon": 179, "pie_output": [8, 28675836988560422058761249697597660021553, 393402133025997798000961, 4660, 3263811509957192001236011849648096936763478458714366776325653316400632080348, 0, 0, 0, 251135100382232381663615269816633432876244315562696024275148037701611579983], "pie_sha256": "5d8f6dad7fcd62db7cd290c8d6de14c440403d5af326134e50905cdcc252c68d"}
+{"case": "sender-key", "exit_code": 1, "seconds": 0.04129664599895477, "rejected_at": "MEMBERSHIP"}
+{"case": "view-key", "exit_code": 1, "seconds": 0.04013089399813907, "rejected_at": "MEMBERSHIP"}
+{"case": "bad-path", "exit_code": 1, "seconds": 0.04677176800032612, "rejected_at": "MEMBERSHIP"}
+{"case": "bad-nullifier", "exit_code": 1, "seconds": 0.04708548700000392, "rejected_at": "NULLIFIER"}
+{"case": "bad-amount-range", "exit_code": 1, "seconds": 0.04060804699838627, "rejected_at": "AMOUNT_RANGE"}
+{"case": "zero-rho", "exit_code": 1, "seconds": 0.044128472996817436, "rejected_at": "ZERO_NOTE"}
+{"case": "redirect-withdrawal", "exit_code": 1, "seconds": 0.041274624003563076, "rejected_at": "BINDING"}
+{"case": "zero-withdrawal-address", "exit_code": 1, "seconds": 0.04820072099391837, "rejected_at": "RECIPIENT"}
+{"case": "out-of-range-withdrawal-address", "exit_code": 1, "seconds": 0.04493509600433754, "rejected_at": "RECIPIENT"}
+{"case": "replace-delivery", "exit_code": 1, "seconds": 0.04801535400474677, "rejected_at": "BINDING"}
+{"case": "wrong-output-owner", "exit_code": 1, "seconds": 0.04040210699895397, "rejected_at": "OUTPUT"}
+{"case": "duplicate-input", "exit_code": 1, "seconds": 0.043203873006859794, "rejected_at": "DUPLICATE_INPUT"}
+{"case": "inflation", "exit_code": 1, "seconds": 0.049785591996624134, "rejected_at": "CONSERVATION"}
+{"case": "funded-duplicate-commitments", "exit_code": 0, "seconds": 0.0487420000063139, "public_matches": true, "steps": 7560, "poseidon": 165, "pie_output": [8, 28675836988560422058761249697597660021553, 393402133025997798000961, 4660, 1953102664733984362797478399332125882636005466368478723241499573223096956167, 0, 0, 0, 1723037964552560973214212288836402596024999971572660500843456018329945273260], "pie_sha256": "5bd4fe7aced35765253a21af63b24816c96e5edde11f52d8a342cd10cf40cf47"}

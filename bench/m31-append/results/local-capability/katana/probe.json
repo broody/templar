@@ -1,0 +1,137 @@
+{
+  "scope": "fresh synthetic local node capability, not a proving benchmark",
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-m31-capability-katana-1789988645928472060",
+    "-p",
+    "MemoryMax=4G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "RuntimeMaxSec=180",
+    "/home/broody/.asdf/shims/katana",
+    "--dev",
+    "--silent",
+    "--dev.seed",
+    "42",
+    "--dev.accounts",
+    "1",
+    "--http.addr",
+    "127.0.0.1",
+    "--http.port",
+    "50303"
+  ],
+  "url": "http://127.0.0.1:50303",
+  "calls": [
+    {
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "starknet_specVersion",
+        "params": []
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0.9.0"
+      }
+    },
+    {
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "starknet_chainId",
+        "params": []
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x4b4154414e41"
+      }
+    },
+    {
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "starknet_blockNumber",
+        "params": []
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": 0
+      }
+    },
+    {
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "starknet_getBlockWithTxHashes",
+        "params": {
+          "block_id": "latest"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "status": "ACCEPTED_ON_L2",
+          "block_hash": "0x7dc9982df7da070f60ded7cece28b057128b623061bf8b5433f96ea2ce5f998",
+          "parent_hash": "0x0",
+          "block_number": 0,
+          "new_root": "0x4c46a0d78608d2169fcf3ef0f7ec311fb24504975788101c26a14affcb1dda2",
+          "timestamp": 0,
+          "sequencer_address": "0x1",
+          "l1_gas_price": {
+            "price_in_fri": "0x1",
+            "price_in_wei": "0x1"
+          },
+          "l2_gas_price": {
+            "price_in_fri": "0x1",
+            "price_in_wei": "0x1"
+          },
+          "l1_data_gas_price": {
+            "price_in_fri": "0x1",
+            "price_in_wei": "0x1"
+          },
+          "l1_da_mode": "CALLDATA",
+          "starknet_version": "0.13.1.1",
+          "transactions": []
+        }
+      }
+    },
+    {
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "starknet_getStorageProof",
+        "params": {
+          "block_id": "latest",
+          "class_hashes": [],
+          "contract_addresses": [],
+          "contracts_storage_keys": []
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "global_roots": {
+            "block_hash": "0x7dc9982df7da070f60ded7cece28b057128b623061bf8b5433f96ea2ce5f998",
+            "classes_tree_root": "0x6e063be46fef7b22e0e05ef8f58ab0e38579c0972a597b61b2b7f3cf6e388f3",
+            "contracts_tree_root": "0x72f91d4d1be6441b93c109c886eda68f5d2fb115506f3e6650b49745935b2ce"
+          },
+          "classes_proof": [],
+          "contracts_proof": {
+            "nodes": [],
+            "contract_leaves_data": []
+          },
+          "contracts_storage_proofs": []
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,153 @@
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.11s
+   Compiling test(pool_unittest) pool v0.1.0 (/home/broody/development/templar/packages/pool/Scarb.toml)
+warn[E2066]: Usage of deprecated feature `"corelib-internal-use"` with no `#[feature("corelib-internal-use")]` attribute. Note: "Use `starknet` directly"
+ --> /home/broody/development/templar/packages/pool/src/pool.cairo:54:15
+    use core::starknet::{
+              ^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StorageMapReadAccess`
+ --> /home/broody/development/templar/packages/pool/src/tree.cairo:17:5
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+    ^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StorageMapWriteAccess`
+ --> /home/broody/development/templar/packages/pool/src/tree.cairo:17:27
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StoragePointerReadAccess`
+ --> /home/broody/development/templar/packages/pool/src/tree.cairo:17:50
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/packages/pool/src/tree.cairo:18:5
+    StoragePointerWriteAccess,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tests::mock_erc20::MockERC20::StoragePointerReadAccess`
+ --> /home/broody/development/templar/packages/pool/src/tests/mock_erc20.cairo:9:59
+        Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tests::mock_erc20::MockERC20::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/packages/pool/src/tests/mock_erc20.cairo:10:9
+        StoragePointerWriteAccess,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"corelib-internal-use"` with no `#[feature("corelib-internal-use")]` attribute. Note: "Use `starknet` directly"
+ --> /home/broody/development/templar/packages/pool/src/tests/mock_erc20.cairo:6:15
+    use core::starknet::{get_caller_address, ContractAddress};
+              ^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tests::test_pool::EventSpyTrait`
+ --> /home/broody/development/templar/packages/pool/src/tests/test_pool.cairo:21:70
+    ContractClassTrait, DeclareResultTrait, EventSpyAssertionsTrait, EventSpyTrait, test_address,
+                                                                     ^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"corelib-internal-use"` with no `#[feature("corelib-internal-use")]` attribute. Note: "Use `starknet` directly"
+ --> /home/broody/development/templar/packages/pool/src/tests/test_pool.cairo:6:11
+use core::starknet::{contract_address_const, ContractAddress};
+          ^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"deprecated-starknet-consts"` with no `#[feature("deprecated-starknet-consts")]` attribute. Note: "Use `TryInto::try_into` in const context instead."
+ --> /home/broody/development/templar/packages/pool/src/tests/test_pool.cairo:6:22
+use core::starknet::{contract_address_const, ContractAddress};
+                     ^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2153]: `allow` attribute argument not supported.
+ --> /home/broody/development/templar/packages/pool/src/tests/test_pool.cairo:91:8
+#[allow(implicit_ordering)]
+       ^^^^^^^^^^^^^^^^^^^
+
+warn[E0001]: Unused variable. Consider ignoring by prefixing with `_`.
+ --> /home/broody/development/templar/packages/pool/src/tests/test_pool.cairo:142:9
+    let me = test_address();
+        ^^
+note: this error originates in the attribute macro: `test`
+
+warn[E0001]: Unused variable. Consider ignoring by prefixing with `_`.
+ --> /home/broody/development/templar/packages/pool/src/tests/test_pool.cairo:982:9
+    let me = test_address();
+        ^^
+note: this error originates in the attribute macro: `test`
+note: this error originates in the attribute macro: `should_panic`
+
+warn[E2066]: Usage of deprecated feature `"corelib-internal-use"` with no `#[feature("corelib-internal-use")]` attribute. Note: "Use `starknet` directly"
+ --> /home/broody/development/templar/packages/pool/src/tests/bench_pool.cairo:10:11
+use core::starknet::{contract_address_const, ContractAddress};
+          ^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"deprecated-starknet-consts"` with no `#[feature("deprecated-starknet-consts")]` attribute. Note: "Use `TryInto::try_into` in const context instead."
+ --> /home/broody/development/templar/packages/pool/src/tests/bench_pool.cairo:10:22
+use core::starknet::{contract_address_const, ContractAddress};
+                     ^^^^^^^^^^^^^^^^^^^^^^
+
+    Finished `dev` profile target(s) in 3 seconds
+
+
+Collected 57 test(s) from pool package
+Running 57 test(s) from src/
+[PASS] pool::tests::test_tree::zero_leaf_is_rejected (l1_gas: ~0, l1_data_gas: ~96, l2_gas: ~533720)
+[PASS] pool::tests::test_hashes::reference_vectors (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~76406)
+[PASS] pool::tests::test_tree::zero_hash_chain_is_self_consistent (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~352008)
+[PASS] pool::tests::test_hashes::inner_hides_the_spend_capability (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~63062)
+[PASS] pool::tests::test_hashes::derivations_are_input_sensitive (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~157036)
+[PASS] pool::tests::test_pool::deposit_zero_amount_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22296485)
+[PASS] pool::tests::bench_pool::bench_apply_1_leaf (l1_gas: ~0, l1_data_gas: ~8064, l2_gas: ~42395690)
+[PASS] pool::tests::bench_pool::bench_apply_1_nullifier (l1_gas: ~0, l1_data_gas: ~4704, l2_gas: ~23295416)
+[PASS] pool::tests::test_pool::controller_mismatch_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~28325438)
+[PASS] pool::tests::bench_pool::bench_baseline_deploy (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~21772644)
+[PASS] pool::tests::test_pool::fee_is_collected_from_caller (l1_gas: ~0, l1_data_gas: ~4896, l2_gas: ~25694754)
+[PASS] pool::tests::test_pool::empty_root_known_from_genesis (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22263084)
+[PASS] pool::tests::test_pool::owner_can_replace_verifier (l1_gas: ~0, l1_data_gas: ~4704, l2_gas: ~22329774)
+[PASS] pool::tests::test_pool::old_owner_loses_fee_control_after_transfer (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22205004)
+[PASS] pool::tests::test_pool::bundle_after_verifier_swap_reverts (l1_gas: ~0, l1_data_gas: ~4704, l2_gas: ~23193988)
+[PASS] pool::tests::test_pool::leaf_commitment_mismatch_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~23000865)
+[PASS] pool::tests::bench_pool::bench_apply_controlled_small (l1_gas: ~0, l1_data_gas: ~8160, l2_gas: ~43232428)
+[PASS] pool::tests::test_pool::rejected_proof_reverts (l1_gas: ~0, l1_data_gas: ~4320, l2_gas: ~21639438)
+[PASS] pool::tests::test_pool::expired_deadline_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~28402068)
+[PASS] pool::tests::test_pool::controlled_spend_happy_path (l1_gas: ~0, l1_data_gas: ~8160, l2_gas: ~43339178)
+[PASS] pool::tests::test_pool::controlled_spend_without_apply_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~28001172)
+[PASS] pool::tests::test_pool::wrong_chain_id_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22679162)
+[PASS] pool::tests::bench_pool::bench_apply_2_leaves_only (l1_gas: ~0, l1_data_gas: ~8352, l2_gas: ~48784738)
+[PASS] pool::tests::test_pool::non_owner_cannot_replace_verifier (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~21996804)
+[PASS] pool::tests::test_pool::forged_extra_nullifier_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~28196856)
+[PASS] pool::tests::bench_pool::bench_apply_2x2_with_public_io (l1_gas: ~0, l1_data_gas: ~8736, l2_gas: ~51637076)
+[PASS] pool::tests::test_pool::missing_nullifier_action_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~28163330)
+[PASS] pool::tests::test_pool::happy_path_full_bundle (l1_gas: ~0, l1_data_gas: ~9120, l2_gas: ~60787558)
+[PASS] pool::tests::bench_pool::bench_deposit (l1_gas: ~0, l1_data_gas: ~8160, l2_gas: ~43079432)
+[PASS] pool::tests::test_pool::non_owner_cannot_set_fee (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22021664)
+[PASS] pool::tests::test_pool::tampered_binding_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22618178)
+[PASS] pool::tests::bench_pool::bench_apply_max (l1_gas: ~0, l1_data_gas: ~9504, l2_gas: ~66420606)
+[PASS] pool::tests::bench_pool::bench_apply_4_leaves_only (l1_gas: ~0, l1_data_gas: ~9024, l2_gas: ~61939322)
+[PASS] pool::tests::test_pool::replay_nullifier_reverts (l1_gas: ~0, l1_data_gas: ~8160, l2_gas: ~44012356)
+[PASS] pool::tests::test_pool::wrong_pool_address_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22529215)
+[PASS] pool::tests::test_pool::wrong_protocol_version_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22660442)
+[PASS] pool::tests::test_pool::non_owner_cannot_transfer_ownership (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22022694)
+[PASS] pool::tests::test_tree::path_verification_two_leaves (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~1679148)
+[PASS] pool::tests::test_tree::first_insert_seeds_zero_chain_and_count (l1_gas: ~0, l1_data_gas: ~7104, l2_gas: ~38080258)
+[PASS] pool::tests::test_tree::path_verification_wrong_path_fails (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~1144954)
+[PASS] pool::tests::test_hashes::derivations_are_deterministic (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~91870)
+[PASS] pool::tests::test_pool::ownership_transfer_moves_owner (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22153954)
+[PASS] pool::tests::test_pool::rejected_controller_signature_reverts (l1_gas: ~0, l1_data_gas: ~4320, l2_gas: ~27117598)
+[PASS] pool::tests::test_pool::deposit_zero_token_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22296585)
+[PASS] pool::tests::test_tree::insert_updates_root_count_and_matches_naive_reference (l1_gas: ~0, l1_data_gas: ~7776, l2_gas: ~70222240)
+[PASS] pool::tests::test_pool::deposit_zero_inner_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22296485)
+[PASS] pool::tests::test_pool::apply_on_ordinary_spend_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~28325438)
+[PASS] pool::tests::test_pool::direct_tree_insert_is_not_an_entrypoint (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22228894)
+[PASS] pool::tests::bench_pool::bench_build_only_noop (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22037569)
+[PASS] pool::tests::test_pool::deposit_pulls_only_from_caller (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22481068)
+[PASS] pool::tests::bench_pool::bench_apply_noop (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~22715664)
+[PASS] pool::tests::test_pool::double_controller_apply_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~28562164)
+[PASS] pool::tests::test_pool::zero_nullifier_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~23014048)
+[PASS] pool::tests::test_pool::deadline_mismatch_reverts (l1_gas: ~0, l1_data_gas: ~4608, l2_gas: ~28325438)
+[PASS] pool::tests::test_pool::controlled_deposit_then_spend (l1_gas: ~0, l1_data_gas: ~8544, l2_gas: ~51598586)
+[PASS] pool::tests::test_tree::root_history_ring_evicts_oldest (l1_gas: ~0, l1_data_gas: ~105600, l2_gas: ~1775828888)
+[PASS] pool::tests::test_pool::stale_root_reverts (l1_gas: ~0, l1_data_gas: ~105984, l2_gas: ~1997862192)
+Tests: 57 passed, 0 failed, 0 ignored, 0 filtered out
+

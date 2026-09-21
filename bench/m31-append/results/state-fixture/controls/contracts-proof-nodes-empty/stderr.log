@@ -1,0 +1,35 @@
+Running as unit: templar-m31-state-contracts-proof-nodes-empty-1789991424853794912.service; invocation ID: 90f46d4ab5cb42c1a4d064494ff3c71e
+
+thread 'main' (1031786) panicked at /home/broody/development/templar/bench/m31-append/state_fixture.rs:123:9:
+fixture differs from canonical reconstruction
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+Command exited with non-zero status 101
+	Command being timed: "/home/broody/development/templar/target/m31-append/state-fixture-build-v4/state-fixture check /home/broody/development/templar/bench/m31-append/results/state-fixture/controls/contracts-proof-nodes-empty/fixture.json /home/broody/development/templar/bench/m31-append/results/state-fixture/controls/contracts-proof-nodes-empty/report.json"
+	User time (seconds): 0.32
+	System time (seconds): 0.03
+	Percent of CPU this job got: 95%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.37
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 83420
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 21515
+	Voluntary context switches: 9
+	Involuntary context switches: 218
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 101
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=101
+Service runtime: 376ms
+CPU time consumed: 362ms
+Memory peak: 512.0K
+Memory swap peak: 0B

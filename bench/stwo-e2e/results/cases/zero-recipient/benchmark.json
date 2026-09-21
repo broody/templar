@@ -1,0 +1,26 @@
+{
+  "case": "zero-recipient",
+  "startup_seconds": 2.002410654000414,
+  "request_seconds": 20.960585724002158,
+  "proving_seconds": 13.542,
+  "virtual_os_seconds": 7.415,
+  "proof_bytes": 236870,
+  "proof_sha256": "d0064ea143b3a416be959237e9ab9036c6789819a8130ce3ea5543ad75087d8b",
+  "peak_rss_gib": 13.761436462402344,
+  "swap_peak_bytes": 0,
+  "local_verification_passed": true,
+  "public_binding_matches": true,
+  "public_values": [
+    "0x54454d504c41525f5632",
+    "0x534e5f5345504f4c4941",
+    "0xba1d723e8d952cb0a8d4612ddb04ef2f7d9a697ba4d30b2e407f91acfe98ad",
+    "0x961db839ec4e3e19c4d15380b9030abee28bcddf537b57d169f0f2912550f",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x2babd68b0d9416254839769bcc49146c3d2023f3f4775d2d8f8e70f48b2ab05"
+  ],
+  "base_block": 15358483,
+  "memory_cap_gib": 16,
+  "cores": 4
+}

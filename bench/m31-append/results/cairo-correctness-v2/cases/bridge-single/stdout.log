@@ -1,0 +1,24 @@
+   Executing templar_m31_append_bridge
+Program output:
+8
+6116411936294045149168452720177
+1
+1110
+194250202315021002790422369058999935285926933295307486729424430452319255097
+2139620970
+0
+81953478838084139214922649031393117662340898249154644072560030397320275174
+1
+Resources:
+	steps: 6,032,137
+	max memory address: 6,288,793
+	memory holes: 387,640
+	builtins:
+		range_check_builtin: 608,841
+		output_builtin: 9
+		poseidon_builtin: 6
+	memory segments:
+		execution: 5,196,991
+		range_check: 608,841
+		poseidon: 36
+		output: 9

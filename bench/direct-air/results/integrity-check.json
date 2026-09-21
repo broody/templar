@@ -1,0 +1,17 @@
+{
+  "vendor_source_files": 111,
+  "intended_generated_deviations": {
+    "circuit_air/src/preprocessed_columns.cairo": "d2569502337a0d5cb0604c9d81f126d6c9a067189e7aced35c0d2b4a5834b5a0",
+    "circuit_air/src/privacy_consts.cairo": "ebf2d002189e8e0ddcb70fa3057e4afa6fdf79dfe0084a38d4b4f59c9fc06757"
+  },
+  "accepted_outer_prover_unchanged": true,
+  "accepted_outer_verifier_unchanged": true,
+  "artifacts_sha256": {
+    "templar_synthetic_circuit_bridge.executable.json": "aed07ae9a7cf30ccbde5beddad9f7c324f4f5a55c051bb1f04a5351fa72e7ddb",
+    "templar_synthetic_statement_account_SyntheticCircuitStatementAccount.contract_class.json": "7adf587155ec8a8f884536bed64908e6a029238904a1c09112c8aee5388cdf93",
+    "templar_synthetic_statement_account_SyntheticCircuitStatementAccount.compiled_contract_class.json": "8522ffd6b2d74da7b2c916f9766bc5f5da2b5e927a07b08b34cc41e5c8dcc11e"
+  },
+  "privacy_qualified": false,
+  "proof1_round_trip_completed": false,
+  "chain_transactions_submitted": 0
+}

@@ -1,0 +1,22 @@
+{
+  "variant": "staged",
+  "fixture": "ordinary",
+  "cap_gib": 10,
+  "rayon_threads": 4,
+  "cpu_cores": 4,
+  "base_block": 15390992,
+  "binary_sha256": "e22a7222bcd272fd661d656a08682ee7e045a698db552571a01b35491014ea06",
+  "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+  "private_request_sha256": "fd48d099eddab05f5560b510190649bdf2803328fc9b9934d88b0015b32bb2db",
+  "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+  "requests": [],
+  "startup_seconds": 0.13290300499647856,
+  "error": "Remote end closed connection without response",
+  "status": "FAILED",
+  "cgroup_peak_gib": 10.0,
+  "peak_rss_gib": 10.075031280517578,
+  "swap_peak_bytes": 0,
+  "oom_kill": 1,
+  "peak_requested_gib": 9.82852885313332,
+  "final_live_requested_gib": 9.82852885313332
+}

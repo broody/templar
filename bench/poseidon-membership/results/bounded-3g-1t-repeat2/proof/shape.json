@@ -1,0 +1,323 @@
+{
+  "components": [
+    {
+      "interaction_base_columns": 56,
+      "log_rows": 7,
+      "name": "poseidon_aggregator",
+      "rows": 128,
+      "trace_columns": 342
+    },
+    {
+      "interaction_base_columns": 24,
+      "log_rows": 10,
+      "name": "poseidon_full_round_chain",
+      "rows": 1024,
+      "trace_columns": 126
+    },
+    {
+      "interaction_base_columns": 36,
+      "log_rows": 12,
+      "name": "poseidon_3_partial_rounds_chain",
+      "rows": 4096,
+      "trace_columns": 169
+    },
+    {
+      "interaction_base_columns": 200,
+      "log_rows": 14,
+      "name": "cube_252",
+      "rows": 16384,
+      "trace_columns": 141
+    },
+    {
+      "interaction_base_columns": 32,
+      "log_rows": 14,
+      "name": "range_check_252_width_27",
+      "rows": 16384,
+      "trace_columns": 20
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 6,
+      "name": "poseidon_round_keys",
+      "rows": 64,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 15,
+      "name": "range_check_3_3_3_3_3",
+      "rows": 32768,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 16,
+      "name": "range_check_4_4_4_4",
+      "rows": 65536,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 8,
+      "name": "range_check_4_4",
+      "rows": 256,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 16,
+      "log_rows": 18,
+      "name": "range_check_9_9",
+      "rows": 262144,
+      "trace_columns": 8
+    },
+    {
+      "interaction_base_columns": 16,
+      "log_rows": 20,
+      "name": "range_check_20",
+      "rows": 1048576,
+      "trace_columns": 8
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 18,
+      "name": "range_check_18",
+      "rows": 262144,
+      "trace_columns": 2
+    }
+  ],
+  "interaction_pow_bits": 24,
+  "pcs_config": {
+    "fri_config": {
+      "fold_step": 4,
+      "log_blowup_factor": 3,
+      "log_last_layer_degree_bound": 0,
+      "n_queries": 23
+    },
+    "lifting_log_size": 23,
+    "pow_bits": 27
+  },
+  "preprocessed": [
+    {
+      "id": "seq_6",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_0",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_1",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_2",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_3",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_4",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_5",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_6",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_7",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_8",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_9",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_10",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_11",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_12",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_13",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_14",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_15",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_16",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_17",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_18",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_19",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_20",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_21",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_22",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_23",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_24",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_25",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_26",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_27",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_28",
+      "log_size": 6
+    },
+    {
+      "id": "poseidon_round_keys_29",
+      "log_size": 6
+    },
+    {
+      "id": "seq_7",
+      "log_size": 7
+    },
+    {
+      "id": "range_check_4_4_column_0",
+      "log_size": 8
+    },
+    {
+      "id": "range_check_4_4_column_1",
+      "log_size": 8
+    },
+    {
+      "id": "range_check_3_3_3_3_3_column_0",
+      "log_size": 15
+    },
+    {
+      "id": "range_check_3_3_3_3_3_column_1",
+      "log_size": 15
+    },
+    {
+      "id": "range_check_3_3_3_3_3_column_2",
+      "log_size": 15
+    },
+    {
+      "id": "range_check_3_3_3_3_3_column_3",
+      "log_size": 15
+    },
+    {
+      "id": "range_check_3_3_3_3_3_column_4",
+      "log_size": 15
+    },
+    {
+      "id": "range_check_4_4_4_4_column_0",
+      "log_size": 16
+    },
+    {
+      "id": "range_check_4_4_4_4_column_1",
+      "log_size": 16
+    },
+    {
+      "id": "range_check_4_4_4_4_column_2",
+      "log_size": 16
+    },
+    {
+      "id": "range_check_4_4_4_4_column_3",
+      "log_size": 16
+    },
+    {
+      "id": "seq_18",
+      "log_size": 18
+    },
+    {
+      "id": "range_check_9_9_column_0",
+      "log_size": 18
+    },
+    {
+      "id": "range_check_9_9_column_1",
+      "log_size": 18
+    },
+    {
+      "id": "seq_20",
+      "log_size": 20
+    }
+  ],
+  "trusted_preprocessed_root": [
+    57,
+    219,
+    244,
+    93,
+    12,
+    105,
+    72,
+    3,
+    143,
+    218,
+    230,
+    175,
+    131,
+    166,
+    98,
+    235,
+    110,
+    99,
+    204,
+    240,
+    95,
+    31,
+    88,
+    222,
+    109,
+    246,
+    100,
+    2,
+    53,
+    158,
+    226,
+    207
+  ]
+}

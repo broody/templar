@@ -1,0 +1,28 @@
+{
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-m31-state-classes-edge-child-xor1-1789991420023714400",
+    "-p",
+    "WorkingDirectory=/home/broody/development/templar",
+    "-p",
+    "MemoryMax=4G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUQuota=100%",
+    "-p",
+    "CPUAffinity=0",
+    "-p",
+    "RuntimeMaxSec=120",
+    "--setenv=PATH=/usr/bin:/home/broody/.cargo/bin:/bin",
+    "/usr/bin/time",
+    "-v",
+    "/home/broody/development/templar/target/m31-append/state-fixture-build-v4/state-fixture",
+    "check",
+    "/home/broody/development/templar/bench/m31-append/results/state-fixture/controls/classes-edge-child-xor1/fixture.json",
+    "/home/broody/development/templar/bench/m31-append/results/state-fixture/controls/classes-edge-child-xor1/report.json"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "block-state-diff-commitment-xor1",
+  "expected": "reject",
+  "exit_code": 101,
+  "passed": true,
+  "input": "bench/m31-append/results/state-fixture/controls/block-state-diff-commitment-xor1/fixture.json",
+  "input_sha256": "3515a369812e482f3f0d3b6b013002874858f9c26fda216ac3980b42a887ba82",
+  "report_path": null,
+  "stdout": "bench/m31-append/results/state-fixture/controls/block-state-diff-commitment-xor1/stdout.log",
+  "stderr": "bench/m31-append/results/state-fixture/controls/block-state-diff-commitment-xor1/stderr.log",
+  "cgroup": "bench/m31-append/results/state-fixture/controls/block-state-diff-commitment-xor1/cgroup.txt"
+}

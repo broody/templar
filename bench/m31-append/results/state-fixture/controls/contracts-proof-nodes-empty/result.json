@@ -1,0 +1,12 @@
+{
+  "name": "contracts-proof-nodes-empty",
+  "expected": "reject",
+  "exit_code": 101,
+  "passed": true,
+  "input": "bench/m31-append/results/state-fixture/controls/contracts-proof-nodes-empty/fixture.json",
+  "input_sha256": "0fb663fa5b62fc530a198642bcbbb71665af2c2e9739b920f4393f400ddcab20",
+  "report_path": null,
+  "stdout": "bench/m31-append/results/state-fixture/controls/contracts-proof-nodes-empty/stdout.log",
+  "stderr": "bench/m31-append/results/state-fixture/controls/contracts-proof-nodes-empty/stderr.log",
+  "cgroup": "bench/m31-append/results/state-fixture/controls/contracts-proof-nodes-empty/cgroup.txt"
+}

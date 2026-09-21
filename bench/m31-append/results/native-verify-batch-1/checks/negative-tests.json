@@ -1,0 +1,30 @@
+{
+  "discarded_multiplicity_rejected": true,
+  "omitted_padding_rejected": true,
+  "rejected_mutations": [
+    "chain",
+    "pool",
+    "old_count",
+    "new_count",
+    "old_root",
+    "new_root",
+    "commitment_substitution",
+    "ordered_commitment_swap",
+    "sibling",
+    "interaction_pow",
+    "base_commitment",
+    "leaf_domain",
+    "leaf_padding",
+    "noncanonical_word",
+    "untrusted_config",
+    "sampled_value",
+    "sum",
+    "preprocessing_root",
+    "extra_empty_pp_sample",
+    "extra_empty_pp_query",
+    "extra_empty_pp_witness",
+    "structurally_valid_unused_output",
+    "trailing_envelope",
+    "truncated_envelope"
+  ]
+}

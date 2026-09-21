@@ -1,0 +1,68 @@
+Running as unit: templar-privacy-cost-unsplit-8g-4c-1789979707654926548.service
+   0.021549575s  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Run privacy bootloader and get the prover input and output preimage
+   0.036863320s  INFO privacy_recursive_prove_low_memory:get_prover_input: privacy_prove: Running the program
+   0.036901562s  INFO privacy_recursive_prove_low_memory:get_prover_input:cairo_run_program:cairo run: cairo_vm::cairo_run: Initializing Cairo runner. layout=stwo_no_ecop proof_mode=true trace_enabled=true disable_trace_padding=true allow_missing_builtins=true
+   0.036907977s  INFO privacy_recursive_prove_low_memory:get_prover_input:cairo_run_program:cairo run: cairo_vm::vm::runners::cairo_runner: Initializing builtins.
+   0.036918885s  INFO privacy_recursive_prove_low_memory:get_prover_input:cairo_run_program:cairo run: cairo_vm::vm::runners::cairo_runner: Initializing segments.
+   0.036921386s  INFO privacy_recursive_prove_low_memory:get_prover_input:cairo_run_program:cairo run: cairo_vm::vm::runners::cairo_runner: Initializing main entrypoint.
+   0.036960008s  INFO privacy_recursive_prove_low_memory:get_prover_input:cairo_run_program:cairo run: cairo_vm::vm::runners::cairo_runner: Initializing zero segments.
+   0.036962418s  INFO privacy_recursive_prove_low_memory:get_prover_input:cairo_run_program:cairo run: cairo_vm::vm::runners::cairo_runner: Initializing VM.
+   0.036964485s  INFO privacy_recursive_prove_low_memory:get_prover_input:cairo_run_program:cairo run: cairo_vm::cairo_run: Running until PC.
+   0.110500154s  INFO privacy_recursive_prove_low_memory:get_prover_input:cairo_run_program:cairo run: cairo_vm::cairo_run: Ending run. disable_trace_padding=true fill_holes=true
+   0.110520382s  INFO privacy_recursive_prove_low_memory:get_prover_input:cairo_run_program:cairo run: cairo_vm::vm::runners::cairo_runner: Relocating memory.
+   0.113265762s  INFO privacy_recursive_prove_low_memory:get_prover_input:cairo_run_program:cairo run: cairo_vm::vm::runners::cairo_runner: Computing effective sizes of segments.
+   0.113283505s  INFO privacy_recursive_prove_low_memory:get_prover_input:cairo_run_program:cairo run: cairo_vm::cairo_run: Reading return values.
+   0.113289572s  INFO privacy_recursive_prove_low_memory:get_prover_input:cairo_run_program:cairo run: cairo_vm::cairo_run: In proof mode, finalizing segments.
+   0.113301934s  INFO privacy_recursive_prove_low_memory:get_prover_input:cairo_run_program:cairo run: cairo_vm::cairo_run: Relocating. relocate_mem=false relocate_trace=false
+   0.113310256s  INFO privacy_recursive_prove_low_memory:get_prover_input: privacy_prove: Reading the bootloader output preimage
+   0.113345106s  INFO privacy_recursive_prove_low_memory:get_prover_input: privacy_prove: Adapting the runner output for the prover
+   0.113351908s  INFO privacy_recursive_prove_low_memory:get_prover_input:adapt: stwo_cairo_adapter::adapter: Num steps: 275850
+   0.115239900s  INFO privacy_recursive_prove_low_memory:get_prover_input:adapt:pad_relocatble_builtin_segments: stwo_cairo_adapter::builtins: Padded builtin segment 'pedersen_builtin' from 33 to 64 instances.
+   0.115334801s  INFO privacy_recursive_prove_low_memory:get_prover_input:adapt:pad_relocatble_builtin_segments: stwo_cairo_adapter::builtins: Padded builtin segment 'range_check_builtin' from 14231 to 16384 instances.
+   0.115339479s  INFO privacy_recursive_prove_low_memory:get_prover_input:adapt:pad_relocatble_builtin_segments: stwo_cairo_adapter::builtins: Padded builtin segment 'bitwise_builtin' from 1 to 16 instances.
+   0.115345659s  INFO privacy_recursive_prove_low_memory:get_prover_input:adapt:pad_relocatble_builtin_segments: stwo_cairo_adapter::builtins: Padded builtin segment 'poseidon_builtin' from 78 to 128 instances.
+   0.126350932s  INFO privacy_recursive_prove_low_memory:get_prover_input:adapt: stwo_cairo_adapter::adapter: Builtin segments: BuiltinSegments { add_mod_builtin: None, bitwise_builtin: Some(MemorySegmentAddresses { begin_addr: 226031, stop_ptr: 226111 }), output: Some(MemorySegmentAddresses { begin_addr: 209454, stop_ptr: 209455 }), mul_mod_builtin: None, pedersen_builtin: Some(MemorySegmentAddresses { begin_addr: 209455, stop_ptr: 209647 }), poseidon_builtin: Some(MemorySegmentAddresses { begin_addr: 226111, stop_ptr: 226879 }), range_check96_builtin: None, range_check_builtin: Some(MemorySegmentAddresses { begin_addr: 209647, stop_ptr: 226031 }), ec_op_builtin: None }
+   0.158248439s  INFO privacy_recursive_prove_low_memory:get_prover_input:adapt: stwo_cairo_adapter::adapter: Opcode counts: [("generic_opcode", 0), ("add_ap_opcode", 15230), ("add_opcode", 35107), ("add_opcode_small", 60315), ("assert_eq_opcode", 7877), ("assert_eq_opcode_double_deref", 70544), ("assert_eq_opcode_imm", 16481), ("call_opcode_abs", 2), ("call_opcode_rel_imm", 2968), ("jnz_opcode_non_taken", 2642), ("jnz_opcode_taken", 18179), ("jump_opcode_rel_imm", 16064), ("jump_opcode_rel", 1), ("jump_opcode_double_deref", 3), ("jump_opcode_abs", 2), ("mul_opcode_small", 15886), ("mul_opcode", 9232), ("ret_opcode", 2970), ("blake_compress_opcode", 2346), ("qm_31_add_mul_opcode", 0)]
+   0.174311062s  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Prepare only the Cairo stage
+   0.513531159s  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Generate the cairo proof
+   2.899455333s  INFO privacy_recursive_prove_low_memory:prove_cairo: stwo_cairo_prover::prover: Witness trace cells: [10161776, 94066912, 100172736]
+  11.384833875s  INFO privacy_recursive_prove_low_memory:prove_cairo:Prove STARKs:prove_ex: stwo::prover: proof_size_estimate=573968
+  11.385988537s  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Cairo stage tree and buffer pool released
+  11.401172282s  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Prepare the cairo proof for the cairo-circuit verifier
+  11.402595702s  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Build the cairo-circuit verifier context
+  11.624932564s  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Prepare only the recursive circuit stage
+  12.387678108s  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Prove the cairo-circuit verifier
+  20.279775386s  INFO privacy_recursive_prove_low_memory:prove_ex: stwo::prover: proof_size_estimate=191460
+  20.279975091s  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Recursive stage tree and buffer pool released
+  20.279979851s  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Prepare the circuit proof for the circuit verifier
+  20.280588191s  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Serialize and compress the proof
+{"blinding_policy":"unchanged inner witness commitment seed and outer query count","bounded_cairo_columns":16,"bounded_circuit_columns":16,"cairo_interaction_pow_bits":24,"cairo_pcs_config":{"fri_config":{"fold_step":4,"log_blowup_factor":3,"log_last_layer_degree_bound":0,"n_queries":23},"lifting_log_size":23,"pow_bits":27},"channel":"Blake2sM31","checkpoint":"local typed CairoProof with auxiliary data and matching output preimage; no config authority","circuit_interaction_pow_bits":20,"circuit_output_addresses":[3,4,2],"circuit_pcs_config":{"fri_config":{"fold_step":4,"log_blowup_factor":2,"log_last_layer_degree_bound":0,"n_queries":35},"lifting_log_size":23,"pow_bits":26},"elapsed_through_artifact_write_seconds":20.282243427,"input_bytes":669569,"load_seconds":0.021410882,"mode":"unsplit","output_preimage_felts":9,"privacy_qualified_by_measurement":false,"proof_bytes":235734,"proof_sha256":"9326c1eaad137c1b865b417b36d041928b1e5d9ec15b363662f0535eed868153","scope":"unchanged fixed Cairo wrapper; synthetic local fixture only","trusted_circuit_preprocessed_root":[1226144497,1215753816,1261723493,447821635,511752374,214804093,1020993193,1889786400],"unsplit_seconds":20.259839896,"verification":"separate verify command, excluded from proving measurement","write_seconds":0.000149301}
+	Command being timed: "/home/broody/development/templar/target/client-privacy-feasibility/bin/fixed-cairo-wrapper unsplit /home/broody/development/templar/target/client-privacy-feasibility/proving-utils/crates/privacy_prove/test_data/privacy_tx_cairo_pie.zip /home/broody/development/templar/bench/client-privacy-feasibility/results/unsplit-8g-4c/output"
+	User time (seconds): 65.04
+	System time (seconds): 5.44
+	Percent of CPU this job got: 342%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:20.55
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 5460532
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 3304134
+	Voluntary context switches: 28712
+	Involuntary context switches: 41182
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 496
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 20.559s
+CPU time consumed: 1min 10.493s
+Memory peak: 3.7M
+Memory swap peak: 0B

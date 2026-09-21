@@ -1,0 +1,12 @@
+{
+  "error": {
+    "code": 41,
+    "data": {
+      "execution_error": "Invalid proof facts: Proof version 88314448135729 (PROOF1) is not allowed under this protocol version.",
+      "transaction_index": 0
+    },
+    "message": "Transaction execution error"
+  },
+  "id": 1,
+  "jsonrpc": "2.0"
+}

@@ -1,0 +1,33 @@
+{
+  "reason": "SWAP_INTENT",
+  "unchanged_pool_and_token_state": true,
+  "nullifiers_checked": true,
+  "before": {
+    "root": 2066674879488402551979857969701471274299643792061307486245514438538815336343,
+    "leaf_count": 1,
+    "token_a_pool": 5000,
+    "token_a_mock": 0,
+    "token_a_adapter": 0,
+    "token_a_relayer": 998999995000,
+    "token_b_pool": 0,
+    "token_b_mock": 100000,
+    "token_b_adapter": 0,
+    "token_b_relayer": 998999900000,
+    "token_a_core": 1000000000,
+    "token_b_core": 1000000000
+  },
+  "after": {
+    "root": 2066674879488402551979857969701471274299643792061307486245514438538815336343,
+    "leaf_count": 1,
+    "token_a_pool": 5000,
+    "token_a_mock": 0,
+    "token_a_adapter": 0,
+    "token_a_relayer": 998999995000,
+    "token_b_pool": 0,
+    "token_b_mock": 100000,
+    "token_b_adapter": 0,
+    "token_b_relayer": 998999900000,
+    "token_a_core": 1000000000,
+    "token_b_core": 1000000000
+  }
+}

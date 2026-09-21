@@ -1,0 +1,62 @@
+{
+  "actual_fee": {
+    "amount": "0xeb429a8a69c960",
+    "unit": "FRI"
+  },
+  "block_hash": "0x13877c335a398169d89a1803ef53e57c235c9ba7482cac17add0412411b040d",
+  "block_number": 15358274,
+  "events": [
+    {
+      "data": [
+        "0x6ecbc38fff40f629202d17fe2ad6c3fa64d2d036de3698fb181b3bc213ce82e",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x0",
+        "0x6049c4bb351cd2baef4d73c4b2c4cc1662189382d4a0060e4c627927be0e7c1",
+        "0x4",
+        "0xba1d723e8d952cb0a8d4612ddb04ef2f7d9a697ba4d30b2e407f91acfe98ad",
+        "0x19de775d92ef74f939812421cc0f88602771dbd7595fb20e85491d429a0f6d",
+        "0x1abe02708463a69d3db5b7304214a1ed92c5c9a572f25251e755eb2cb0f855a",
+        "0x1000",
+        "0x5354574f5f4532455f7665726966696572"
+      ],
+      "from_address": "0x2ceed65a4bd731034c01113685c831b01c15d7d432f71afb1cf1634b53a2125",
+      "keys": [
+        "0x26b160f10156dea0639bec90696772c640b9706a47f5b8c52ea1abe5858b34d"
+      ]
+    },
+    {
+      "data": [
+        "0x1",
+        "0x1",
+        "0x6ecbc38fff40f629202d17fe2ad6c3fa64d2d036de3698fb181b3bc213ce82e"
+      ],
+      "from_address": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+      "keys": [
+        "0x1dcde06aabdbca2f80aa51392b345d7549d7757aa855f7e37f5d335ac8243b1",
+        "0x7cb181b3ae4fc6a6829dc7821c9c86c45493ecefc5f8f0cc90f73d5d8992de2"
+      ]
+    },
+    {
+      "data": [
+        "0xeb429a8a69c960",
+        "0x0"
+      ],
+      "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+      "keys": [
+        "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8"
+      ]
+    }
+  ],
+  "execution_resources": {
+    "l1_data_gas": 608,
+    "l1_gas": 0,
+    "l2_gas": 3416960
+  },
+  "execution_status": "SUCCEEDED",
+  "finality_status": "ACCEPTED_ON_L2",
+  "messages_sent": [],
+  "transaction_hash": "0x7cb181b3ae4fc6a6829dc7821c9c86c45493ecefc5f8f0cc90f73d5d8992de2",
+  "type": "INVOKE"
+}

@@ -1,0 +1,56 @@
+---
+showAskAi: false
+title: Code map
+description: Find the executable push-payment reference, recovery client, and native proof integration.
+---
+
+# Code map
+
+The executable controlled and ordinary push-payment reference is in `bench/controlled-push-e2e/`. The separate ordinary-only evidence remains in `bench/push-e2e/`. Paths below are relative to the repository root. They identify source responsibilities rather than installation steps. The primary packages have not yet adopted this format.
+
+## Keys, delivery, and recovery
+
+| Path | Responsibility | Read alongside |
+| --- | --- | --- |
+| `bench/controlled-push-e2e/protocol.py` | Receiving and viewing keys, seed derivation, note encoding, sealed-box encryption, commitment and nullifier reference | [Notes & ownership](/architecture/notes) |
+| `bench/controlled-push-e2e/encoding.py` | Canonical ciphertext words and public calldata | [Proofs & verification](/architecture/proofs) |
+| `bench/controlled-push-e2e/sync.py` | Pinned-block RPC checks, event retrieval, payload verification, and spent-status reads | [Receiving & recovery](/architecture/receiving) |
+| `bench/controlled-push-e2e/restore.py` | Fresh-process seed restoration and full-view imports | [Receiving & recovery](/architecture/receiving) |
+| `bench/push-e2e/recovery_drills.py` | Missing, corrupted, reordered, and stale history checks against public data | [Implementation status](/status) |
+
+## Pool and native proving
+
+| Path | Responsibility |
+| --- | --- |
+| `bench/controlled-push-e2e/cairo/src/pool.cairo` | Funded deposits, spends, atomic encrypted publication, nullifier checks, withdrawals, fees, and owner configuration |
+| `bench/controlled-push-e2e/cairo/src/spend.cairo` | Public bundle types, ciphertext digest, counted/padded operation binding, and verifier interface |
+| `bench/controlled-push-e2e/cairo/src/tree.cairo` | Depth-32 commitment tree and root history |
+| `bench/controlled-push-e2e/cairo/src/statement.cairo` | Ownership, membership, nullifier, amount, output, and binding checks |
+| `bench/controlled-push-e2e/cairo/src/statement_account.cairo` | Virtual execution entry point and public message |
+| `bench/controlled-push-e2e/cairo/src/proof_adapter.cairo` | Native proof-fact checks and exact public-result binding |
+| `bench/controlled-push-e2e/flow.py` | Funded offline-payment, viewing, restore, spend, and withdrawal lifecycle |
+| `bench/controlled-push-e2e/results/` | Public receipts, proofs, measurements, source hashes, and recovery evidence |
+
+The tree is reused from the pool package. The push note, delivery, spend ABI, and binding must be read together in this reference; substituting similarly named modules from another package does not preserve those semantics.
+
+## Controller approval
+
+`bench/controlled-push-e2e/authorization.py` checks a scoped policy request and signs its canonical transition. `cairo/src/controller.cairo` in that experiment verifies the real Stark signature. The statement recomputes the approved transition from the actual notes, and the pool enforces approval and expiry.
+
+## Production integration boundary
+
+`packages/pool/` contains the existing package implementation and controller-oriented modules. It is not a production implementation of the receiving format described in this guide. `packages/circuit/` is not the selected native S-two statement. Their integration status is tracked separately from successful experimental transactions.
+
+Within this workspace, `docs/push-payment-spec.md` and `docs/adr/0021-push-only-payments.md` record Templar's accepted architecture and first-release scope.
+
+## A useful reading order
+
+Start with `protocol.py` for keys and notes. Read `spend.cairo` and `statement.cairo` together to compare the pool's public encoding with its private checks. Then inspect `pool.cairo`, `proof_adapter.cairo`, and `sync.py` to trace settlement and recovery.
+
+A check made only by a client is not a pool invariant. A valid proof matters only if the adapter selects the intended statement and the pool applies exactly its bound operation. A recovery result also depends on complete encrypted history and a trustworthy canonical checkpoint.
+
+## Return notes and upstream adapters
+
+`bench/return-note-e2e/cairo/src/return_note.cairo` defines `ReturnNote`, `ExecutionIntent` and the external `OpenNoteDeposit` response. Its `pool.cairo` validates execution, funding and atomic publication. `protocol.py` and `encoding.py` define return recovery and intent encoding. The Scarb manifest pins unchanged upstream Ekubo and Vesu adapter sources. `flow.py` exercises native Ekubo settlement and fresh recovery; Vesu mock-vault tests have a separate qualification scope.
+
+The architecture and interface are specified in `docs/return-note-spec.md` and `docs/adr/0023-return-notes-and-adapter-compatibility.md`. See [return notes](/architecture/returns) and [implementation status](/status#return-note-integration).

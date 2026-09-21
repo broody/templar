@@ -1,0 +1,41 @@
+--- a/proving-utils/crates/privacy_prove/src/low_memory.rs
++++ b/proving-utils/crates/privacy_prove/src/low_memory.rs
+@@ -9,9 +9,10 @@
+ #[derive(Clone, Copy)]
+ pub struct LowMemoryOptions {
+     pub cache_cairo_coefficients: bool,
++    pub recompute_cairo_commitments: bool,
+ }
+ impl Default for LowMemoryOptions {
+-    fn default() -> Self { Self { cache_cairo_coefficients: true } }
++    fn default() -> Self { Self { cache_cairo_coefficients: true, recompute_cairo_commitments: false } }
+ }
+ 
+ pub fn privacy_recursive_prove_low_memory(pie: CairoPie, options: LowMemoryOptions) -> Result<PrivacyProofOutput, Box<dyn Error>> {
+@@ -38,8 +39,8 @@
+             polys, CAIRO_PCS_CONFIG.fri_config.log_blowup_factor, &twiddles,
+             cairo_params.store_polynomials_coefficients, Some(cairo_lifting), &pool);
+         info!("Generate the cairo proof");
+-        prove_cairo_with_precompute(&pool, &twiddles, trace,
+-            MaybeOwned::Owned(tree), prover_input, cairo_params)?
++        stwo_cairo_prover::prover::prove_cairo_with_precompute_memory_mode(&pool, &twiddles, trace,
++            MaybeOwned::Owned(tree), prover_input, cairo_params, options.recompute_cairo_commitments)?
+     };
+     info!("Cairo stage tree and buffer pool released");
+     let cairo_verifier_config = get_cairo_verifier_config()?;
+--- a/sequencer/crates/starknet_transaction_prover/src/proving/prover.rs
++++ b/sequencer/crates/starknet_transaction_prover/src/proving/prover.rs
+@@ -23,7 +23,12 @@
+                 Err(std::env::VarError::NotPresent) | Ok("1") => true,
+                 _ => return Err("TEMPLAR_CAIRO_COEFFICIENTS must be 0 or 1".into()),
+             };
+-            Ok(Arc::new(RecursiveProverPrecomputes::LowMemory(LowMemoryOptions { cache_cairo_coefficients })))
++            let recompute_cairo_commitments = match std::env::var("TEMPLAR_RECOMPUTE_CAIRO_COMMITMENTS").as_deref() {
++                Ok("0") => false,
++                Err(std::env::VarError::NotPresent) | Ok("1") => true,
++                _ => return Err("TEMPLAR_RECOMPUTE_CAIRO_COMMITMENTS must be 0 or 1".into()),
++            };
++            Ok(Arc::new(RecursiveProverPrecomputes::LowMemory(LowMemoryOptions { cache_cairo_coefficients, recompute_cairo_commitments })))
+         },
+         Err(std::env::VarError::NotPresent) | Ok("0") => Ok(Arc::new(
+             RecursiveProverPrecomputes::Cached(privacy_prove::prepare_recursive_prover_precomputes()?))),

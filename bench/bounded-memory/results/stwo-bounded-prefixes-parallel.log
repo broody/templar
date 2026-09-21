@@ -1,0 +1,18 @@
+warning: the feature `stdarch_x86_avx512` has been stable since 1.89.0 and no longer requires an attribute to enable
+ --> crates/stwo/src/lib.rs:4:13
+  |
+4 |     feature(stdarch_x86_avx512)
+  |             ^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(stable_features)]` on by default
+
+warning: `stwo` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running unittests src/lib.rs (/home/broody/development/templar/target/bounded-memory/stwo-test-target/debug/deps/stwo-54ad1e7d9d1b0fb7)
+
+running 2 tests
+test prover::air::component_prover::bounded_tests::bounded_prefixes_simd ... ok
+test prover::air::component_prover::bounded_tests::bounded_prefixes_cpu ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 265 filtered out; finished in 0.06s
+

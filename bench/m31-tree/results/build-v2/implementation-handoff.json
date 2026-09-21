@@ -1,0 +1,215 @@
+{
+  "status": "six release units and native full proofs/mutations in both modes pass; browser and repeated benchmarks pending root/Kimi",
+  "scope": "Public synthetic tree membership; mixed adds residual RTN hash union. No private/payment proof or protocol migration.",
+  "compiler": "rustc 1.94.0-nightly (86a49fd71 2026-01-14)\nbinary: rustc\ncommit-hash: 86a49fd71fecd25b0fd20247db0ba95eeceaba28\ncommit-date: 2026-01-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.94.0-nightly\nLLVM version: 21.1.8\n",
+  "wasm_bindgen": "wasm-bindgen 0.2.128",
+  "build_exit_codes": {
+    "native": 0,
+    "unit_targets_no_run": 0,
+    "wasm": 0,
+    "wasm_bindgen": 0
+  },
+  "build_commands": [
+    "python3 bench/m31-tree/client/setup.py",
+    "bash bench/m31-tree/client/build.sh native",
+    "bash bench/m31-tree/client/build.sh test",
+    "bash bench/m31-tree/client/build.sh wasm"
+  ],
+  "build_settings": {
+    "nightly": "nightly-2026-01-15",
+    "jobs": 8,
+    "native_rustflags": "-C target-cpu=native",
+    "wasm_rustflags": "-C target-feature=+simd128 -C link-arg=-zstack-size=8388608 -C link-arg=--max-memory=4294967296"
+  },
+  "unit_command": "target/m31-tree/client-target/release/deps/templar_m31_tree-89b0d6a18384b4b6 --test-threads=1",
+  "unit_test_count": 6,
+  "fixture_command": "target/m31-tree/client-target/release/templar-m31-tree --make-fixtures NEW_DIR",
+  "native_command_template": "env RAYON_NUM_THREADS=1 taskset -c 0 target/m31-tree/client-target/release/templar-m31-tree FIXTURE NEW_DIR",
+  "negative_command_template": "env RAYON_NUM_THREADS=1 taskset -c 0 target/m31-tree/client-target/release/templar-m31-tree --verify-tests PROOF_BIN NEW_DIR",
+  "wasm_api": {
+    "module": "target/m31-tree/pkg/templar_m31_tree.js",
+    "prove": "prove_membership(fixture_json)",
+    "result_getters": [
+      "proof_bytes",
+      "summary_json",
+      "shape_json"
+    ],
+    "verify": "verify_membership(proof_bytes)",
+    "mutations": "test_membership_mutations(proof_bytes)",
+    "phase_callback": "globalThis.onMembershipPhase"
+  },
+  "expected_checks": {
+    "tree_only": {
+      "unchanged_proof_mutations": 19,
+      "boundary_controls": 2
+    },
+    "mixed": {
+      "unchanged_proof_mutations": 17,
+      "boundary_controls": 3
+    }
+  },
+  "config": {
+    "pow_bits": 27,
+    "log_blowup_factor": 3,
+    "n_queries": 23,
+    "fold_step": 4,
+    "last_layer_degree_bound": 0,
+    "interaction_pow_bits": 24,
+    "max_fri_columns": 16,
+    "channel": "Blake2s",
+    "lifting_log_size": {
+      "tree_only": 11,
+      "mixed": 23
+    },
+    "configured_security_metric_bits": 96,
+    "qualification": "No freshly derived exact small-domain soundness bound."
+  },
+  "workload": {
+    "paths": 2,
+    "depth": 32,
+    "M31_requests": 130,
+    "M31_padded_rows": 256,
+    "M31_trace_columns": 1172,
+    "M31_interaction_columns": 4,
+    "mixed_felt_hash_calls": 17,
+    "mixed_felt_permutations": 62
+  },
+  "fixtures": [
+    {
+      "path": "bench/m31-tree/client/fixtures/tree-only.json",
+      "bytes": 209009,
+      "sha256": "826822cd0ea6d44d3850ed23a0bec210b52c0e5b82b1a570502b591115d9f9e2"
+    },
+    {
+      "path": "bench/m31-tree/client/fixtures/mixed.json",
+      "bytes": 251401,
+      "sha256": "b035acbdfa2e997a9053f71fb9151f7e63bce06675025042ec117e1a71449693"
+    },
+    {
+      "path": "bench/m31-tree/client/fixtures/golden-vectors.json",
+      "bytes": 41662,
+      "sha256": "4c461658f5d4e23cdfdc3ed7a79e7a2fdac33d4d1346f7a31151ce595867920e"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "target/m31-tree/client-target/release/templar-m31-tree",
+      "bytes": 14252872,
+      "sha256": "afd206ceed8ebe44127840d4a3a908c48550934408e1c1a38bcba2dde0af6fc6"
+    },
+    {
+      "path": "target/m31-tree/client-target/release/deps/templar_m31_tree-89b0d6a18384b4b6",
+      "bytes": 4650992,
+      "sha256": "99a7fc394ccbad739a69defccdf441af4570d2646715f5f6e80b426e3f198fdb"
+    },
+    {
+      "path": "target/m31-tree/pkg/snippets/templar-m31-tree-ceab9a9cb8577f40/inline0.js",
+      "bytes": 267,
+      "sha256": "d8eea28a8a3cda91e0bef8d77a7039f9efb7c8a40c3960f61822407d6ec97d60"
+    },
+    {
+      "path": "target/m31-tree/pkg/templar_m31_tree.d.ts",
+      "bytes": 3263,
+      "sha256": "77b01c95751de720859c9fae334ef53d386c5ebbd0a018d5c352712527a27c55"
+    },
+    {
+      "path": "target/m31-tree/pkg/templar_m31_tree.js",
+      "bytes": 11056,
+      "sha256": "2789b903fd5338fe91e4d526d849c8f4d0e0780cf3e049baaa606023ba6b1fc5"
+    },
+    {
+      "path": "target/m31-tree/pkg/templar_m31_tree_bg.wasm",
+      "bytes": 11583267,
+      "sha256": "5c67d4a66d880f1d1b199f53b49ce33bfdea61f5ebffda184cca6faa7588746c"
+    },
+    {
+      "path": "target/m31-tree/pkg/templar_m31_tree_bg.wasm.d.ts",
+      "bytes": 1852,
+      "sha256": "824caeb97699259180b80eb7d58bb4ab11b6a49b160e9675397223ecfc1c0015"
+    }
+  ],
+  "source_manifests": [
+    {
+      "path": "target/m31-tree/client-source-manifest.json",
+      "bytes": 2002,
+      "sha256": "017950352f49547e14d65dbe81ebfe279ecde228b4cb4e3f61f66ab189c5224f"
+    },
+    {
+      "path": "target/m31-tree/copied-source-manifest.json",
+      "bytes": 128049,
+      "sha256": "78724075824857191cde5530b76551eada56996ad620cbcdb89e8068dd0c1cca"
+    }
+  ],
+  "logs": [
+    {
+      "path": "target/m31-tree/rebuild-native.log",
+      "bytes": 1028,
+      "sha256": "81c28112d94816703ef7970811f7ef100ba6b0a64d9b9f2b015ac89fc6be8996"
+    },
+    {
+      "path": "target/m31-tree/rebuild-test.log",
+      "bytes": 2056,
+      "sha256": "56c47cf74da7c10c41da7c6d42ed13441208b362e902c8932da2e7e61a9482b6"
+    },
+    {
+      "path": "target/m31-tree/rebuild-wasm.log",
+      "bytes": 1099,
+      "sha256": "7b6c0dfc1e37a790b9b5799fd4359c0566fa93ac3bf60565846a8337a3b140ef"
+    },
+    {
+      "path": "target/m31-tree/rebuild-bindgen.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "notes": [
+    "Version1 including complete client source, artifacts, manifests and build logs is preserved under target/m31-tree/frozen-v1/SHA256.json.",
+    "No dependency source edits: setup.py verifies exact identity with reviewed wasm-membership copies.",
+    "Native implementation smoke and mutation runs were explicitly authorized for debugging; exclude their timings from performance aggregation.",
+    "Browser cross-runtime proof equality remains pending on the frozen v2 package."
+  ],
+  "version": 2,
+  "unit_tests_passed": 6,
+  "change_from_v1": {
+    "cause": "Pinned empty-column Merkle prover has height0 while explicit-lifting verifier constructor has height11.",
+    "fix": "Client verifier normalizes only first trusted zero-column preprocessing tree to height0; requires empty samples, queried values and hash witness.",
+    "unchanged": [
+      "prover",
+      "AIR",
+      "config",
+      "statement",
+      "trusted preprocessing root",
+      "transcript",
+      "dependencies"
+    ],
+    "patch": {
+      "path": "target/m31-tree/empty-preprocessing-adapter.patch",
+      "bytes": 5274,
+      "sha256": "a6a87eae176c0d730f5685dcd3d7c60baf3bafecea0f6438f77795e781f9679c"
+    }
+  },
+  "implementation_smokes": {
+    "exclude_from_performance_aggregation": true,
+    "tree": {
+      "path": "bench/m31-tree/results/implementation-smoke-v2",
+      "mutations": 19,
+      "boundary_controls": 2,
+      "proof": {
+        "path": "bench/m31-tree/results/implementation-smoke-v2/tree/proof.bin",
+        "bytes": 197320,
+        "sha256": "d8f4881c20541419f45a4c96eb114dd82e9903b51bc41bc835a598576c68b332"
+      }
+    },
+    "mixed": {
+      "path": "bench/m31-tree/results/implementation-mixed-smoke-v2",
+      "negatives_path": "bench/m31-tree/results/implementation-mixed-negatives-v2",
+      "mutations": 17,
+      "boundary_controls": 3,
+      "proof": {
+        "path": "bench/m31-tree/results/implementation-mixed-smoke-v2/proof/proof.bin",
+        "bytes": 464900,
+        "sha256": "d069e30789a0459126966b341e9921b1c21c1ade6ca822a08320bc700767e1fd"
+      }
+    }
+  }
+}

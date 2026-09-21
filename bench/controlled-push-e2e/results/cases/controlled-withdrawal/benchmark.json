@@ -1,0 +1,26 @@
+{
+  "case": "controlled-withdrawal",
+  "startup_seconds": 2.0019238569948357,
+  "request_seconds": 19.163246286996582,
+  "proving_seconds": 12.433,
+  "virtual_os_seconds": 6.725,
+  "proof_bytes": 232634,
+  "proof_sha256": "f7302733292dbe48dcfdb4cea76b6bba98a3aef247dccf3a2be706a1c1f42b02",
+  "peak_rss_gib": 13.873775482177734,
+  "swap_peak_bytes": 0,
+  "local_verification_passed": true,
+  "public_binding_matches": true,
+  "public_values": [
+    "0x54454d504c41525f434f4e54524f4c5f504f4331",
+    "0x534e5f5345504f4c4941",
+    "0x6d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+    "0x51c51399b48c0189801f5e15c7fbd01fbfea0b6403c17b6ad020bcf543c61cf",
+    "0x2683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+    "0xeaca73",
+    "0x19864e396c45221514077b34365f7770cecab27d3449504ac0e530d6a6fb025",
+    "0x6f6690a284496499d41f22fd6b2a096bf5031b11e52dfe2b899674c9703d515"
+  ],
+  "base_block": 15385454,
+  "memory_cap_gib": 16,
+  "cores": 4
+}

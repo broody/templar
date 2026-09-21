@@ -1,0 +1,32 @@
+{
+  "actual_fee": {
+    "amount": "0xa3e7dc01e2817dc0",
+    "unit": "FRI"
+  },
+  "block_hash": "0x5c28ad92ad699c0efb51a9133361455c0e1552e2bfb9b1d9c9853bfa400442",
+  "block_number": 15363427,
+  "events": [
+    {
+      "data": [
+        "0xa3e7dc01e2817dc0",
+        "0x0"
+      ],
+      "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+      "keys": [
+        "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8"
+      ]
+    }
+  ],
+  "execution_resources": {
+    "l1_data_gas": 192,
+    "l1_gas": 0,
+    "l2_gas": 616656960
+  },
+  "execution_status": "SUCCEEDED",
+  "finality_status": "ACCEPTED_ON_L2",
+  "messages_sent": [],
+  "transaction_hash": "0x5fa411e6253650feb5803862f99d00774e1fb81678b2c79835c0c83cad818bf",
+  "type": "DECLARE"
+}

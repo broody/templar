@@ -1,0 +1,15 @@
+{
+  "features": "stwo_proving",
+  "artifact_id": "8eaa1763abd7-778a9aad",
+  "source_tree_sha256": "778a9aad893a08cf644233360b64ddbca30f63f0aad6514b4432f9437cd4527e",
+  "binary_sha256": "8eaa1763abd7216f43fff2a935a3646e5643f55763236b41885ee77f5286d471",
+  "source_sha256": {
+    "stwo.patch": "575088cd452ec1f1b2dc399f5b6b0dca3692a1a6c7ba5a38e4b053c941acb287",
+    "stwo-cairo.patch": "fcdadd209dd54740115688c94d206e9d711bddf0d357fed2c1034eb07f447e7f",
+    "stwo-circuits.patch": "c783d392aad381e05c98f3401cb6475108d59bd977d3589c4d0247decd7ea531",
+    "integration.patch": "f07f396378f135e53643366df5f0340ba893b4c08170085749f2d574caceae1c",
+    "setup.py": "50ef0a8368c724008cc1e696db7cc77529156c86772b27ff292f4c38a44765ca",
+    "build.py": "24930bbbdc00e669660fbfb68fc59b2b3461e769dd214f600a2fe27ce6f7eaca"
+  },
+  "cargo_lock_sha256": "28bd9ca4fc35955fac6186f07f178628ca32b6d125064d3964fb4b6a65b9ec0f"
+}

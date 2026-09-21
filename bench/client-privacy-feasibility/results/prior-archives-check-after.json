@@ -1,0 +1,26 @@
+{
+  "bench/wasm-membership/SHA256SUMS": {
+    "manifest_sha256": "1b6602fa09e8303a35582539930f284644e79701302a15b89823c567dc967ac4",
+    "exit_code": 0
+  },
+  "bench/poseidon-membership/SHA256SUMS": {
+    "manifest_sha256": "e457c1ebfcc54add1f670d49eb614c93e77e525e4a3888d6599a63abcbf4a127",
+    "exit_code": 0
+  },
+  "bench/direct-air/SHA256SUMS": {
+    "manifest_sha256": "4dde6e14dc348b59798a260315ae47aa603371692ab005f5fe5047b5a1afc885",
+    "exit_code": 0
+  },
+  "bench/bounded-memory/SHA256SUMS": {
+    "manifest_sha256": "cb2f5e25dcdf19523b71dfb97e06ac7359e1cf647601d2ccb89e2a0b7c861db2",
+    "exit_code": 0
+  },
+  "bench/cairo-memory/SHA256SUMS": {
+    "manifest_sha256": "70a216118521866b67fed8f4a60cd6d11787687639907fe00ab764cf32d99df5",
+    "exit_code": 0
+  },
+  "bench/prover-memory/SHA256SUMS": {
+    "manifest_sha256": "585198127854037adcc0acdb803c6a1fea0fb93429d2a4216fe6e022b03a195e",
+    "exit_code": 0
+  }
+}

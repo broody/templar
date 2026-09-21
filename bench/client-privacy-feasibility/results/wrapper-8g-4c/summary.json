@@ -1,0 +1,28 @@
+{
+  "scope": "Fresh fixed-Cairo wrapper including load/setup/prove/serialization; external verifier excluded",
+  "command": [
+    "/home/broody/development/templar/target/client-privacy-feasibility/bin/fixed-cairo-wrapper",
+    "wrap",
+    "/home/broody/development/templar/bench/client-privacy-feasibility/results/prepare-8g-4c/output/checkpoint.bin",
+    "/home/broody/development/templar/bench/client-privacy-feasibility/results/wrapper-8g-4c/output"
+  ],
+  "binary_sha256": "86073d1ee5b6dfae0264aeddedb5e12d17215aa51480a70a03810f5ef8630b0c",
+  "cap_gib": 8,
+  "cpu_budget_cores": 4,
+  "rayon_workers": 4,
+  "cpu_affinity": "0 1 2 3",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 11.499954277998768,
+  "sampled_prover_peak_rss_gib": 4.782218933105469,
+  "sampled_peak_cgroup_gib": 4.7574920654296875,
+  "effective_peak_cgroup_gib": 4.7574920654296875,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 434,
+  "cgroup_sample_count": 434,
+  "time_largest_process_peak_rss_gib": 4.782218933105469
+}

@@ -1,0 +1,13 @@
+{
+  "status": "failed",
+  "memory_cap_gib": 16,
+  "cores": 4,
+  "local_node_attachment": false,
+  "native_verification_passed": false,
+  "error": "{\"code\": 1000, \"message\": \"Invalid transaction input\", \"data\": \"Transaction execution has failed:\\n0: Error in the called contract (contract address: 0x0224abbc723ec41df538065d8fc9b1d3459960364236e50556c371207970e860, class hash: 0x06ef8a6b896fe830b46f08893a54dcc11853331b3f23fd04834349f87a2cfd48, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\\nExecution failed. Failure reason:\\nError in contract (contract address: 0x0224abbc723ec41df538065d8fc9b1d3459960364236e50556c371207970e860, class hash: 0x06ef8a6b896fe830b46f08893a54dcc11853331b3f23fd04834349f87a2cfd48, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\\n0x4f7574206f6620676173 ('Out of gas').\\n\\n\\nThis is likely caused by l2_gas.max_amount being too low. Set it to the value from starknet_estimateFee, or use 100000000 (0x5f5e100) as a safe upper bound (sufficient for ~1 million Cairo steps).\"}",
+  "error_type": "RuntimeError",
+  "peak_rss_gib": 2.5675277709960938,
+  "cgroup_peak_bytes": 2723426304,
+  "swap_peak_bytes": 0,
+  "resource_samples": 9
+}

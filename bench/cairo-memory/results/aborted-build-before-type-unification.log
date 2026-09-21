@@ -1,0 +1,105 @@
+Running as unit: templar-memory-build-1789958473992180241.service; invocation ID: 920192e1804a482d8c55c223830b53f2
+     Locking 10 packages to latest compatible versions
+      Adding cairo-air v1.2.2 (/home/broody/development/templar/target/cairo-memory/stwo-cairo/stwo_cairo_prover/crates/cairo-air)
+      Adding cairo-program-runner-lib v1.2.2 (/home/broody/development/templar/target/cairo-memory/proving-utils/crates/cairo-program-runner-lib)
+      Adding privacy-circuit-verify v1.2.2 (/home/broody/development/templar/target/cairo-memory/proving-utils/crates/privacy_circuit_verify)
+      Adding privacy-prove v1.2.2 (/home/broody/development/templar/target/cairo-memory/proving-utils/crates/privacy_prove)
+      Adding stwo v2.2.0 (/home/broody/development/templar/target/cairo-memory/stwo/crates/stwo)
+      Adding stwo-cairo-adapter v1.2.2 (/home/broody/development/templar/target/cairo-memory/stwo-cairo/stwo_cairo_prover/crates/adapter)
+      Adding stwo-cairo-common v1.2.2 (/home/broody/development/templar/target/cairo-memory/stwo-cairo/stwo_cairo_prover/crates/common)
+      Adding stwo-cairo-prover v1.2.2 (/home/broody/development/templar/target/cairo-memory/stwo-cairo/stwo_cairo_prover/crates/prover)
+      Adding stwo-cairo-serialize v1.2.2 (/home/broody/development/templar/target/cairo-memory/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize)
+      Adding stwo-cairo-serialize-derive v1.2.2 (/home/broody/development/templar/target/cairo-memory/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize-derive)
+   Compiling salsa v0.26.2
+   Compiling num-prime v0.4.4
+   Compiling stwo v2.2.0 (/home/broody/development/templar/target/cairo-memory/stwo/crates/stwo)
+   Compiling ark-poly v0.5.0
+warning: the feature `stdarch_x86_avx512` has been stable since 1.89.0 and no longer requires an attribute to enable
+ --> /home/broody/development/templar/target/cairo-memory/stwo/crates/stwo/src/lib.rs:4:13
+  |
+4 |     feature(stdarch_x86_avx512)
+  |             ^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(stable_features)]` on by default
+
+   Compiling cairo-vm v3.2.0
+   Compiling cairo-lang-utils v2.19.0-rc.3
+   Compiling cairo-lang-debug v2.19.0-rc.3
+   Compiling cairo-lang-filesystem v2.19.0-rc.3
+   Compiling cairo-lang-sierra v2.19.0-rc.3
+warning: `stwo` (lib) generated 1 warning
+   Compiling cairo-lang-syntax v2.19.0-rc.3
+   Compiling cairo-lang-diagnostics v2.19.0-rc.3
+   Compiling cairo-lang-parser v2.19.0-rc.3
+   Compiling cairo-lang-formatter v2.19.0-rc.3
+   Compiling cairo-lang-defs v2.19.0-rc.3
+   Compiling cairo-lang-sierra-type-size v2.19.0-rc.3
+   Compiling cairo-lang-eq-solver v2.19.0-rc.3
+   Compiling cairo-lang-test-utils v2.19.0-rc.3
+   Compiling cairo-lang-sierra-ap-change v2.19.0-rc.3
+   Compiling cairo-lang-sierra-gas v2.19.0-rc.3
+   Compiling cairo-lang-casm v2.19.0-rc.3
+   Compiling cairo-lang-project v2.19.0-rc.3
+   Compiling cairo-lang-plugins v2.19.0-rc.3
+   Compiling cairo-lang-semantic v2.19.0-rc.3
+   Compiling cairo-lang-sierra-to-casm v2.19.0-rc.3
+   Compiling stwo-constraint-framework v2.2.0 (https://github.com/starkware-libs/stwo?rev=489a0f3e#489a0f3e)
+   Compiling cairo-lang-runnable-utils v2.19.0-rc.3
+   Compiling cairo-lang-starknet-classes v2.19.0-rc.3
+   Compiling stwo-cairo-serialize v1.2.2 (https://github.com/starkware-libs/stwo-cairo?rev=9b6be271#9b6be271)
+   Compiling stwo-cairo-common v1.2.2 (https://github.com/starkware-libs/stwo-cairo?rev=9b6be271#9b6be271)
+   Compiling cairo-lang-lowering v2.19.0-rc.3
+   Compiling circuits v0.1.0 (https://github.com/starkware-libs/stwo-circuits?rev=5ef951a1#5ef951a1)
+   Compiling circuits-stark-verifier v0.1.0 (https://github.com/starkware-libs/stwo-circuits?rev=5ef951a1#5ef951a1)
+   Compiling ark-ec v0.5.0
+   Compiling circuit-common v0.1.0 (https://github.com/starkware-libs/stwo-circuits?rev=5ef951a1#5ef951a1)
+   Compiling stwo-cairo-serialize-derive v1.2.2 (/home/broody/development/templar/target/cairo-memory/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize-derive)
+   Compiling metrics-util v0.19.1
+   Compiling cairo-lang-sierra-generator v2.19.0-rc.3
+   Compiling cairo-lang-compiler v2.19.0-rc.3
+   Compiling stwo-cairo-serialize v1.2.2 (/home/broody/development/templar/target/cairo-memory/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize)
+   Compiling stwo-cairo-common v1.2.2 (/home/broody/development/templar/target/cairo-memory/stwo-cairo/stwo_cairo_prover/crates/common)
+   Compiling cairo-lang-starknet v2.19.0-rc.3
+   Compiling cairo-lang-runner v2.19.0-rc.3
+   Compiling starknet_api v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/starknet_api)
+   Compiling metrics-exporter-prometheus v0.16.2
+   Compiling circuit-verifier v0.1.0 (https://github.com/starkware-libs/stwo-circuits?rev=5ef951a1#5ef951a1)
+   Compiling ark-secp256r1 v0.5.0
+   Compiling ark-secp256k1 v0.5.0
+   Compiling cairo-air v1.2.2 (https://github.com/starkware-libs/stwo-cairo?rev=9b6be271#9b6be271)
+   Compiling apollo_infra v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/apollo_infra)
+   Compiling blockifier v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/blockifier)
+   Compiling circuit-serialize v0.1.0 (https://github.com/starkware-libs/stwo-circuits?rev=5ef951a1#5ef951a1)
+   Compiling circuit-cairo-verifier v0.1.0 (https://github.com/starkware-libs/stwo-circuits?rev=5ef951a1#5ef951a1)
+   Compiling cairo-lang-executable-plugin v2.19.0-rc.3
+   Compiling stwo-air-utils v2.2.0 (https://github.com/starkware-libs/stwo?rev=489a0f3e#489a0f3e)
+   Compiling cairo-lang-executable v2.19.0-rc.3
+   Compiling apollo_compile_to_casm_types v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/apollo_compile_to_casm_types)
+   Compiling stwo-cairo-adapter v1.2.2 (/home/broody/development/templar/target/cairo-memory/stwo-cairo/stwo_cairo_prover/crates/adapter)
+   Compiling starknet_patricia_storage v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/starknet_patricia_storage)
+   Compiling papyrus_common v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/papyrus_common)
+   Compiling cairo-air v1.2.2 (/home/broody/development/templar/target/cairo-memory/stwo-cairo/stwo_cairo_prover/crates/cairo-air)
+   Compiling apollo_storage v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/apollo_storage)
+   Compiling stwo-cairo-prover v1.2.2 (/home/broody/development/templar/target/cairo-memory/stwo-cairo/stwo_cairo_prover/crates/prover)
+   Compiling starknet_patricia v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/starknet_patricia)
+   Compiling apollo_class_manager_types v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/apollo_class_manager_types)
+warning: apollo_starknet_os_program@0.19.0-rc.2: Dumping OS source files...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Compiling starknet_os program...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Compiling starknet_aggregator program...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Compiling virtual_os program...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Done compiling starknet_aggregator. Writing compiled bytes to output directory.
+warning: apollo_starknet_os_program@0.19.0-rc.2: Done compiling virtual_os. Writing compiled bytes to output directory.
+warning: apollo_starknet_os_program@0.19.0-rc.2: Done compiling starknet_os. Writing compiled bytes to output directory.
+   Compiling cairo-lang-execute-utils v2.19.0-rc.3
+   Compiling starknet_committer v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/starknet_committer)
+   Compiling apollo_compilation_utils v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/apollo_compilation_utils)
+   Compiling cairo-program-runner-lib v1.2.2 (/home/broody/development/templar/target/cairo-memory/proving-utils/crates/cairo-program-runner-lib)
+   Compiling apollo_starknet_os_program v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/apollo_starknet_os_program)
+   Compiling apollo_rpc_execution v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/apollo_rpc_execution)
+   Compiling circuit-prover v0.1.0 (https://github.com/starkware-libs/stwo-circuits?rev=5ef951a1#5ef951a1)
+Finished with result: success
+Main processes terminated with: code=killed/status=TERM
+Service runtime: 4min 1.270s
+CPU time consumed: 15min 51.842s
+Memory peak: 4.3G
+Memory swap peak: 0B

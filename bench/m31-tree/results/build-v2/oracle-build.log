@@ -1,0 +1,49 @@
+    Updating crates.io index
+     Locking 40 packages to latest Rust 1.94.0-nightly compatible versions
+ Downloading crates ...
+  Downloaded spin v0.12.3
+  Downloaded num-bigint v0.5.1
+  Downloaded itertools v0.15.0
+  Downloaded rand v0.10.3
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling serde v1.0.229
+   Compiling paste v1.0.15
+   Compiling p3-maybe-rayon v0.7.0 (/home/broody/development/templar/target/m31-tree/upstream-plonky3/maybe-rayon)
+   Compiling either v1.18.0
+   Compiling tracing-core v0.1.36
+   Compiling pin-project-lite v0.2.17
+   Compiling rand_core v0.10.1
+   Compiling thiserror v2.0.20
+   Compiling itertools v0.15.0
+   Compiling rand v0.10.3
+   Compiling num-traits v0.2.19
+   Compiling scopeguard v1.2.0
+   Compiling lock_api v0.4.14
+   Compiling zmij v1.0.23
+   Compiling spin v0.12.3
+   Compiling serde_json v1.0.151
+   Compiling memchr v2.8.3
+   Compiling syn v3.0.6
+   Compiling syn v2.0.119
+   Compiling itoa v1.0.18
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.5.1
+   Compiling serde_derive v1.0.229
+   Compiling thiserror-impl v2.0.20
+   Compiling tracing-attributes v0.1.31
+   Compiling tracing v0.1.44
+   Compiling p3-util v0.7.0 (/home/broody/development/templar/target/m31-tree/upstream-plonky3/util)
+   Compiling p3-field v0.7.0 (/home/broody/development/templar/target/m31-tree/upstream-plonky3/field)
+   Compiling p3-matrix v0.7.0 (/home/broody/development/templar/target/m31-tree/upstream-plonky3/matrix)
+   Compiling p3-symmetric v0.7.0 (/home/broody/development/templar/target/m31-tree/upstream-plonky3/symmetric)
+   Compiling p3-dft v0.7.0 (/home/broody/development/templar/target/m31-tree/upstream-plonky3/dft)
+   Compiling p3-mds v0.7.0 (/home/broody/development/templar/target/m31-tree/upstream-plonky3/mds)
+   Compiling p3-poseidon1 v0.7.0 (/home/broody/development/templar/target/m31-tree/upstream-plonky3/poseidon1)
+   Compiling p3-poseidon2 v0.7.0 (/home/broody/development/templar/target/m31-tree/upstream-plonky3/poseidon2)
+   Compiling p3-mersenne-31 v0.7.0 (/home/broody/development/templar/target/m31-tree/upstream-plonky3/mersenne-31)
+   Compiling templar-m31-plonky3-oracle v0.1.0 (/home/broody/development/templar/bench/m31-tree/client/oracle)
+    Finished `release` profile [optimized] target(s) in 9.10s

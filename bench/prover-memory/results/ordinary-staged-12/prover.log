@@ -1,0 +1,36 @@
+Running as unit: templar-memory-ordinary-staged-12-1789956329891939085.service
+[2m2026-09-21T02:05:29.927444Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: rpc_node_url: <unset> -> https://api.zan.top
+[2m2026-09-21T02:05:29.927461Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: chain_id: SN_MAIN -> SN_SEPOLIA
+[2m2026-09-21T02:05:29.927466Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: port: 3000 -> 31461
+[2m2026-09-21T02:05:29.927470Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: ip: 0.0.0.0 -> 127.0.0.1
+[2m2026-09-21T02:05:29.927472Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: max_concurrent_requests: 2 -> 1
+[2m2026-09-21T02:05:29.927473Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: max_queued_requests: 8 -> 0
+[2m2026-09-21T02:05:29.927476Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: compiled_class_cache_size: 600 -> 16
+[2m2026-09-21T02:05:29.927486Z[0m [32m INFO[0m [2mstarknet_transaction_prover[0m[2m:[0m Starting Starknet transaction prover. [3mversion[0m[2m=[0m"0.19.0-rc.2" [3mgit_sha[0m[2m=[0m"unknown" [3mchain_id[0m[2m=[0mSN_SEPOLIA [3mrpc_node_host[0m[2m=[0mhttps://api.zan.top [3mvalidate_zero_fee_fields[0m[2m=[0mtrue [3mblocking_check_enabled[0m[2m=[0mfalse [3mblocking_check_fail_open[0m[2m=[0mfalse [3mohttp_enabled[0m[2m=[0mfalse
+[2m2026-09-21T02:05:29.927565Z[0m [32m INFO[0m [2mstarknet_transaction_prover[0m[2m:[0m JSON-RPC proving server is running. [3mlocal_address[0m[2m=[0m127.0.0.1:31461 [3mscheme[0m[2m=[0m"http" [3mmax_concurrent_requests[0m[2m=[0m1 [3mmax_connections[0m[2m=[0m10 [3mcors_mode[0m[2m=[0m"disabled" [3mcors_allow_origin[0m[2m=[0m[] [3mohttp_enabled[0m[2m=[0mfalse
+[2m2026-09-21T02:05:30.015625Z[0m [32m INFO[0m [1mprove_transaction[0m[1m{[0m[3mblock_id[0m[2m=[0mNumber(BlockNumber(15390992)) [3mtx_hash[0m[2m=[0m0x2ac6917b585bfa182258918be576d1da48da19d3914b586ac5ae84e160fb131[1m}[0m[2m:[0m [2mstarknet_transaction_prover::running::runner[0m[2m:[0m Starting transaction proving
+[2m2026-09-21T02:05:36.892050Z[0m [32m INFO[0m [1mprove_transaction[0m[1m{[0m[3mblock_id[0m[2m=[0mNumber(BlockNumber(15390992)) [3mtx_hash[0m[2m=[0m0x2ac6917b585bfa182258918be576d1da48da19d3914b586ac5ae84e160fb131[1m}[0m[2m:[0m [2mstarknet_transaction_prover::running::runner[0m[2m:[0m Virtual OS execution resources [3mn_steps[0m[2m=[0m110989 [3mn_memory_holes[0m[2m=[0m1033 [3mbuiltins[0m[2m=[0m{output: 6, range_check: 6113, pedersen: 54, ecdsa: 0, keccak: 0, bitwise: 0, ec_op: 0, poseidon: 209, range_check96: 0, add_mod: 0, mul_mod: 0}
+[2m2026-09-21T02:05:36.892104Z[0m [32m INFO[0m [1mprove_transaction[0m[1m{[0m[3mblock_id[0m[2m=[0mNumber(BlockNumber(15390992)) [3mtx_hash[0m[2m=[0m0x2ac6917b585bfa182258918be576d1da48da19d3914b586ac5ae84e160fb131[1m}[0m[2m:[0m [2mstarknet_transaction_prover::proving::virtual_snos_prover[0m[2m:[0m OS execution completed [3mos_duration_ms[0m[2m=[0m6933
+[2m2026-09-21T02:05:36.892145Z[0m [32m INFO[0m [1mprivacy_recursive_prove_low_memory[0m[2m:[0m [2mprivacy_prove::low_memory[0m[2m:[0m Run privacy bootloader and get the prover input and output preimage
+[2m2026-09-21T02:05:36.908203Z[0m [32m INFO[0m [1mprivacy_recursive_prove_low_memory[0m[2m:[0m[1mget_prover_input[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Running the program
+[2m2026-09-21T02:05:36.998886Z[0m [32m INFO[0m [1mprivacy_recursive_prove_low_memory[0m[2m:[0m[1mget_prover_input[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Reading the bootloader output preimage
+[2m2026-09-21T02:05:36.998953Z[0m [32m INFO[0m [1mprivacy_recursive_prove_low_memory[0m[2m:[0m[1mget_prover_input[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Adapting the runner output for the prover
+[2m2026-09-21T02:05:37.072792Z[0m [32m INFO[0m [1mprivacy_recursive_prove_low_memory[0m[2m:[0m [2mprivacy_prove::low_memory[0m[2m:[0m Prepare only the Cairo stage
+[2m2026-09-21T02:05:37.430499Z[0m [32m INFO[0m [1mprivacy_recursive_prove_low_memory[0m[2m:[0m [2mprivacy_prove::low_memory[0m[2m:[0m Generate the cairo proof
+[2m2026-09-21T02:05:40.065803Z[0m [32m INFO[0m [1mprivacy_recursive_prove_low_memory[0m[2m:[0m[1mprove_cairo[0m[2m:[0m [2mstwo_cairo_prover::prover[0m[2m:[0m Witness trace cells: [10161776, 103968160, 108955840]
+[2m2026-09-21T02:05:44.632939Z[0m [32m INFO[0m [1mprivacy_recursive_prove_low_memory[0m[2m:[0m [2mprivacy_prove::low_memory[0m[2m:[0m Cairo stage tree and buffer pool released
+[2m2026-09-21T02:05:44.647466Z[0m [32m INFO[0m [1mprivacy_recursive_prove_low_memory[0m[2m:[0m [2mprivacy_prove::low_memory[0m[2m:[0m Prepare the cairo proof for the cairo-circuit verifier
+[2m2026-09-21T02:05:44.649127Z[0m [32m INFO[0m [1mprivacy_recursive_prove_low_memory[0m[2m:[0m [2mprivacy_prove::low_memory[0m[2m:[0m Build the cairo-circuit verifier context
+[2m2026-09-21T02:05:44.927764Z[0m [32m INFO[0m [1mprivacy_recursive_prove_low_memory[0m[2m:[0m [2mprivacy_prove::low_memory[0m[2m:[0m Prepare only the recursive circuit stage
+[2m2026-09-21T02:05:45.953839Z[0m [32m INFO[0m [1mprivacy_recursive_prove_low_memory[0m[2m:[0m [2mprivacy_prove::low_memory[0m[2m:[0m Prove the cairo-circuit verifier
+[2m2026-09-21T02:05:51.679140Z[0m [32m INFO[0m [1mprivacy_recursive_prove_low_memory[0m[2m:[0m [2mprivacy_prove::low_memory[0m[2m:[0m Recursive stage tree and buffer pool released
+[2m2026-09-21T02:05:51.679167Z[0m [32m INFO[0m [1mprivacy_recursive_prove_low_memory[0m[2m:[0m [2mprivacy_prove::low_memory[0m[2m:[0m Prepare the circuit proof for the circuit verifier
+[2m2026-09-21T02:05:51.679895Z[0m [32m INFO[0m [1mprivacy_recursive_prove_low_memory[0m[2m:[0m [2mprivacy_prove::low_memory[0m[2m:[0m Serialize and compress the proof
+[2m2026-09-21T02:05:51.689297Z[0m [32m INFO[0m [1mprove_transaction[0m[1m{[0m[3mblock_id[0m[2m=[0mNumber(BlockNumber(15390992)) [3mtx_hash[0m[2m=[0m0x2ac6917b585bfa182258918be576d1da48da19d3914b586ac5ae84e160fb131[1m}[0m[2m:[0m [2mstarknet_transaction_prover::proving::virtual_snos_prover[0m[2m:[0m Proving completed [3mprove_duration_ms[0m[2m=[0m14797
+[2m2026-09-21T02:05:51.689316Z[0m [32m INFO[0m [1mprove_transaction[0m[1m{[0m[3mblock_id[0m[2m=[0mNumber(BlockNumber(15390992)) [3mtx_hash[0m[2m=[0m0x2ac6917b585bfa182258918be576d1da48da19d3914b586ac5ae84e160fb131[1m}[0m[2m:[0m [2mstarknet_transaction_prover::proving::virtual_snos_prover[0m[2m:[0m prove_transaction completed [3mtotal_duration_ms[0m[2m=[0m21730
+Finished with result: success
+Main processes terminated with: code=killed/status=TERM
+Service runtime: 22.566s
+CPU time consumed: 51.871s
+Memory peak: 10.6G
+Memory swap peak: 0B

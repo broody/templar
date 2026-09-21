@@ -1,0 +1,270 @@
+{
+  "status": "PASS",
+  "ordinary_notes_only": true,
+  "stage": 3,
+  "deployment": {
+    "pool": "0x036636caea4e6d63566de391af83a931365c3a3a2fd48c81c4a456bee10d49c0",
+    "statement": "0x01ccc0ef53fa9e37cc4ebc85487d1927279f0cd1d958c854dc38b461a58512f6",
+    "statement_class": "0xe876a4750d6dcbb0ff0cc029dbd839be297a45a0ed48dc9eb24fcb59600f9b",
+    "verifier": "0x01fe28ee742ce6234d298249f7383be6b5cfc97ef460cb60b8a7454d3cec294d",
+    "token": "0x039f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8",
+    "token_a": "0x039f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8",
+    "token_b": "0x0328b0b5dfb7eb09efcf36ac4af4b1da407cbe90ca9519e6f4d02d677e28a044",
+    "adapter": "0x02170da7d3388efdeb86aafb2ed342db69ced37d87801658e6463c96fad2e2b2",
+    "relayer": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+    "start_block": 15389956,
+    "classes": {
+      "Pool": "0x6f75a1437e829c46a53f037b78edc914f1fb815c98bfac19750b93ea1f139c1",
+      "StatementAccount": "0xe876a4750d6dcbb0ff0cc029dbd839be297a45a0ed48dc9eb24fcb59600f9b",
+      "NativeProofVerifier": "0x59bd39a970bd622f4bcfb28e19d11a68a3b280bacbb84d4e5b96c9332f74c07",
+      "EkuboSwapAnonymizer": "0x2b293fbc496757f84123a1bc789b3bf92067920b2e37a78f8268c4bdb731e2e"
+    },
+    "ekubo": {
+      "core": {
+        "address": "0x0444a09d96389aa7148f1aada508e30b71299ffe650d9c97fdaae38cb9a23384",
+        "class_hash": "0x577604a2611c851e9cfc4da2ba7f7fc1d44a9327cc734d68b2b271340a6551c",
+        "block_number": 15389577,
+        "block_hash": "0x2ee12441d2310423ff41ab1fa2997f8f8c266fa60ec2eac0ef41abcb365893b",
+        "source": "https://docs.ekubo.org/reference/contracts/starknet-sepolia/"
+      },
+      "router": {
+        "address": "0x0045f933adf0607292468ad1c1dedaa74d5ad166392590e72676a34d01d7b763",
+        "class_hash": "0x137a5970f752fd80649fb38d684b090decebec4f2853396617e4f2f01e5396a",
+        "block_number": 15389577,
+        "block_hash": "0x2ee12441d2310423ff41ab1fa2997f8f8c266fa60ec2eac0ef41abcb365893b",
+        "source": "https://docs.ekubo.org/reference/contracts/starknet-sepolia/"
+      },
+      "positions": {
+        "address": "0x06a2aee84bb0ed5dded4384ddd0e40e9c1372b818668375ab8e3ec08807417e5",
+        "class_hash": "0xc12f7c0a0bf73e3675345a8d28d26c83db3b13605f2aa33cba8344a0f582b5",
+        "block_number": 15389577,
+        "block_hash": "0x2ee12441d2310423ff41ab1fa2997f8f8c266fa60ec2eac0ef41abcb365893b",
+        "source": "https://docs.ekubo.org/reference/contracts/starknet-sepolia/"
+      }
+    },
+    "pool_key": [
+      1428832039008617000195820088556908623791563621072455733433048352489604685892,
+      1638482101400834274803790307942338246874949356461610145982088101307546600888,
+      0,
+      1000,
+      0
+    ],
+    "protocol": "TEMPLAR_RETURN_POC1",
+    "ordinary_notes_only": true,
+    "upstream_revision": "b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106",
+    "adapter_source_unchanged": true,
+    "synthetic_pair_reused_from": "../defi-return-e2e"
+  },
+  "negative_tests": [
+    "isolated-withdrawal",
+    "stripped-intent-proof",
+    "redirected-return",
+    "changed-call",
+    "changed-return-id",
+    "replay-swap"
+  ],
+  "return_amount": 999,
+  "final_state": {
+    "root": 1011997281831907325622706411720977177665123607317092863313615955118349988041,
+    "leaf_count": 5,
+    "token_a_pool": 4000,
+    "token_a_adapter": 0,
+    "token_a_relayer": 998999991000,
+    "token_a_core": 1000002000,
+    "token_b_pool": 999,
+    "token_b_adapter": 0,
+    "token_b_relayer": 998999900999,
+    "token_b_core": 999998002
+  },
+  "proofs": {
+    "upstream-ekubo-swap": {
+      "case": "upstream-ekubo-swap",
+      "startup_seconds": 2.00277207698673,
+      "request_seconds": 19.11047640700417,
+      "proving_seconds": 12.217,
+      "virtual_os_seconds": 6.889,
+      "proof_bytes": 237926,
+      "proof_sha256": "568fcdf4cfd65022234ade05daf8360ba40e5fcc49fb3bf7d59fff6579ef6a71",
+      "peak_rss_gib": 13.813159942626953,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f52455455524e5f504f4331",
+        "0x534e5f5345504f4c4941",
+        "0x36636caea4e6d63566de391af83a931365c3a3a2fd48c81c4a456bee10d49c0",
+        "0x2b27d4b967a12d047da296ffb8697b668fb9bfffe5b1a59c482650f1d1f558e",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x69f9b3ff7fcf1672cc21e4755b90aacdf457baa169cd84dd8386a26e90b7254"
+      ],
+      "base_block": 15390063,
+      "memory_cap_gib": 16,
+      "cores": 4
+    },
+    "restored-return-payment": {
+      "case": "restored-return-payment",
+      "startup_seconds": 2.0028165240073577,
+      "request_seconds": 19.69231887499336,
+      "proving_seconds": 12.097,
+      "virtual_os_seconds": 7.592,
+      "proof_bytes": 232162,
+      "proof_sha256": "ffe39e1ca606c1457d0299e53c2ca96135c359c13c3b2e692aa81362a5fd090a",
+      "peak_rss_gib": 13.876277923583984,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f52455455524e5f504f4331",
+        "0x534e5f5345504f4c4941",
+        "0x36636caea4e6d63566de391af83a931365c3a3a2fd48c81c4a456bee10d49c0",
+        "0x334de4e709ac9824ac6ae23f26815619e595e987b571337c54c55f8ba99087b",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x69ef7af2ed22cf37e7c04d5321a072d7139fe19aab7e7b5b4b2f922164db125"
+      ],
+      "base_block": 15390192,
+      "memory_cap_gib": 16,
+      "cores": 4
+    }
+  },
+  "transactions": {
+    "deposit-alice": {
+      "transaction_hash": "0x5be03498911b55201c73a0ba665c1d8ae59e851208cbfa0a156598ca82e2ed6",
+      "execution_status": "SUCCEEDED",
+      "block_number": 15390045,
+      "actual_fee": {
+        "amount": "0x5bb5aa28648d8e0",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 4160,
+        "l1_gas": 0,
+        "l2_gas": 23406880
+      },
+      "revert_reason": null
+    },
+    "upstream-ekubo-swap": {
+      "transaction_hash": "0x40506b834bcfaad59274f242d26d9717597358ba8fa76244978a0d01973172",
+      "execution_status": "SUCCEEDED",
+      "block_number": 15390158,
+      "actual_fee": {
+        "amount": "0x192bd13f61fa26d0",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 3936,
+        "l1_gas": 0,
+        "l2_gas": 103155120
+      },
+      "revert_reason": null
+    },
+    "restored-return-payment": {
+      "transaction_hash": "0x58bb385bd744e6ac1960f6f43a40b6ce08208545954c1d80bbec8402efcbbda",
+      "execution_status": "SUCCEEDED",
+      "block_number": 15390222,
+      "actual_fee": {
+        "amount": "0x16b23e01031d7530",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 3488,
+        "l1_gas": 0,
+        "l2_gas": 93014000
+      },
+      "revert_reason": null
+    },
+    "isolated-withdrawal": {
+      "transaction_hash": "0x66d30785c92149d4d78728d1a26a71aab33b32c78d88506add2c45b4738e94c",
+      "execution_status": "REVERTED",
+      "block_number": 15390091,
+      "actual_fee": {
+        "amount": "0x12a51c0d981f8280",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 128,
+        "l1_gas": 0,
+        "l2_gas": 76480640
+      },
+      "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x455845435554494f4e5f5245515549524544 ('EXECUTION_REQUIRED'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n"
+    },
+    "stripped-intent-proof": {
+      "transaction_hash": "0x23379900a6f8f341fab0496e5f439ea43d83aeb4308b4c9b2bb182cd3238462",
+      "execution_status": "REVERTED",
+      "block_number": 15390105,
+      "actual_fee": {
+        "amount": "0x12b6956030959140",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 128,
+        "l1_gas": 0,
+        "l2_gas": 76760640
+      },
+      "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x50524f4f465f42494e44494e47 ('PROOF_BINDING'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n"
+    },
+    "redirected-return": {
+      "transaction_hash": "0x44340a177790a1fe1109f925aa43dbddffa483fefe7a57439e2e4aa526895e2",
+      "execution_status": "REVERTED",
+      "block_number": 15390119,
+      "actual_fee": {
+        "amount": "0x12cd9becd83a5d80",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 128,
+        "l1_gas": 0,
+        "l2_gas": 77129600
+      },
+      "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x455845435554494f4e5f494e54454e54 ('EXECUTION_INTENT'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n"
+    },
+    "changed-call": {
+      "transaction_hash": "0x32f7f84368aa33bce52d9fddfd8e36e7ca59c00999cdbde213653b80b260582",
+      "execution_status": "REVERTED",
+      "block_number": 15390132,
+      "actual_fee": {
+        "amount": "0x12cd9befd88b1500",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 128,
+        "l1_gas": 0,
+        "l2_gas": 77129600
+      },
+      "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x455845435554494f4e5f494e54454e54 ('EXECUTION_INTENT'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n"
+    },
+    "changed-return-id": {
+      "transaction_hash": "0x7fefee8d388f9087309e9eba0040ab1d338a0c346afd56e9e62abb297540190",
+      "execution_status": "REVERTED",
+      "block_number": 15390146,
+      "actual_fee": {
+        "amount": "0x12cd9be7acdbef80",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 128,
+        "l1_gas": 0,
+        "l2_gas": 77129600
+      },
+      "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x455845435554494f4e5f494e54454e54 ('EXECUTION_INTENT'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n"
+    },
+    "replay-swap": {
+      "transaction_hash": "0x32e42e4853b6fdbb04a38ed0aa6d5a4219cb94e82747daa106e17e9fa036d84",
+      "execution_status": "REVERTED",
+      "block_number": 15390169,
+      "actual_fee": {
+        "amount": "0x12e19445fcd90780",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 128,
+        "l1_gas": 0,
+        "l2_gas": 77449600
+      },
+      "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x4e554c4c49464945525f55534544 ('NULLIFIER_USED'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n"
+    }
+  }
+}

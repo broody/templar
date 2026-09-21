@@ -1,0 +1,12 @@
+{
+  "source_revision_from_preserved_evidence": "cd7bc5f4697fb188a27e09f9242f1dd76df8afdc",
+  "binary_matches_preserved_experiment": true,
+  "binary_sha256": "b31d54ce9bb32965658b443be44d308626345676e0811fce0b5084a24fc2ffb8",
+  "source": "/tmp/templar-stwo-privacy-dtgn6e8l/source",
+  "binary": "/tmp/templar-stwo-privacy-dtgn6e8l/source/target/release/deps/privacy_prove-0f4017300f924673",
+  "source_files": {
+    "crates/privacy_prove/src/lib.rs": "02373d7a9cd89f68431e2e7ff5546dbbf1b739758ae6a89a7a9cc056cffba3d1",
+    "crates/privacy_prove/src/tests.rs": "7a694769d1f131719e88635824e26ccbcc2573cda70107bc80f02d088898d303",
+    "Cargo.lock": "6f3afba1c13811fe9044a9639a2ae31d91016d2f6d9ad58b4232bc1eae44f87a"
+  }
+}

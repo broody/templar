@@ -1,0 +1,28 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "4-7",
+    "/home/broody/.cargo/bin/cargo",
+    "+nightly-2026-01-15",
+    "test",
+    "--locked",
+    "--offline",
+    "-p",
+    "stwo-constraint-framework",
+    "--lib",
+    "--features",
+    "prover,parallel"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 2.0244358829950215,
+  "environment": {
+    "PATH": "/usr/bin:/home/broody/.cargo/bin:/bin",
+    "RUSTUP_HOME": "/tmp/templar-stwo-privacy-dtgn6e8l/rustup",
+    "RUSTC_WRAPPER": "",
+    "RUSTFLAGS": "-Ctarget-cpu=native",
+    "CARGO_TARGET_DIR": "/home/broody/development/templar/target/bounded-memory/stwo-test-target",
+    "CARGO_BUILD_JOBS": "4",
+    "RAYON_NUM_THREADS": "4"
+  }
+}

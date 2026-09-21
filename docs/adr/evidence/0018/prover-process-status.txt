@@ -1,0 +1,61 @@
+Name:	starknet_transa
+Umask:	0002
+State:	S (sleeping)
+Tgid:	231964
+Ngid:	0
+Pid:	231964
+PPid:	231963
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 24 27 30 46 100 114 982 983 984 1000 
+NStgid:	231964
+NSpid:	231964
+NSpgid:	231963
+NSsid:	231963
+Kthread:	0
+VmPeak:	16740864 kB
+VmSize:	13308312 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	14910600 kB
+VmRSS:	11572564 kB
+RssAnon:	11487092 kB
+RssFile:	   85472 kB
+RssShmem:	       0 kB
+VmData:	11666324 kB
+VmStk:	     132 kB
+VmExe:	   56392 kB
+VmLib:	    6084 kB
+VmPTE:	   23304 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	9
+SigQ:	0/513702
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000000001000
+SigCgt:	0000000100000440
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	0,0000000f
+Cpus_allowed_list:	0-3
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	65
+nonvoluntary_ctxt_switches:	31
+x86_Thread_features:	
+x86_Thread_features_locked:	

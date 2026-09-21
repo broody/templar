@@ -1,0 +1,381 @@
+{
+  "scope": "isolated model, Cairo execution and earlier standalone privacy prover; no new deployment",
+  "python_tests": 48,
+  "valid_cairo_vectors": 5,
+  "rejected_cairo_vectors": 17,
+  "ciphertext_bytes_per_output": 304,
+  "discovery": {
+    "events": 10000,
+    "matching": 2,
+    "seconds": [
+      1.0354261210013647,
+      1.032806516996061,
+      1.0336429890012369
+    ],
+    "median_seconds": 1.0336429890012369,
+    "ciphertext_download_bytes": 3040000,
+    "includes_network": false,
+    "consumer_hardware": false
+  },
+  "final_balances": {
+    "Alice": 400,
+    "Bob": 310,
+    "Carol": 250,
+    "Dave": 500
+  },
+  "withdrawn": 40,
+  "after_seed_restore": {
+    "incoming": {
+      "as_of_block": 101,
+      "block_hash": "public-fixture-block-101",
+      "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+      "history_complete": true,
+      "missing_payload_indices": [],
+      "received_indices": [
+        2,
+        4,
+        7
+      ],
+      "received_totals": {
+        "0x5678": 1160
+      },
+      "spent_indices": null,
+      "known_unspent": null,
+      "balances": null,
+      "balance_scope": "recoverable protocol-published notes for this receiving address"
+    },
+    "full_view": {
+      "as_of_block": 101,
+      "block_hash": "public-fixture-block-101",
+      "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+      "history_complete": true,
+      "missing_payload_indices": [],
+      "received_indices": [
+        2,
+        4,
+        7
+      ],
+      "received_totals": {
+        "0x5678": 1160
+      },
+      "spent_indices": [
+        2,
+        4
+      ],
+      "known_unspent": {
+        "0x5678": 310
+      },
+      "balances": {
+        "0x5678": 310
+      },
+      "balance_scope": "recoverable protocol-published notes for this receiving address"
+    },
+    "seed_restore": {
+      "as_of_block": 101,
+      "block_hash": "public-fixture-block-101",
+      "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+      "history_complete": true,
+      "missing_payload_indices": [],
+      "received_indices": [
+        2,
+        4,
+        7
+      ],
+      "received_totals": {
+        "0x5678": 1160
+      },
+      "spent_indices": [
+        2,
+        4
+      ],
+      "known_unspent": {
+        "0x5678": 310
+      },
+      "balances": {
+        "0x5678": 310
+      },
+      "balance_scope": "recoverable protocol-published notes for this receiving address"
+    },
+    "after_restored_owner_spend": {
+      "as_of_block": 102,
+      "block_hash": "public-fixture-block-102",
+      "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+      "history_complete": true,
+      "missing_payload_indices": [],
+      "received_indices": [
+        2,
+        4,
+        7
+      ],
+      "received_totals": {
+        "0x5678": 1160
+      },
+      "spent_indices": [
+        2,
+        4,
+        7
+      ],
+      "known_unspent": {
+        "0x5678": 0
+      },
+      "balances": {
+        "0x5678": 0
+      },
+      "balance_scope": "recoverable protocol-published notes for this receiving address"
+    },
+    "total_withdrawn_after_restored_spend": 350
+  },
+  "recovery_demo": {
+    "scope": "local fixture ledger and explicitly trusted checkpoints; no RPC authentication",
+    "keys_are_public_test_fixtures": true,
+    "incoming": {
+      "as_of_block": 101,
+      "block_hash": "public-fixture-after",
+      "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+      "history_complete": true,
+      "missing_payload_indices": [],
+      "received_indices": [
+        0,
+        2
+      ],
+      "received_totals": {
+        "0x5678": 140
+      },
+      "spent_indices": null,
+      "known_unspent": null,
+      "balances": null,
+      "balance_scope": "recoverable protocol-published notes for this receiving address"
+    },
+    "full_view": {
+      "as_of_block": 101,
+      "block_hash": "public-fixture-after",
+      "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+      "history_complete": true,
+      "missing_payload_indices": [],
+      "received_indices": [
+        0,
+        2
+      ],
+      "received_totals": {
+        "0x5678": 140
+      },
+      "spent_indices": [
+        0
+      ],
+      "known_unspent": {
+        "0x5678": 40
+      },
+      "balances": {
+        "0x5678": 40
+      },
+      "balance_scope": "recoverable protocol-published notes for this receiving address"
+    },
+    "seed_restore": {
+      "as_of_block": 101,
+      "block_hash": "public-fixture-after",
+      "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+      "history_complete": true,
+      "missing_payload_indices": [],
+      "received_indices": [
+        0,
+        2
+      ],
+      "received_totals": {
+        "0x5678": 140
+      },
+      "spent_indices": [
+        0
+      ],
+      "known_unspent": {
+        "0x5678": 40
+      },
+      "balances": {
+        "0x5678": 40
+      },
+      "balance_scope": "recoverable protocol-published notes for this receiving address"
+    },
+    "missing_change_payload": {
+      "as_of_block": 101,
+      "block_hash": "public-fixture-after",
+      "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+      "history_complete": false,
+      "missing_payload_indices": [
+        2
+      ],
+      "received_indices": [
+        0
+      ],
+      "received_totals": {
+        "0x5678": 100
+      },
+      "spent_indices": [
+        0
+      ],
+      "known_unspent": {
+        "0x5678": 0
+      },
+      "balances": null,
+      "balance_scope": "recoverable protocol-published notes for this receiving address"
+    },
+    "retry_with_complete_archive": {
+      "as_of_block": 101,
+      "block_hash": "public-fixture-after",
+      "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+      "history_complete": true,
+      "missing_payload_indices": [],
+      "received_indices": [
+        0,
+        2
+      ],
+      "received_totals": {
+        "0x5678": 140
+      },
+      "spent_indices": [
+        0
+      ],
+      "known_unspent": {
+        "0x5678": 40
+      },
+      "balances": {
+        "0x5678": 40
+      },
+      "balance_scope": "recoverable protocol-published notes for this receiving address"
+    },
+    "rejected": {
+      "stale_archive": "archive is not from the pinned canonical block",
+      "old_checkpoint_below_requested_height": "checkpoint older than required block",
+      "modified_payload_with_self_consistent_digest": "event differs from authenticated receipt"
+    },
+    "reorg_rebuilt": {
+      "as_of_block": 102,
+      "block_hash": "public-fixture-new-canonical-branch",
+      "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+      "history_complete": true,
+      "missing_payload_indices": [],
+      "received_indices": [
+        0
+      ],
+      "received_totals": {
+        "0x5678": 100
+      },
+      "spent_indices": [],
+      "known_unspent": {
+        "0x5678": 100
+      },
+      "balances": {
+        "0x5678": 100
+      },
+      "balance_scope": "recoverable protocol-published notes for this receiving address"
+    },
+    "actual_final_spend": {
+      "as_of_block": 102,
+      "block_hash": "public-fixture-fully-spent",
+      "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+      "history_complete": true,
+      "missing_payload_indices": [],
+      "received_indices": [
+        0,
+        2
+      ],
+      "received_totals": {
+        "0x5678": 140
+      },
+      "spent_indices": [
+        0,
+        2
+      ],
+      "known_unspent": {
+        "0x5678": 0
+      },
+      "balances": {
+        "0x5678": 0
+      },
+      "balance_scope": "recoverable protocol-published notes for this receiving address"
+    }
+  },
+  "cairo_comparison_with_poc1": [
+    {
+      "case": "alice-send",
+      "old_steps": 4799,
+      "new_steps": 4908,
+      "old_poseidon": 103,
+      "new_poseidon": 107,
+      "extra_poseidon": 4
+    },
+    {
+      "case": "carol-send",
+      "old_steps": 4798,
+      "new_steps": 4907,
+      "old_poseidon": 103,
+      "new_poseidon": 107,
+      "extra_poseidon": 4
+    },
+    {
+      "case": "bob-spend",
+      "old_steps": 7981,
+      "new_steps": 8199,
+      "old_poseidon": 179,
+      "new_poseidon": 187,
+      "extra_poseidon": 8
+    }
+  ],
+  "proofs": [
+    {
+      "case": "alice-send",
+      "wall_seconds": 11.739859314002388,
+      "peak_rss_gib": 8.744029998779297,
+      "proof_bytes": 231043,
+      "proof_sha256": "d475a29e0ebf21b13b156ff69fced2da223cb1801ec587cc88d84d8ceacb083a",
+      "statement_program_hash": "0x4ab8d7753c61a9b678e6abf40dae8696999e8aeaaca5dd39188e5855eada60e",
+      "verified": true,
+      "modified_output_and_program_rejected": true
+    },
+    {
+      "case": "carol-send",
+      "wall_seconds": 11.284715372996288,
+      "peak_rss_gib": 8.683464050292969,
+      "proof_bytes": 224510,
+      "proof_sha256": "6663e12186ba649c80c12278711f849d8e5345c01dbc83d00900a473b6cbfeaf",
+      "statement_program_hash": "0x4ab8d7753c61a9b678e6abf40dae8696999e8aeaaca5dd39188e5855eada60e",
+      "verified": true,
+      "modified_output_and_program_rejected": true
+    },
+    {
+      "case": "bob-spend",
+      "wall_seconds": 11.484515518997796,
+      "peak_rss_gib": 8.642799377441406,
+      "proof_bytes": 236443,
+      "proof_sha256": "af25f8eb4c6f3716c9fec451427a8f06b4a475f0af1d2e382aaa21fd5c05c979",
+      "statement_program_hash": "0x4ab8d7753c61a9b678e6abf40dae8696999e8aeaaca5dd39188e5855eada60e",
+      "verified": true,
+      "modified_output_and_program_rejected": true
+    },
+    {
+      "case": "restored-owner-spend",
+      "wall_seconds": 11.203204011995695,
+      "peak_rss_gib": 8.786811828613281,
+      "proof_bytes": 226733,
+      "proof_sha256": "e91a0e9589cc34cdc8e04aece638fe07de7c230b0fd88944a9171747ff169d5f",
+      "statement_program_hash": "0x4ab8d7753c61a9b678e6abf40dae8696999e8aeaaca5dd39188e5855eada60e",
+      "verified": true,
+      "modified_output_and_program_rejected": true
+    }
+  ],
+  "source_hashes": {
+    "bench/view-recovery/run_cairo.py": "81ae44d96bd5e943d5f28b5edddb9bef74de9ab30a1008c75b16fa7ba0002841",
+    "bench/view-recovery/test_recovery.py": "00d3aee889812018efcf933a3801e65b8fa54fc32311dd309b7cfa38b662bf26",
+    "bench/view-recovery/protocol.py": "ec4465caad031b1db490b71756fa163f71b2a6f8e134b454c3c9c42eeb4440d3",
+    "bench/view-recovery/prove_standalone.py": "133e429f0bd20ec68855f3ba90ad006fa9ae9daadafa64dafede21d668d36708",
+    "bench/view-recovery/recovery_experiment.py": "14284ec70015d2c3ab5f79b096f75f50deddc50897695f6dcae34cfab079d818",
+    "bench/view-recovery/report.py": "7651eb72ead2527df1ce97085a4501afc2ce8c376bf31a869f2079f3f53e98b5",
+    "bench/view-recovery/recovery.py": "cedc452d5f1144ebb26436ce620a4d22b533e3e39016e73063a6b5be55d7b70c",
+    "bench/view-recovery/test_protocol.py": "9be825a3d96bdfd09bdafb539ee37fe95284610dc722905e087e37061c18d723",
+    "bench/view-recovery/experiment.py": "86756345e97573ab4bcca5532ca5f072836e9572cbfa5ff7c2aa88c5b5c3caa0",
+    "bench/view-recovery/README.md": "da88f4084fdf228d867289b50cd91b9a7634f794fdeb9c615c9f141f13498b55",
+    "bench/view-recovery/cairo/Scarb.toml": "bd0c2e4d8525a6599048844c96437446838d0720bb85ed4207f691eefa6cde6d",
+    "bench/view-recovery/cairo/Scarb.lock": "4e2f2795df5aecd11aedff75f290f510a69fb4d13fc823b3d5f5368fb193ef3b",
+    "bench/view-recovery/cairo/src/lib.cairo": "a5e75def0de83c6a8c77e6b65d13282a8d975a4b351dbdecff095367591c5808",
+    "bench/stwo-e2e/reference.py": "02768dd34010df7b1e811c2560eb7e0797e3c2b41713e60af17cf663f5968291",
+    "docs/adr/0020-full-viewing-and-recovery.md": "935e66997b0616e805369e4c17533d6309521dfcf66cfa620796ee938d52358e"
+  }
+}

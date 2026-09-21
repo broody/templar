@@ -1,0 +1,14 @@
+     Running cairo-test templar_synthetic_circuit_bridge
+warn: `scarb cairo-test` is deprecated and will be removed in a future version.
+help: please migrate to `snforge` for all your testing needs.
+help: to install snforge, please visit: https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html
+help: to learn how to migrate, see: https://foundry-rs.github.io/starknet-foundry/getting-started/first-steps.html#using-snforge-with-existing-scarb-projects
+   Compiling test(templar_synthetic_circuit_bridge_unittest) templar_synthetic_circuit_bridge v0.1.0 (/home/broody/development/templar/bench/direct-air/cairo/bridge/Scarb.toml)
+    Finished `dev` profile target(s) in 5 seconds
+     Testing templar_synthetic_circuit_bridge
+running 4 tests
+test templar_synthetic_circuit_bridge::test::full_pcs_config_rejects_bad_option ... ok
+test templar_synthetic_circuit_bridge::test::full_pcs_config_serde_none ... ok
+test templar_synthetic_circuit_bridge::test::full_pcs_config_serde_some ... ok
+test templar_synthetic_circuit_bridge::test::full_pcs_config_transcript_fixture ... ok
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 filtered out;

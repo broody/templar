@@ -1,0 +1,29 @@
+warning: the feature `stdarch_x86_avx512` has been stable since 1.89.0 and no longer requires an attribute to enable
+ --> crates/stwo/src/lib.rs:4:13
+  |
+4 |     feature(stdarch_x86_avx512)
+  |             ^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(stable_features)]` on by default
+
+warning: `stwo` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+     Running unittests src/lib.rs (/home/broody/development/templar/target/cairo-memory/stwo-test-target/debug/deps/stwo-54ad1e7d9d1b0fb7)
+
+running 13 tests
+test core::vcs_lifted::verifier::tests::test_merkle_duplicate_query_positions ... ok
+test core::vcs_lifted::verifier::tests::test_merkle_invalid_witness ... ok
+test core::vcs_lifted::verifier::tests::test_merkle_invalid_witness_poseidon ... ok
+test core::vcs_lifted::verifier::tests::test_merkle_invalid_value ... ok
+test core::vcs_lifted::verifier::tests::test_merkle_witness_too_long ... ok
+test core::vcs_lifted::verifier::tests::test_merkle_success ... ok
+test prover::vcs_lifted::prover::test::test_decommitment_aux ... ok
+test prover::vcs_lifted::prover::test::test_empty_cols ... ok
+test core::vcs_lifted::verifier::tests::test_merkle_witness_too_short ... ok
+test prover::vcs_lifted::prover::test::test_lifted_decommitted_values ... ok
+test prover::vcs_lifted::prover::test::test_lifted_merkle_leaves ... ok
+test core::vcs_lifted::verifier::tests::test_merkle_success_poseidon ... ok
+test prover::vcs_lifted::prover::test::test_bit_reverse_lifted_merkle_cpu ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 245 filtered out; finished in 0.02s
+

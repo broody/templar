@@ -1,0 +1,12 @@
+{
+  "features": "stwo_proving",
+  "binary_sha256": "d45f739393d497087381fc179391897445d36e983b00278b68c301460896bd7d",
+  "source_sha256": {
+    "stwo.patch": "281426f182f835d98e3bddcd56119c3b06f2522c697cbb678841fbed55f1cf28",
+    "stwo-cairo.patch": "3305da78cedb744a2649dc57b3700dfd64165e937a7500fb62b44aaeb81a18a4",
+    "integration.patch": "8450f40092379384f741ad751247189b03e7e7061c0fa086273467b62d1caefe",
+    "setup.py": "f66b5ccf901eb383c7113d73a5a25a660af13dc98bc571496dad46568f0bc9a3",
+    "build.py": "cf9f912d56ba8321e6f523da6a5e7536c7bd7c14d82efbf8861ae4c9dc30a47d"
+  },
+  "cargo_lock_sha256": "5958d68089fe5f213a9fff97846cf20535dd07db5bbe88d4900788b219ca2533"
+}

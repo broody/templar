@@ -1,0 +1,58 @@
+     Running cairo-test templar_synthetic_circuit_bridge
+warn: `scarb cairo-test` is deprecated and will be removed in a future version.
+help: please migrate to `snforge` for all your testing needs.
+help: to install snforge, please visit: https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html
+help: to learn how to migrate, see: https://foundry-rs.github.io/starknet-foundry/getting-started/first-steps.html#using-snforge-with-existing-scarb-projects
+   Compiling test(templar_synthetic_circuit_bridge_unittest) templar_synthetic_circuit_bridge v0.1.0 (/home/broody/development/templar/bench/direct-air/cairo/bridge/Scarb.toml)
+error[E2075]: Unsupported use item in statement.
+ --> /home/broody/development/templar/bench/direct-air/cairo/bridge/src/test.cairo:6:39
+    use stwo_verifier_core::channel::{Channel, ChannelTrait};
+                                      ^^^^^^^
+
+error[E2075]: Unsupported use item in statement.
+ --> /home/broody/development/templar/bench/direct-air/cairo/bridge/src/test.cairo:7:42
+    use stwo_verifier_core::fields::m31::m31;
+                                         ^^^
+
+error[E2075]: Unsupported use item in statement.
+ --> /home/broody/development/templar/bench/direct-air/cairo/bridge/src/test.cairo:8:43
+    use stwo_verifier_core::fields::qm31::QM31Trait;
+                                          ^^^^^^^^^
+
+error[E2075]: Unsupported use item in statement.
+ --> /home/broody/development/templar/bench/direct-air/cairo/bridge/src/test.cairo:9:34
+    use stwo_verifier_core::pcs::PcsConfigTrait;
+                                 ^^^^^^^^^^^^^^
+
+error[E0006]: Type not found.
+ --> /home/broody/development/templar/bench/direct-air/cairo/bridge/src/test.cairo:12:22
+    let mut channel: Channel = Default::default();
+                     ^^^^^^^
+
+error[E0002]: Method `mix_felts` not found on type `<missing>`. Consider importing one of the following traits: `stwo_circuit_air::prelude::ChannelTrait`.
+ --> /home/broody/development/templar/bench/direct-air/cairo/bridge/src/test.cairo:13:13
+    channel.mix_felts([QM31Trait::from_fixed_array([m31(0); 4])].span());
+            ^^^^^^^^^
+
+error[E0006]: Identifier not found.
+ --> /home/broody/development/templar/bench/direct-air/cairo/bridge/src/test.cairo:13:24
+    channel.mix_felts([QM31Trait::from_fixed_array([m31(0); 4])].span());
+                       ^^^^^^^^^
+
+error[E0006]: Function not found.
+ --> /home/broody/development/templar/bench/direct-air/cairo/bridge/src/test.cairo:13:53
+    channel.mix_felts([QM31Trait::from_fixed_array([m31(0); 4])].span());
+                                                    ^^^
+
+error[E0002]: Method `mix_into` not found on type `stwo_verifier_core::pcs::PcsConfig`. Consider importing one of the following traits: `stwo_verifier_core::pcs::PcsConfigTrait`.
+ --> /home/broody/development/templar/bench/direct-air/cairo/bridge/src/test.cairo:14:12
+    config.mix_into(ref channel);
+           ^^^^^^^^
+
+error[E0002]: Method `draw_u32s` not found on type `<missing>`. Consider importing one of the following traits: `stwo_circuit_air::prelude::ChannelTrait`.
+ --> /home/broody/development/templar/bench/direct-air/cairo/bridge/src/test.cairo:16:17
+        channel.draw_u32s() == [
+                ^^^^^^^^^
+
+error: could not compile `templar_synthetic_circuit_bridge` due to 10 previous errors
+Error: `scarb` command exited with error

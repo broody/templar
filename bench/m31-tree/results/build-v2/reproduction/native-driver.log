@@ -1,0 +1,233 @@
+=== native-tree-v2-1g-r1 start 2026-09-21T17:53:25+08:00
+{
+  "scope": "tree-only native proof v2: 2 public depth-32 M31 paths, 130 permutations padded to 256 rows, lifting log 11; 1 GiB cgroup, no swap, 1 pinned CPU, 1 prover worker",
+  "command": [
+    "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree",
+    "bench/m31-tree/client/fixtures/tree-only.json",
+    "bench/m31-tree/results/native-tree-v2-1g-r1/proof"
+  ],
+  "binary_sha256": "afd206ceed8ebe44127840d4a3a908c48550934408e1c1a38bcba2dde0af6fc6",
+  "cap_gib": 1,
+  "cpu_budget_cores": 1,
+  "prover_workers": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 0.611218182995799,
+  "sampled_command_peak_rss_gib": 0.015796661376953125,
+  "sampled_peak_cgroup_gib": 0.011867523193359375,
+  "effective_peak_cgroup_gib": 0.011867523193359375,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 21,
+  "cgroup_sample_count": 19,
+  "time_largest_process_peak_rss_gib": 0.016994476318359375
+}
+=== native-tree-v2-1g-r1 ok 2026-09-21T17:53:26+08:00
+=== native-tree-v2-1g-r2 start 2026-09-21T17:53:26+08:00
+{
+  "scope": "tree-only native proof v2 repeat 2; same fixture/caps as r1; deterministic-fixture runtime stability, not a PoW distribution",
+  "command": [
+    "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree",
+    "bench/m31-tree/client/fixtures/tree-only.json",
+    "bench/m31-tree/results/native-tree-v2-1g-r2/proof"
+  ],
+  "binary_sha256": "afd206ceed8ebe44127840d4a3a908c48550934408e1c1a38bcba2dde0af6fc6",
+  "cap_gib": 1,
+  "cpu_budget_cores": 1,
+  "prover_workers": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 0.6049734580010409,
+  "sampled_command_peak_rss_gib": 0.015804290771484375,
+  "sampled_peak_cgroup_gib": 0.011871337890625,
+  "effective_peak_cgroup_gib": 0.011871337890625,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 20,
+  "cgroup_sample_count": 19,
+  "time_largest_process_peak_rss_gib": 0.017009735107421875
+}
+=== native-tree-v2-1g-r2 ok 2026-09-21T17:53:27+08:00
+=== native-tree-v2-1g-r3 start 2026-09-21T17:53:27+08:00
+{
+  "scope": "tree-only native proof v2 repeat 3; same fixture/caps as r1",
+  "command": [
+    "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree",
+    "bench/m31-tree/client/fixtures/tree-only.json",
+    "bench/m31-tree/results/native-tree-v2-1g-r3/proof"
+  ],
+  "binary_sha256": "afd206ceed8ebe44127840d4a3a908c48550934408e1c1a38bcba2dde0af6fc6",
+  "cap_gib": 1,
+  "cpu_budget_cores": 1,
+  "prover_workers": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 0.6050580129958689,
+  "sampled_command_peak_rss_gib": 0.015796661376953125,
+  "sampled_peak_cgroup_gib": 0.012115478515625,
+  "effective_peak_cgroup_gib": 0.012115478515625,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 20,
+  "cgroup_sample_count": 18,
+  "time_largest_process_peak_rss_gib": 0.016994476318359375
+}
+=== native-tree-v2-1g-r3 ok 2026-09-21T17:53:27+08:00
+=== native-mixed-v2-3g-r1 start 2026-09-21T17:53:27+08:00
+{
+  "scope": "mixed native proof v2: M31 tree plus 17 felt252 hash calls / 62 Hades permutations union workload, lifting log 23; 3 GiB cgroup, no swap, 1 pinned CPU, 1 prover worker",
+  "command": [
+    "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree",
+    "bench/m31-tree/client/fixtures/mixed.json",
+    "bench/m31-tree/results/native-mixed-v2-3g-r1/proof"
+  ],
+  "binary_sha256": "afd206ceed8ebe44127840d4a3a908c48550934408e1c1a38bcba2dde0af6fc6",
+  "cap_gib": 3,
+  "cpu_budget_cores": 1,
+  "prover_workers": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 16.505613682995318,
+  "sampled_command_peak_rss_gib": 1.8992195129394531,
+  "sampled_peak_cgroup_gib": 1.8966026306152344,
+  "effective_peak_cgroup_gib": 1.8966026306152344,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 633,
+  "cgroup_sample_count": 632,
+  "time_largest_process_peak_rss_gib": 1.8992195129394531
+}
+=== native-mixed-v2-3g-r1 ok 2026-09-21T17:53:44+08:00
+=== native-mixed-v2-3g-r2 start 2026-09-21T17:53:44+08:00
+{
+  "scope": "mixed native proof v2 repeat 2; same fixture/caps as r1",
+  "command": [
+    "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree",
+    "bench/m31-tree/client/fixtures/mixed.json",
+    "bench/m31-tree/results/native-mixed-v2-3g-r2/proof"
+  ],
+  "binary_sha256": "afd206ceed8ebe44127840d4a3a908c48550934408e1c1a38bcba2dde0af6fc6",
+  "cap_gib": 3,
+  "cpu_budget_cores": 1,
+  "prover_workers": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 16.25661134099937,
+  "sampled_command_peak_rss_gib": 1.8993186950683594,
+  "sampled_peak_cgroup_gib": 1.8964080810546875,
+  "effective_peak_cgroup_gib": 1.8964080810546875,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 623,
+  "cgroup_sample_count": 623,
+  "time_largest_process_peak_rss_gib": 1.8993186950683594
+}
+=== native-mixed-v2-3g-r2 ok 2026-09-21T17:54:00+08:00
+=== native-mixed-v2-3g-r3 start 2026-09-21T17:54:00+08:00
+{
+  "scope": "mixed native proof v2 repeat 3; same fixture/caps as r1",
+  "command": [
+    "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree",
+    "bench/m31-tree/client/fixtures/mixed.json",
+    "bench/m31-tree/results/native-mixed-v2-3g-r3/proof"
+  ],
+  "binary_sha256": "afd206ceed8ebe44127840d4a3a908c48550934408e1c1a38bcba2dde0af6fc6",
+  "cap_gib": 3,
+  "cpu_budget_cores": 1,
+  "prover_workers": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 16.355486638000002,
+  "sampled_command_peak_rss_gib": 1.8990058898925781,
+  "sampled_peak_cgroup_gib": 1.8964004516601562,
+  "effective_peak_cgroup_gib": 1.8964004516601562,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 627,
+  "cgroup_sample_count": 626,
+  "time_largest_process_peak_rss_gib": 1.8990058898925781
+}
+=== native-mixed-v2-3g-r3 ok 2026-09-21T17:54:17+08:00
+=== native-mixed-v2-2g-r1 start 2026-09-21T17:54:17+08:00
+{
+  "scope": "mixed native proof v2 2 GiB probe r1; same workload, tighter cap",
+  "command": [
+    "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree",
+    "bench/m31-tree/client/fixtures/mixed.json",
+    "bench/m31-tree/results/native-mixed-v2-2g-r1/proof"
+  ],
+  "binary_sha256": "afd206ceed8ebe44127840d4a3a908c48550934408e1c1a38bcba2dde0af6fc6",
+  "cap_gib": 2,
+  "cpu_budget_cores": 1,
+  "prover_workers": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 16.351092929995502,
+  "sampled_command_peak_rss_gib": 1.8991928100585938,
+  "sampled_peak_cgroup_gib": 1.8965988159179688,
+  "effective_peak_cgroup_gib": 1.8965988159179688,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 629,
+  "cgroup_sample_count": 628,
+  "time_largest_process_peak_rss_gib": 1.8991928100585938
+}
+=== native-mixed-v2-2g-r1 ok 2026-09-21T17:54:33+08:00
+=== native-mixed-v2-2g-r2 start 2026-09-21T17:54:33+08:00
+{
+  "scope": "mixed native proof v2 2 GiB probe r2; fresh-process repetition after r1 success",
+  "command": [
+    "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree",
+    "bench/m31-tree/client/fixtures/mixed.json",
+    "bench/m31-tree/results/native-mixed-v2-2g-r2/proof"
+  ],
+  "binary_sha256": "afd206ceed8ebe44127840d4a3a908c48550934408e1c1a38bcba2dde0af6fc6",
+  "cap_gib": 2,
+  "cpu_budget_cores": 1,
+  "prover_workers": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 16.474120265993406,
+  "sampled_command_peak_rss_gib": 1.89923095703125,
+  "sampled_peak_cgroup_gib": 1.8965263366699219,
+  "effective_peak_cgroup_gib": 1.8965263366699219,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 635,
+  "cgroup_sample_count": 634,
+  "time_largest_process_peak_rss_gib": 1.89923095703125
+}
+=== native-mixed-v2-2g-r2 ok 2026-09-21T17:54:50+08:00
+=== ALL NATIVE RUNS OK 2026-09-21T17:54:50+08:00

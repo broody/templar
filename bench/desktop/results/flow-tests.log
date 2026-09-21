@@ -1,0 +1,65 @@
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.10s
+   Compiling test(desktop_unittest) desktop v0.1.0 (/home/broody/development/templar/bench/desktop/cairo/Scarb.toml)
+warn[E2100]: Unused import: `desktop::token::MockERC20::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/desktop/cairo/src/token.cairo:9:59
+        Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `desktop::token::MockERC20::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/desktop/cairo/src/token.cairo:10:9
+        StoragePointerWriteAccess,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"corelib-internal-use"` with no `#[feature("corelib-internal-use")]` attribute. Note: "Use `starknet` directly"
+ --> /home/broody/development/templar/bench/desktop/cairo/src/token.cairo:6:15
+    use core::starknet::{get_caller_address, ContractAddress};
+              ^^^^^^^^
+
+    Finished `dev` profile target(s) in 7 seconds
+
+
+Collected 6 test(s) from desktop package
+Running 6 test(s) from src/
+BENCH_CONTEXT 393402133025997798000961 2729803221271570066613690517647409316053702653133109971683405512948856058382 1141294416851960555827485770824555636061013194558187036781199905421522604210 469394814521890341860918960550914
+[PASS] desktop::flow_tests::export_context (l1_gas: ~0, l1_data_gas: ~7008, l2_gas: ~90056706)
+        sierra gas: 61916706
+        syscalls: (StorageWrite: 73, Deploy: 3, GetExecutionInfo: 1)
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] desktop::flow_tests::funded_baseline (l1_gas: ~0, l1_data_gas: ~13824, l2_gas: ~243498470)
+        sierra gas: 186816470
+        syscalls: (StorageRead: 278, StorageWrite: 231, CallContract: 7, GetExecutionInfo: 7, Deploy: 3)
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] desktop::flow_tests::redirected_withdrawal_rejected (l1_gas: ~0, l1_data_gas: ~13824, l2_gas: ~517015515)
+        sierra gas: 460333515
+        syscalls: (StorageRead: 280, StorageWrite: 232, Keccak: 82, GetExecutionInfo: 9, CallContract: 8, Deploy: 3)
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] desktop::flow_tests::alice_payment (l1_gas: ~0, l1_data_gas: ~14880, l2_gas: ~639773937)
+        sierra gas: 578669937
+        syscalls: (StorageRead: 544, StorageWrite: 379, Keccak: 82, CallContract: 12, GetExecutionInfo: 10, Deploy: 3)
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] desktop::flow_tests::replay_rejected (l1_gas: ~0, l1_data_gas: ~14880, l2_gas: ~908852212)
+        sierra gas: 847748212
+        syscalls: (StorageRead: 544, StorageWrite: 380, Keccak: 164, GetExecutionInfo: 12, CallContract: 11, Deploy: 3)
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] desktop::flow_tests::deposit_payment_withdrawal (l1_gas: ~0, l1_data_gas: ~14976, l2_gas: ~910908220)
+        sierra gas: 849402220
+        syscalls: (StorageRead: 554, StorageWrite: 386, Keccak: 164, CallContract: 15, GetExecutionInfo: 13, Deploy: 3)
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+Tests: 6 passed, 0 failed, 0 ignored, 11 filtered out
+

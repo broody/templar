@@ -1,0 +1,3 @@
+{"status":"compiling","message":"templar_synthetic_statement_account v0.1.0 (/home/broody/development/templar/bench/direct-air/cairo/statement_account/Scarb.toml)"}
+{"status":"finished","message":"`contract` profile target(s) in 6 seconds"}
+{"command":"declare","error":"Failed to build contract: Failed to load artifacts. Make sure you have enabled sierra code generation in Scarb.toml: `universal-sierra-compiler` binary not available. Make sure it is installed https://github.com/software-mansion/universal-sierra-compiler and available in PATH or set via UNIVERSAL_SIERRA_COMPILER.: cannot find binary path","type":"error"}

@@ -1,0 +1,28 @@
+{
+  "source_hashes": {
+    "cairo/src/lib.cairo": "d516f64569b4f2c86a1d0f090ea8cb5c69ed7aeb2f87d88f479c0d409d996469",
+    "cairo/src/pool.cairo": "abad6630cf0f0360e60551b28dd2ada15ef13ccaa2444728d18a76bbad410894",
+    "cairo/src/proof_adapter.cairo": "c60ade37a138681c78f093a3ee25d9fccfc9133e1ffa9fcbc4efa21b8ae776e5",
+    "cairo/src/return_note.cairo": "6463ad12337a63c14f3f2f130f2854a06feaaced409c3396e169f072c65bfe46",
+    "cairo/src/spend.cairo": "234acdd2cd3134b136990fc108de924982f2c2bdf3a0a2fe9b92fbbfcf475e4a",
+    "cairo/src/statement.cairo": "8aa646ba79a6b41cc92336c853217f463215ec0578467dbccd07009a137967be",
+    "cairo/src/statement_account.cairo": "ddbc22452636381e7d6db0983e7ce06aa76695250e7b7e358ba0712fdecfeea4",
+    "cairo/src/test_token.cairo": "d80a124388d1149e89fa23c1e0158614d46b41a06236eeacb6eee2bf95c93ea4",
+    "cairo/src/tests/adapter.cairo": "fbce99e1406e6c30c91ad4dc5c21da0db57bbcce776b528bd9d1f8f79e077500",
+    "cairo/src/tests/golden.cairo": "21423cd3dcab73d789ddc3cda24d8e49d64309f7e49892d1701a34c821f669b1",
+    "cairo/src/tests/mock_verifier.cairo": "63841c3b5fe1dd1fda8ec01a8dab0844885ab2df55f3a402c3efd11970bf314b",
+    "cairo/src/tests/test_return_note.cairo": "9a7a7dd1c41c1e526c4953cfb03d05d2d5abf93b5bbbef473ad39a690aeef85f",
+    "cairo/src/tests/test_vesu.cairo": "d3e6032b5704794b7b48899b5d18575089e392f05331b2fb03e8b36328bc66fa",
+    "cairo/src/tests.cairo": "a4a1634abd91e674e45e7a4728400499055126950e80c094fb8e35d35567230c",
+    "cairo/src/tree.cairo": "995e89a06f6a73bc1831fcea7586ef49128e5fa6649536ea557f1b4de4080dcf"
+  },
+  "classes": {
+    "Pool": "0x6f75a1437e829c46a53f037b78edc914f1fb815c98bfac19750b93ea1f139c1",
+    "StatementAccount": "0xe876a4750d6dcbb0ff0cc029dbd839be297a45a0ed48dc9eb24fcb59600f9b",
+    "NativeProofVerifier": "0x59bd39a970bd622f4bcfb28e19d11a68a3b280bacbb84d4e5b96c9332f74c07",
+    "EkuboSwapAnonymizer": "0x2b293fbc496757f84123a1bc789b3bf92067920b2e37a78f8268c4bdb731e2e"
+  },
+  "scarb_lock_sha256": "17fd42e62cec3e18778bee6ec16275fbbe4a21bfc13fa3fd00214fdf3232e172",
+  "upstream_revision": "b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106",
+  "adapter_source_unchanged": true
+}

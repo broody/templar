@@ -1,0 +1,28 @@
+{
+  "scope": "Public synthetic Cairo checkpoint preparation; excludes recursion and verification",
+  "command": [
+    "/home/broody/development/templar/target/client-privacy-feasibility/bin/fixed-cairo-wrapper",
+    "prepare",
+    "/home/broody/development/templar/target/client-privacy-feasibility/proving-utils/crates/privacy_prove/test_data/privacy_tx_cairo_pie.zip",
+    "/home/broody/development/templar/bench/client-privacy-feasibility/results/prepare-8g-4c/output"
+  ],
+  "binary_sha256": "86073d1ee5b6dfae0264aeddedb5e12d17215aa51480a70a03810f5ef8630b0c",
+  "cap_gib": 8,
+  "cpu_budget_cores": 4,
+  "rayon_workers": 4,
+  "cpu_affinity": "0 1 2 3",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 12.005433368001832,
+  "sampled_prover_peak_rss_gib": 4.989219665527344,
+  "sampled_peak_cgroup_gib": 4.954387664794922,
+  "effective_peak_cgroup_gib": 4.954387664794922,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 453,
+  "cgroup_sample_count": 453,
+  "time_largest_process_peak_rss_gib": 4.989219665527344
+}

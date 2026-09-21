@@ -1,0 +1,8 @@
+[package]
+name = "felt252_poseidon"
+type = "bin"
+authors = [""]
+compiler_version = ">=1.0.0"
+
+[dependencies]
+bignum = { path = "vendor/noir-bignum" }

@@ -1,0 +1,111 @@
+{
+  "scope": "Astra review extraction of append_batch call resources; does not use top-level test counters",
+  "cells": {
+    "felt_cold_1": {
+      "trace": "bench/m31-tree/cairo/snfoundry_trace/m31_tree_bench_tests_cost_felt_cold_1.json",
+      "trace_sha256": "21c2dd7d41274be3a6456f83ce70f4b815168344dea51a68608009b0d2b26998",
+      "entry_point": "append_batch",
+      "used_execution_resources": {
+        "vm_resources": {
+          "n_steps": 11299,
+          "n_memory_holes": 25,
+          "builtin_instance_counter": {
+            "pedersen_builtin": 134,
+            "range_check_builtin": 999,
+            "poseidon_builtin": 128
+          }
+        },
+        "gas_consumed": 0,
+        "syscall_counter": {
+          "StorageWrite": {
+            "call_count": 76,
+            "linear_factor": 0
+          },
+          "StorageRead": {
+            "call_count": 68,
+            "linear_factor": 0
+          }
+        }
+      }
+    },
+    "felt_warm_1": {
+      "trace": "bench/m31-tree/cairo/snfoundry_trace/m31_tree_bench_tests_cost_felt_warm_1.json",
+      "trace_sha256": "4298f99e2be4ed59573a9457291c6b0b087e142556fc32fd8a135cc715432511",
+      "entry_point": "append_batch",
+      "used_execution_resources": {
+        "vm_resources": {
+          "n_steps": 7469,
+          "n_memory_holes": 26,
+          "builtin_instance_counter": {
+            "range_check_builtin": 793,
+            "pedersen_builtin": 98,
+            "poseidon_builtin": 64
+          }
+        },
+        "gas_consumed": 0,
+        "syscall_counter": {
+          "StorageRead": {
+            "call_count": 67,
+            "linear_factor": 0
+          },
+          "StorageWrite": {
+            "call_count": 38,
+            "linear_factor": 0
+          }
+        }
+      }
+    },
+    "m31_cold_1": {
+      "trace": "bench/m31-tree/cairo/snfoundry_trace/m31_tree_bench_tests_cost_m31_cold_1.json",
+      "trace_sha256": "cb91413dc1e5858a4468c5cb43fde01856c20dd05a340f079a580016aebe85b4",
+      "entry_point": "append_batch",
+      "used_execution_resources": {
+        "vm_resources": {
+          "n_steps": 13515671,
+          "n_memory_holes": 252108,
+          "builtin_instance_counter": {
+            "pedersen_builtin": 136,
+            "range_check_builtin": 2519734
+          }
+        },
+        "gas_consumed": 0,
+        "syscall_counter": {
+          "StorageRead": {
+            "call_count": 133,
+            "linear_factor": 0
+          },
+          "StorageWrite": {
+            "call_count": 146,
+            "linear_factor": 0
+          }
+        }
+      }
+    },
+    "m31_warm_1": {
+      "trace": "bench/m31-tree/cairo/snfoundry_trace/m31_tree_bench_tests_cost_m31_warm_1.json",
+      "trace_sha256": "baa78d286cff2cee9fa6fde2be606e6cd519a37a0370ba7ee34f9ce6a5abfec9",
+      "entry_point": "append_batch",
+      "used_execution_resources": {
+        "vm_resources": {
+          "n_steps": 6760704,
+          "n_memory_holes": 126073,
+          "builtin_instance_counter": {
+            "range_check_builtin": 1260324,
+            "pedersen_builtin": 99
+          }
+        },
+        "gas_consumed": 0,
+        "syscall_counter": {
+          "StorageRead": {
+            "call_count": 131,
+            "linear_factor": 0
+          },
+          "StorageWrite": {
+            "call_count": 73,
+            "linear_factor": 0
+          }
+        }
+      }
+    }
+  }
+}

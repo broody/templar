@@ -1,0 +1,22 @@
+{
+  "controller": "0x02683fe485235181c28c3b776501d03c30aaa2b0ac9e87a053bd6c654f42c4ad",
+  "controller_public_key": "0x12652c25b53b2c930fdc2b4d7318ad17bbfc4cfc6affbe5eba85cc7d577c51c",
+  "pool": "0x06d62348a2dcc16973aa02a8a84b80ca6194e79faffd6dd672a02cbc20c449be",
+  "statement": "0x048597bcd6ed2c4441c4804777e70477ab05fc5c003239fc11f14361e4bb0f24",
+  "verifier": "0x0728285fd9a46d256411b18c62bc2d621c6fa097665494f8cc0cef960079341e",
+  "token": "0x05e4a5d280e0ed60716081a1a3216a756bd1a55324beab375a0c87d746c02a9e",
+  "statement_class": "0x053ec0d3c42e65ab7794371a21f20ada7348ab7ba8d1f437ce047fa2a6387b7e",
+  "fee_collector": "0xfee",
+  "bob_withdrawal_address": "0xb0b",
+  "relayer": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+  "max_proof_age": 4096,
+  "fee_amount": 5,
+  "classes": {
+    "Pool": "0x075a9d07d648c7313627fad670f676200425d0a00ba326a52703ddb73517705a",
+    "StatementAccount": "0x053ec0d3c42e65ab7794371a21f20ada7348ab7ba8d1f437ce047fa2a6387b7e",
+    "NativeProofVerifier": "0x04f3492ad0c0a1947d6e5a365b4d62209f8cf2a62f0a433c06696a2d42e99b5f",
+    "E2EToken": "0xfb29a47941892d91a25179de02aee7564db6631cea9173e4763f07432a6f43",
+    "SignatureController": "0x010b7b74d0fdb5c6adbedb6109838a5249f92b5e5681408dd68eecbee8c23fc7"
+  },
+  "start_block": 15385149
+}

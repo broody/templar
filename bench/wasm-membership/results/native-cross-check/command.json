@@ -1,0 +1,16 @@
+{
+  "command": [
+    "env",
+    "RAYON_NUM_THREADS=1",
+    "taskset",
+    "-c",
+    "0",
+    "target/poseidon-membership/client-target/release/templar-poseidon-membership",
+    "--verify-tests",
+    "bench/wasm-membership/results/chrome-three-runs-8g-v2/browser/proof-1.bin",
+    "bench/wasm-membership/results/native-cross-check/checks"
+  ],
+  "exit_code": 0,
+  "binary_sha256": "9c44542bd838100722358edc8c92f91e08012c4e59ebbf2b6ea35813c95c8974",
+  "timing_claim": null
+}

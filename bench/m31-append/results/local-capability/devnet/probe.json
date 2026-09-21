@@ -1,0 +1,128 @@
+{
+  "scope": "fresh synthetic local node capability, not a proving benchmark",
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-m31-capability-devnet-1789988643129080666",
+    "-p",
+    "MemoryMax=4G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "RuntimeMaxSec=180",
+    "/home/broody/.asdf/installs/starknet-devnet/0.6.0/bin/starknet-devnet",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "50677",
+    "--seed",
+    "42",
+    "--accounts",
+    "1",
+    "--state-archive-capacity",
+    "full"
+  ],
+  "url": "http://127.0.0.1:50677",
+  "calls": [
+    {
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "starknet_specVersion",
+        "params": []
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0.9.0"
+      }
+    },
+    {
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "starknet_chainId",
+        "params": []
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x534e5f5345504f4c4941"
+      }
+    },
+    {
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "starknet_blockNumber",
+        "params": []
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": 0
+      }
+    },
+    {
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "starknet_getBlockWithTxHashes",
+        "params": {
+          "block_id": "latest"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "status": "ACCEPTED_ON_L2",
+          "block_hash": "0xb751935b7c033082e15e41198fdedcbe07a7bc0b097f639fbfd8b239d6b56f",
+          "parent_hash": "0x0",
+          "block_number": 0,
+          "sequencer_address": "0x1000",
+          "new_root": "0x0",
+          "timestamp": 1789988644,
+          "starknet_version": "0.14.0",
+          "l1_gas_price": {
+            "price_in_fri": "0x3b9aca00",
+            "price_in_wei": "0x3b9aca00"
+          },
+          "l2_gas_price": {
+            "price_in_fri": "0x3b9aca00",
+            "price_in_wei": "0x3b9aca00"
+          },
+          "l1_data_gas_price": {
+            "price_in_fri": "0x3b9aca00",
+            "price_in_wei": "0x3b9aca00"
+          },
+          "l1_da_mode": "BLOB",
+          "transactions": []
+        }
+      }
+    },
+    {
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "starknet_getStorageProof",
+        "params": {
+          "block_id": "latest",
+          "class_hashes": [],
+          "contract_addresses": [],
+          "contracts_storage_keys": []
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "error": {
+          "code": 42,
+          "message": "Devnet doesn't support storage proofs"
+        }
+      }
+    }
+  ]
+}

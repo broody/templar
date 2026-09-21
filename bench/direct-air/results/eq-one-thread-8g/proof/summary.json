@@ -1,0 +1,407 @@
+{
+  "channel": "Blake2s",
+  "classification": "synthetic privacy diagnostic; not a privacy-qualified prover",
+  "components": [
+    {
+      "log_size": 6,
+      "name": "eq"
+    },
+    {
+      "log_size": 10,
+      "name": "qm31_ops"
+    },
+    {
+      "log_size": 6,
+      "name": "triple_xor"
+    },
+    {
+      "log_size": 6,
+      "name": "m_31_to_u_32"
+    },
+    {
+      "log_size": 6,
+      "name": "blake_g_gate"
+    },
+    {
+      "log_size": 16,
+      "name": "verify_bitwise_xor_8"
+    },
+    {
+      "log_size": 20,
+      "name": "verify_bitwise_xor_12"
+    },
+    {
+      "log_size": 8,
+      "name": "verify_bitwise_xor_4"
+    },
+    {
+      "log_size": 14,
+      "name": "verify_bitwise_xor_7"
+    },
+    {
+      "log_size": 18,
+      "name": "verify_bitwise_xor_9"
+    },
+    {
+      "log_size": 16,
+      "name": "range_check_16"
+    }
+  ],
+  "independent_trace_roots": true,
+  "interaction_pow_bits": 20,
+  "n_blinding_rows_per_component": 35,
+  "output_addresses": [
+    3,
+    4,
+    2
+  ],
+  "pcs_config": {
+    "fri_config": {
+      "fold_step": 4,
+      "log_blowup_factor": 2,
+      "log_last_layer_degree_bound": 0,
+      "n_queries": 35
+    },
+    "lifting_log_size": 22,
+    "pow_bits": 26
+  },
+  "preprocessed_columns": [
+    {
+      "id": "eq_in0_address",
+      "log_size": 6
+    },
+    {
+      "id": "eq_in1_address",
+      "log_size": 6
+    },
+    {
+      "id": "triple_xor_input_addr_0",
+      "log_size": 6
+    },
+    {
+      "id": "triple_xor_input_addr_1",
+      "log_size": 6
+    },
+    {
+      "id": "triple_xor_input_addr_2",
+      "log_size": 6
+    },
+    {
+      "id": "triple_xor_output_addr",
+      "log_size": 6
+    },
+    {
+      "id": "triple_xor_multiplicity",
+      "log_size": 6
+    },
+    {
+      "id": "m31_to_u32_input_addr",
+      "log_size": 6
+    },
+    {
+      "id": "m31_to_u32_output_addr",
+      "log_size": 6
+    },
+    {
+      "id": "m31_to_u32_multiplicity",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_input_addr_a",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_input_addr_b",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_input_addr_c",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_input_addr_d",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_input_addr_f0",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_input_addr_f1",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_output_addr_a",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_output_addr_b",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_output_addr_c",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_output_addr_d",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_multiplicity",
+      "log_size": 6
+    },
+    {
+      "id": "bitwise_xor_4_0",
+      "log_size": 8
+    },
+    {
+      "id": "bitwise_xor_4_1",
+      "log_size": 8
+    },
+    {
+      "id": "bitwise_xor_4_2",
+      "log_size": 8
+    },
+    {
+      "id": "qm31_ops_add_flag",
+      "log_size": 10
+    },
+    {
+      "id": "qm31_ops_sub_flag",
+      "log_size": 10
+    },
+    {
+      "id": "qm31_ops_mul_flag",
+      "log_size": 10
+    },
+    {
+      "id": "qm31_ops_pointwise_mul_flag",
+      "log_size": 10
+    },
+    {
+      "id": "qm31_ops_in0_address",
+      "log_size": 10
+    },
+    {
+      "id": "qm31_ops_in1_address",
+      "log_size": 10
+    },
+    {
+      "id": "qm31_ops_out_address",
+      "log_size": 10
+    },
+    {
+      "id": "qm31_ops_mults",
+      "log_size": 10
+    },
+    {
+      "id": "bitwise_xor_7_0",
+      "log_size": 14
+    },
+    {
+      "id": "bitwise_xor_7_1",
+      "log_size": 14
+    },
+    {
+      "id": "bitwise_xor_7_2",
+      "log_size": 14
+    },
+    {
+      "id": "seq_16",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_8_0",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_8_1",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_8_2",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_9_0",
+      "log_size": 18
+    },
+    {
+      "id": "bitwise_xor_9_1",
+      "log_size": 18
+    },
+    {
+      "id": "bitwise_xor_9_2",
+      "log_size": 18
+    },
+    {
+      "id": "bitwise_xor_10_0",
+      "log_size": 20
+    },
+    {
+      "id": "bitwise_xor_10_1",
+      "log_size": 20
+    },
+    {
+      "id": "bitwise_xor_10_2",
+      "log_size": 20
+    }
+  ],
+  "preprocessed_root": [
+    184,
+    120,
+    165,
+    95,
+    167,
+    184,
+    219,
+    8,
+    145,
+    239,
+    126,
+    2,
+    251,
+    249,
+    138,
+    43,
+    232,
+    92,
+    139,
+    186,
+    74,
+    175,
+    124,
+    219,
+    81,
+    144,
+    172,
+    143,
+    24,
+    57,
+    208,
+    169
+  ],
+  "preprocessed_root_u32": [
+    1604679864,
+    148617383,
+    41873297,
+    730528251,
+    3129695464,
+    3682381642,
+    2410451025,
+    2848995608
+  ],
+  "runs": [
+    {
+      "coordinates": [
+        {
+          "coordinate": 0,
+          "mask_rank": 35,
+          "private_plus_mask_rank": 35,
+          "query_only_mask_rank": 31,
+          "query_only_private_plus_mask_rank": 31,
+          "query_only_recovered": false,
+          "recovered": false
+        },
+        {
+          "coordinate": 1,
+          "mask_rank": 35,
+          "private_plus_mask_rank": 35,
+          "query_only_mask_rank": 31,
+          "query_only_private_plus_mask_rank": 31,
+          "query_only_recovered": false,
+          "recovered": false
+        },
+        {
+          "coordinate": 2,
+          "mask_rank": 35,
+          "private_plus_mask_rank": 35,
+          "query_only_mask_rank": 31,
+          "query_only_private_plus_mask_rank": 31,
+          "query_only_recovered": false,
+          "recovered": false
+        },
+        {
+          "coordinate": 3,
+          "mask_rank": 35,
+          "private_plus_mask_rank": 35,
+          "query_only_mask_rank": 31,
+          "query_only_private_plus_mask_rank": 31,
+          "query_only_recovered": false,
+          "recovered": false
+        }
+      ],
+      "distinct_folded_eq_queries": 31,
+      "eq_log_size": 6,
+      "global_query_count": 35,
+      "mask_count": 35,
+      "matrix_columns": 36,
+      "matrix_rows": 35,
+      "native_verification_passed": true,
+      "proving_seconds": 5.989062486,
+      "recovered_matches_local_witness": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "serialized_public_proof_bytes": 581835
+    },
+    {
+      "coordinates": [
+        {
+          "coordinate": 0,
+          "mask_rank": 35,
+          "private_plus_mask_rank": 36,
+          "query_only_mask_rank": 33,
+          "query_only_private_plus_mask_rank": 33,
+          "query_only_recovered": false,
+          "recovered": true
+        },
+        {
+          "coordinate": 1,
+          "mask_rank": 35,
+          "private_plus_mask_rank": 36,
+          "query_only_mask_rank": 33,
+          "query_only_private_plus_mask_rank": 33,
+          "query_only_recovered": false,
+          "recovered": true
+        },
+        {
+          "coordinate": 2,
+          "mask_rank": 35,
+          "private_plus_mask_rank": 36,
+          "query_only_mask_rank": 33,
+          "query_only_private_plus_mask_rank": 33,
+          "query_only_recovered": false,
+          "recovered": true
+        },
+        {
+          "coordinate": 3,
+          "mask_rank": 35,
+          "private_plus_mask_rank": 36,
+          "query_only_mask_rank": 33,
+          "query_only_private_plus_mask_rank": 33,
+          "query_only_recovered": false,
+          "recovered": true
+        }
+      ],
+      "distinct_folded_eq_queries": 33,
+      "eq_log_size": 6,
+      "global_query_count": 35,
+      "mask_count": 35,
+      "matrix_columns": 36,
+      "matrix_rows": 37,
+      "native_verification_passed": true,
+      "proving_seconds": 5.671506014,
+      "recovered_matches_local_witness": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "serialized_public_proof_bytes": 589646
+    }
+  ],
+  "total_seconds": 12.274531751
+}

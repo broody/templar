@@ -1,0 +1,15 @@
+{
+  "status": "failed",
+  "memory_cap_gib": 64,
+  "cores": 4,
+  "l2_gas_max_amount": 1000000000,
+  "local_node_attachment": false,
+  "native_verification_passed": false,
+  "error": "{\"code\": -32603, \"message\": \"Internal error\", \"data\": \"Proving task failed to join: task 29 panicked with message \\\"Not enough twiddles!\\\"\"}",
+  "error_type": "RuntimeError",
+  "peak_rss_gib": 29.270309448242188,
+  "cgroup_peak_bytes": 31393665024,
+  "swap_peak_bytes": 0,
+  "resource_samples": 341,
+  "os_seconds": 4.382
+}

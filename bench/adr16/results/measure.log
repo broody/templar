@@ -1,0 +1,38 @@
+{
+  "date_utc": "2026-09-20T06:04:05Z",
+  "platform": "Linux-6.17.0-20-generic-x86_64-with-glibc2.39",
+  "threads": 32,
+  "nargo": "nargo version = 1.0.0-beta.16\nnoirc version = 1.0.0-beta.16+2d46fca7203545cbbfb31a0d0328de6c10a8db95\n(git version hash: 2d46fca7203545cbbfb31a0d0328de6c10a8db95, is dirty: false)",
+  "bb": "3.0.0-nightly.20251104",
+  "gates": {
+    "functions": [
+      {
+        "acir_opcodes": 35185,
+        "circuit_size": 81889
+      }
+    ]
+  },
+  "prove_wall_seconds": [
+    0.6533220150013221,
+    0.6478290439990815,
+    0.658555931000592
+  ],
+  "median_prove_wall_seconds": 0.6533220150013221,
+  "timing_scope": "bb prove process including proving-key construction; excludes compilation, witness, write_vk and native verification; cached CRS",
+  "files": {
+    "proof": {
+      "bytes": 9408,
+      "sha256": "28e62a61d2fe5a0b8711a8fa034b32596a00fa37747fb8d5b7ba7bccca7755de"
+    },
+    "public_inputs": {
+      "bytes": 96,
+      "sha256": "d2d9e2b006b5e48c30af40a0d03b10d2a35f3edb9f290898e5fdc1848dee8a15"
+    },
+    "vk": {
+      "bytes": 1888,
+      "sha256": "cdfd30ace808f662e8ae6231ce970b8452087448a6268012df84c56e3f3e16aa"
+    }
+  },
+  "native_verification": "passed for every run",
+  "bytecode_sha256": "7cceebe76ded5759f72f63978960a4aa46dcd5a950011e7906e26a9b3a9b7797"
+}

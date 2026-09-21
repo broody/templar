@@ -1,0 +1,73 @@
+{
+  "task": "m31-append preflight inventory (read-only)",
+  "date": "2026-09-21",
+  "scope": "local synthetic M31 append -> PROOF1 -> local contract round trip; no builds/benchmarks/transactions executed",
+  "toolchain": {
+    "scarb_2_18_0": "/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb (cairo 2.18.0, sierra 1.8.0) \u2014 default shim",
+    "snforge_0_63_0": "/home/broody/.asdf/installs/starknet-foundry/0.63.0/bin/snforge \u2014 WARNING: ~/.local/bin/snforge is 0.20.0",
+    "sncast_0_63_0": "/home/broody/.asdf/installs/starknet-foundry/0.63.0/bin/sncast \u2014 WARNING: ~/.local/bin/sncast and default shim are 0.20.0",
+    "starknet_devnet_0_6_0": "/home/broody/.asdf/installs/starknet-devnet/0.6.0/bin/starknet-devnet (default shim matches)",
+    "also_installed": "scarb 2.9.2-2.18.0, foundry 0.48.1/0.52.0/0.54.1/0.63.0, sozo/katana/torii/cairo-coverage/cairo-profiler (dojo, likely unrelated)"
+  },
+  "native_binaries": {
+    "prover": {
+      "path": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/rust-target/release/starknet_transaction_prover",
+      "sha256": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5",
+      "hash_verified": true,
+      "risk": "lives in /tmp (ephemeral); build instructions in bench/push-e2e (sequencer e6b6fd2e9932909107833579e5b6efd6c75fa0af, proving_utils 3035dd00421daa541894297bd754db6e2787807b)"
+    },
+    "verifier": {
+      "path": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/local-verifier",
+      "sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+      "hash_verified": true
+    },
+    "m31_client": {
+      "path": "target/m31-tree/client-target/release/templar-m31-tree",
+      "sha256": "f5a9d8c44a51eceabc11e7afab7815ec9cb1511b9d0ad69414926fa89b1eba0f",
+      "note": "Mutable target build; not the frozen archived v2 binary. New experiment will build isolated sources."
+    },
+    "m31_client_frozen_v2": {
+      "path": "target/m31-tree/frozen-v2/templar-m31-tree",
+      "sha256": "afd206ceed8ebe44127840d4a3a908c48550934408e1c1a38bcba2dde0af6fc6"
+    }
+  },
+  "prover_rpc_interface": {
+    "source": "bench/push-e2e/proving.py, bench/direct-air/bridge-findings.md",
+    "summary": "pinned service starknet_transaction_prover runs local HTTP JSON-RPC (PROVER_IP/PORT); env RPC_URL points at chain state source, CHAIN_ID=SN_SEPOLIA. Prove via starknet_proveTransaction{block_id, INVOKE v3 tx to statement account, calldata=[len(private),*private]}. Response: base64 proof + proof_facts; facts[0]=='PROOF1'; single L2->L1 message payload [statement_class, *public] bound via hash_span digest == facts[8]. Local verification: local-verifier <proof_dir>.",
+    "constraints": "service has NO state-override parameter (bridge-findings.md); validate_virtual_os_state_diff forbids declaration/deployment inside the proven tx \u2014 the statement account must already exist in authenticated state at the proven block",
+    "proven_against": "Prior Sepolia RPC runs succeeded; the native prover explicitly calls starknet_getStorageProof through RpcStorageProofsProvider::fetch_single_proof. Supporting ordinary state queries alone is insufficient."
+  },
+  "local_devnet": {
+    "existing_bootstrap_utilities": "none found in bench/* (grep for devnet found no harness); common.py has a loopback RPC capture proxy used only for negative sncast tests, not prover state replay",
+    "saved_rpc_state_fixtures": "none covering prover state reads; cannot assume isolated declare/deploy from saved fixtures",
+    "statement_account_artifacts": "bench/direct-air/artifacts/ (synthetic statement account contract_class + compiled_contract_class JSONs)"
+  },
+  "processes_ports": {
+    "listening_relevant": "chrome 127.0.0.1:9222 (existing debug browser); 100.81.77.19:60675 (unidentified, not devnet)",
+    "free": "prover port 31458 unused; no starknet-devnet/prover processes running",
+    "note": "no process was terminated or controlled"
+  },
+  "archive_integrity": {
+    "script": "target/kimi-m31-append/preflight-integrity.py (same manifest-relative logic as bench/m31-tree/check-integrity.py)",
+    "result": "results/preflight/integrity-initial.json: PASS \u2014 8 archives incl. bench/m31-tree, 1741 files, no failures"
+  },
+  "proposed_local_run_outline": [
+    "1. Astra Cairo bridge freezes the M31-append synthetic statement account (extend/direct-air artifacts pattern)",
+    "2. start starknet-devnet 0.6.0 on a fresh port (avoid 9222/60675), dump state for restartability",
+    "3. declare+deploy statement account on devnet via sncast 0.63.0 explicit path (devnet predeployed accounts are public; no real keys)",
+    "4. run pinned prover with RPC_URL=http://127.0.0.1:<devnet>, CHAIN_ID adjusted, PROVER_PORT=31458 under systemd caps (per bench/push-e2e/proving.py pattern)",
+    "5. starknet_proveTransaction for the M31-append invoke at the deployment block; verify PROOF1 facts and L2->L1 message binding; run local-verifier",
+    "6. local contract check of append/root via devnet starknet_call"
+  ],
+  "open_feasibility_questions": [
+    "Does the pinned proving service accept starknet-devnet 0.6.0 as RPC_URL? Prior runs asserted starknet_version 0.14.4 on the block; devnet 0.6.0 version support unverified",
+    "CHAIN_ID handling: service env used SN_SEPOLIA; local devnet chain id support unknown",
+    "Virtual-OS state reads and genuine getStorageProof support against devnet remain unqualified; local capability probe pending.",
+    "Which block_id the prover accepts on devnet (latest vs numbered) and whether devnet must mine blocks between deploy and prove",
+    "Devnet restart/state-dump workflow needed so the proven block remains available",
+    "Prover/verifier binaries live in /tmp \u2014 archive or rebuild before host reboot loses them"
+  ],
+  "disclaimer": "inventory only; prover proof-code and architecture decisions belong to Astra; no privacy/ZK claim",
+  "review_corrections": "Astra corrected the unsupported no-storage-proof assumption; initial Kimi operational inventory alone did not establish local node compatibility.",
+  "local_capability_probe": "See results/local-capability: devnet RPC returns error42 for getStorageProof; Katana returns authentic proof structures but currentRPC0.9 header lacks required commitment/count fields. No full PROOF1 compatibility claimed."
+}

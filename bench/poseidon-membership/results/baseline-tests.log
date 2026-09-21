@@ -1,0 +1,25 @@
+warning: patch `stwo-cairo-utils v1.2.2 (/home/broody/development/templar/target/direct-air/stwo-cairo/stwo_cairo_prover/crates/utils)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+warning: the feature `stdarch_x86_avx512` has been stable since 1.89.0 and no longer requires an attribute to enable
+ --> /home/broody/development/templar/target/direct-air/stwo/crates/stwo/src/lib.rs:4:13
+  |
+4 |     feature(stdarch_x86_avx512)
+  |             ^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(stable_features)]` on by default
+
+warning: `stwo` (lib) generated 1 warning
+   Compiling templar-poseidon-membership v0.1.0 (/home/broody/development/templar/bench/poseidon-membership/client)
+    Finished `release` profile [optimized] target(s) in 1.44s
+     Running unittests src/main.rs (target/poseidon-membership/client-target/release/deps/templar_poseidon_membership-4015af9117f247c7)
+
+running 3 tests
+test statement::tests::duplicate_and_padding_accounting ... ok
+test statement::tests::reference_and_verifier_bookkeeping ... ok
+test statement::tests::reject_public_link_mutations ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

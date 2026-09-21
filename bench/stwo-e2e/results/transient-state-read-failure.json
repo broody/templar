@@ -1,0 +1,7 @@
+{
+  "case": "invalid-conservation",
+  "stage": "virtual account validation / remote state read",
+  "expected_statement_error_reached": false,
+  "published_transaction": false,
+  "resolution": "Fresh local retry reached NOT_CONSERVED as expected; subsequent valid withdrawal succeeded."
+}

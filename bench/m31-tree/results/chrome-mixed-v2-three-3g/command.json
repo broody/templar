@@ -1,0 +1,32 @@
+{
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-m31-chrome-mixed-v2-three-3g-1789984607437389362",
+    "-p",
+    "WorkingDirectory=/home/broody/development/templar",
+    "-p",
+    "MemoryMax=3G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUQuota=400%",
+    "-p",
+    "CPUAffinity=0 1 2 3",
+    "-p",
+    "RuntimeMaxSec=1200",
+    "--setenv=RAYON_NUM_THREADS=4",
+    "--setenv=PATH=/home/broody/.local/share/solana/install/active_release/bin:/home/broody/.local/bin:/home/broody/bin:/home/broody/.codex/tmp/arg0/codex-arg0rl6QtN:/home/broody/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/broody/.local/share/solana/install/active_release/bin:/home/broody/.local/bin:/home/broody/bin:/home/broody/.bb:/home/broody/.bb:/home/broody/.kimi-code/bin:/home/broody/.openfang/bin:/home/broody/.opencode/bin:/home/broody/.asdf/shims:/home/broody/.local/bin:/home/broody/.local/share/solana/install/active_release/bin:/home/broody/.bun/bin:/home/broody/.local/share/pnpm:/home/broody/.nvm/versions/node/v22.22.1/bin:/home/broody/.local/share/solana/install/active_release/bin:/home/broody/.starkli/bin:/home/broody/.cargo/bin:/home/broody/.local/bin:/home/broody/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/broody/.local/bin:/home/broody/.slot/bin:/home/broody/bin/cursor:/home/broody/.local/bin:/usr/local/go/bin:/home/broody/go/bin:/home/broody/.local/bin:/home/broody/.local/bin:/home/broody/.local/bin:/home/broody/.local/bin:/home/broody/.nargo/bin:/home/broody/.nargo/bin:/home/broody/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+    "/usr/bin/time",
+    "-v",
+    "/usr/bin/node",
+    "bench/m31-tree/run-browser.mjs",
+    "bench/m31-tree/results/chrome-mixed-v2-three-3g/browser",
+    "3",
+    "target/m31-tree/pkg",
+    "bench/m31-tree/client/fixtures/mixed.json",
+    "bench/m31-tree/results/native-mixed-v2-3g-r1/proof/proof.bin"
+  ]
+}

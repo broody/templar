@@ -1,0 +1,30 @@
+{
+  "block_hash": "0x42d0cf752d86d296ace3237ebd89cd1150b866d2dee54326a34b63bf7829d10",
+  "block_number": 15391320,
+  "event_commitment": "0x1a2b8c42a3b53887e4063e41fb0eb3550ed2bc56ee875edc687e5972e33fde7",
+  "event_count": 3,
+  "l1_da_mode": "BLOB",
+  "l1_data_gas_price": {
+    "price_in_fri": "0x6a85fc3aa8",
+    "price_in_wei": "0x7f34a4"
+  },
+  "l1_gas_price": {
+    "price_in_fri": "0x666e9a44b67c",
+    "price_in_wei": "0x7a51e6c3"
+  },
+  "l2_gas_price": {
+    "price_in_fri": "0x439eeb80d",
+    "price_in_wei": "0x50bff"
+  },
+  "new_root": "0x67d58c533801f3eb3b9674170be061f89946b5adf485da3de9ebc7bb4b5e850",
+  "parent_hash": "0x5de8d3e823153231ff4e502e5636dca16e8a52ca1cb0d73db41e7c4571de04e",
+  "receipt_commitment": "0x95ce1cd8a785b2a965f6d320a64160227c20a236fdfab64f8ad21f91b27690",
+  "sequencer_address": "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8",
+  "starknet_version": "0.14.4",
+  "state_diff_commitment": "0x19e293ae81f66e46f2a1c7a82ce1b6c4fbe282717a0359cc74c400df4d9b47e",
+  "state_diff_length": 5,
+  "status": "ACCEPTED_ON_L2",
+  "timestamp": 1789956793,
+  "transaction_commitment": "0x7afd145bd0497bc12c66244a1f6ce3c97b44fc6a9a3e8dddd1fd50a9998213f",
+  "transaction_count": 3
+}

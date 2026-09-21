@@ -1,0 +1,63 @@
+---
+showAskAi: false
+title: Pool state
+description: How the commitment tree, nullifier set, and root history represent private value.
+---
+
+# Pool state
+
+The pool tracks note creation and note consumption separately. The commitment tree answers “was this note created?” The nullifier set answers “has its spending capability already been used?”
+
+## Commitment tree
+
+Every accepted deposit, spend output or funded return appends a commitment to a depth-32 binary Merkle tree. Each parent is the Poseidon hash of its two children. The root is a compact commitment to the entire tree.
+
+To demonstrate membership, the holder supplies a leaf index and 32 sibling hashes to the private statement. Recomputing the path must produce the selected public root. The proof hides the opening, leaf index, and path from the public verifier.
+
+Return destinations are transaction-local data. They create no placeholder leaves; the pool appends only the final funded note. See [return notes](/architecture/returns).
+
+The tree is append-only. Spending never deletes or changes a leaf. Its capacity is 2³² leaves, and unused subtrees have deterministic zero-hash values so the contract only needs to store populated paths.
+
+## Nullifier set
+
+For each consumed input, the proof derives a nullifier from the owner's nullifier key, the note commitment, and its authenticated leaf position. The pool requires that this nullifier has never appeared before, then marks it spent.
+
+Two spends of the same note derive the same nullifier. Even if both proofs are valid, only the first successful transaction can consume it. The second reverts. A membership proof alone would not prevent double spending because the original leaf remains in the tree forever.
+
+The nullifier is not the leaf commitment. Under the hash and secrecy assumptions, a public observer cannot directly compute the link between the two. Other transaction metadata can still narrow the possibilities.
+
+## Encrypted publication
+
+Each funded leaf also has an immutable delivery digest indexed by its position. The pool publishes the commitment, index, digest, and encrypted note bytes together. The spend binding covers the digest computed from those actual bytes. Return receipts additionally authenticate the public amount determined at settlement.
+
+The commitment root authenticates note commitments and positions, but does not authenticate the encrypted payloads. Recovery checks those payloads against delivery digests obtained from canonical pool state. A self-consistent payload and digest supplied by an untrusted archive are insufficient.
+
+There is no stable public recipient identifier. Wallets download the encrypted outputs and try decryption locally, then verify matching notes against their commitments. The [receiving and recovery model](/architecture/receiving) explains completeness, missing data, and checkpoint trust.
+
+## Recent roots keep concurrent activity practical
+
+While a holder prepares a proof, another user may append a note and change the current root. Requiring only the newest root would invalidate otherwise sound work whenever this happened.
+
+The pool keeps a ring of **256 accepted roots**. A spend can reference any root still in that history. This is a window measured in recorded roots, not seconds or blocks; a busy pool can advance it quickly. A transaction can also insert multiple leaves and therefore advance several roots.
+
+An expired root does not destroy a note. The holder needs a fresh membership path and a new proof against an accepted root. Nullifiers remain authoritative regardless of which accepted root was used.
+
+## Two independent freshness checks
+
+| Check | What it protects |
+| --- | --- |
+| Pool root history | The note's membership root must still be accepted by the pool. |
+| Native proof base-block age | Virtual execution must be based on a sufficiently recent chain context. |
+
+A proof can pass one check and fail the other. The adapter's experimental age limit is recorded on the [status page](/status); it is separate from the 256-root ring.
+
+## The ledger invariants
+
+1. A deposited commitment is backed by a successful token transfer into the pool.
+2. A spend proves that input value equals output value plus public withdrawals for one asset.
+3. Each consumed note contributes exactly one previously unused nullifier.
+4. Applied actions correspond exactly to the public values bound by the proof.
+5. A failed spend rolls back all pool changes, including its pool fee and token transfers.
+6. Every new commitment is published atomically with its bound encrypted payload and delivery digest.
+
+Network gas for a reverted transaction is still payable. The pool's atomicity does not eliminate that external cost.

@@ -1,0 +1,17 @@
+   Executing templar_m31_append_ood_probe
+Program output:
+1401674891
+445170796
+271151462
+221128821
+Resources:
+	steps: 691,282
+	max memory address: 730,600
+	memory holes: 29,538
+	builtins:
+		range_check_builtin: 80,584
+		output_builtin: 4
+	memory segments:
+		execution: 591,220
+		range_check: 80,584
+		output: 4

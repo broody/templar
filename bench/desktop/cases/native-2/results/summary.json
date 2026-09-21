@@ -1,0 +1,303 @@
+{
+  "project": "/home/broody/development/templar/bench/desktop/cases/native-2",
+  "date_utc": "2026-09-20T06:23:45Z",
+  "nargo": "nargo version = 1.0.0-beta.16\nnoirc version = 1.0.0-beta.16+2d46fca7203545cbbfb31a0d0328de6c10a8db95\n(git version hash: 2d46fca7203545cbbfb31a0d0328de6c10a8db95, is dirty: false)",
+  "bb": "3.0.0-nightly.20251104",
+  "stages": [
+    {
+      "stage": "compile",
+      "command": [
+        "/home/broody/.nargo/bin/nargo",
+        "compile"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.11,
+      "driver_wall_seconds": 0.1519185879988072,
+      "max_rss_kib": 60824,
+      "memory_limit": "32G",
+      "cpu_affinity": "0-3",
+      "cpu_quota": "400%",
+      "swap_limit": 0,
+      "timeout_seconds": 300,
+      "systemd_result": "success",
+      "cgroup_peak": "1.5M"
+    },
+    {
+      "stage": "witness",
+      "command": [
+        "/home/broody/.nargo/bin/nargo",
+        "execute",
+        "witness"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.11,
+      "driver_wall_seconds": 0.19851221999851987,
+      "max_rss_kib": 59940,
+      "memory_limit": "6G",
+      "cpu_affinity": "0-3",
+      "cpu_quota": "400%",
+      "swap_limit": 0,
+      "timeout_seconds": 180,
+      "systemd_result": "success",
+      "cgroup_peak": "1.5M"
+    },
+    {
+      "stage": "gates",
+      "command": [
+        "/home/broody/.bb/bb",
+        "gates",
+        "-s",
+        "ultra_honk",
+        "--oracle_hash",
+        "keccak",
+        "-b",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/target/bench.json"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.0,
+      "driver_wall_seconds": 0.08476316199812572,
+      "max_rss_kib": 11940,
+      "memory_limit": "6G",
+      "cpu_affinity": "0-3",
+      "cpu_quota": "400%",
+      "swap_limit": 0,
+      "timeout_seconds": 180,
+      "systemd_result": "success",
+      "cgroup_peak": "1.5M"
+    },
+    {
+      "stage": "write_vk",
+      "command": [
+        "/home/broody/.bb/bb",
+        "write_vk",
+        "-s",
+        "ultra_honk",
+        "--oracle_hash",
+        "keccak",
+        "-b",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/target/bench.json",
+        "-o",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.01,
+      "driver_wall_seconds": 0.07255402499868069,
+      "max_rss_kib": 16060,
+      "memory_limit": "6G",
+      "cpu_affinity": "0-3",
+      "cpu_quota": "400%",
+      "swap_limit": 0,
+      "timeout_seconds": 180,
+      "systemd_result": "success",
+      "cgroup_peak": "1.0M"
+    },
+    {
+      "stage": "prove-1",
+      "command": [
+        "/home/broody/.bb/bb",
+        "prove",
+        "-s",
+        "ultra_honk",
+        "--oracle_hash",
+        "keccak",
+        "-b",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/target/bench.json",
+        "-w",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/target/witness.gz",
+        "-k",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results/vk",
+        "-o",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.03,
+      "driver_wall_seconds": 0.09536283200213802,
+      "max_rss_kib": 17952,
+      "memory_limit": "6G",
+      "cpu_affinity": "0-3",
+      "cpu_quota": "400%",
+      "swap_limit": 0,
+      "timeout_seconds": 180,
+      "systemd_result": "success",
+      "cgroup_peak": "1.7M"
+    },
+    {
+      "stage": "verify-1",
+      "command": [
+        "/home/broody/.bb/bb",
+        "verify",
+        "-s",
+        "ultra_honk",
+        "--oracle_hash",
+        "keccak",
+        "-v",
+        "-k",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results/vk",
+        "-p",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results/proof",
+        "-i",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results/public_inputs"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.01,
+      "driver_wall_seconds": 0.09351912200145307,
+      "max_rss_kib": 10724,
+      "memory_limit": "6G",
+      "cpu_affinity": "0-3",
+      "cpu_quota": "400%",
+      "swap_limit": 0,
+      "timeout_seconds": 180,
+      "systemd_result": "success",
+      "cgroup_peak": "1.7M"
+    },
+    {
+      "stage": "prove-2",
+      "command": [
+        "/home/broody/.bb/bb",
+        "prove",
+        "-s",
+        "ultra_honk",
+        "--oracle_hash",
+        "keccak",
+        "-b",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/target/bench.json",
+        "-w",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/target/witness.gz",
+        "-k",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results/vk",
+        "-o",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.04,
+      "driver_wall_seconds": 0.06828833200052031,
+      "max_rss_kib": 18332,
+      "memory_limit": "6G",
+      "cpu_affinity": "0-3",
+      "cpu_quota": "400%",
+      "swap_limit": 0,
+      "timeout_seconds": 180,
+      "systemd_result": "success",
+      "cgroup_peak": "1.8M"
+    },
+    {
+      "stage": "verify-2",
+      "command": [
+        "/home/broody/.bb/bb",
+        "verify",
+        "-s",
+        "ultra_honk",
+        "--oracle_hash",
+        "keccak",
+        "-v",
+        "-k",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results/vk",
+        "-p",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results/proof",
+        "-i",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results/public_inputs"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.01,
+      "driver_wall_seconds": 0.10305729399988195,
+      "max_rss_kib": 10960,
+      "memory_limit": "6G",
+      "cpu_affinity": "0-3",
+      "cpu_quota": "400%",
+      "swap_limit": 0,
+      "timeout_seconds": 180,
+      "systemd_result": "success",
+      "cgroup_peak": "1.7M"
+    },
+    {
+      "stage": "prove-3",
+      "command": [
+        "/home/broody/.bb/bb",
+        "prove",
+        "-s",
+        "ultra_honk",
+        "--oracle_hash",
+        "keccak",
+        "-b",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/target/bench.json",
+        "-w",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/target/witness.gz",
+        "-k",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results/vk",
+        "-o",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.03,
+      "driver_wall_seconds": 0.07724260200120625,
+      "max_rss_kib": 18600,
+      "memory_limit": "6G",
+      "cpu_affinity": "0-3",
+      "cpu_quota": "400%",
+      "swap_limit": 0,
+      "timeout_seconds": 180,
+      "systemd_result": "success",
+      "cgroup_peak": "1.2M"
+    },
+    {
+      "stage": "verify-3",
+      "command": [
+        "/home/broody/.bb/bb",
+        "verify",
+        "-s",
+        "ultra_honk",
+        "--oracle_hash",
+        "keccak",
+        "-v",
+        "-k",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results/vk",
+        "-p",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results/proof",
+        "-i",
+        "/home/broody/development/templar/bench/desktop/cases/native-2/results/public_inputs"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.01,
+      "driver_wall_seconds": 0.09149668800091604,
+      "max_rss_kib": 11380,
+      "memory_limit": "6G",
+      "cpu_affinity": "0-3",
+      "cpu_quota": "400%",
+      "swap_limit": 0,
+      "timeout_seconds": 180,
+      "systemd_result": "success",
+      "cgroup_peak": "1.7M"
+    }
+  ],
+  "gates": {
+    "functions": [
+      {
+        "acir_opcodes": 6,
+        "circuit_size": 204
+      }
+    ]
+  },
+  "files": {
+    "bench.json": {
+      "bytes": 16655,
+      "sha256": "757aa32cffd3fd6e85a8b1db19bd2d0a861794efaeeff38428e8fb331df54bc5"
+    },
+    "witness.gz": {
+      "bytes": 385,
+      "sha256": "b0ec000530dc3d50e6f584e9eab0077b8335967655dfb6838496a1598e37b09f"
+    },
+    "proof": {
+      "bytes": 5952,
+      "sha256": "3853f30924e5337783403eb6adf7e7c13bde0dfa22b831d7b09d324083441cdc"
+    },
+    "vk": {
+      "bytes": 1888,
+      "sha256": "80ffca386b826e2c7c57ad4f54bd88eeacfaf30b844208bed8a368c6cd78287d"
+    },
+    "public_inputs": {
+      "bytes": 32,
+      "sha256": "c3f8afa97e187d7e017b5a6e4314d931678c8d019f5a1f939ae73e6f06ce7006"
+    }
+  },
+  "completed": true
+}

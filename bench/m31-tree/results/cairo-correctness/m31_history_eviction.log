@@ -1,0 +1,71 @@
+Running as unit: templar-m31-corr-m31_history_eviction-1789983514.service; invocation ID: 62329ae42e2341efbd39863f248ff38f
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.10s
+   Compiling test(m31_tree_bench_unittest) m31_tree_bench v0.1.0 (/home/broody/development/templar/bench/m31-tree/cairo/Scarb.toml)
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:5
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+    ^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:27
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:50
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:18:5
+    StoragePointerWriteAccess,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    Finished `dev` profile target(s) in 0 seconds
+
+
+Collected 1 test(s) from m31_tree_bench package
+Running 1 test(s) from src/
+[FAIL] m31_tree_bench::tests::m31_history_eviction
+
+Failure data:
+    Got an exception while executing a hint: Error at pc=0:11977:
+Could not reach the end of the program. RunResources has no remaining steps.
+Cairo traceback (most recent call last):
+Unknown location (pc=0:6800)
+Unknown location (pc=0:6800)
+Unknown location (pc=0:6800)
+Unknown location (pc=0:6800)
+Unknown location (pc=0:6800)
+Unknown location (pc=0:6800)
+Unknown location (pc=0:6800)
+Unknown location (pc=0:6800)
+Unknown location (pc=0:6597)
+Unknown location (pc=0:7967)
+Unknown location (pc=0:6103)
+Unknown location (pc=0:7667)
+Unknown location (pc=0:8453)
+Unknown location (pc=0:10620)
+Unknown location (pc=0:12262)
+Unknown location (pc=0:10202)
+Unknown location (pc=0:11984)
+Unknown location (pc=0:11984)
+Unknown location (pc=0:11984)
+Unknown location (pc=0:11984)
+
+
+note: run with `SNFORGE_BACKTRACE=1` environment variable to display a backtrace
+Tests: 0 passed, 1 failed, 0 ignored, 51 filtered out
+
+Failures:
+    m31_tree_bench::tests::m31_history_eviction
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 2.754s
+CPU time consumed: 2.945s
+Memory peak: 256.0K
+Memory swap peak: 0B

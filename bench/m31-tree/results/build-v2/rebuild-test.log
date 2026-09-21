@@ -1,0 +1,40 @@
+warning: patch `stwo-cairo-utils v1.2.2 (/home/broody/development/templar/target/m31-tree/stwo-cairo/stwo_cairo_prover/crates/utils)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+warning: the feature `stdarch_x86_avx512` has been stable since 1.89.0 and no longer requires an attribute to enable
+ --> /home/broody/development/templar/target/m31-tree/stwo/crates/stwo/src/lib.rs:4:13
+  |
+4 |     feature(stdarch_x86_avx512)
+  |             ^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(stable_features)]` on by default
+
+warning: `stwo` (lib) generated 1 warning
+   Compiling templar-m31-tree v0.1.0 (/home/broody/development/templar/bench/m31-tree/client)
+    Finished `release` profile [optimized] target(s) in 2.58s
+     Running unittests src/lib.rs (target/m31-tree/client-target/release/deps/templar_m31_tree-89b0d6a18384b4b6)
+
+running 6 tests
+test m31::tests::independent_plonky3_permutation_and_padding_vectors ... ok
+test m31::tests::quadratic_constraints_and_witness ... ok
+test statement::tests::both_workloads_bind_all_public_calls ... ok
+test statement::tests::canonical_encodings_and_oracle_tree_vectors ... ok
+test wire_tests::empty_preprocessing_matches_prover_height_without_transcript_change ... ok
+test wire_tests::fixed_encoding_requires_complete_envelope ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running unittests src/main.rs (target/m31-tree/client-target/release/deps/templar_m31_tree-6b77fd64dd4d60ff)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests templar_m31_tree
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

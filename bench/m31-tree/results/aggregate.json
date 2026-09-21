@@ -1,0 +1,207 @@
+{
+ "generated": "2026-09-21T18:20:00+0800 (updated: 16 GiB retries + reviewed counter verification)",
+ "scope": "Public synthetic M31 tree benchmark v2 (frozen handoff, empty-preprocessing verifier fix). Hash-workload comparison only; not a payment, privacy, or consumer-device qualification. Local VM gas != on-chain fees.",
+ "toolchain": {
+  "scarb": "2.18.0 (e6144df0f)",
+  "snforge": "0.63.0",
+  "sierra": "1.8.0",
+  "node": "v22.22.1",
+  "chrome": "153.0.8010.47",
+  "rustc_nightly": "1.94.0-nightly (86a49fd71 2026-01-14)"
+ },
+ "verification_counts": {
+  "native_unit_tests_v2": "6/6 PASS",
+  "cairo_correctness": "36/36 PASS (24 golden, 4 packing, 2 m31_reject, 1 history_eviction, 5 snapshot; two cold-M31 tests required authorized 80M step budget; default-limit failures preserved)",
+  "native_proofs_verified_in_runtime": "8/8",
+  "browser_proofs_byte_identical_to_native": "8/8 (tree sha256 d8f4881c..., mixed d069e307...)",
+  "native_verify_tests_browser_exports": {
+   "tree": "19 mutations + 2 boundary controls rejected, exit 0",
+   "mixed": "17 mutations + 3 boundary controls rejected, exit 0"
+  },
+  "browser_rejection_tests": "same counts in-browser",
+  "archive_integrity_final": "passed, no failures",
+  "cairo_cost_cells": "16/16 measured (14 at 8 GiB, 2 at authorized 16 GiB retry)"
+ },
+ "native": {
+  "tree_only_1g": {
+   "runs": 3,
+   "complete_seconds": [
+    0.486,
+    0.491,
+    0.48
+   ],
+   "process_peak_rss_gib": 0.017,
+   "cgroup_peak_gib": 0.012,
+   "cap_gib": 1,
+   "swap": 0,
+   "oom": 0,
+   "proof_envelope_bytes": 197320,
+   "bare_stark_bytes": 166809,
+   "proof_sha256": "d8f4881c20541419f45a4c96eb114dd82e9903b51bc41bc835a598576c68b332",
+   "lifting_log": 11
+  },
+  "mixed_3g": {
+   "runs": 3,
+   "complete_seconds": [
+    16.352,
+    16.108,
+    16.183
+   ],
+   "process_peak_rss_gib": 1.899,
+   "cgroup_peak_gib": 1.897,
+   "cap_gib": 3,
+   "swap": 0,
+   "oom": 0,
+   "proof_envelope_bytes": 464900,
+   "bare_stark_bytes": 404305,
+   "proof_sha256": "d069e30789a0459126966b341e9921b1c21c1ade6ca822a08320bc700767e1fd",
+   "lifting_log": 23
+  },
+  "mixed_2g_probe": {
+   "runs": 2,
+   "complete_seconds": [
+    16.185,
+    16.309
+   ],
+   "process_peak_rss_gib": 1.899,
+   "cgroup_peak_gib": 1.897,
+   "cap_gib": 2,
+   "result": "PASS both fresh processes, no OOM"
+  }
+ },
+ "browser_chrome_wasm": {
+  "tree_1g": {
+   "runs": "3 successive + 1 fresh",
+   "proof_latency_ms": [
+    4220,
+    4219,
+    4194,
+    4276
+   ],
+   "wasm_linear_memory_hwm_bytes": 20709376,
+   "browser_plus_harness_cgroup_peak_gib": [
+    0.305,
+    0.314
+   ],
+   "summed_pss_peak_gib": [
+    0.283,
+    0.277
+   ],
+   "cap_gib": 1,
+   "oom": 0,
+   "ui_heartbeat_max_gap_ms": [
+    104.5,
+    100.3
+   ]
+  },
+  "mixed_3g": {
+   "runs": "3 successive + 1 fresh",
+   "proof_latency_ms": [
+    77094,
+    75908,
+    75787,
+    77180
+   ],
+   "wasm_linear_memory_hwm_bytes": 2040070144,
+   "browser_plus_harness_cgroup_peak_gib": [
+    2.168,
+    2.15
+   ],
+   "summed_pss_peak_gib": [
+    2.138,
+    2.124
+   ],
+   "cap_gib": 3,
+   "oom": 0,
+   "ui_heartbeat_max_gap_ms": [
+    118.2,
+    104.1
+   ]
+  }
+ },
+ "cairo_append_batch_l2_gas": {
+  "note": "per-selector L2 gas from snforge 0.63.0 --gas-report; local VM estimates, not on-chain fees; whole-test counters reported per-directory and are NOT per-call counters",
+  "felt_cold": {
+   "1": 8000008,
+   "2": 13088672,
+   "4": 23235680,
+   "8": 43469056
+  },
+  "felt_warm": {
+   "seed_snapshot": 6901390,
+   "1": 5122444,
+   "2": 10180788,
+   "4": 20267156,
+   "8": 40379252
+  },
+  "m31_cold": {
+   "1": 1571243590,
+   "2": 2358804480,
+   "4": 3933870870,
+   "8": 7083892870
+  },
+  "m31_warm": {
+   "seed_snapshot": 12389010,
+   "1": 787619740,
+   "2": 1575125240,
+   "4": 3150080850,
+   "8": 6299881290
+  },
+  "m31_batch8_note": "batch-8 cells OOM-killed at the initial authorized 8 GiB cgroup cap (failures preserved in cairo-final-m31-cold-8/ and cairo-final-m31-warm-8/); single authorized 16 GiB retries PASS: cairo-final-m31-cold-8-16g and cairo-final-m31-warm-8-16g. 16/16 cells now have measured values."
+ },
+ "cairo_per_selector_steps": {
+  "source": "snforge --tracked-resource cairo-steps --save-trace-data nested EntryPointCall extraction",
+  "felt_cold_1_append": {
+   "steps": 11299,
+   "poseidon_builtin": 128,
+   "pedersen_builtin": 134,
+   "range_check_builtin": 999
+  },
+  "felt_warm_1_append": {
+   "steps": 7469,
+   "poseidon_builtin": 64,
+   "pedersen_builtin": 98,
+   "range_check_builtin": 793
+  },
+  "m31_cold_1_append": {
+   "steps": 13515671,
+   "range_check_builtin": 2519734,
+   "pedersen_builtin": 136
+  },
+  "m31_warm_1_append": {
+   "steps": 6760704,
+   "range_check_builtin": 1260324,
+   "pedersen_builtin": 99
+  },
+  "m31_seed_snapshot": {
+   "steps": 7808
+  },
+  "note": "cold M31 = 130 permutations (65 empty-tree init + 65 append); warm = 65; digest stored as 2 felts",
+  "verification": "Values verified equal to Astra reviewed extraction results/reviewed-cairo-counters.json (append_batch EntryPointCall nodes, incl. trace SHA256s); gas_consumed=0 in traces is a cairo-steps tracking artifact, not a zero-gas claim"
+ },
+ "prior_felt252_baseline": {
+  "source_archives": [
+   "bench/poseidon-membership",
+   "bench/wasm-membership"
+  ],
+  "native": "1.97 GiB peak RSS, 14.08-14.14 s",
+  "browser": "2.150 GiB WASM linear memory, 40.93-41.72 s, browser group 2.21-2.23 GiB",
+  "note": "different measurement sessions/conditions; metrics kept separate"
+ },
+ "limitations": [
+  "deterministic fixture latency repeats the same grinding search; not a PoW time distribution",
+  "128-bit application-hash design target is separate from the configured 96-bit PCS metric",
+  "mixed workload is a labeled hash-union, not a complete or migrated payment",
+  "M31 prefix8 warm fixture is reference-derived; genuine Cairo snapshot comparisons cover prefix 1/2 (felt baseline 1/2/8)",
+  "no Sepolia/mainnet fee or live on-chain executability claim",
+  "M31 batch-8 cost runs failed at the 8 GiB local VM cap and passed at 16 GiB in one authorized run per cell (failures preserved); 16 GiB is a passing cap, not a measured minimum. Gas figures are local VM resources, not fee quotes"
+ ],
+ "doc_corrections_2026_09_21": [
+  "browser mixed WASM linear high-water reported as 1.900 GiB (2,040,070,144 bytes = 1.89996337890625 GiB), replacing the earlier 2.04 GiB wording in TODO.md, docs/prover-memory-review.md and docs/guide/src/pages/status.mdx",
+  "browser tree WASM linear high-water standardized to 19.75 MiB (20,709,376 bytes), replacing 20.7 MB mixed-unit prose",
+  "UI heartbeat max gap reported as 118.2 ms (was a false <=118 ms bound in measurements.md)",
+  "docs/prover-memory-review.md: client-privacy-feasibility/wrapper discussion given its own heading so it is not attributed to the M31 experiment",
+  "cost-run cap evidence phrased as failed at 8 GiB / passed at 16 GiB, not a measured minimum",
+  "no design decisions, measured values, or earlier archives changed by these corrections"
+ ]
+}

@@ -1,0 +1,136 @@
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.11s
+   Compiling test(pool_unittest) pool v0.1.0 (/home/broody/development/templar/bench/controlled-push-e2e/cairo/Scarb.toml)
+warn[E2100]: Unused import: `pool::tree::StorageMapReadAccess`
+ --> /home/broody/development/templar/bench/controlled-push-e2e/cairo/src/tree.cairo:17:5
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+    ^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StorageMapWriteAccess`
+ --> /home/broody/development/templar/bench/controlled-push-e2e/cairo/src/tree.cairo:17:27
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/controlled-push-e2e/cairo/src/tree.cairo:17:50
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/controlled-push-e2e/cairo/src/tree.cairo:18:5
+    StoragePointerWriteAccess,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::test_token::E2EToken::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/controlled-push-e2e/cairo/src/test_token.cairo:9:59
+        Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::test_token::E2EToken::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/controlled-push-e2e/cairo/src/test_token.cairo:10:9
+        StoragePointerWriteAccess,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"corelib-internal-use"` with no `#[feature("corelib-internal-use")]` attribute. Note: "Use `starknet` directly"
+ --> /home/broody/development/templar/bench/controlled-push-e2e/cairo/src/test_token.cairo:6:15
+    use core::starknet::{get_caller_address, ContractAddress};
+              ^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tests::test_proof_adapter::ContractAddress`
+ --> /home/broody/development/templar/bench/controlled-push-e2e/cairo/src/tests/test_proof_adapter.cairo:4:40
+use starknet::{contract_address_const, ContractAddress, SyscallResultTrait};
+                                       ^^^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"deprecated-starknet-consts"` with no `#[feature("deprecated-starknet-consts")]` attribute. Note: "Use `TryInto::try_into` in const context instead."
+ --> /home/broody/development/templar/bench/controlled-push-e2e/cairo/src/tests/test_proof_adapter.cairo:4:16
+use starknet::{contract_address_const, ContractAddress, SyscallResultTrait};
+               ^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"deprecated-starknet-consts"` with no `#[feature("deprecated-starknet-consts")]` attribute. Note: "Use `TryInto::try_into` in const context instead."
+ --> /home/broody/development/templar/bench/controlled-push-e2e/cairo/src/tests/test_push.cairo:3:33
+use starknet::{ContractAddress, contract_address_const, get_tx_info, SyscallResultTrait};
+                                ^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"deprecated-starknet-consts"` with no `#[feature("deprecated-starknet-consts")]` attribute. Note: "Use `TryInto::try_into` in const context instead."
+ --> /home/broody/development/templar/bench/controlled-push-e2e/cairo/src/tests/test_controller.cairo:1:32
+use starknet::{ContractAddress,contract_address_const,get_tx_info,SyscallResultTrait};
+                               ^^^^^^^^^^^^^^^^^^^^^^
+
+    Finished `dev` profile target(s) in 2 seconds
+
+
+Collected 68 test(s) from pool package
+Running 68 test(s) from src/
+[PASS] pool::tests::golden::rejects_old_version (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~233062)
+[PASS] pool::tests::test_proof_adapter::native_adapter_rejects_other_proof_version (l1_gas: ~0, l1_data_gas: ~480, l2_gas: ~2681128)
+[PASS] pool::tests::golden::rejects_amount_overflow (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~299738)
+[PASS] pool::tests::golden::rejects_index_overflow (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~299738)
+[PASS] pool::tests::test_tree::path_verification_two_leaves (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~1679148)
+[PASS] pool::tests::test_tree::zero_leaf_is_rejected (l1_gas: ~0, l1_data_gas: ~96, l2_gas: ~533720)
+[PASS] pool::tests::test_controller::real_stark_signature_verifies (l1_gas: ~0, l1_data_gas: ~192, l2_gas: ~821811)
+[PASS] pool::tests::golden::rejects_changed_destination (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~942431)
+[PASS] pool::tests::test_tree::path_verification_wrong_path_fails (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~1144954)
+[PASS] pool::tests::golden::rejects_wrong_owner (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~727420)
+[PASS] pool::tests::test_controller::changed_transition_fails (l1_gas: ~0, l1_data_gas: ~192, l2_gas: ~822011)
+[PASS] pool::tests::golden::rejects_viewer_not_owner (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~727420)
+[PASS] pool::tests::golden::valid_controlled (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~1016855)
+[PASS] pool::tests::test_push::unknown_root_rejected (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~43940046)
+[PASS] pool::tests::golden::rejects_zero_amount (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~299738)
+[PASS] pool::tests::golden::rejects_wrong_nullifier (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~732072)
+[PASS] pool::tests::golden::rejects_wrong_input_controller (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~299738)
+[PASS] pool::tests::golden::rejects_ordinary_authorization (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~302180)
+[PASS] pool::tests::test_tree::zero_hash_chain_is_self_consistent (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~352008)
+[PASS] pool::tests::test_proof_adapter::native_adapter_rejects_calldata_proof (l1_gas: ~0, l1_data_gas: ~480, l2_gas: ~2650318)
+[PASS] pool::tests::test_push::uninserted_delivery_not_available (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~42716360)
+[PASS] pool::tests::golden::rejects_wrong_output_policy (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~791089)
+[PASS] pool::tests::golden::valid_ordinary (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~874952)
+[PASS] pool::tests::golden::rejects_changed_delivery (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~942431)
+[PASS] pool::tests::test_push::changed_ciphertext_rejected (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~43578164)
+[PASS] pool::tests::test_proof_adapter::native_adapter_accepts_matching_message (l1_gas: ~0, l1_data_gas: ~480, l2_gas: ~2752574)
+[PASS] pool::tests::test_push::empty_inputs_rejected (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~43372392)
+[PASS] pool::tests::test_controller::pool_rejects_wrong_signer (l1_gas: ~0, l1_data_gas: ~8160, l2_gas: ~44598265)
+[PASS] pool::tests::test_push::duplicate_nullifiers_rejected (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~44069516)
+[PASS] pool::tests::test_push::oversized_full_word_rejected (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~31791)
+[PASS] pool::tests::test_controller::out_of_order_scalar_fails (l1_gas: ~0, l1_data_gas: ~192, l2_gas: ~767570)
+[PASS] pool::tests::golden::rejects_wrong_output_controller (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~778124)
+[PASS] pool::tests::test_proof_adapter::native_adapter_rejects_missing_facts (l1_gas: ~0, l1_data_gas: ~480, l2_gas: ~2588538)
+[PASS] pool::tests::golden::valid_maximum_controlled (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~2863766)
+[PASS] pool::tests::test_controller::wrong_key_signature_fails (l1_gas: ~0, l1_data_gas: ~192, l2_gas: ~822011)
+[PASS] pool::tests::golden::rejects_expired_format (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~239162)
+[PASS] pool::tests::test_proof_adapter::native_adapter_rejects_unfinalized_base (l1_gas: ~0, l1_data_gas: ~480, l2_gas: ~2634987)
+[PASS] pool::tests::test_push::only_owner_can_change_verifier (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~42797480)
+[PASS] pool::tests::test_controller::zero_signature_fails (l1_gas: ~0, l1_data_gas: ~192, l2_gas: ~762600)
+[PASS] pool::tests::test_proof_adapter::native_adapter_rejects_changed_message (l1_gas: ~0, l1_data_gas: ~480, l2_gas: ~2753794)
+[PASS] pool::tests::test_push::only_owner_can_change_fee (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~42823240)
+[PASS] pool::tests::golden::rejects_forged_ordinary_input (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~784450)
+[PASS] pool::tests::test_tree::first_insert_seeds_zero_chain_and_count (l1_gas: ~0, l1_data_gas: ~7104, l2_gas: ~38080258)
+[PASS] pool::tests::test_push::other_pool_rejected (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~43610535)
+[PASS] pool::tests::test_tree::insert_updates_root_count_and_matches_naive_reference (l1_gas: ~0, l1_data_gas: ~7776, l2_gas: ~70222240)
+[PASS] pool::tests::test_push::rejecting_verifier_blocks_spend (l1_gas: ~0, l1_data_gas: ~7872, l2_gas: ~43313794)
+[PASS] pool::tests::test_proof_adapter::native_adapter_rejects_other_caller (l1_gas: ~0, l1_data_gas: ~480, l2_gas: ~2739068)
+[PASS] pool::tests::test_push::rebound_zero_withdrawal_rejected (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~49263197)
+[PASS] pool::tests::test_push::redirected_withdrawal_rejected (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~43575864)
+[PASS] pool::tests::test_proof_adapter::native_adapter_rejects_unapproved_os (l1_gas: ~0, l1_data_gas: ~480, l2_gas: ~2681128)
+[PASS] pool::tests::test_proof_adapter::native_adapter_rejects_stale_proof (l1_gas: ~0, l1_data_gas: ~480, l2_gas: ~2661737)
+[PASS] pool::tests::test_proof_adapter::native_adapter_rejects_multiple_messages (l1_gas: ~0, l1_data_gas: ~480, l2_gas: ~2695198)
+[PASS] pool::tests::test_push::legacy_version_rejected (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~43606855)
+[PASS] pool::tests::test_controller::pool_rejects_missing_signature (l1_gas: ~0, l1_data_gas: ~8160, l2_gas: ~44538854)
+[PASS] pool::tests::test_controller::real_controller_signature_gates_mock_proof_pool (l1_gas: ~0, l1_data_gas: ~8736, l2_gas: ~53167296)
+[PASS] pool::tests::test_push::spend_publishes_bound_delivery_and_marks_nullifier (l1_gas: ~0, l1_data_gas: ~8928, l2_gas: ~55315122)
+[PASS] pool::tests::test_push::replay_rejected (l1_gas: ~0, l1_data_gas: ~8544, l2_gas: ~53310569)
+[PASS] pool::tests::test_controller::canonical_message_mask_matches_signer (l1_gas: ~0, l1_data_gas: ~192, l2_gas: ~822601)
+[PASS] pool::tests::test_push::oversized_tail_word_rejected (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~73731)
+[PASS] pool::tests::test_push::omitted_ciphertext_rejected (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~43421084)
+[PASS] pool::tests::test_proof_adapter::native_adapter_rejects_other_chain (l1_gas: ~0, l1_data_gas: ~480, l2_gas: ~2741708)
+[PASS] pool::tests::test_controller::pool_rejects_expired_approval (l1_gas: ~0, l1_data_gas: ~8160, l2_gas: ~44443664)
+[PASS] pool::tests::golden::rejects_wrong_transition (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~942431)
+[PASS] pool::tests::golden::rejects_wrong_policy (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~727420)
+[PASS] pool::tests::golden::rejects_wrong_binding (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~1012235)
+[PASS] pool::tests::test_push::deposit_binds_funding_context_and_publishes_bytes (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~43305649)
+[PASS] pool::tests::test_push::other_chain_rejected (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~43609495)
+[PASS] pool::tests::test_tree::root_history_ring_evicts_oldest (l1_gas: ~0, l1_data_gas: ~105600, l2_gas: ~1775828888)
+Tests: 68 passed, 0 failed, 0 ignored, 0 filtered out
+

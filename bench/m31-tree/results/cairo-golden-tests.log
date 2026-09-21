@@ -1,0 +1,177 @@
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.12s
+   Compiling test(m31_tree_bench_unittest) m31_tree_bench v0.1.0 (/home/broody/development/templar/bench/m31-tree/cairo/Scarb.toml)
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:5
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+    ^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StorageMapWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:27
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:17:50
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_tree_bench::felt_tree::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/m31-tree/cairo/src/felt_tree.cairo:18:5
+    StoragePointerWriteAccess,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    Finished `dev` profile target(s) in 0 seconds
+
+
+Collected 24 test(s) from m31_tree_bench package
+Running 24 test(s) from src/
+[PASS] m31_tree_bench::golden::empty_leaf_golden (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12037930)
+        sierra gas: 12037930
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::leaf_golden_2 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12196770)
+        sierra gas: 12196770
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::leaf_golden_3 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12196770)
+        sierra gas: 12196770
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::leaf_golden_0 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12196770)
+        sierra gas: 12196770
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::leaf_golden_4 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12196770)
+        sierra gas: 12196770
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::leaf_golden_5 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12197560)
+        sierra gas: 12197560
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::leaf_golden_6 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12197560)
+        sierra gas: 12197560
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::node_golden_0 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~24254060)
+        sierra gas: 24254060
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::node_golden_1 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~24253120)
+        sierra gas: 24253120
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::permutation_golden_0 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~11735920)
+        sierra gas: 11735920
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::permutation_golden_1 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~11735920)
+        sierra gas: 11735920
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::sponge_golden_0 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12028660)
+        sierra gas: 12028660
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::permutation_golden_2 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~11735920)
+        sierra gas: 11735920
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::sponge_golden_10 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~35624600)
+        sierra gas: 35624600
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::sponge_golden_1 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12030700)
+        sierra gas: 12030700
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::sponge_golden_2 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12037930)
+        sierra gas: 12037930
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::sponge_golden_3 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12059620)
+        sierra gas: 12059620
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::sponge_golden_4 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12062030)
+        sierra gas: 12062030
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::sponge_golden_5 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12066020)
+        sierra gas: 12066020
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::sponge_golden_6 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~23824360)
+        sierra gas: 23824360
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::leaf_golden_1 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~12196770)
+        sierra gas: 12196770
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::sponge_golden_8 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~23861800)
+        sierra gas: 23861800
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::sponge_golden_9 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~23866260)
+        sierra gas: 23866260
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+[PASS] m31_tree_bench::golden::sponge_golden_7 (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~23841640)
+        sierra gas: 23841640
+        syscalls: ()
+        events: (count: 0, keys: 0, data size: 0)
+        messages: (l2 to l1: 0, l1 handler: 0)
+
+Tests: 24 passed, 0 failed, 0 ignored, 23 filtered out
+

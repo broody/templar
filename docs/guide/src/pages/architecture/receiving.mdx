@@ -1,0 +1,71 @@
+---
+showAskAi: false
+title: Receiving & recovery
+description: Offline receipt, optional viewing authority, and wallet recovery from a seed and encrypted history.
+---
+
+import { Flow } from '../../components/Flow'
+
+# Receiving & recovery
+
+A recipient shares a locally derived [cloaked receiving address](/architecture/notes); their wallet handles the note data. Payers publish encrypted notes with their payments so a recipient can discover them later. Users do not exchange withdrawal secrets or manage a separate secret file for every payment.
+
+<Flow steps={[
+  { title: 'Publish', detail: 'The payer funds a commitment and publishes its encrypted note in the same transaction.' },
+  { title: 'Discover', detail: 'The wallet downloads history, decrypts matching notes, and verifies their commitments.' },
+  { title: 'Track', detail: 'The wallet checks spent status and builds membership paths for available notes.' },
+]} caption="Receiving is asynchronous. The payee can be offline while several independent payers use the same address." />
+
+## Encrypted delivery is part of settlement
+
+Every output carries a commitment and encrypted payload. The pool computes a digest from the actual payload and includes it in the operation checked against the proof. It appends the leaf, records the digest at that position, and publishes the ciphertext atomically.
+
+The reference uses a fixed 256-byte plaintext and a 304-byte libsodium sealed-box payload. The plaintext contains the chain, pool, token, amount, receiving identity, randomness, and controller and policy fields. Its encryption uses the address's independent X25519 key.
+
+A valid commitment is not enough to recover a note. The recipient needs the encrypted bytes, and the wallet needs a trustworthy connection between those bytes and canonical pool state. A digest detects changes but cannot recreate missing data. The [pool state](/architecture/state#encrypted-publication) describes this additional integrity boundary.
+
+The spend proof does not prove that encryption was performed correctly. A payer can publish a payload the intended recipient cannot decrypt, or one that does not match the committed note. Wallets credit only successfully decrypted, commitment-matching funded notes. Sealed-box integrity also does not identify the sender or provide a return address.
+
+## Choose how much to disclose
+
+| Capability | What its holder can do |
+| --- | --- |
+| Cloaked receiving address | Create a payment to that address; it can be shared with payers |
+| Incoming viewing key | Decrypt received notes and see their token and amount |
+| Full viewing key | Also derive those notes' nullifiers and determine spent status |
+| Spending wallet | Prove ownership and spend available notes |
+
+Incoming viewing alone cannot calculate an authoritative available balance. If Bob receives 100, spends it, and receives 40 change, his receipts total 140 while his unspent balance is 40. Full viewing distinguishes the spent 100 from the unspent 40.
+
+“Full” is scoped to received notes and their spent status for the supplied address. It does not reconstruct every outgoing destination, sender identity, memo, or private input-to-output relationship. Viewing material is optional and is never required by a global auditor or discovery service.
+
+Viewing exports must be checked against an independently authenticated expected address. A self-consistent export for some other address is not evidence about this wallet. Copied viewing keys are not revocable: their holders retain access to old receipts and future payments to that same address.
+
+## Restore from a wallet backup
+
+The seed recreates spending and decryption keys. It cannot recreate randomness chosen by other people who paid the wallet. Recovery therefore needs both the backup and the public encrypted history.
+
+1. Restore keys using the backup's derivation version and network/pool context.
+2. Select a canonical checkpoint with a block identity, tree root, leaf count, and spent state.
+3. Obtain the ordered commitments, delivery digests, and encrypted output history.
+4. Rebuild the tree and check its root; validate payloads against the canonical digests.
+5. Decrypt matching notes, check ownership and commitments, and deduplicate by leaf position.
+6. Derive their nullifiers and report the unspent balance as of that checkpoint.
+
+Restoring the spending wallet restores spending authority. Importing a full viewing key produces a watch-only view even when it finds the same available notes.
+
+## Completeness and freshness
+
+Missing payloads produce an **incomplete** result, including when no currently known note is unspent. The wallet cannot call that a complete zero balance because a missing payload might belong to it. Conflicting commitments, payloads, or positions must be rejected.
+
+A valid historical checkpoint establishes a historical balance. A minimum height can reject known-stale data, but does not independently establish canonical status. The wallet must handle reorgs and identify the checkpoint its balance refers to.
+
+The reference scans public outputs and tries decryption locally. Efficient history transport, private spent-status queries, and durable historical availability are separate requirements from the cryptographic ownership proof. The [status page](/status) records the current RPC trust model and measured synchronization limits.
+
+## Restoring controlled value
+
+Decrypted notes include their controller and policy. Recovery preserves those conditions. An unspent balance reports value owned at the checkpoint; controlled value still needs approval before it can move. A full viewing key can display those conditions and spent status without granting ownership or controller authority.
+
+## Recovering external proceeds
+
+For [return notes](/architecture/returns), the wallet combines encrypted ownership information with an authenticated public amount determined at settlement. It verifies the delivery digest and final commitment before crediting the ordinary note. Seed recovery and viewing retain the same authority boundaries; history must include the amount as well as the ciphertext.

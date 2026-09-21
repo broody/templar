@@ -1,0 +1,24 @@
+{
+  "command": [
+    "env",
+    "PATH=/usr/bin:/home/broody/.cargo/bin:/bin",
+    "RUSTUP_HOME=/tmp/templar-stwo-privacy-dtgn6e8l/rustup",
+    "RUSTC_WRAPPER=",
+    "RUSTFLAGS=-Ctarget-cpu=native",
+    "CARGO_TARGET_DIR=/home/broody/development/templar/target/poseidon-membership/client-target",
+    "CARGO_BUILD_JOBS=8",
+    "taskset",
+    "-c",
+    "0-7",
+    "cargo",
+    "+nightly-2026-01-15",
+    "build",
+    "--offline",
+    "--release",
+    "--manifest-path",
+    "bench/poseidon-membership/client/Cargo.toml"
+  ],
+  "start_unix": 1789968725.9882925,
+  "elapsed_seconds": 7.868614435195923,
+  "exit_code": 0
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "stage": "negative-wrong-owner",
+    "command": [
+      "/home/broody/.nargo/bin/nargo",
+      "execute",
+      "-p",
+      "negative-wrong-owner"
+    ],
+    "exit_code": 1,
+    "wall_seconds": 0.12,
+    "driver_wall_seconds": 0.1644638469988422,
+    "max_rss_kib": 60692,
+    "memory_limit": "6G",
+    "cpu_affinity": "0-3",
+    "cpu_quota": "400%",
+    "swap_limit": 0,
+    "timeout_seconds": 180
+  },
+  {
+    "stage": "negative-inflation",
+    "command": [
+      "/home/broody/.nargo/bin/nargo",
+      "execute",
+      "-p",
+      "negative-inflation"
+    ],
+    "exit_code": 1,
+    "wall_seconds": 0.12,
+    "driver_wall_seconds": 0.2064379520015791,
+    "max_rss_kib": 61012,
+    "memory_limit": "6G",
+    "cpu_affinity": "0-3",
+    "cpu_quota": "400%",
+    "swap_limit": 0,
+    "timeout_seconds": 180
+  },
+  {
+    "stage": "negative-duplicate-input",
+    "command": [
+      "/home/broody/.nargo/bin/nargo",
+      "execute",
+      "-p",
+      "negative-duplicate-input"
+    ],
+    "exit_code": 1,
+    "wall_seconds": 0.13,
+    "driver_wall_seconds": 0.21441277299891226,
+    "max_rss_kib": 61440,
+    "memory_limit": "6G",
+    "cpu_affinity": "0-3",
+    "cpu_quota": "400%",
+    "swap_limit": 0,
+    "timeout_seconds": 180
+  },
+  {
+    "stage": "negative-bad-path",
+    "command": [
+      "/home/broody/.nargo/bin/nargo",
+      "execute",
+      "-p",
+      "negative-bad-path"
+    ],
+    "exit_code": 1,
+    "wall_seconds": 0.12,
+    "driver_wall_seconds": 0.198710115000722,
+    "max_rss_kib": 60776,
+    "memory_limit": "6G",
+    "cpu_affinity": "0-3",
+    "cpu_quota": "400%",
+    "swap_limit": 0,
+    "timeout_seconds": 180
+  }
+]

@@ -1,0 +1,35 @@
+--- a/verifier_core/src/vcs/verifier.cairo
++++ b/verifier_core/src/vcs/verifier.cairo
+@@ -88,6 +88,17 @@
+         mut queried_values: Span<BaseField>,
+         decommitment: MerkleDecommitment<H>,
+     ) {
++        // Bridge-local reviewed empty-preprocessing case. The pinned Rust prover commits
++        // zero columns as one empty leaf, with no queries/openings or authentication path.
++        // Reject every other zero-height shape; all nonempty-tree logic is unchanged.
++        if *self.tree_height == 0 {
++            assert!(self.column_log_deg_bounds.is_empty(), "empty tree columns");
++            assert!(query_positions.is_empty(), "empty tree queries");
++            assert!(queried_values.is_empty(), "empty tree values");
++            assert!(decommitment.hash_witness.is_empty(), "empty tree witness");
++            assert!(*self.root == H::hash_node(None, [].span()), "empty tree root");
++            return;
++        }
+         let n_columns = self.column_log_deg_bounds.len();
+         let mut positions_and_values: Felt252Dict<Nullable<Span<BaseField>>> = Default::default();
+ 
+--- a/verifier_core/src/vcs/blake2s_hasher.cairo
++++ b/verifier_core/src/vcs/blake2s_hasher.cairo
+@@ -23,7 +23,11 @@
+         if column_values.is_empty() {
+             let (msg, byte_count) = match children_hashes {
+                 Some((x, y)) => (combine_u32_block(x.hash, y.hash), 64),
+-                None => panic!("Empty nodes are not supported"),
++                // Bridge-local compatibility: pinned native zero-column preprocessing
++                // finalizes an untouched Blake2s256 state (zero bytes, one final zero block).
++                // This is the full digest, with no M31 output reduction. The Merkle
++                // verifier separately enforces the exact guarded height-zero shape.
++                None => (BoxImpl::new([0_u32; 16]), 0),
+             };
+ 
+             // Note: there is no domain separation between the cases

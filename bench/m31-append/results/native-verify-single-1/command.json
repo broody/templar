@@ -1,0 +1,29 @@
+{
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-m31-native-verify-single-1-1789991323769333729",
+    "-p",
+    "WorkingDirectory=/home/broody/development/templar",
+    "-p",
+    "MemoryMax=1G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUQuota=100%",
+    "-p",
+    "CPUAffinity=0",
+    "-p",
+    "RuntimeMaxSec=1200",
+    "--setenv=RAYON_NUM_THREADS=1",
+    "--setenv=PATH=/home/broody/.local/share/solana/install/active_release/bin:/home/broody/.local/bin:/home/broody/bin:/home/broody/.codex/tmp/arg0/codex-arg0QMLPaf:/home/broody/.local/share/solana/install/active_release/bin:/home/broody/.local/bin:/home/broody/bin:/home/broody/.codex/tmp/arg0/codex-arg0rl6QtN:/home/broody/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/broody/.local/share/solana/install/active_release/bin:/home/broody/.local/bin:/home/broody/bin:/home/broody/.bb:/home/broody/.bb:/home/broody/.kimi-code/bin:/home/broody/.openfang/bin:/home/broody/.opencode/bin:/home/broody/.asdf/shims:/home/broody/.local/bin:/home/broody/.local/share/solana/install/active_release/bin:/home/broody/.bun/bin:/home/broody/.local/share/pnpm:/home/broody/.nvm/versions/node/v22.22.1/bin:/home/broody/.local/share/solana/install/active_release/bin:/home/broody/.starkli/bin:/home/broody/.cargo/bin:/home/broody/.local/bin:/home/broody/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/broody/.local/bin:/home/broody/.slot/bin:/home/broody/bin/cursor:/home/broody/.local/bin:/usr/local/go/bin:/home/broody/go/bin:/home/broody/.local/bin:/home/broody/.local/bin:/home/broody/.local/bin:/home/broody/.local/bin:/home/broody/.nargo/bin:/home/broody/.nargo/bin:/home/broody/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+    "/usr/bin/time",
+    "-v",
+    "/home/broody/development/templar/target/m31-append/frozen-native-v2/templar-m31-append",
+    "--verify-tests",
+    "/home/broody/development/templar/bench/m31-append/results/native-single-1/proof/proof.bin",
+    "/home/broody/development/templar/bench/m31-append/results/native-verify-single-1/checks"
+  ]
+}

@@ -1,0 +1,177 @@
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -447,3 +447,6 @@
+ as_conversions = "warn"
+ await_holding_lock = "warn"
+ await_holding_refcell_ref = "warn"
++
++[patch."https://github.com/starkware-libs/proving-utils"]
++privacy-prove = { path = "../proving-utils/crates/privacy_prove" }
+--- a/crates/starknet_transaction_prover/Cargo.toml
++++ b/crates/starknet_transaction_prover/Cargo.toml
+@@ -7,6 +7,7 @@
+ description = "Standalone service that proves individual Starknet transactions using the virtual Starknet OS and Stwo prover."
+ 
+ [features]
++memory_profile = []
+ cairo_native = ["blockifier/cairo_native"]
+ # Enables in-memory stwo proving.  Requires a nightly Rust toolchain because the
+ # stwo prover crate uses unstable features (array_chunks, portable_simd, …).
+--- a/crates/starknet_transaction_prover/src/main.rs
++++ b/crates/starknet_transaction_prover/src/main.rs
+@@ -1,4 +1,9 @@
+ //! CLI for the Starknet transaction prover.
++#[cfg(feature = "memory_profile")]
++mod memory_profile;
++#[cfg(feature = "memory_profile")]
++#[global_allocator]
++static ALLOCATOR: memory_profile::CountingAllocator = memory_profile::CountingAllocator;
+ 
+ #[cfg(not(feature = "stwo_proving"))]
+ fn main() {
+@@ -34,6 +39,8 @@
+     use tracing_subscriber::prelude::*;
+     use tracing_subscriber::{fmt, EnvFilter};
+ 
++    #[cfg(feature = "memory_profile")]
++    memory_profile::start()?;
+     let args = CliArgs::parse();
+ 
+     // TODO(Avi): Revisit the starknet_transaction_prover=debug default once the service stabilizes.
+@@ -41,9 +48,10 @@
+         EnvFilter::new("warn,starknet_transaction_prover=debug,privacy_prove=info")
+     });
+     let registry = tracing_subscriber::registry().with(filter);
++    let events = if std::env::var_os("TEMPLAR_TRACE_SPANS").is_some() { tracing_subscriber::fmt::format::FmtSpan::NEW | tracing_subscriber::fmt::format::FmtSpan::CLOSE } else { tracing_subscriber::fmt::format::FmtSpan::NONE };
+     match args.log_format {
+-        LogFormat::Json => registry.with(fmt::layer().json()).init(),
+-        LogFormat::Text => registry.with(fmt::layer()).init(),
++        LogFormat::Json => registry.with(fmt::layer().with_span_events(events).json()).init(),
++        LogFormat::Text => registry.with(fmt::layer().with_span_events(events)).init(),
+     }
+ 
+     let config = ServiceConfig::from_args(args)?;
+--- a/crates/starknet_transaction_prover/src/memory_profile.rs
++++ b/crates/starknet_transaction_prover/src/memory_profile.rs
+@@ -0,0 +1,52 @@
++//! Native-only diagnostics. Counts Rust System-allocator requested bytes, not RSS
++//! or C-library allocations. No witness contents or addresses are recorded.
++use std::alloc::{GlobalAlloc, Layout, System};
++use std::sync::atomic::{AtomicUsize, Ordering::Relaxed};
++static LIVE: AtomicUsize = AtomicUsize::new(0);
++static PEAK: AtomicUsize = AtomicUsize::new(0);
++static TOTAL: AtomicUsize = AtomicUsize::new(0);
++pub struct CountingAllocator;
++fn add(n: usize) {
++    let live = LIVE.fetch_add(n, Relaxed) + n;
++    PEAK.fetch_max(live, Relaxed);
++    TOTAL.fetch_add(n, Relaxed);
++}
++// SAFETY: delegates every allocation operation to System with the unchanged
++// pointer/layout. Counters never allocate, inspect or alter allocated memory.
++unsafe impl GlobalAlloc for CountingAllocator {
++    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
++        let p = unsafe { System.alloc(layout) };
++        if !p.is_null() { add(layout.size()); }
++        p
++    }
++    unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
++        let p = unsafe { System.alloc_zeroed(layout) };
++        if !p.is_null() { add(layout.size()); }
++        p
++    }
++    unsafe fn dealloc(&self, p: *mut u8, layout: Layout) {
++        unsafe { System.dealloc(p, layout) };
++        LIVE.fetch_sub(layout.size(), Relaxed);
++    }
++    unsafe fn realloc(&self, p: *mut u8, layout: Layout, n: usize) -> *mut u8 {
++        let q = unsafe { System.realloc(p, layout, n) };
++        if !q.is_null() {
++            if n >= layout.size() { add(n-layout.size()); }
++            else { LIVE.fetch_sub(layout.size()-n, Relaxed); }
++        }
++        q
++    }
++}
++pub fn start() -> std::io::Result<()> {
++    use std::io::Write;
++    use std::time::{Duration, SystemTime, UNIX_EPOCH};
++    let Some(path) = std::env::var_os("TEMPLAR_MEMORY_PROFILE") else { return Ok(()) };
++    let mut file = std::fs::File::create(path)?;
++    writeln!(file, "unix_ms,live_requested_bytes,peak_requested_bytes,total_requested_bytes")?;
++    std::thread::spawn(move || loop {
++        let ms = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
++        if writeln!(file, "{ms},{},{},{}", LIVE.load(Relaxed), PEAK.load(Relaxed), TOTAL.load(Relaxed)).is_err() { break; }
++        std::thread::sleep(Duration::from_millis(25));
++    });
++    Ok(())
++}
+--- a/crates/starknet_transaction_prover/src/proving/prover.rs
++++ b/crates/starknet_transaction_prover/src/proving/prover.rs
+@@ -5,7 +5,31 @@
+ use std::sync::Arc;
+ 
+ use cairo_vm::vm::runners::cairo_pie::CairoPie;
+-use privacy_prove::{privacy_recursive_prove, RecursiveProverPrecomputes};
++use privacy_prove::{privacy_recursive_prove, privacy_recursive_prove_low_memory, LowMemoryOptions};
++
++/// Benchmark integration: choose once at startup, never mutate shared precomputes.
++pub(crate) enum RecursiveProverPrecomputes {
++    Cached(Arc<privacy_prove::RecursiveProverPrecomputes>),
++    LowMemory(LowMemoryOptions),
++}
++
++pub(crate) fn prepare_recursive_prover_precomputes()
++    -> Result<Arc<RecursiveProverPrecomputes>, Box<dyn std::error::Error>>
++{
++    match std::env::var("TEMPLAR_LOW_MEMORY").as_deref() {
++        Ok("1") => {
++            let cache_cairo_coefficients = match std::env::var("TEMPLAR_CAIRO_COEFFICIENTS").as_deref() {
++                Ok("0") => false,
++                Err(std::env::VarError::NotPresent) | Ok("1") => true,
++                _ => return Err("TEMPLAR_CAIRO_COEFFICIENTS must be 0 or 1".into()),
++            };
++            Ok(Arc::new(RecursiveProverPrecomputes::LowMemory(LowMemoryOptions { cache_cairo_coefficients })))
++        },
++        Err(std::env::VarError::NotPresent) | Ok("0") => Ok(Arc::new(
++            RecursiveProverPrecomputes::Cached(privacy_prove::prepare_recursive_prover_precomputes()?))),
++        _ => Err("TEMPLAR_LOW_MEMORY must be 0 or 1".into()),
++    }
++}
+ use starknet_api::transaction::fields::Proof;
+ use starknet_proof_verifier::ProgramOutput;
+ 
+@@ -28,7 +52,10 @@
+     precomputes: Arc<RecursiveProverPrecomputes>,
+ ) -> Result<ProverOutput, ProvingError> {
+     let proof_output = tokio::task::spawn_blocking(move || {
+-        privacy_recursive_prove(cairo_pie, precomputes).map_err(|e| e.to_string())
++        match precomputes.as_ref() {
++            RecursiveProverPrecomputes::Cached(shared) => privacy_recursive_prove(cairo_pie, shared.clone()),
++            RecursiveProverPrecomputes::LowMemory(options) => privacy_recursive_prove_low_memory(cairo_pie, *options),
++        }.map_err(|e| e.to_string())
+     })
+     .await
+     .map_err(ProvingError::TaskJoin)?
+--- a/crates/starknet_transaction_prover/src/proving/prover_test.rs
++++ b/crates/starknet_transaction_prover/src/proving/prover_test.rs
+@@ -4,7 +4,7 @@
+ use apollo_infra_utils::path::resolve_project_relative_path;
+ use cairo_vm::vm::runners::cairo_pie::CairoPie;
+ use privacy_circuit_verify_v1::{verify_recursive_circuit, PrivacyProofOutput};
+-use privacy_prove::{prepare_recursive_prover_precomputes, RecursiveProverPrecomputes};
++use super::prover::{prepare_recursive_prover_precomputes, RecursiveProverPrecomputes};
+ use starknet_api::transaction::fields::VIRTUAL_SNOS;
+ use starknet_proof_verifier::ProgramOutput;
+ 
+--- a/crates/starknet_transaction_prover/src/proving/virtual_snos_prover.rs
++++ b/crates/starknet_transaction_prover/src/proving/virtual_snos_prover.rs
+@@ -11,7 +11,7 @@
+ use blockifier_reexecution::state_reader::rpc_objects::BlockId;
+ use blockifier_reexecution::utils::get_chain_info;
+ #[cfg(feature = "stwo_proving")]
+-use privacy_prove::{prepare_recursive_prover_precomputes, RecursiveProverPrecomputes};
++use super::prover::{prepare_recursive_prover_precomputes, RecursiveProverPrecomputes};
+ use serde::{Deserialize, Serialize};
+ use serde_json::{Map, Value};
+ use starknet_api::block::GasPrice;

@@ -1,0 +1,75 @@
+{
+ "scope": "per-selector VM counters from snforge --save-trace-data nested EntryPointCall nodes (cairo-steps tracked resource); test-code frame and deploy marker excluded; verified equal to reviewed extraction results/reviewed-cairo-counters.json (append_batch EntryPointCall under root nested_calls; not test-root counters). gas_consumed fields are 0 because --tracked-resource cairo-steps tracking does not charge gas; this is not a zero-gas claim \u2014 L2/Sierra gas comes from the gas-report logs.",
+ "selectors": {
+  "seed_snapshot": [
+   {
+    "n_steps": 5494,
+    "n_memory_holes": 0,
+    "builtins": {
+     "range_check_builtin": 433,
+     "pedersen_builtin": 95
+    },
+    "gas_consumed": 0,
+    "syscalls": {
+     "StorageWrite": 99
+    }
+   }
+  ],
+  "append_batch": [
+   {
+    "n_steps": 7469,
+    "n_memory_holes": 26,
+    "builtins": {
+     "range_check_builtin": 793,
+     "pedersen_builtin": 98,
+     "poseidon_builtin": 64
+    },
+    "gas_consumed": 0,
+    "syscalls": {
+     "StorageRead": 67,
+     "StorageWrite": 38
+    }
+   }
+  ],
+  "get_root": [
+   {
+    "n_steps": 26,
+    "n_memory_holes": 0,
+    "builtins": {
+     "range_check_builtin": 1
+    },
+    "gas_consumed": 0,
+    "syscalls": {
+     "StorageRead": 1
+    }
+   }
+  ],
+  "get_leaf_count": [
+   {
+    "n_steps": 30,
+    "n_memory_holes": 0,
+    "builtins": {
+     "range_check_builtin": 3
+    },
+    "gas_consumed": 0,
+    "syscalls": {
+     "StorageRead": 1
+    }
+   }
+  ],
+  "root_is_known": [
+   {
+    "n_steps": 59,
+    "n_memory_holes": 0,
+    "builtins": {
+     "range_check_builtin": 4,
+     "pedersen_builtin": 1
+    },
+    "gas_consumed": 0,
+    "syscalls": {
+     "StorageRead": 1
+    }
+   }
+  ]
+ }
+}

@@ -1,0 +1,95 @@
+Running as unit: templar-m31-native-single-3-1789990766310599931.service
+{
+  "binary_bytes": 192143,
+  "cairo_proof_felts": 44735,
+  "complete_seconds": 4.063302771,
+  "empty_preprocessed_root": [
+    105,
+    33,
+    122,
+    48,
+    121,
+    144,
+    128,
+    148,
+    225,
+    17,
+    33,
+    208,
+    66,
+    53,
+    74,
+    124,
+    31,
+    85,
+    182,
+    72,
+    44,
+    161,
+    165,
+    30,
+    27,
+    37,
+    13,
+    253,
+    30,
+    208,
+    238,
+    249
+  ],
+  "fri_pow_nonce": "1503238887814",
+  "interaction_pow_bits": 24,
+  "interaction_pow_nonce": "103080092825",
+  "n": 1,
+  "native_verified": true,
+  "pcs_config": {
+    "fri_config": {
+      "fold_step": 4,
+      "log_blowup_factor": 3,
+      "log_last_layer_degree_bound": 0,
+      "n_queries": 23
+    },
+    "lifting_log_size": 11,
+    "pow_bits": 27
+  },
+  "phases": {
+    "base_commit_seconds": 0.011690479,
+    "interaction_seconds": 0.267081713,
+    "native_verify_seconds": 0.002481941,
+    "stark_prove_seconds": 3.756989408,
+    "twiddles_and_witness_seconds": 0.01570097
+  },
+  "requests": 129,
+  "rows": 256,
+  "scope": "public synthetic append validity; no private payment claim",
+  "trace_columns": 1172
+}
+	Command being timed: "/home/broody/development/templar/target/m31-append/frozen-native-v1/templar-m31-append /home/broody/development/templar/bench/m31-append/results/native-inputs/single-empty-to-one.json /home/broody/development/templar/bench/m31-append/results/native-single-3/proof"
+	User time (seconds): 4.07
+	System time (seconds): 0.01
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:04.09
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 17924
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 3897
+	Voluntary context switches: 195
+	Involuntary context switches: 512
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 5992
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 4.098s
+CPU time consumed: 4.094s
+Memory peak: 2.7M
+Memory swap peak: 0B

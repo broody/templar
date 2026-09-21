@@ -1,0 +1,382 @@
+--- a/crates/stwo/src/prover/pcs/mod.rs
++++ b/crates/stwo/src/prover/pcs/mod.rs
+@@ -19,7 +19,7 @@
+ use crate::core::vcs_lifted::verifier::ExtendedMerkleDecommitmentLifted;
+ use crate::core::ColumnVec;
+ use crate::prover::air::component_prover::{Poly, Trace, WeightsHashMap};
+-use crate::prover::backend::{BackendForChannel, Col};
++use crate::prover::backend::{BackendForChannel, Col, Column};
+ use crate::prover::fri::{FriDecommitResult, FriProver};
+ use crate::prover::mempool::BaseColumnPool;
+ use crate::prover::pcs::quotient_ops::compute_fri_quotients;
+@@ -38,6 +38,7 @@
+     pub store_polynomials_coefficients: bool,
+     /// Pre-allocated base field column pool for polynomial evaluation during commit.
+     pub base_column_pool: MaybeOwned<'a, BaseColumnPool<B>>,
++    low_memory_mode: bool,
+ }
+ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a, B, MC> {
+     /// Creates a new empty commitment scheme prover with the given configuration and twiddles. The
+@@ -49,6 +50,7 @@
+             twiddles,
+             store_polynomials_coefficients: false,
+             base_column_pool: MaybeOwned::Owned(BaseColumnPool::new()),
++            low_memory_mode: false,
+         }
+     }
+ 
+@@ -63,6 +65,7 @@
+             twiddles,
+             store_polynomials_coefficients: false,
+             base_column_pool: MaybeOwned::Borrowed(base_column_pool),
++            low_memory_mode: false,
+         }
+     }
+ 
+@@ -72,11 +75,24 @@
+         self.store_polynomials_coefficients = true;
+     }
+ 
++    /// Reduces retained proving data by recomputing owned Merkle trees when opening them and
++    /// releasing owned polynomial coefficients after out-of-domain evaluation. Call before
++    /// committing any trees. Borrowed preprocessed trees are never modified.
++    ///
++    /// This changes only storage lifetimes; the commitment and proof format are unchanged.
++    pub fn set_low_memory_mode(&mut self) {
++        assert!(
++            self.trees.is_empty(),
++            "Select memory mode before committing trees"
++        );
++        self.low_memory_mode = true;
++    }
++
+     /// Evaluates the given polynomials, commits them into a Merkle tree, mixes the root into
+     /// the channel, and appends the resulting tree to the scheme.
+     fn commit(&mut self, polynomials: ColumnVec<CircleCoefficients<B>>, channel: &mut MC::C) {
+         let _span = span!(Level::INFO, "Commitment").entered();
+-        let tree = CommitmentTreeProver::new(
++        let mut tree = CommitmentTreeProver::new(
+             polynomials,
+             self.config.fri_config.log_blowup_factor,
+             self.twiddles,
+@@ -84,6 +100,9 @@
+             self.config.lifting_log_size,
+             &self.base_column_pool,
+         );
++        if self.low_memory_mode {
++            tree.retain_merkle_root();
++        }
+         MC::mix_root(channel, tree.commitment.root());
+         self.trees.push(MaybeOwned::Owned(tree));
+     }
+@@ -92,9 +111,14 @@
+     /// Merkle root into the channel. Accepts both owned and borrowed trees.
+     pub fn commit_tree(
+         &mut self,
+-        tree: MaybeOwned<'a, CommitmentTreeProver<B, MC>>,
++        mut tree: MaybeOwned<'a, CommitmentTreeProver<B, MC>>,
+         channel: &mut MC::C,
+     ) {
++        if self.low_memory_mode {
++            if let MaybeOwned::Owned(tree) = &mut tree {
++                tree.retain_merkle_root();
++            }
++        }
+         MC::mix_root(channel, tree.commitment.root());
+         self.trees.push(tree);
+     }
+@@ -217,6 +241,19 @@
+             .polynomials()
+             .zip_cols(&sampled_points)
+             .par_map_cols(eval_at_points);
++
++        if self.low_memory_mode {
++            // The samples own their field values. All remaining PCS operations read evaluations,
++            // so coefficients and barycentric weights are no longer needed.
++            drop(weights_hash_map);
++            for tree in &mut self.trees.0 {
++                if let MaybeOwned::Owned(tree) = tree {
++                    for poly in &mut tree.polynomials {
++                        poly.coeffs = None;
++                    }
++                }
++            }
++        }
+ 
+         span.exit();
+         let sampled_values = samples
+@@ -353,7 +390,10 @@
+ /// commit on a set of polynomials at a time. This corresponds to such a set.
+ pub struct CommitmentTreeProver<B: BackendForChannel<MC>, MC: MerkleChannel> {
+     pub polynomials: ColumnVec<Poly<B>>,
++    /// In low-memory PCS mode, non-root layer buffers are empty but the vector retains the
++    /// logical tree height. The owning PCS reconstructs these layers before opening the tree.
+     pub commitment: MerkleProverLifted<B, MC::H>,
++    recompute_merkle_decommitment: bool,
+ }
+ 
+ impl<B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentTreeProver<B, MC> {
+@@ -394,7 +434,17 @@
+         CommitmentTreeProver {
+             polynomials,
+             commitment: tree,
+-        }
++            recompute_merkle_decommitment: false,
++        }
++    }
++
++    /// Keep the root and logical tree height while releasing all other hash buffers. This is
++    /// private to PCS trees: FRI commitments can use packed leaves and are not affected.
++    fn retain_merkle_root(&mut self) {
++        for layer in self.commitment.layers.iter_mut().skip(1) {
++            *layer = Col::<B, <MC::H as MerkleHasherLifted>::Hash>::zeros(0);
++        }
++        self.recompute_merkle_decommitment = true;
+     }
+ 
+     /// Decommits the merkle tree on the given query positions.
+@@ -413,7 +463,18 @@
+             .iter()
+             .map(|poly| &poly.evals.values)
+             .collect_vec();
+-        self.commitment.decommit(queries, eval_vec)
++        if self.recompute_merkle_decommitment {
++            let _span = span!(Level::INFO, "Recompute Merkle opening").entered();
++            let rebuilt = MerkleProverLifted::<B, MC::H>::commit(
++                eval_vec.clone(),
++                self.commitment.layers.len() as u32 - 1,
++                0,
++            );
++            assert_eq!(rebuilt.root(), self.commitment.root());
++            rebuilt.decommit(queries, eval_vec)
++        } else {
++            self.commitment.decommit(queries, eval_vec)
++        }
+     }
+ }
+ 
+@@ -432,3 +493,224 @@
+         info!("Log size {log_size}: {count}");
+     }
+ }
++
++#[cfg(test)]
++mod low_memory_tests {
++    use super::*;
++    use crate::core::channel::Blake2sChannel;
++    use crate::core::circle::SECURE_FIELD_CIRCLE_GEN;
++    use crate::core::fields::m31::M31;
++    use crate::core::pcs::CommitmentSchemeVerifier;
++    use crate::core::vcs_lifted::blake2_merkle::Blake2sMerkleChannel;
++    use crate::core::vcs_lifted::verifier::MerkleVerifierLifted;
++    use crate::prover::backend::simd::SimdBackend;
++    use crate::prover::backend::CpuBackend;
++
++    fn polynomials<B: BackendForChannel<Blake2sMerkleChannel>>() -> Vec<CircleCoefficients<B>> {
++        // Deliberately unsorted, with equal-height columns whose stable order must be retained.
++        [6, 4, 7, 4]
++            .into_iter()
++            .enumerate()
++            .map(|(column, log_size)| {
++                CircleCoefficients::new(
++                    (0..1 << log_size)
++                        .map(|row| M31::from((row + column * 31) as u32))
++                        .collect(),
++                )
++            })
++            .collect()
++    }
++
++    fn check_recomputed_tree<B: BackendForChannel<Blake2sMerkleChannel>>() {
++        let twiddles = B::precompute_twiddles(CanonicCoset::new(9).half_coset());
++        let pool = BaseColumnPool::new();
++        let mut tree = CommitmentTreeProver::<B, Blake2sMerkleChannel>::new(
++            polynomials(),
++            1,
++            &twiddles,
++            true,
++            Some(9),
++            &pool,
++        );
++        let root = tree.commitment.root();
++        let query_sets = [vec![], vec![0], vec![1, 1, 3, 12, 511]];
++        let expected = query_sets.iter().map(|q| tree.decommit(q)).collect_vec();
++        tree.retain_merkle_root();
++        assert_eq!(tree.commitment.root(), root);
++        assert_eq!(tree.commitment.layers.len(), 10);
++        assert!(tree.commitment.layers.iter().skip(1).all(Column::is_empty));
++        for (queries, (values, extended)) in query_sets.iter().zip(expected) {
++            let (actual_values, actual) = tree.decommit(queries);
++            assert_eq!(actual_values, values);
++            assert_eq!(
++                actual.decommitment.hash_witness,
++                extended.decommitment.hash_witness
++            );
++            assert_eq!(actual.aux.all_node_values, extended.aux.all_node_values);
++            if !queries.is_empty() {
++                let verifier = MerkleVerifierLifted::new(root, vec![7, 5, 8, 5], Some(9));
++                verifier
++                    .verify(queries, actual_values.clone(), actual.decommitment.clone())
++                    .unwrap();
++                let mut corrupted = actual_values;
++                corrupted[0][0] += M31::from(1);
++                // Use a distinct query to keep this a Merkle rejection, not a duplicate-value
++                // consistency assertion in the verifier.
++                if queries.len() == 1 {
++                    assert!(verifier
++                        .verify(queries, corrupted, actual.decommitment)
++                        .is_err());
++                }
++            }
++        }
++
++        // A stale/mutated retained root must fail closed before returning an opening.
++        let old_root = tree.commitment.root();
++        tree.commitment.layers[0].set(0, Default::default());
++        assert_ne!(tree.commitment.root(), old_root);
++        assert!(
++            std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| tree.decommit(&[0]))).is_err()
++        );
++
++        let mut empty = CommitmentTreeProver::<B, Blake2sMerkleChannel>::new(
++            vec![],
++            1,
++            &twiddles,
++            true,
++            Some(0),
++            &pool,
++        );
++        let expected = empty.decommit(&[]);
++        empty.retain_merkle_root();
++        assert_eq!(empty.commitment.layers.len(), 1);
++        let actual = empty.decommit(&[]);
++        assert_eq!(expected.0, actual.0);
++        assert_eq!(
++            expected.1.decommitment.hash_witness,
++            actual.1.decommitment.hash_witness
++        );
++        assert_eq!(expected.1.aux.all_node_values, actual.1.aux.all_node_values);
++    }
++
++    fn check_pcs<B: BackendForChannel<Blake2sMerkleChannel>>(store_coeffs: bool, borrowed: bool) {
++        let config = PcsConfig::default(); // Test-only parameters, identical in both modes.
++        let twiddles = B::precompute_twiddles(CanonicCoset::new(8).half_coset());
++        let pool = BaseColumnPool::new();
++        let make_tree = || {
++            CommitmentTreeProver::<B, Blake2sMerkleChannel>::new(
++                polynomials(),
++                1,
++                &twiddles,
++                store_coeffs,
++                None,
++                &pool,
++            )
++        };
++        let cached = make_tree();
++        let original_layers = cached
++            .commitment
++            .layers
++            .iter()
++            .map(Column::to_cpu)
++            .collect_vec();
++        let sampled_points = TreeVec(vec![vec![vec![SECURE_FIELD_CIRCLE_GEN]; 4]; 2]);
++        let prove = |low_memory_mode| {
++            let mut scheme =
++                CommitmentSchemeProver::<B, Blake2sMerkleChannel>::new(config, &twiddles);
++            if store_coeffs {
++                scheme.set_store_polynomials_coefficients();
++            }
++            if low_memory_mode {
++                scheme.set_low_memory_mode();
++            }
++            let mut channel = Blake2sChannel::default();
++            scheme.commit_tree(
++                if borrowed {
++                    MaybeOwned::Borrowed(&cached)
++                } else {
++                    MaybeOwned::Owned(make_tree())
++                },
++                &mut channel,
++            );
++            let mut builder = scheme.tree_builder();
++            builder.extend_polys(polynomials());
++            builder.commit(&mut channel);
++            if low_memory_mode {
++                assert_eq!(scheme.trees[0].recompute_merkle_decommitment, !borrowed);
++                assert!(scheme.trees[1].recompute_merkle_decommitment);
++            }
++            scheme.prove_values(sampled_points.clone(), &mut channel)
++        };
++        let full = prove(false);
++        let reduced = prove(true);
++        // The proof has ordered vectors only; debug equality compares every proof field without
++        // adding a serialization dependency. End-to-end callers additionally compare bytes.
++        assert_eq!(format!("{:?}", full.proof), format!("{:?}", reduced.proof));
++        assert_eq!(
++            full.aux.unsorted_query_locations,
++            reduced.aux.unsorted_query_locations
++        );
++        for (left, right) in full
++            .aux
++            .trace_decommitment
++            .iter()
++            .zip(reduced.aux.trace_decommitment.iter())
++        {
++            assert_eq!(left.all_node_values, right.all_node_values);
++        }
++        assert_eq!(
++            cached
++                .commitment
++                .layers
++                .iter()
++                .map(Column::to_cpu)
++                .collect_vec(),
++            original_layers
++        );
++        assert!(cached
++            .polynomials
++            .iter()
++            .all(|poly| poly.coeffs.is_some() == store_coeffs));
++
++        let verify = |proof: CommitmentSchemeProof<_>| {
++            let mut channel = Blake2sChannel::default();
++            let mut verifier = CommitmentSchemeVerifier::<Blake2sMerkleChannel>::new(config);
++            for root in &proof.commitments.0 {
++                verifier.commit(*root, &[6, 4, 7, 4], &mut channel);
++            }
++            verifier.verify_values(sampled_points.clone(), proof, &mut channel)
++        };
++        verify(reduced.proof.clone()).unwrap();
++        let mut corrupted = reduced.proof;
++        corrupted.sampled_values[0][0][0] += SecureField::from(1);
++        assert!(verify(corrupted).is_err());
++    }
++
++    #[test]
++    fn low_memory_tree_cpu() {
++        check_recomputed_tree::<CpuBackend>();
++    }
++
++    #[test]
++    fn low_memory_tree_simd() {
++        check_recomputed_tree::<SimdBackend>();
++    }
++
++    #[test]
++    fn low_memory_pcs_cpu() {
++        for store_coeffs in [false, true] {
++            for borrowed in [false, true] {
++                check_pcs::<CpuBackend>(store_coeffs, borrowed);
++            }
++        }
++    }
++
++    #[test]
++    fn low_memory_pcs_simd() {
++        for store_coeffs in [false, true] {
++            for borrowed in [false, true] {
++                check_pcs::<SimdBackend>(store_coeffs, borrowed);
++            }
++        }
++    }
++}

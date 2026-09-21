@@ -1,0 +1,32 @@
+Running as unit: templar-wasm-chrome-three-runs-8g-1789975176674419463.service
+{"status":"failed","output":"/home/broody/development/templar/bench/wasm-membership/results/chrome-three-runs-8g/browser","browser_peak_pss_gib":null}
+Command exited with non-zero status 1
+	Command being timed: "/home/broody/.nvm/versions/node/v22.22.1/bin/node bench/wasm-membership/run-browser.mjs bench/wasm-membership/results/chrome-three-runs-8g/browser 3"
+	User time (seconds): 0.49
+	System time (seconds): 0.14
+	Percent of CPU this job got: 133%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.48
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 148552
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 11
+	Minor (reclaiming a frame) page faults: 41089
+	Voluntary context switches: 2543
+	Involuntary context switches: 644
+	Swaps: 0
+	File system inputs: 8
+	File system outputs: 4480
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 482ms
+CPU time consumed: 770ms
+Memory peak: 2.7M
+Memory swap peak: 0B

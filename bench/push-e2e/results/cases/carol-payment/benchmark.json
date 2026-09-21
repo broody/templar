@@ -1,0 +1,26 @@
+{
+  "case": "carol-payment",
+  "startup_seconds": 2.0023092349947547,
+  "request_seconds": 18.899751191995165,
+  "proving_seconds": 11.929,
+  "virtual_os_seconds": 6.966,
+  "proof_bytes": 237556,
+  "proof_sha256": "c3e3c6078b8485ded70ffb0425a5bdd4c4145ce63c6a55a2543ba19b0461ba26",
+  "peak_rss_gib": 13.905960083007812,
+  "swap_peak_bytes": 0,
+  "local_verification_passed": true,
+  "public_binding_matches": true,
+  "public_values": [
+    "0x54454d504c41525f505553485f504f4332",
+    "0x534e5f5345504f4c4941",
+    "0x7430fdfc9121d40c0b92bec1a19265c5f9b2c0fd16aba973f1799beed736a1e",
+    "0x5b7a0f8c885a7b2e6074c1e4e317116b0e90d6d4f96f92915aafa65501da072",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x407eb58ada0df8805864a32a6ae63ac425b69a8af050156948e215853e36454"
+  ],
+  "base_block": 15363747,
+  "memory_cap_gib": 16,
+  "cores": 4
+}

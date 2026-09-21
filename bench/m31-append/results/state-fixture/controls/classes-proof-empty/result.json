@@ -1,0 +1,12 @@
+{
+  "name": "classes-proof-empty",
+  "expected": "reject",
+  "exit_code": 101,
+  "passed": true,
+  "input": "bench/m31-append/results/state-fixture/controls/classes-proof-empty/fixture.json",
+  "input_sha256": "c6f0994f0387675b70e1a85c860ecafc856d6c45a249fd102cc7acb78b681780",
+  "report_path": null,
+  "stdout": "bench/m31-append/results/state-fixture/controls/classes-proof-empty/stdout.log",
+  "stderr": "bench/m31-append/results/state-fixture/controls/classes-proof-empty/stderr.log",
+  "cgroup": "bench/m31-append/results/state-fixture/controls/classes-proof-empty/cgroup.txt"
+}

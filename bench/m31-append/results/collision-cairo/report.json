@@ -1,0 +1,61 @@
+{
+  "status": "passed",
+  "scope": "saved collision-proof Cairo regression; correctness only",
+  "exit_code": 0,
+  "expected_program_output": [
+    8,
+    6116411936294045149168452720177,
+    393402133025997798000961,
+    1110,
+    369885523772527728750115346542049401884169389828638891089154140543675697279,
+    964860872,
+    1,
+    2240549288302754291170171073021663588532823840557379167998095719595131846438,
+    1
+  ],
+  "comparison_exact": true,
+  "caps": {
+    "memory_gib": 8,
+    "swap_bytes": 0,
+    "cpu_cores": 1,
+    "runtime_seconds": 300,
+    "explicit_step_cap": null
+  },
+  "resources": {
+    "cairo_steps": 5959448,
+    "time_max_rss_kib": 894572
+  },
+  "hashes": {
+    "scarb": "97eafe061de1e473e6649578e320225d41abaf708784db1858173132811f01d6",
+    "arguments": "07e659d16ebb3212927ee6086c830a1b5e1c4f0b8b74c2bfc513a5cc2303b369",
+    "public_output": "9dc55f112c74ddfb88b7ce601536199a37a04182dcfd45546330c8be4e055235",
+    "bridge_executable": "2255febc4f0c54d461f81fb01724751990a2cd4dd20df982554d034122d6a232"
+  },
+  "stdout": "stdout.log",
+  "stderr": "stderr.log",
+  "cgroup": "cgroup.txt",
+  "raw_program_output": [
+    8,
+    6116411936294045149168452720177,
+    393402133025997798000961,
+    1110,
+    369885523772527728750115346542049401884169389828638891089154140543675697279,
+    964860872,
+    1,
+    -1377953500363376922527151710073406517090283374774217531974996336540740174043,
+    1
+  ],
+  "actual_program_output_canonical_felts": [
+    8,
+    6116411936294045149168452720177,
+    393402133025997798000961,
+    1110,
+    369885523772527728750115346542049401884169389828638891089154140543675697279,
+    964860872,
+    1,
+    2240549288302754291170171073021663588532823840557379167998095719595131846438,
+    1
+  ],
+  "felt_output_normalization": "negative VM decimal outputs reduced modulo the Stark field prime",
+  "reprocessed_without_rerun": true
+}

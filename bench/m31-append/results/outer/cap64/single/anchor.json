@@ -1,0 +1,21 @@
+{
+  "fixture_sha256": "a0936d5ac143d921ea1900bdde5540b252f615b1f4e6dffc270b9881358bcc2c",
+  "authority": {
+    "compiled_class_v2": "0x6d1ad21151ce7f06a20bd4bf21ecad40d898a3c9c95e3b0832ca94e975bbba6",
+    "constructor_calldata": [],
+    "deployer": "0x0",
+    "os_config_hash": "0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57",
+    "pool": "0x456",
+    "salt": "0x4d33315f415050454e445f464958545552455f5631",
+    "statement": "0x224abbc723ec41df538065d8fc9b1d3459960364236e50556c371207970e860",
+    "statement_class": "0x6ef8a6b896fe830b46f08893a54dcc11853331b3f23fd04834349f87a2cfd48"
+  },
+  "base_block_hash": "0x5e0835638f30e6821384e81492b4e73f09fc7c66dc5753735adf96b07a20e8b",
+  "base_number": 100,
+  "program_hash": "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+  "binaries": {
+    "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/rust-target/release/starknet_transaction_prover": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5",
+    "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/local-verifier": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934"
+  },
+  "scope": "synthetic authenticated local state; no network finality"
+}

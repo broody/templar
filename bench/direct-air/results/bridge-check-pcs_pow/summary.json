@@ -1,0 +1,28 @@
+{
+  "scope": "synthetic Cairo interoperability only; no PROOF1, payment or privacy qualification",
+  "command": [
+    "/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb",
+    "--manifest-path",
+    "/home/broody/development/templar/bench/direct-air/cairo/Scarb.toml",
+    "execute",
+    "--no-build",
+    "-p",
+    "templar_synthetic_circuit_bridge",
+    "--arguments-file",
+    "/home/broody/development/templar/bench/direct-air/results/cairo-mutations/pcs_pow.json",
+    "--print-program-output",
+    "--print-resource-usage"
+  ],
+  "binary_sha256": "97eafe061de1e473e6649578e320225d41abaf708784db1858173132811f01d6",
+  "cap_gib": 8,
+  "threads": 4,
+  "cpu_affinity": "0 1 2 3",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 1,
+  "elapsed_seconds": 0.9961200980033027,
+  "sampled_peak_rss_gib": 0.01198577880859375,
+  "sampled_peak_cgroup_gib": 0.08404922485351562,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "time_peak_rss_gib": 0.09254074096679688
+}

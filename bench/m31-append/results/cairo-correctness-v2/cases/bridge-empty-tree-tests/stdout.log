@@ -1,0 +1,17 @@
+     Running cairo-test templar_m31_append_bridge
+warn: `scarb cairo-test` is deprecated and will be removed in a future version.
+help: please migrate to `snforge` for all your testing needs.
+help: to install snforge, please visit: https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html
+help: to learn how to migrate, see: https://foundry-rs.github.io/starknet-foundry/getting-started/first-steps.html#using-snforge-with-existing-scarb-projects
+   Compiling test(templar_m31_append_bridge_unittest) templar_m31_append_bridge v0.1.0 (/home/broody/development/templar/bench/m31-append/cairo/bridge/Scarb.toml)
+    Finished `dev` profile target(s) in 7 seconds
+     Testing templar_m31_append_bridge
+running 7 tests
+test templar_m31_append_bridge::test::empty_tree_accepts_exact_shape ... ok
+test templar_m31_append_bridge::test::empty_tree_rejects_wrong_root ... ok
+test templar_m31_append_bridge::test::empty_tree_rejects_columns ... ok
+test templar_m31_append_bridge::test::empty_tree_rejects_queries ... ok
+test templar_m31_append_bridge::test::empty_tree_rejects_values ... ok
+test templar_m31_append_bridge::test::empty_tree_rejects_witness ... ok
+test templar_m31_append_bridge::test::empty_root_matches_pinned_native_full_blake2s ... ok
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 filtered out;

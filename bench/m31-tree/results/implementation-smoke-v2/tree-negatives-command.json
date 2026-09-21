@@ -1,0 +1,14 @@
+{
+  "purpose": "implementation smoke, not benchmark",
+  "command": [
+    "taskset",
+    "-c",
+    "0",
+    "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree",
+    "--verify-tests",
+    "/home/broody/development/templar/bench/m31-tree/results/implementation-smoke-v2/tree/proof.bin",
+    "/home/broody/development/templar/bench/m31-tree/results/implementation-smoke-v2/tree-negatives"
+  ],
+  "RAYON_NUM_THREADS": "1",
+  "exit_code": 0
+}

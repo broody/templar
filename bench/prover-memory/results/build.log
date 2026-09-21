@@ -1,0 +1,16 @@
+Running as unit: templar-memory-build-1789957468364449153.service; invocation ID: c235f613e6f04f45bc16548bdbc89cb1
+warning: apollo_starknet_os_program@0.19.0-rc.2: Dumping OS source files...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Compiling starknet_os program...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Compiling starknet_aggregator program...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Compiling virtual_os program...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Done compiling starknet_aggregator. Writing compiled bytes to output directory.
+warning: apollo_starknet_os_program@0.19.0-rc.2: Done compiling virtual_os. Writing compiled bytes to output directory.
+warning: apollo_starknet_os_program@0.19.0-rc.2: Done compiling starknet_os. Writing compiled bytes to output directory.
+   Compiling starknet_transaction_prover v0.19.0-rc.2 (/home/broody/development/templar/target/prover-memory/sequencer/crates/starknet_transaction_prover)
+    Finished `release` profile [optimized] target(s) in 29.51s
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 29.600s
+CPU time consumed: 1min 23.150s
+Memory peak: 512.0K
+Memory swap peak: 0B

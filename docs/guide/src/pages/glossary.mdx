@@ -1,0 +1,42 @@
+---
+showAskAi: false
+title: Glossary
+description: The cryptographic and system terms used in the Templar architecture guide.
+---
+
+# Glossary
+
+| Term | Meaning in this guide |
+| --- | --- |
+| Base block | The chain snapshot used by local virtual execution. |
+| Checkpoint | A canonical block identity and pool state against which a wallet verifies history and reports a balance. |
+| Ciphertext | Encrypted note data published with a funded output so its recipient can recover it. |
+| Commitment | A hash that binds a note's fields while concealing its private contents; also the tree leaf. |
+| Controller | An additional policy authority on a controlled note; approval and the owner’s proof are both required. Ordinary notes need no controller. |
+| Delivery digest | A hash of canonical ciphertext bytes, bound to the spend and recorded with the output position. |
+| felt252 | A value in Starknet's prime field, used by Cairo and the protocol's Poseidon hashes. |
+| Full viewing key | A sensitive read-only capability that decrypts receipts and derives their nullifiers to determine spent status. |
+| Incoming viewing key | A capability that decrypts receipts but cannot by itself determine which are spent. |
+| Merkle path | Sibling hashes and a position used to recompute a tree root from one leaf. |
+| Note | A private claim on an amount of one token held by the pool. |
+| Nullifier | A secret-derived public identifier that records consumption once, without directly naming the input leaf. |
+| Opening | Data that reconstructs a commitment. An output's payer knows its opening but lacks the recipient's spending authority. |
+| Poseidon | The hash function used for receiving identity, commitments, nullifiers, the tree, and binding. |
+| PROOF1 | The native proof format used by the recursive privacy-proving integration. |
+| Proof facts | Public results exposed by native verification; the adapter must interpret and bind them. |
+| Public inputs | Values visible to verification and settlement, in contrast to the private witness. |
+| Push payment | A sender-created payment to a reusable receiving address that does not require a per-payment recipient response. |
+| Cloaked receiving address | Shareable payment information derived locally by the recipient's wallet: a receiving identity and encryption public key, scoped to a chain and pool. It is not a Starknet account address and requires no onchain registration or deployment. Also called a cloaked address. |
+| Return note | A transaction-local destination for externally funded proceeds. Verified funding creates an ordinary spendable note. Called `ReturnNote` in the implementation. |
+| OpenNoteDeposit | The upstream-compatible adapter response containing a return identifier, token and actual amount. |
+| Execution intent | The proof-bound adapter, exact call, input budget, expiry and required return destinations. |
+| Spending secret | The private authority the statement requires to prove ownership and consume a note. |
+| S-two / STWO | The prover technology used by the selected recursive zero-knowledge privacy pipeline. |
+| Soundness | The property that a false claim cannot feasibly pass verification. |
+| Statement | The program and public claim whose correctness is established by a proof. |
+| Statement binding | The hash connecting the public proof result to the exact bundle, including ciphertexts and withdrawals. |
+| Virtual execution | Local execution against a chain context whose result is proven rather than directly applied to public state. |
+| Witness | Private input supplied to the statement, including spending secrets, note data, and membership paths. |
+| Zero knowledge | The property that a proof reveals no additional private witness information beyond its public claim. |
+
+For the relationships between these terms, see [notes and ownership](/architecture/notes), [receiving and recovery](/architecture/receiving), and [proofs and verification](/architecture/proofs).

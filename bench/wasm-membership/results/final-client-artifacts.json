@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "path": "target/wasm-membership/client-target/release/templar-wasm-membership",
+      "sha256": "28bc5c1467ead725eef519cf235b5a7bf54b294776dde09f1890dff93134db30",
+      "bytes": 13864824
+    },
+    {
+      "path": "target/wasm-membership/pkg/templar_wasm_membership_bg.wasm",
+      "sha256": "9e84a321253f36e41930024b9fd0e07ac8f6bb9efcf6b4f939472d31bfcf117f",
+      "bytes": 11223495
+    },
+    {
+      "path": "bench/wasm-membership/client/build.sh",
+      "sha256": "048895559b9d4d7545faf5b88e856ed3624a7f49e9dc149d4e2ade7580905f11",
+      "bytes": 2091
+    },
+    {
+      "path": "bench/wasm-membership/client/README.md",
+      "sha256": "17ae2df7dc1c2ab29650dab545e5289eac9149841540bd03cd19ab9377fe6f63",
+      "bytes": 4633
+    },
+    {
+      "path": "bench/wasm-membership/client/patches/cube252-browser-pool.patch",
+      "sha256": "d30049fcd6098b63b093e28098f7a57ba8ef2b3e6244a7a2755d384f640a9b6b",
+      "bytes": 1386
+    }
+  ],
+  "native_build_metadata": "target/wasm-membership/build-native-driver.json",
+  "native_test_metadata": "target/wasm-membership/build-test-driver.json",
+  "native_unit_tests_passed": 3,
+  "full_native_parity": "bench/wasm-membership/results/port-native-parity/validation.json",
+  "wasm_build_manifest": "target/wasm-membership/build-wasm-artifacts.json",
+  "source_portability_manifest": "target/wasm-membership/source-portability-manifest.json",
+  "patch_reproduction_check": "target/wasm-membership/patch-reproduction-check.json"
+}

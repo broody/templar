@@ -1,0 +1,32 @@
+{
+  "scope": "local state model + Cairo execution; not a deployed pool",
+  "python": "3.12.3",
+  "pynacl": "1.5.0",
+  "payments_received_offline": 2,
+  "recovered_amount": 850,
+  "final_balances": {
+    "Alice": 400,
+    "Bob": 310,
+    "Carol": 250,
+    "Dave": 500
+  },
+  "withdrawn": 40,
+  "plaintext_bytes": 256,
+  "ciphertext_bytes_per_note": 304,
+  "discovery": {
+    "events": 10000,
+    "matching": 2,
+    "seconds": [
+      0.7394932579991291,
+      0.7216836460065679,
+      0.788814415995148
+    ],
+    "median_seconds": 0.7394932579991291,
+    "ciphertext_download_bytes": 3040000,
+    "includes_network": false,
+    "consumer_hardware": false
+  },
+  "replay_rejected": true,
+  "swapped_delivery_rejected_before_state_change": true,
+  "keys_are_public_test_fixtures": true
+}

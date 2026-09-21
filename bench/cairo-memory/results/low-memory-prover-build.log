@@ -1,0 +1,43 @@
+Running as unit: templar-memory-build-1789958769813898820.service; invocation ID: 78da3443e2244b709f12a6f668421efc
+warning: the feature `stdarch_x86_avx512` has been stable since 1.89.0 and no longer requires an attribute to enable
+ --> /home/broody/development/templar/target/cairo-memory/stwo/crates/stwo/src/lib.rs:4:13
+  |
+4 |     feature(stdarch_x86_avx512)
+  |             ^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(stable_features)]` on by default
+
+warning: `stwo` (lib) generated 1 warning
+   Compiling circuits v0.1.0 (https://github.com/starkware-libs/stwo-circuits?rev=5ef951a1#5ef951a1)
+   Compiling cairo-air v1.2.2 (/home/broody/development/templar/target/cairo-memory/stwo-cairo/stwo_cairo_prover/crates/cairo-air)
+warning: apollo_starknet_os_program@0.19.0-rc.2: Dumping OS source files...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Compiling starknet_os program...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Compiling starknet_aggregator program...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Compiling virtual_os program...
+warning: apollo_starknet_os_program@0.19.0-rc.2: Done compiling starknet_aggregator. Writing compiled bytes to output directory.
+warning: apollo_starknet_os_program@0.19.0-rc.2: Done compiling virtual_os. Writing compiled bytes to output directory.
+warning: apollo_starknet_os_program@0.19.0-rc.2: Done compiling starknet_os. Writing compiled bytes to output directory.
+   Compiling apollo_rpc_execution v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/apollo_rpc_execution)
+   Compiling shared_execution_objects v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/shared_execution_objects)
+   Compiling circuits-stark-verifier v0.1.0 (https://github.com/starkware-libs/stwo-circuits?rev=5ef951a1#5ef951a1)
+   Compiling circuit-common v0.1.0 (https://github.com/starkware-libs/stwo-circuits?rev=5ef951a1#5ef951a1)
+   Compiling circuit-verifier v0.1.0 (https://github.com/starkware-libs/stwo-circuits?rev=5ef951a1#5ef951a1)
+   Compiling circuit-serialize v0.1.0 (https://github.com/starkware-libs/stwo-circuits?rev=5ef951a1#5ef951a1)
+   Compiling ark-bls12-381 v0.5.0
+   Compiling blockifier_reexecution v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/blockifier_reexecution)
+   Compiling circuit-cairo-verifier v0.1.0 (https://github.com/starkware-libs/stwo-circuits?rev=5ef951a1#5ef951a1)
+   Compiling stwo-cairo-prover v1.2.2 (/home/broody/development/templar/target/cairo-memory/stwo-cairo/stwo_cairo_prover/crates/prover)
+   Compiling privacy-circuit-verify v1.2.2 (https://github.com/starkware-libs/proving-utils?tag=v0.14.3-rust-bump#3035dd00)
+   Compiling privacy-circuit-verify v1.2.2 (/home/broody/development/templar/target/cairo-memory/proving-utils/crates/privacy_circuit_verify)
+   Compiling starknet_proof_verifier v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/starknet_proof_verifier)
+   Compiling starknet_os v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/starknet_os)
+   Compiling circuit-prover v0.1.0 (https://github.com/starkware-libs/stwo-circuits?rev=5ef951a1#5ef951a1)
+   Compiling privacy-prove v1.2.2 (/home/broody/development/templar/target/cairo-memory/proving-utils/crates/privacy_prove)
+   Compiling starknet_transaction_prover v0.19.0-rc.2 (/home/broody/development/templar/target/cairo-memory/sequencer/crates/starknet_transaction_prover)
+    Finished `release` profile [optimized] target(s) in 3m 07s
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 3min 7.362s
+CPU time consumed: 11min 47.884s
+Memory peak: 512.0K
+Memory swap peak: 0B

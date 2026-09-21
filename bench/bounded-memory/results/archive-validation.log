@@ -1,0 +1,68 @@
+{
+  "verified_proof_count": 15,
+  "mutation_rejections": 45,
+  "public_messages_and_proven_digests_match_original_fixtures": true,
+  "remote_dependency_versions_unchanged": true,
+  "local_runner_and_verifier_files_unchanged": 61,
+  "dependency_source_files_unchanged": 822,
+  "reviewed_dependency_source_changes": [
+    "stwo/crates/stwo/src/prover/pcs/quotient_ops.rs",
+    "stwo/crates/stwo/src/prover/pcs/mod.rs",
+    "stwo/crates/stwo/src/prover/air/component_prover.rs",
+    "stwo/crates/stwo/src/prover/vcs_lifted/prover.rs",
+    "stwo/crates/stwo/src/prover/vcs_lifted/ops.rs",
+    "stwo/crates/stwo/src/prover/backend/simd/blake2s_lifted.rs",
+    "stwo/crates/examples/src/blake/air.rs",
+    "stwo/crates/examples/src/xor/gkr_lookups/mle_eval.rs",
+    "stwo/crates/constraint-framework/src/prover/component_prover.rs",
+    "stwo-cairo/stwo_cairo_prover/crates/prover/src/prover.rs",
+    "stwo-cairo/stwo_cairo_prover/crates/prover/src/debug_tools/relation_tracker.rs",
+    "stwo-circuits/crates/circuit_prover/src/prover.rs"
+  ],
+  "no_private_fixture_exports": true,
+  "same_request_comparisons": 6,
+  "previous_experiment_comparisons": [
+    {
+      "run": "8-8-4-repeat-8g",
+      "previous_experiment_run": "8-8-4-repeat-10",
+      "byte_identical": true,
+      "requests": 3
+    },
+    {
+      "run": "controlled-repeat-8g",
+      "previous_experiment_run": "controlled-repeat-10",
+      "byte_identical": true,
+      "requests": 3
+    },
+    {
+      "run": "ordinary-baseline-12g",
+      "previous_experiment_run": "ordinary-baseline",
+      "byte_identical": true,
+      "requests": 1
+    },
+    {
+      "run": "ordinary-bounded-12g",
+      "previous_experiment_run": "ordinary-baseline",
+      "byte_identical": true,
+      "requests": 1
+    },
+    {
+      "run": "ordinary-in-build-baseline",
+      "previous_experiment_run": "ordinary-baseline",
+      "byte_identical": true,
+      "requests": 1
+    },
+    {
+      "run": "ordinary-repeat-8g",
+      "previous_experiment_run": "ordinary-baseline",
+      "byte_identical": true,
+      "requests": 3
+    },
+    {
+      "run": "return-repeat-8g",
+      "previous_experiment_run": "return-repeat-10",
+      "byte_identical": true,
+      "requests": 3
+    }
+  ]
+}

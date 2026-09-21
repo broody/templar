@@ -1,0 +1,42 @@
+{
+  "work": "/home/broody/development/templar/target/direct-air",
+  "previous_work": "/home/broody/development/templar/target/bounded-memory",
+  "rustup_home": "/tmp/templar-stwo-privacy-dtgn6e8l/rustup",
+  "build_path": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-test/.cairo-venv/bin:/usr/bin:/home/broody/.cargo/bin:/bin",
+  "prover": "/home/broody/development/templar/target/bounded-memory/bin/low-memory-prover",
+  "prover_sha256": "8eaa1763abd7216f43fff2a935a3646e5643f55763236b41885ee77f5286d471",
+  "verifier": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/local-verifier",
+  "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+  "sequencer_original": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/upstream/sequencer-e6b6fd2e9932909107833579e5b6efd6c75fa0af",
+  "previous_archive_manifest_sha256": "cb2f5e25dcdf19523b71dfb97e06ac7359e1cf647601d2ccb89e2a0b7c861db2",
+  "source_pins": {
+    "stwo": {
+      "revision": "489a0f3ee44a59e03944ad9aa4f3e5a91a3d3f08"
+    },
+    "stwo_cairo": {
+      "revision": "9b6be2710e4d7124bc93fe80a5af36556d42ed29"
+    },
+    "stwo_circuits": {
+      "revision": "5ef951a12727e3489a2ee991c580a5b925c59c69"
+    },
+    "proving": {
+      "revision": "3035dd00421daa541894297bd754db6e2787807b"
+    },
+    "sequencer": {
+      "revision": "e6b6fd2e9932909107833579e5b6efd6c75fa0af",
+      "source": "pinned source archive"
+    },
+    "crates/privacy_prove/src/consts.rs": {
+      "sha256": "ef4510da98925485859c5d553c7798e3abf40d44b09a6a23d480b47c80d2b4bc",
+      "unchanged": true
+    },
+    "crates/privacy_circuit_verify/src/consts.rs": {
+      "sha256": "9b6d4d844bdc7f81c616f6f323687af361f36e4121d9f209091dd92c4943700e",
+      "unchanged": true
+    },
+    "crates/privacy_circuit_verify/src/lib.rs": {
+      "sha256": "a7f9708e741ccffd28bbf6c06ddd749e787ecfa4fe76e4aa9559117bb9923729",
+      "unchanged": true
+    }
+  }
+}

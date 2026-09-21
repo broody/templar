@@ -1,0 +1,168 @@
+{
+  "scope": "local fixture ledger and explicitly trusted checkpoints; no RPC authentication",
+  "keys_are_public_test_fixtures": true,
+  "incoming": {
+    "as_of_block": 101,
+    "block_hash": "public-fixture-after",
+    "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+    "history_complete": true,
+    "missing_payload_indices": [],
+    "received_indices": [
+      0,
+      2
+    ],
+    "received_totals": {
+      "0x5678": 140
+    },
+    "spent_indices": null,
+    "known_unspent": null,
+    "balances": null,
+    "balance_scope": "recoverable protocol-published notes for this receiving address"
+  },
+  "full_view": {
+    "as_of_block": 101,
+    "block_hash": "public-fixture-after",
+    "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+    "history_complete": true,
+    "missing_payload_indices": [],
+    "received_indices": [
+      0,
+      2
+    ],
+    "received_totals": {
+      "0x5678": 140
+    },
+    "spent_indices": [
+      0
+    ],
+    "known_unspent": {
+      "0x5678": 40
+    },
+    "balances": {
+      "0x5678": 40
+    },
+    "balance_scope": "recoverable protocol-published notes for this receiving address"
+  },
+  "seed_restore": {
+    "as_of_block": 101,
+    "block_hash": "public-fixture-after",
+    "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+    "history_complete": true,
+    "missing_payload_indices": [],
+    "received_indices": [
+      0,
+      2
+    ],
+    "received_totals": {
+      "0x5678": 140
+    },
+    "spent_indices": [
+      0
+    ],
+    "known_unspent": {
+      "0x5678": 40
+    },
+    "balances": {
+      "0x5678": 40
+    },
+    "balance_scope": "recoverable protocol-published notes for this receiving address"
+  },
+  "missing_change_payload": {
+    "as_of_block": 101,
+    "block_hash": "public-fixture-after",
+    "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+    "history_complete": false,
+    "missing_payload_indices": [
+      2
+    ],
+    "received_indices": [
+      0
+    ],
+    "received_totals": {
+      "0x5678": 100
+    },
+    "spent_indices": [
+      0
+    ],
+    "known_unspent": {
+      "0x5678": 0
+    },
+    "balances": null,
+    "balance_scope": "recoverable protocol-published notes for this receiving address"
+  },
+  "retry_with_complete_archive": {
+    "as_of_block": 101,
+    "block_hash": "public-fixture-after",
+    "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+    "history_complete": true,
+    "missing_payload_indices": [],
+    "received_indices": [
+      0,
+      2
+    ],
+    "received_totals": {
+      "0x5678": 140
+    },
+    "spent_indices": [
+      0
+    ],
+    "known_unspent": {
+      "0x5678": 40
+    },
+    "balances": {
+      "0x5678": 40
+    },
+    "balance_scope": "recoverable protocol-published notes for this receiving address"
+  },
+  "rejected": {
+    "stale_archive": "archive is not from the pinned canonical block",
+    "old_checkpoint_below_requested_height": "checkpoint older than required block",
+    "modified_payload_with_self_consistent_digest": "event differs from authenticated receipt"
+  },
+  "reorg_rebuilt": {
+    "as_of_block": 102,
+    "block_hash": "public-fixture-new-canonical-branch",
+    "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+    "history_complete": true,
+    "missing_payload_indices": [],
+    "received_indices": [
+      0
+    ],
+    "received_totals": {
+      "0x5678": 100
+    },
+    "spent_indices": [],
+    "known_unspent": {
+      "0x5678": 100
+    },
+    "balances": {
+      "0x5678": 100
+    },
+    "balance_scope": "recoverable protocol-published notes for this receiving address"
+  },
+  "actual_final_spend": {
+    "as_of_block": 102,
+    "block_hash": "public-fixture-fully-spent",
+    "anchor": "trusted local test fixture; not an authenticated live RPC snapshot",
+    "history_complete": true,
+    "missing_payload_indices": [],
+    "received_indices": [
+      0,
+      2
+    ],
+    "received_totals": {
+      "0x5678": 140
+    },
+    "spent_indices": [
+      0,
+      2
+    ],
+    "known_unspent": {
+      "0x5678": 0
+    },
+    "balances": {
+      "0x5678": 0
+    },
+    "balance_scope": "recoverable protocol-published notes for this receiving address"
+  }
+}

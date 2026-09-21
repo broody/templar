@@ -1,0 +1,276 @@
+{
+  "status": "stopped_on_first_integration_proof_failure",
+  "scope": "public append arithmetic; no private payment or browser qualification",
+  "binary": {
+    "path": "target/m31-append/frozen-native-v1/templar-m31-append",
+    "sha256": "8acbab38aa2a35f150205ea6546bc56bc643601ff19b98ab40405194b33dfbbd"
+  },
+  "harness": {
+    "path": "bench/m31-append/measure.py",
+    "sha256": "53a477353c690ec6b088753bd782873e3804bfaeb2cece2161bc7e135b99bd87",
+    "mechanical_origin": "bench/m31-tree/measure.py; only harness_files reduced to ['measure.py']"
+  },
+  "fixtures": [
+    {
+      "path": "bench/m31-append/results/native-inputs/single-empty-to-one.json",
+      "sha256": "5c21af8802ecc3ee7e289dbc20fa985d1ce6cfea1b9270dfd61605bf6f1aadbe",
+      "size_bytes": 152950,
+      "chain_id": "0x534e5f5345504f4c4941",
+      "pool": "0x456",
+      "old_count": 0,
+      "new_count": 1,
+      "batch_length": 1
+    },
+    {
+      "path": "bench/m31-append/results/native-inputs/batch-empty-to-two.json",
+      "sha256": "a27851b1a4e2d3156bc5f059b6215c50df8fec2dc0fc7b01c1cc2535ba9889b6",
+      "size_bytes": 305462,
+      "chain_id": "0x534e5f5345504f4c4941",
+      "pool": "0x456",
+      "old_count": 0,
+      "new_count": 2,
+      "batch_length": 2
+    },
+    {
+      "path": "bench/m31-append/results/native-inputs/concurrent-a-to-b.json",
+      "sha256": "87348ec3c14f9af6fd462e2e6e23c08d23d27875b78eb0e6bae5d5de3542a4b0",
+      "size_bytes": 152975,
+      "chain_id": "0x534e5f5345504f4c4941",
+      "pool": "0x456",
+      "old_count": 1,
+      "new_count": 2,
+      "batch_length": 1
+    },
+    {
+      "path": "bench/m31-append/results/native-inputs/concurrent-a-to-c.json",
+      "sha256": "08098cb9264af6cdd5ed36690210e316982b9a57e1be68fd54de4e12ceeee474",
+      "size_bytes": 152963,
+      "chain_id": "0x534e5f5345504f4c4941",
+      "pool": "0x456",
+      "old_count": 1,
+      "new_count": 2,
+      "batch_length": 1
+    },
+    {
+      "path": "bench/m31-append/results/native-inputs/refresh-b-to-d.json",
+      "sha256": "472dcf26e3e376a75d7452e205b5d3e577ff1779aa7df260dee457fbcc1df0ea",
+      "size_bytes": 153055,
+      "chain_id": "0x534e5f5345504f4c4941",
+      "pool": "0x456",
+      "old_count": 2,
+      "new_count": 3,
+      "batch_length": 1
+    }
+  ],
+  "measurement_runs": [
+    {
+      "name": "native-single-1",
+      "shape": "single",
+      "status": "passed",
+      "proof_directory": "bench/m31-append/results/native-single-1/proof",
+      "proof_bytes": 192143,
+      "proof_sha256": "955bfb38e456678966def815a9d1c3096c0f4258972006a4a2b1c5692d6f5615",
+      "native_verified": true,
+      "complete_seconds": 4.085298488,
+      "phases_seconds": {
+        "base_commit_seconds": 0.011326378,
+        "interaction_seconds": 0.267043367,
+        "native_verify_seconds": 0.002367658,
+        "stark_prove_seconds": 3.780009166,
+        "twiddles_and_witness_seconds": 0.015558844
+      },
+      "harness_elapsed_seconds": 4.192707955997321,
+      "sampled_command_peak_rss_gib": 0.017513275146484375,
+      "sampled_peak_cgroup_gib": 0.0142974853515625,
+      "effective_peak_cgroup_gib": 0.0142974853515625,
+      "time_largest_process_peak_rss_gib": 0.017093658447265625,
+      "sampled_swap_peak_bytes": 0,
+      "sampled_oom_kill": 0,
+      "cap_gib": 1,
+      "cpu_budget_cores": 1,
+      "prover_workers": 1
+    },
+    {
+      "name": "native-single-2",
+      "shape": "single",
+      "status": "passed",
+      "proof_directory": "bench/m31-append/results/native-single-2/proof",
+      "proof_bytes": 192143,
+      "proof_sha256": "955bfb38e456678966def815a9d1c3096c0f4258972006a4a2b1c5692d6f5615",
+      "native_verified": true,
+      "complete_seconds": 4.073443076,
+      "phases_seconds": {
+        "base_commit_seconds": 0.010766447,
+        "interaction_seconds": 0.269605512,
+        "native_verify_seconds": 0.002353546,
+        "stark_prove_seconds": 3.765623888,
+        "twiddles_and_witness_seconds": 0.016251205
+      },
+      "harness_elapsed_seconds": 4.19697413299582,
+      "sampled_command_peak_rss_gib": 0.01752471923828125,
+      "sampled_peak_cgroup_gib": 0.0145416259765625,
+      "effective_peak_cgroup_gib": 0.0145416259765625,
+      "time_largest_process_peak_rss_gib": 0.0171051025390625,
+      "sampled_swap_peak_bytes": 0,
+      "sampled_oom_kill": 0,
+      "cap_gib": 1,
+      "cpu_budget_cores": 1,
+      "prover_workers": 1
+    },
+    {
+      "name": "native-single-3",
+      "shape": "single",
+      "status": "passed",
+      "proof_directory": "bench/m31-append/results/native-single-3/proof",
+      "proof_bytes": 192143,
+      "proof_sha256": "955bfb38e456678966def815a9d1c3096c0f4258972006a4a2b1c5692d6f5615",
+      "native_verified": true,
+      "complete_seconds": 4.063302771,
+      "phases_seconds": {
+        "base_commit_seconds": 0.011690479,
+        "interaction_seconds": 0.267081713,
+        "native_verify_seconds": 0.002481941,
+        "stark_prove_seconds": 3.756989408,
+        "twiddles_and_witness_seconds": 0.01570097
+      },
+      "harness_elapsed_seconds": 4.195489225996425,
+      "sampled_command_peak_rss_gib": 0.017513275146484375,
+      "sampled_peak_cgroup_gib": 0.0147552490234375,
+      "effective_peak_cgroup_gib": 0.0147552490234375,
+      "time_largest_process_peak_rss_gib": 0.017093658447265625,
+      "sampled_swap_peak_bytes": 0,
+      "sampled_oom_kill": 0,
+      "cap_gib": 1,
+      "cpu_budget_cores": 1,
+      "prover_workers": 1
+    },
+    {
+      "name": "native-batch-1",
+      "shape": "batch",
+      "status": "passed",
+      "proof_directory": "bench/m31-append/results/native-batch-1/proof",
+      "proof_bytes": 223098,
+      "proof_sha256": "7ed80c51ad5a0fd05239675903b515d8b0c46d7e7cfb69ad5f2840902592646e",
+      "native_verified": true,
+      "complete_seconds": 1.9881207650000001,
+      "phases_seconds": {
+        "base_commit_seconds": 0.021587858,
+        "interaction_seconds": 0.065077616,
+        "native_verify_seconds": 0.002830352,
+        "stark_prove_seconds": 1.8608668449999999,
+        "twiddles_and_witness_seconds": 0.027519828
+      },
+      "harness_elapsed_seconds": 2.135122734005563,
+      "sampled_command_peak_rss_gib": 0.030315399169921875,
+      "sampled_peak_cgroup_gib": 0.027172088623046875,
+      "effective_peak_cgroup_gib": 0.027172088623046875,
+      "time_largest_process_peak_rss_gib": 0.03020477294921875,
+      "sampled_swap_peak_bytes": 0,
+      "sampled_oom_kill": 0,
+      "cap_gib": 1,
+      "cpu_budget_cores": 1,
+      "prover_workers": 1
+    },
+    {
+      "name": "native-batch-2",
+      "shape": "batch",
+      "status": "passed",
+      "proof_directory": "bench/m31-append/results/native-batch-2/proof",
+      "proof_bytes": 223098,
+      "proof_sha256": "7ed80c51ad5a0fd05239675903b515d8b0c46d7e7cfb69ad5f2840902592646e",
+      "native_verified": true,
+      "complete_seconds": 2.10285472,
+      "phases_seconds": {
+        "base_commit_seconds": 0.020573179,
+        "interaction_seconds": 0.065226263,
+        "native_verify_seconds": 0.002922178,
+        "stark_prove_seconds": 1.9763341730000001,
+        "twiddles_and_witness_seconds": 0.028767973
+      },
+      "harness_elapsed_seconds": 2.224527090002084,
+      "sampled_command_peak_rss_gib": 0.030292510986328125,
+      "sampled_peak_cgroup_gib": 0.027416229248046875,
+      "effective_peak_cgroup_gib": 0.027416229248046875,
+      "time_largest_process_peak_rss_gib": 0.029998779296875,
+      "sampled_swap_peak_bytes": 0,
+      "sampled_oom_kill": 0,
+      "cap_gib": 1,
+      "cpu_budget_cores": 1,
+      "prover_workers": 1
+    },
+    {
+      "name": "native-batch-3",
+      "shape": "batch",
+      "status": "passed",
+      "proof_directory": "bench/m31-append/results/native-batch-3/proof",
+      "proof_bytes": 223098,
+      "proof_sha256": "7ed80c51ad5a0fd05239675903b515d8b0c46d7e7cfb69ad5f2840902592646e",
+      "native_verified": true,
+      "complete_seconds": 1.9882423299999998,
+      "phases_seconds": {
+        "base_commit_seconds": 0.021753531,
+        "interaction_seconds": 0.064318624,
+        "native_verify_seconds": 0.002789096,
+        "stark_prove_seconds": 1.864988398,
+        "twiddles_and_witness_seconds": 0.025688938
+      },
+      "harness_elapsed_seconds": 2.1313023580005392,
+      "sampled_command_peak_rss_gib": 0.0302886962890625,
+      "sampled_peak_cgroup_gib": 0.031276702880859375,
+      "effective_peak_cgroup_gib": 0.031276702880859375,
+      "time_largest_process_peak_rss_gib": 0.029933929443359375,
+      "sampled_swap_peak_bytes": 0,
+      "sampled_oom_kill": 0,
+      "cap_gib": 1,
+      "cpu_budget_cores": 1,
+      "prover_workers": 1
+    }
+  ],
+  "determinism": {
+    "single_three_proofs_byte_identical": true,
+    "single_proof_sha256": "955bfb38e456678966def815a9d1c3096c0f4258972006a4a2b1c5692d6f5615",
+    "batch_three_proofs_byte_identical": true,
+    "batch_proof_sha256": "7ed80c51ad5a0fd05239675903b515d8b0c46d7e7cfb69ad5f2840902592646e",
+    "limitation": "Fixed public fixture and deterministic grinding/context demonstrate fixture stability, not a payment-latency distribution."
+  },
+  "integration_failure": {
+    "name": "native-branch12",
+    "fixture": "bench/m31-append/results/native-inputs/concurrent-a-to-b.json",
+    "status": "failed; sequence stopped without retry or cap increase",
+    "error": "wire query count",
+    "exit_code": 1,
+    "systemd_result": "exit-code",
+    "effective_peak_cgroup_gib": 0.014301300048828125,
+    "sampled_command_peak_rss_gib": 0.01738739013671875,
+    "sampled_swap_peak_bytes": 0,
+    "sampled_oom_kill": 0,
+    "stdout_log": "bench/m31-append/results/native-branch12/stdout.log",
+    "process_summary": "bench/m31-append/results/native-branch12/summary.json"
+  },
+  "outer_ready_primary_proof_directories": [
+    "bench/m31-append/results/native-single-1/proof",
+    "bench/m31-append/results/native-batch-1/proof"
+  ],
+  "outer_ready_primary_proof_directories_expected": 5,
+  "outer_ready_primary_proof_directories_available": 2,
+  "missing_primary_proof_directories": [
+    "bench/m31-append/results/native-branch12/proof",
+    "bench/m31-append/results/native-branch13/proof",
+    "bench/m31-append/results/native-refresh123/proof"
+  ],
+  "not_run_after_stop": {
+    "integration_fixtures": [
+      "native-branch13",
+      "native-refresh123"
+    ],
+    "verify_tests": [
+      "single-1",
+      "batch-1"
+    ],
+    "state_fixture_positive_validation": 1,
+    "state_fixture_rejection_controls": 16,
+    "reason": "required stop on first actual proof failure"
+  },
+  "verification_timing_note": "native_verify_seconds is an in-process proving phase only; verification memory was not measured separately.",
+  "remaining_limitation": "The branch fixture failed during proof output serialization with 'wire query count'; outer service/proving and canonical state-fixture controls remain unexecuted."
+}

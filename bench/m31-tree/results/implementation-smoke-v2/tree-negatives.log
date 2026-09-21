@@ -1,0 +1,25 @@
+{
+  "discarded_M31_duplicate_multiplicity_rejected": true,
+  "omitted_M31_padding_boundary_rejected": true,
+  "rejected_mutations": [
+    "root",
+    "packed_root",
+    "leaf",
+    "index",
+    "sibling",
+    "domain_kind",
+    "domain_level",
+    "padding",
+    "noncanonical_M31",
+    "component_log",
+    "claimed_sum",
+    "interaction_pow",
+    "PCS_config",
+    "STARK_sample",
+    "preprocessed_root",
+    "structurally_valid_unlinked_M31_output",
+    "extra_empty_preprocessing_sample",
+    "extra_empty_preprocessing_query",
+    "extra_empty_preprocessing_witness"
+  ]
+}

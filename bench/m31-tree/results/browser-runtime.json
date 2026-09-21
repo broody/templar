@@ -1,0 +1,7 @@
+{
+  "playwright_dependency_tree": "/home/broody/development/templar/target/wasm-membership/browser-tools",
+  "package_lock_sha256": "a31f444ee53c9be081836c06906eeba37d7fc7dc2af6b5830aa888e685dc2ec1",
+  "chrome_executable": "/usr/bin/google-chrome",
+  "source_harness": "bench/wasm-membership",
+  "runtime_scope": "isolated headless Chrome with loopback-only public synthetic fixtures"
+}

@@ -1,0 +1,31 @@
+{
+  "variant": "cached",
+  "fixture": "ordinary",
+  "cap_gib": 16,
+  "rayon_threads": 4,
+  "cpu_cores": 4,
+  "base_block": 15390992,
+  "binary_sha256": "e22a7222bcd272fd661d656a08682ee7e045a698db552571a01b35491014ea06",
+  "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+  "private_request_sha256": "fd48d099eddab05f5560b510190649bdf2803328fc9b9934d88b0015b32bb2db",
+  "scope": "native replay on larger host; no settlement, browser or physical-desktop qualification",
+  "requests": [
+    {
+      "request_seconds": 21.184615316989948,
+      "start_unix_ms": 1789956367183,
+      "end_unix_ms": 1789956388368,
+      "proof_bytes": 228713,
+      "proof_sha256": "1291616b5a55b39593c16a7d4c0648222ea3d06ccc4c1bc5ff29d9edafffb04f",
+      "public_binding_matches": true,
+      "verification_and_three_mutation_rejections": true
+    }
+  ],
+  "startup_seconds": 1.7364614749967586,
+  "status": "PASS",
+  "cgroup_peak_gib": 13.72231674194336,
+  "peak_rss_gib": 13.79238510131836,
+  "swap_peak_bytes": 0,
+  "oom_kill": 0,
+  "peak_requested_gib": 12.976863132789731,
+  "final_live_requested_gib": 9.865496108308434
+}

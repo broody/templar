@@ -1,0 +1,99 @@
+{
+  "build_command": [
+    "env",
+    "PATH=/usr/bin:/home/broody/.cargo/bin:/bin",
+    "RUSTUP_HOME=/tmp/templar-stwo-privacy-dtgn6e8l/rustup",
+    "RUSTC_WRAPPER=",
+    "CARGO_BUILD_JOBS=8",
+    "CARGO_TARGET_DIR=/home/broody/development/templar/target/wasm-membership/client-target",
+    "RUSTFLAGS=-C target-feature=+simd128 -C link-arg=-zstack-size=8388608 -C link-arg=--max-memory=4294967296",
+    "taskset",
+    "-c",
+    "0-7",
+    "cargo",
+    "+nightly-2026-01-15",
+    "build",
+    "--release",
+    "--lib",
+    "--target",
+    "wasm32-unknown-unknown",
+    "--manifest-path",
+    "bench/wasm-membership/client/Cargo.toml"
+  ],
+  "build_exit_code": 0,
+  "build_log": "build-wasm-1.log",
+  "wasm_bindgen_command": [
+    "target/wasm-membership/tools/bin/wasm-bindgen",
+    "--target",
+    "web",
+    "--out-dir",
+    "target/wasm-membership/pkg",
+    "--out-name",
+    "templar_wasm_membership",
+    "target/wasm-membership/client-target/wasm32-unknown-unknown/release/templar_wasm_membership.wasm"
+  ],
+  "wasm_bindgen_exit_code": 0,
+  "wasm_bindgen_log": "wasm-bindgen.log",
+  "files": [
+    {
+      "path": "bench/wasm-membership/client/src/platform.rs",
+      "sha256": "b1757a64e2aba2f47e5dd5006e154168dd47081abe52e2b5611f1ab943846081",
+      "bytes": 2263
+    },
+    {
+      "path": "bench/wasm-membership/client/src/main.rs",
+      "sha256": "7bbacfcab72afa3de5cafa08ddbc5004e7c458a857c2364c000ef9c6507a10a3",
+      "bytes": 1392
+    },
+    {
+      "path": "bench/wasm-membership/client/src/statement.rs",
+      "sha256": "9047353575b07c2964b952352dd717a29d7f65307d769375321f61613d48ee7a",
+      "bytes": 11865
+    },
+    {
+      "path": "bench/wasm-membership/client/src/lib.rs",
+      "sha256": "7e555bbd8896928e59271e729ce7a19d3804c7c0f698dedfd0c142d1bfc70b4e",
+      "bytes": 23990
+    },
+    {
+      "path": "bench/wasm-membership/client/Cargo.toml",
+      "sha256": "29a990f2236cd942c6f618b9fdcd466732e84442e0be9397851bd9c822473c88",
+      "bytes": 2173
+    },
+    {
+      "path": "bench/wasm-membership/client/Cargo.lock",
+      "sha256": "20f53b4813336b976a00f3b415cda86ecf99f6bb3f057f42db72e1a6cd5929e2",
+      "bytes": 73236
+    },
+    {
+      "path": "target/wasm-membership/stwo-cairo/stwo_cairo_prover/crates/prover/src/witness/components/cube_252.rs",
+      "sha256": "b0b1a3678a34f2b25ae4a67e69ff52f0a4dfea12eaa3b04d2f53972594a6017f",
+      "bytes": 235338
+    },
+    {
+      "path": "target/wasm-membership/pkg/templar_wasm_membership_bg.wasm.d.ts",
+      "sha256": "824caeb97699259180b80eb7d58bb4ab11b6a49b160e9675397223ecfc1c0015",
+      "bytes": 1852
+    },
+    {
+      "path": "target/wasm-membership/pkg/templar_wasm_membership.d.ts",
+      "sha256": "c36c635697fbed35244f70ff193e9680256044f5758f5468e71397f92c845ced",
+      "bytes": 3275
+    },
+    {
+      "path": "target/wasm-membership/pkg/templar_wasm_membership.js",
+      "sha256": "1dd2dd3151b48949a6604d51a7a8f57829bbd7bc225f73b05bcb20c97a70bddc",
+      "bytes": 11134
+    },
+    {
+      "path": "target/wasm-membership/pkg/templar_wasm_membership_bg.wasm",
+      "sha256": "9e84a321253f36e41930024b9fd0e07ac8f6bb9efcf6b4f939472d31bfcf117f",
+      "bytes": 11223495
+    },
+    {
+      "path": "target/wasm-membership/pkg/snippets/templar-wasm-membership-48c7be0f953e4691/inline0.js",
+      "sha256": "d8eea28a8a3cda91e0bef8d77a7039f9efb7c8a40c3960f61822407d6ec97d60",
+      "bytes": 267
+    }
+  ]
+}

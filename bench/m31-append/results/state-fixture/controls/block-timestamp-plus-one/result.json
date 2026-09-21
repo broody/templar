@@ -1,0 +1,12 @@
+{
+  "name": "block-timestamp-plus-one",
+  "expected": "reject",
+  "exit_code": 101,
+  "passed": true,
+  "input": "bench/m31-append/results/state-fixture/controls/block-timestamp-plus-one/fixture.json",
+  "input_sha256": "305cee0a9261975b4fa601266c3d389534aa61ae24997ae52cf9ec541bd2fdfe",
+  "report_path": null,
+  "stdout": "bench/m31-append/results/state-fixture/controls/block-timestamp-plus-one/stdout.log",
+  "stderr": "bench/m31-append/results/state-fixture/controls/block-timestamp-plus-one/stderr.log",
+  "cgroup": "bench/m31-append/results/state-fixture/controls/block-timestamp-plus-one/cgroup.txt"
+}

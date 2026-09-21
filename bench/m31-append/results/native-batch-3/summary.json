@@ -1,0 +1,27 @@
+{
+  "scope": "public synthetic M31 append arithmetic; correctness/resource observation only; no private payment or browser qualification",
+  "command": [
+    "/home/broody/development/templar/target/m31-append/frozen-native-v1/templar-m31-append",
+    "/home/broody/development/templar/bench/m31-append/results/native-inputs/batch-empty-to-two.json",
+    "/home/broody/development/templar/bench/m31-append/results/native-batch-3/proof"
+  ],
+  "binary_sha256": "8acbab38aa2a35f150205ea6546bc56bc643601ff19b98ab40405194b33dfbbd",
+  "cap_gib": 1,
+  "cpu_budget_cores": 1,
+  "prover_workers": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 2.1313023580005392,
+  "sampled_command_peak_rss_gib": 0.0302886962890625,
+  "sampled_peak_cgroup_gib": 0.031276702880859375,
+  "effective_peak_cgroup_gib": 0.031276702880859375,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 80,
+  "cgroup_sample_count": 79,
+  "time_largest_process_peak_rss_gib": 0.029933929443359375
+}

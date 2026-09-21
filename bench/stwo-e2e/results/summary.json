@@ -1,0 +1,262 @@
+{
+  "status": "PASS",
+  "starknet_version": "0.14.4",
+  "deployment": {
+    "pool": "0x00ba1d723e8d952cb0a8d4612ddb04ef2f7d9a697ba4d30b2e407f91acfe98ad",
+    "statement": "0x0019de775d92ef74f939812421cc0f88602771dbd7595fb20e85491d429a0f6d",
+    "verifier": "0x06ecbc38fff40f629202d17fe2ad6c3fa64d2d036de3698fb181b3bc213ce82e",
+    "token": "0x00f6289399ceda39ca180ba1e35378d807012b8463da6752388cfd07df192235",
+    "statement_class": "0x01abe02708463a69d3db5b7304214a1ed92c5c9a572f25251e755eb2cb0f855a",
+    "fee_collector": "0xfee",
+    "bob_withdrawal_address": "0xb0b",
+    "relayer": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+    "max_proof_age": 4096,
+    "fee_amount": 5,
+    "classes": {
+      "Pool": "0x0785e5070a32fa5ba3d01d9f6d3549a424ccd12302b4b98b59bb0f1b877eac49",
+      "StatementAccount": "0x01abe02708463a69d3db5b7304214a1ed92c5c9a572f25251e755eb2cb0f855a",
+      "NativeProofVerifier": "0x06049c4bb351cd2baef4d73c4b2c4cc1662189382d4a0060e4c627927be0e7c1",
+      "E2EToken": "0x00fb29a47941892d91a25179de02aee7564db6631cea9173e4763f07432a6f43"
+    }
+  },
+  "stage": 4,
+  "final_state": {
+    "root": 16577011068188278529648290636966829237501864561588120877019199784392742159,
+    "leaf_count": 4,
+    "balance_relayer": 8985,
+    "balance_pool": 400,
+    "balance_bob": 600,
+    "balance_collector": 15,
+    "spent_alice_deposit": 1,
+    "spent_bob_payment": 1,
+    "spent_alice_change": 0,
+    "spent_bob_respend": 1,
+    "block": 15358587
+  },
+  "negative_tests": [
+    "tampered-actions",
+    "forged-public-binding",
+    "replay-payment",
+    "zero-recipient"
+  ],
+  "ordinary_flow": "Deposit 1000; Alice pays Bob 600 + 400 change; Bob respends 600 into 500 change + 100 withdrawal; Bob withdraws remaining 500. Three fees of 5 paid by relayer outside private balance.",
+  "proofs": {
+    "payment": {
+      "case": "payment",
+      "startup_seconds": 1.9243252079977538,
+      "request_seconds": 19.217364197997085,
+      "proving_seconds": 12.687,
+      "virtual_os_seconds": 6.525,
+      "proof_bytes": 230822,
+      "proof_sha256": "7d8b5b9c80ad6ba83b3da8d00193e363326c92bd6c809edafadf5024addae6d4",
+      "peak_rss_gib": 13.923423767089844,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f5632",
+        "0x534e5f5345504f4c4941",
+        "0xba1d723e8d952cb0a8d4612ddb04ef2f7d9a697ba4d30b2e407f91acfe98ad",
+        "0x7e336060698e111aa0feab9a1c32577f2d020eae8c69715a2c018d8edff460",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x3a198b08bd193efc8a6b28a1d2cec0d5fa377a2fb8bca008a62cea58e65ed5d"
+      ],
+      "base_block": 15358322,
+      "memory_cap_gib": 16,
+      "cores": 4
+    },
+    "recipient-respend": {
+      "case": "recipient-respend",
+      "startup_seconds": 2.0032884550018935,
+      "request_seconds": 18.939386583006126,
+      "proving_seconds": 12.129,
+      "virtual_os_seconds": 6.805,
+      "proof_bytes": 236389,
+      "proof_sha256": "71c309f6f0f9e88cb19180071a4a0292cc3a1670a7cb8b259141e2a6f23f3eef",
+      "peak_rss_gib": 13.964481353759766,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f5632",
+        "0x534e5f5345504f4c4941",
+        "0xba1d723e8d952cb0a8d4612ddb04ef2f7d9a697ba4d30b2e407f91acfe98ad",
+        "0x78d71073d7e72542b9596dbc651904cdb7600e6fb28d5cb054e8c4cb3a1c3db",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5cd1d83f7ea92189d40f215f72afadb7eb7ac1516c062c0f4cf24ae5d93be36"
+      ],
+      "base_block": 15358455,
+      "memory_cap_gib": 16,
+      "cores": 4
+    },
+    "withdrawal": {
+      "case": "withdrawal",
+      "startup_seconds": 2.415361977997236,
+      "request_seconds": 20.535461412997392,
+      "proving_seconds": 12.463,
+      "virtual_os_seconds": 8.068,
+      "proof_bytes": 237098,
+      "proof_sha256": "2d114c8cb1fa1183d2204ce0abd79ce16acc0662569f8ecc6e016c7032ad9831",
+      "peak_rss_gib": 14.018428802490234,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f5632",
+        "0x534e5f5345504f4c4941",
+        "0xba1d723e8d952cb0a8d4612ddb04ef2f7d9a697ba4d30b2e407f91acfe98ad",
+        "0x961db839ec4e3e19c4d15380b9030abee28bcddf537b57d169f0f2912550f",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x21300ddee67c695e80dc6b07249cfb9199c6f95d538be864682200f8b945b4a"
+      ],
+      "base_block": 15358565,
+      "memory_cap_gib": 16,
+      "cores": 4
+    },
+    "zero-recipient": {
+      "case": "zero-recipient",
+      "startup_seconds": 2.002410654000414,
+      "request_seconds": 20.960585724002158,
+      "proving_seconds": 13.542,
+      "virtual_os_seconds": 7.415,
+      "proof_bytes": 236870,
+      "proof_sha256": "d0064ea143b3a416be959237e9ab9036c6789819a8130ce3ea5543ad75087d8b",
+      "peak_rss_gib": 13.761436462402344,
+      "swap_peak_bytes": 0,
+      "local_verification_passed": true,
+      "public_binding_matches": true,
+      "public_values": [
+        "0x54454d504c41525f5632",
+        "0x534e5f5345504f4c4941",
+        "0xba1d723e8d952cb0a8d4612ddb04ef2f7d9a697ba4d30b2e407f91acfe98ad",
+        "0x961db839ec4e3e19c4d15380b9030abee28bcddf537b57d169f0f2912550f",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x2babd68b0d9416254839769bcc49146c3d2023f3f4775d2d8f8e70f48b2ab05"
+      ],
+      "base_block": 15358483,
+      "memory_cap_gib": 16,
+      "cores": 4
+    }
+  },
+  "transactions": {
+    "payment": {
+      "transaction_hash": "0x76cab9a760fb1b53f334596673bb309e30a0d0b8f368d254710da55d6456c8c",
+      "execution_status": "SUCCEEDED",
+      "block_number": 15358430,
+      "actual_fee": {
+        "amount": "0x18b20e6b277f49a0",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 3488,
+        "l1_gas": 0,
+        "l2_gas": 92130320
+      },
+      "revert_reason": null
+    },
+    "recipient-respend": {
+      "transaction_hash": "0x4f53a550701b01eeff2bee369aa3db68f1a96d4844cc3d9ba4b3365d7f83a88",
+      "execution_status": "SUCCEEDED",
+      "block_number": 15358474,
+      "actual_fee": {
+        "amount": "0x172a554479eb5060",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 3232,
+        "l1_gas": 0,
+        "l2_gas": 86422800
+      },
+      "revert_reason": null
+    },
+    "withdrawal": {
+      "transaction_hash": "0x4b79421c71c30c3969ca9156cd1dd1dabaea1e43e2a0d308aa8c7118469237d",
+      "execution_status": "SUCCEEDED",
+      "block_number": 15358586,
+      "actual_fee": {
+        "amount": "0x15377fee065435d0",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 672,
+        "l1_gas": 0,
+        "l2_gas": 79203600
+      },
+      "revert_reason": null
+    },
+    "tampered-actions": {
+      "transaction_hash": "0x58d6606ca5960cbc11c2d7b739e6d14bdd7259d64f4059f51cc447f977cd546",
+      "execution_status": "REVERTED",
+      "block_number": 15358406,
+      "actual_fee": {
+        "amount": "0x147b91922ca48400",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 128,
+        "l1_gas": 0,
+        "l2_gas": 76479680
+      },
+      "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x4241445f42494e44494e47 ('BAD_BINDING'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n"
+    },
+    "forged-public-binding": {
+      "transaction_hash": "0x7db8a61b2b4edcc9d2b19b95fa1e10cb6e77fdf17b362db76e791a8f4d939dd",
+      "execution_status": "REVERTED",
+      "block_number": 15358419,
+      "actual_fee": {
+        "amount": "0x14810da1f0c60580",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 128,
+        "l1_gas": 0,
+        "l2_gas": 76559680
+      },
+      "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x50524f4f465f42494e44494e47 ('PROOF_BINDING'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n"
+    },
+    "replay-payment": {
+      "transaction_hash": "0x1311e3dad8a9036f1d4dd0c16b0b60f7c55c3dab9129c088c1c13b78388a7c0",
+      "execution_status": "REVERTED",
+      "block_number": 15358444,
+      "actual_fee": {
+        "amount": "0x148689ab8da7d880",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 128,
+        "l1_gas": 0,
+        "l2_gas": 76639680
+      },
+      "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x4e554c4c49464945525f55534544 ('NULLIFIER_USED'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n"
+    },
+    "zero-recipient": {
+      "transaction_hash": "0x5eabdfbaeaa4066e49aaa6f0f793dc7a44b4518af7c55a16a7f5d5df0a630c1",
+      "execution_status": "REVERTED",
+      "block_number": 15358506,
+      "actual_fee": {
+        "amount": "0x1486d210f2e5fe40",
+        "unit": "FRI"
+      },
+      "execution_resources": {
+        "l1_data_gas": 128,
+        "l1_gas": 0,
+        "l2_gas": 76639680
+      },
+      "revert_reason": "Transaction execution has failed:\n0: Error in the called contract (contract address: 0x054f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3, class hash: 0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nExecution failed. Failure reason:\n(0x617267656e742f6d756c746963616c6c2d6661696c6564 ('argent/multicall-failed'), 0x0 (''), 0x5a45524f5f524543495049454e54 ('ZERO_RECIPIENT'), 0x454e545259504f494e545f4641494c4544 ('ENTRYPOINT_FAILED')).\n"
+    }
+  },
+  "limitations": [
+    "Synthetic test-token units and note keys; account-1 relays all transactions.",
+    "Controller signature verification is not implemented or exercised.",
+    "Wallet encryption, discovery and GUI are not exercised.",
+    "Physical 16 GiB desktop and mainnet remain unqualified."
+  ]
+}

@@ -1,0 +1,53 @@
+Running as unit: templar-wasm-chrome-three-runs-8g-v2-1789975203483294844.service; invocation ID: 114c3ec5227a424bba54c1d636def8b8
+{"type":"ready","initialization_and_fixture_ms":58.564999997615814,"initialization_timer_note":"Includes WASM init and fixture/reference loading and reference hash; excludes JS module import.","linear_memory_bytes":8519680,"fixture_sha256":"019395a2feb2b2e7d49336bdef71c854acad3e57834c7fd95ccb7398f68fcf9a","reference_sha256":"7883c50e7125e608365e7887b50df589ac57bcc91438fe2f1f660caf56a9631e","cross_origin_isolated":true}
+{"type":"phase","run":1,"phase":"public transcript regenerated and fixture parity passed","worker_ms":99.50999999046326,"linear_memory_bytes":9109504}
+{"type":"phase","run":1,"phase":"preprocessing commitment complete; generating witness","worker_ms":2838.169999986887,"linear_memory_bytes":966000640}
+{"type":"phase","run":1,"phase":"base witness complete; committing trace","worker_ms":3296.204999998212,"linear_memory_bytes":966000640}
+{"type":"phase","run":1,"phase":"base commitment complete; interaction PoW and witness","worker_ms":8122.684999987483,"linear_memory_bytes":1771503616}
+{"type":"phase","run":1,"phase":"interaction witness complete; commitment and STARK proving","worker_ms":10868.489999994636,"linear_memory_bytes":1771503616}
+{"type":"phase","run":1,"phase":"proof generated; verifying serialized public envelope","worker_ms":41772.47999998927,"linear_memory_bytes":2308505600}
+{"type":"run","run":1,"elapsed_ms":41719.89499999583,"memory_after_bytes":2308505600,"matches_native":true}
+{"type":"phase","run":2,"phase":"public transcript regenerated and fixture parity passed","worker_ms":41928.67999999225,"linear_memory_bytes":2308505600}
+{"type":"phase","run":2,"phase":"preprocessing commitment complete; generating witness","worker_ms":44269.20999999344,"linear_memory_bytes":2308505600}
+{"type":"phase","run":2,"phase":"base witness complete; committing trace","worker_ms":44659.01999999583,"linear_memory_bytes":2308505600}
+{"type":"phase","run":2,"phase":"base commitment complete; interaction PoW and witness","worker_ms":49396.314999997616,"linear_memory_bytes":2308505600}
+{"type":"phase","run":2,"phase":"interaction witness complete; commitment and STARK proving","worker_ms":52095.88499999046,"linear_memory_bytes":2308505600}
+{"type":"phase","run":2,"phase":"proof generated; verifying serialized public envelope","worker_ms":83080.69999998808,"linear_memory_bytes":2308505600}
+{"type":"run","run":2,"elapsed_ms":41182.51999999583,"memory_after_bytes":2308505600,"matches_native":true}
+{"type":"phase","run":3,"phase":"public transcript regenerated and fixture parity passed","worker_ms":83224.40499998629,"linear_memory_bytes":2308505600}
+{"type":"phase","run":3,"phase":"preprocessing commitment complete; generating witness","worker_ms":85565.07999999821,"linear_memory_bytes":2308505600}
+{"type":"phase","run":3,"phase":"base witness complete; committing trace","worker_ms":85948.28999999166,"linear_memory_bytes":2308505600}
+{"type":"phase","run":3,"phase":"base commitment complete; interaction PoW and witness","worker_ms":90647.43499998748,"linear_memory_bytes":2308505600}
+{"type":"phase","run":3,"phase":"interaction witness complete; commitment and STARK proving","worker_ms":93338.81499999762,"linear_memory_bytes":2308505600}
+{"type":"phase","run":3,"phase":"proof generated; verifying serialized public envelope","worker_ms":124128.71499998868,"linear_memory_bytes":2308505600}
+{"type":"run","run":3,"elapsed_ms":40931.45000000298,"memory_after_bytes":2308505600,"matches_native":true}
+{"status":"passed","output":"/home/broody/development/templar/bench/wasm-membership/results/chrome-three-runs-8g-v2/browser","browser_peak_pss_gib":2.1946773529052734}
+	Command being timed: "/home/broody/.nvm/versions/node/v22.22.1/bin/node bench/wasm-membership/run-browser.mjs bench/wasm-membership/results/chrome-three-runs-8g-v2/browser 3"
+	User time (seconds): 2.10
+	System time (seconds): 12.98
+	Percent of CPU this job got: 11%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:08.03
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 213616
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 143
+	Minor (reclaiming a frame) page faults: 70796
+	Voluntary context switches: 29542
+	Involuntary context switches: 7027
+	Swaps: 0
+	File system inputs: 40
+	File system outputs: 33112
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 2min 8.040s
+CPU time consumed: 2min 25.326s
+Memory peak: 2.1G
+Memory swap peak: 0B

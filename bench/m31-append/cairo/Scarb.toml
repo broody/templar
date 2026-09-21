@@ -1,0 +1,13 @@
+[workspace]
+members = ["bridge", "ood_probe", "transcript_probe", "statement_account", "local_pool", "vendor/bounded_int", "vendor/constraint_framework", "vendor/verifier_core", "vendor/verifier_utils"]
+[workspace.tool.cairo-lint]
+collapsible_if_else = false
+double_parens = false
+ifs_same_cond = false
+manual_assert = false
+[cairo]
+enable-gas = false
+allow-warnings = false
+[profile.contract.cairo]
+enable-gas = true
+allow-warnings = false

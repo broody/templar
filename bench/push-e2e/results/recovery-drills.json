@@ -1,0 +1,113 @@
+{
+  "scope": "read-only mutation of actual downloaded Sepolia history; no chain reorganization performed",
+  "block_number": 15364035,
+  "block_hash": "0x19396c77c867bb0c1e36b36a98b27100eb6b5d3cc2c3e43fc0114d825e1e949",
+  "complete": {
+    "as_of_block": 15364035,
+    "block_hash": "0x19396c77c867bb0c1e36b36a98b27100eb6b5d3cc2c3e43fc0114d825e1e949",
+    "anchor": "two trusted RPC providers agree on block/class/state; no consensus or state-proof verification",
+    "history_complete": true,
+    "missing_payload_indices": [],
+    "received_indices": [
+      2,
+      4,
+      7
+    ],
+    "received_totals": {
+      "0x4ad0831f7836c5fab225cf4ff9d06e641f370f29cd76d8ea80b9932e39c00ee": 1160
+    },
+    "spent_indices": [
+      2,
+      4,
+      7
+    ],
+    "known_unspent": {
+      "0x4ad0831f7836c5fab225cf4ff9d06e641f370f29cd76d8ea80b9932e39c00ee": 0
+    },
+    "balances": {
+      "0x4ad0831f7836c5fab225cf4ff9d06e641f370f29cd76d8ea80b9932e39c00ee": 0
+    },
+    "balance_scope": "recoverable protocol-published notes for this receiving address"
+  },
+  "incoming_only": {
+    "as_of_block": 15364035,
+    "block_hash": "0x19396c77c867bb0c1e36b36a98b27100eb6b5d3cc2c3e43fc0114d825e1e949",
+    "anchor": "two trusted RPC providers agree on block/class/state; no consensus or state-proof verification",
+    "history_complete": true,
+    "missing_payload_indices": [],
+    "received_indices": [
+      2,
+      4,
+      7
+    ],
+    "received_totals": {
+      "0x4ad0831f7836c5fab225cf4ff9d06e641f370f29cd76d8ea80b9932e39c00ee": 1160
+    },
+    "spent_indices": null,
+    "known_unspent": null,
+    "balances": null,
+    "balance_scope": "recoverable protocol-published notes for this receiving address"
+  },
+  "missing_payload": {
+    "as_of_block": 15364035,
+    "block_hash": "0x19396c77c867bb0c1e36b36a98b27100eb6b5d3cc2c3e43fc0114d825e1e949",
+    "anchor": "two trusted RPC providers agree on block/class/state; no consensus or state-proof verification",
+    "history_complete": false,
+    "missing_payload_indices": [
+      7
+    ],
+    "received_indices": [
+      2,
+      4
+    ],
+    "received_totals": {
+      "0x4ad0831f7836c5fab225cf4ff9d06e641f370f29cd76d8ea80b9932e39c00ee": 850
+    },
+    "spent_indices": [
+      2,
+      4
+    ],
+    "known_unspent": {
+      "0x4ad0831f7836c5fab225cf4ff9d06e641f370f29cd76d8ea80b9932e39c00ee": 0
+    },
+    "balances": null,
+    "balance_scope": "recoverable protocol-published notes for this receiving address"
+  },
+  "retry": {
+    "as_of_block": 15364035,
+    "block_hash": "0x19396c77c867bb0c1e36b36a98b27100eb6b5d3cc2c3e43fc0114d825e1e949",
+    "anchor": "two trusted RPC providers agree on block/class/state; no consensus or state-proof verification",
+    "history_complete": true,
+    "missing_payload_indices": [],
+    "received_indices": [
+      2,
+      4,
+      7
+    ],
+    "received_totals": {
+      "0x4ad0831f7836c5fab225cf4ff9d06e641f370f29cd76d8ea80b9932e39c00ee": 1160
+    },
+    "spent_indices": [
+      2,
+      4,
+      7
+    ],
+    "known_unspent": {
+      "0x4ad0831f7836c5fab225cf4ff9d06e641f370f29cd76d8ea80b9932e39c00ee": 0
+    },
+    "balances": {
+      "0x4ad0831f7836c5fab225cf4ff9d06e641f370f29cd76d8ea80b9932e39c00ee": 0
+    },
+    "balance_scope": "recoverable protocol-published notes for this receiving address"
+  },
+  "tampered_with_recomputed_digest_rejected": "event differs from authenticated receipt",
+  "checkpoint_below_requested_height_rejected": "checkpoint older than required block",
+  "reordered_and_duplicate_deliveries_deduplicated": true,
+  "reconciled_private_balances": {
+    "alice": 400,
+    "bob": 0,
+    "carol": 250,
+    "dave": 500
+  },
+  "total_private_balance_matches_pool": 1150
+}

@@ -1,0 +1,73 @@
+{
+  "seconds": 11.83041923899873,
+  "event_pages": 1,
+  "event_count": 2,
+  "unique_payloads": 2,
+  "ciphertext_bytes": 608,
+  "leaf_count": 2,
+  "providers": [
+    "https://api.zan.top/public/starknet-sepolia/rpc/v0_10",
+    "https://api.cartridge.gg/x/starknet/sepolia/rpc/v0_10"
+  ],
+  "block_number": 15363653,
+  "block_hash": "0x73ce66298081a6e3b24364891dbe42f6bf2d57ce6e70596a20ee308132727fc",
+  "anchor": "two trusted RPC providers agree on block/class/state; no consensus or state-proof verification",
+  "privacy_limit": "RPC providers see requested leaf positions and candidate nullifiers",
+  "pool_class": "0x1718e7070d933ac667a49d8312236241636d6decfda9562581f6ad4f1da044a",
+  "raw_events": [
+    {
+      "block_hash": "0x4893b8b0a0102fad7d73631e7c56ea8519adf0f3d5e807afc4102cc3f624fab",
+      "block_number": 15363639,
+      "data": [
+        "0x0",
+        "0x7ea29189a29f5686d84964f9a6d1c72a2d7c6d4bcb21c4683e0ecb21a5bcfa2",
+        "0x59f49735c9f1ae5a6dc9ed9dc613733e346b3a17d64fa128eaeb69c4bbfca09",
+        "0xa",
+        "0xc17017e65ddc51d4df32db084803bf28227566859248986a099356a69847f5",
+        "0x4247d951015db0764d31dd203de66703b8c744e05514abd9df519b4ef65c2a",
+        "0xb7f67bad536b5ab64dbe7256c6f85e6747bb6e0fd3a79953b4ac59d9cc6dfc",
+        "0xef217a06989b6812bbcf204f049117cc8ccaa0de68dfb2e6b0c241b527bd10",
+        "0xe08d9b3b6bc12e1345780605d2b1f08a56a463541e089188a8ee4de32e9e1a",
+        "0x1c5aa5d327a2a149a12fe01bf2a7c9b7dfba2f2d07c212818af99344a7574",
+        "0x504373afa42bf00091d0df33f75784a07d62c6b27543e3b89b8ec7ad1dd719",
+        "0x4a4b591b837feac7e7033524ab8e660d696e350189cad0dea4192c8fe20b7b",
+        "0x8face0a9c6cf514ccdd3d9b103d52ec090f90daf2f3037aea54abcc32e4032",
+        "0x5e8db7f07688cea80705eaa4a7a80b26a70aeb52d79b6c4de3"
+      ],
+      "event_index": 0,
+      "from_address": "0x7430fdfc9121d40c0b92bec1a19265c5f9b2c0fd16aba973f1799beed736a1e",
+      "keys": [
+        "0x10a7e8aac45030c9785c0c740540eb083470c45ac5bcb7f9b1c09d5c2648aa6"
+      ],
+      "transaction_hash": "0x17a3b15d2b6057c608d94bb4452ceccb8bdd5db11409a485ef35999d8666b",
+      "transaction_index": 3
+    },
+    {
+      "block_hash": "0x428369452d1a45d5b45d216fb3973db42ec40543613aadf17e4a95c157cc3c5",
+      "block_number": 15363645,
+      "data": [
+        "0x1",
+        "0xfd45086d9c6c360ab4ccd53c876de7ff8c7e43a147c16016ca518fb9e1441d",
+        "0x3ae5cee1c2c1b6a6dd4a3bce13ab13bb010bdca329fa990d28010b50c364f0a",
+        "0xa",
+        "0x48843104f79b9c3bc9b4f62b1785daff0b14b46fc1f0780edd0d6c236ea9b4",
+        "0x6e8ad1b199e1ef6aa52e11c486da41df5f1515bf564dd91d56c2986999d38a",
+        "0xd201286f882799b8956609f502550a665def2b0d6b0ff321640b2cd2330bc",
+        "0xe7abd8917836bed4696bdf55b318165bb85334b4dab3c505321393804fd336",
+        "0xb5f927b4a5714f49a87a82202c5b9eb505229bcceb149d5f234570bdd324ff",
+        "0x35bd3a429d68d4556cc3553a45dae3d4feeccdc35fa821dd954de7766c3560",
+        "0x6f82456c8daceae0abadf89b8a184b076d0cc57d3b106098747c67110590bd",
+        "0xd29c9e1e7a54bafa10cb2d435d465cb6c7bd3abbb2909aca4c5976bff3eab",
+        "0xc5a9f3d94f3ec8f4fd1145d2cfd859e2d81cc961935ffaf8c3ab0e518b949c",
+        "0x61b081f1ceb235ac71f1d5c4c4edb2f82b4f8d956529332247"
+      ],
+      "event_index": 0,
+      "from_address": "0x7430fdfc9121d40c0b92bec1a19265c5f9b2c0fd16aba973f1799beed736a1e",
+      "keys": [
+        "0x10a7e8aac45030c9785c0c740540eb083470c45ac5bcb7f9b1c09d5c2648aa6"
+      ],
+      "transaction_hash": "0x61177666aaf7220dc03c41212b226ada001684788fb870ffc1d639d12fad99a",
+      "transaction_index": 1
+    }
+  ]
+}

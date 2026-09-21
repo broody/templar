@@ -1,0 +1,28 @@
+{
+  "scope": "Cairo VM verification of saved synthetic public proof, not client proving or PROOF1 wrapping",
+  "command": [
+    "/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb",
+    "--manifest-path",
+    "/home/broody/development/templar/bench/direct-air/cairo/Scarb.toml",
+    "execute",
+    "--no-build",
+    "-p",
+    "templar_synthetic_circuit_bridge",
+    "--arguments-file",
+    "/home/broody/development/templar/bench/direct-air/results/eq-one-thread-8g/proof/cairo-arguments-0.json",
+    "--print-program-output",
+    "--print-resource-usage"
+  ],
+  "binary_sha256": "97eafe061de1e473e6649578e320225d41abaf708784db1858173132811f01d6",
+  "cap_gib": 8,
+  "threads": 4,
+  "cpu_affinity": "0 1 2 3",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "elapsed_seconds": 2.3658561449992703,
+  "sampled_peak_rss_gib": 0.020175933837890625,
+  "sampled_peak_cgroup_gib": 0.7632522583007812,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "time_peak_rss_gib": 0.7692413330078125
+}

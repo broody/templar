@@ -1,0 +1,14 @@
+{
+  "purpose": "implementation smoke, not benchmark",
+  "command": [
+    "taskset",
+    "-c",
+    "0",
+    "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree",
+    "bench/m31-tree/client/fixtures/tree-only.json",
+    "/home/broody/development/templar/bench/m31-tree/results/implementation-smoke-v2/tree"
+  ],
+  "RAYON_NUM_THREADS": "1",
+  "virtual_memory_limit_bytes": 4294967296,
+  "exit_code": 0
+}

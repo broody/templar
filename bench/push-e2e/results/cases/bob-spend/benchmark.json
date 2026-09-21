@@ -1,0 +1,26 @@
+{
+  "case": "bob-spend",
+  "startup_seconds": 2.3946299250019365,
+  "request_seconds": 19.224955243000295,
+  "proving_seconds": 12.605,
+  "virtual_os_seconds": 6.616,
+  "proof_bytes": 236197,
+  "proof_sha256": "b7d4bf8bda80e35567be0406f1267167b03edf91fb5533e8913c6b24f560b00b",
+  "peak_rss_gib": 13.908821105957031,
+  "swap_peak_bytes": 0,
+  "local_verification_passed": true,
+  "public_binding_matches": true,
+  "public_values": [
+    "0x54454d504c41525f505553485f504f4332",
+    "0x534e5f5345504f4c4941",
+    "0x7430fdfc9121d40c0b92bec1a19265c5f9b2c0fd16aba973f1799beed736a1e",
+    "0x58af1da59aa569404c4100e168d0379e02fd3be6c30c3fade611605aee3421",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x613242dd132d49882cedfb05d9aaecf895f61b63b067aa893b389015f01bc4a"
+  ],
+  "base_block": 15363806,
+  "memory_cap_gib": 16,
+  "cores": 4
+}

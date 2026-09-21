@@ -1,0 +1,19 @@
+{
+  "sequencer_revision": "e6b6fd2e9932909107833579e5b6efd6c75fa0af",
+  "tag": "PRIVACY-0.14.3-RC.2",
+  "proving_utils_revision": "3035dd00421daa541894297bd754db6e2787807b",
+  "proof_version": "PROOF1",
+  "starknet_version": "0.14.4",
+  "files_sha256": {
+    "src/lib.cairo": "8c4892c2e83f48614dae59216202d87cd0cc789bd57f8d98f4754831d1a74e2c",
+    "src/statement.cairo": "662801c25343d7e00992e8dee7ef3e1ee123be9428353269ba428a0ba7315f35",
+    "Scarb.toml": "a9942f50a1a60d304f38cc0b3bcd1c36c697b7dc11c5267415a47fcf0421bd2b",
+    "Scarb.lock": "0e4ff4c9bbeca58b7500a8154b3bc607ce7c7d6db903d482fd649f0487af0b9f",
+    "prepare_request.py": "58451319a5163782e4732007795dfc01a4b034d21f1b11dd397c953b9dc49f05",
+    "prove_local.py": "5a36c4f306ccf3da39477a20cbb2c3eddb17cd8bb9fbcc4a1937f6f3624dda01",
+    "run-prover.sh": "5acbf4d30ba1199560d97c1aef8e79829cd27990fcdf9ebcc45f463f32dbbb17",
+    "verify_saved.rs": "eef9af4a1d9f2266566b6e5604405dd92758b711d0d5f367374c75d310d38694",
+    "build-v1.sh": "f17d154ae7c617d07be930fa0136719e1b011ba666aa3bead7004bbf0ed1c170",
+    "upstream/Cargo.lock": "2d47ff1cc07040e820dca7a0946b0ffebff82f30d75efabc67a25e7f2e96af60"
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "algorithm": "Plonky3-00fe0a98/Poseidon2-M31-width24-RF8-RP22/Pad10-rate15-digest9/Templar-frame-v1",
+  "binary_envelope_bytes": 464900,
+  "binary_stark_proof_bytes": 404305,
+  "binding_root_relationship": "mixed residual binding root independent of M31 root; workload union, no migrated payment statement",
+  "channel": "Blake2s",
+  "complete_seconds": 16.35176433,
+  "components": [
+    {
+      "interaction_base_columns": 56,
+      "log_rows": 6,
+      "name": "poseidon_aggregator",
+      "rows": 64,
+      "trace_columns": 342
+    },
+    {
+      "interaction_base_columns": 24,
+      "log_rows": 9,
+      "name": "poseidon_full_round_chain",
+      "rows": 512,
+      "trace_columns": 126
+    },
+    {
+      "interaction_base_columns": 36,
+      "log_rows": 11,
+      "name": "poseidon_3_partial_rounds_chain",
+      "rows": 2048,
+      "trace_columns": 169
+    },
+    {
+      "interaction_base_columns": 200,
+      "log_rows": 13,
+      "name": "cube_252",
+      "rows": 8192,
+      "trace_columns": 141
+    },
+    {
+      "interaction_base_columns": 32,
+      "log_rows": 13,
+      "name": "range_check_252_width_27",
+      "rows": 8192,
+      "trace_columns": 20
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 6,
+      "name": "poseidon_round_keys",
+      "rows": 64,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 15,
+      "name": "range_check_3_3_3_3_3",
+      "rows": 32768,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 16,
+      "name": "range_check_4_4_4_4",
+      "rows": 65536,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 8,
+      "name": "range_check_4_4",
+      "rows": 256,
+      "trace_columns": 1
+    },
+    {
+      "interaction_base_columns": 16,
+      "log_rows": 18,
+      "name": "range_check_9_9",
+      "rows": 262144,
+      "trace_columns": 8
+    },
+    {
+      "interaction_base_columns": 16,
+      "log_rows": 20,
+      "name": "range_check_20",
+      "rows": 1048576,
+      "trace_columns": 8
+    },
+    {
+      "interaction_base_columns": 4,
+      "log_rows": 18,
+      "name": "range_check_18",
+      "rows": 262144,
+      "trace_columns": 2
+    },
+    {
+      "constraint_degree": 2,
+      "interaction_base_columns": 4,
+      "log_rows": 8,
+      "name": "poseidon2_m31_width24",
+      "rows": 256,
+      "trace_columns": 1172
+    }
+  ],
+  "config_security_metric_bits": 96,
+  "execution_target": "x86_64",
+  "felt252_aggregator_padded_rows": 64,
+  "felt252_aggregator_unique_rows": 56,
+  "felt252_public_memory_boundary_terms": 384,
+  "felt252_residual_hash_calls": 17,
+  "felt252_residual_permutations": 62,
+  "fri_pow_nonce": "1520419120596",
+  "interaction_pow_bits": 24,
+  "interaction_pow_nonce": "107374667080",
+  "json_envelope_bytes": 1170023,
+  "m31_padding_repeats": 126,
+  "m31_tree_requests": 130,
+  "m31_tree_rows_with_padding": 256,
+  "max_fri_columns": 16,
+  "mode": "mixed",
+  "native_proof_verified": true,
+  "pcs_config": {
+    "fri_config": {
+      "fold_step": 4,
+      "log_blowup_factor": 3,
+      "log_last_layer_degree_bound": 0,
+      "n_queries": 23
+    },
+    "lifting_log_size": 23,
+    "pow_bits": 27
+  },
+  "phases": {
+    "base_commit_seconds": 1.205598412,
+    "base_witness_seconds": 0.237422502,
+    "interaction_commit_and_stark_prove_seconds": 13.563345497,
+    "interaction_pow_and_witness_seconds": 0.433505087,
+    "preprocessing_twiddles_and_commit_seconds": 0.895115377,
+    "public_transcript_regeneration_seconds": 0.006981047,
+    "verify_seconds": 0.007374938
+  },
+  "plonky3_pin": "00fe0a985b398d3ef1f10d69543ca2b8f9f236da",
+  "proof_verified_in_runtime": true,
+  "public_statement_json_bytes": 101658,
+  "reference_parity": true,
+  "runtime": "native shared in-memory core",
+  "scope": "public synthetic M31 membership; mixed mode adds exact RTN residual hash union workload; no private/payment proof or protocol migration",
+  "security_metric_note": "existing configured metric, not a new exact soundness bound for small domains",
+  "trusted_preprocessed_root": [
+    178,
+    97,
+    89,
+    138,
+    49,
+    115,
+    237,
+    36,
+    206,
+    59,
+    164,
+    3,
+    105,
+    98,
+    54,
+    177,
+    193,
+    101,
+    203,
+    79,
+    82,
+    33,
+    135,
+    155,
+    21,
+    220,
+    232,
+    141,
+    85,
+    46,
+    209,
+    100
+  ],
+  "wasm_linear_memory_bytes": null
+}

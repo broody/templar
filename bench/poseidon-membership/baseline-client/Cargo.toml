@@ -1,0 +1,36 @@
+[package]
+name = "templar-poseidon-membership"
+version = "0.1.0"
+edition = "2024"
+
+[workspace]
+
+[dependencies]
+stwo = { path = "../../../target/direct-air/stwo/crates/stwo", features = ["prover", "parallel"] }
+stwo-constraint-framework = { path = "../../../target/direct-air/stwo/crates/constraint-framework", features = ["prover", "parallel"] }
+stwo-cairo-prover = { path = "../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/prover" }
+stwo-cairo-adapter = { path = "../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/adapter" }
+stwo-cairo-common = { path = "../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/common", features = ["prover"] }
+cairo-air = { path = "../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/cairo-air" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+num-traits = "0.2.19"
+bincode = "1.3"
+anyhow = "1"
+starknet-types-core = { version = "=0.2.4", features = ["hash", "serde"] }
+
+[patch."https://github.com/starkware-libs/stwo"]
+stwo = { path = "../../../target/direct-air/stwo/crates/stwo" }
+stwo-constraint-framework = { path = "../../../target/direct-air/stwo/crates/constraint-framework" }
+stwo-air-utils = { path = "../../../target/direct-air/stwo/crates/air-utils" }
+stwo-air-utils-derive = { path = "../../../target/direct-air/stwo/crates/air-utils-derive" }
+
+[patch."https://github.com/starkware-libs/stwo-cairo"]
+cairo-air = { path = "../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/cairo-air" }
+stwo-cairo-prover = { path = "../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/prover" }
+stwo-cairo-common = { path = "../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/common" }
+stwo-cairo-utils = { path = "../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/utils" }
+stwo-cairo-serialize = { path = "../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize" }
+
+[profile.release]
+debug = false

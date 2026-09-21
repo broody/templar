@@ -1,0 +1,132 @@
+Running as unit: templar-m31-native-tree-v2-1g-r3-1789984407151077088.service
+public transcript regenerated and fixture parity passed
+preprocessing commitment complete; generating witness
+base witness complete; committing trace
+base commitment complete; interaction PoW and witness
+interaction witness complete; commitment and STARK proving
+proof generated; verifying serialized public envelope
+{
+  "algorithm": "Plonky3-00fe0a98/Poseidon2-M31-width24-RF8-RP22/Pad10-rate15-digest9/Templar-frame-v1",
+  "binary_envelope_bytes": 197320,
+  "binary_stark_proof_bytes": 166809,
+  "binding_root_relationship": "mixed residual binding root independent of M31 root; workload union, no migrated payment statement",
+  "channel": "Blake2s",
+  "complete_seconds": 0.480108524,
+  "components": [
+    {
+      "constraint_degree": 2,
+      "interaction_base_columns": 4,
+      "log_rows": 8,
+      "name": "poseidon2_m31_width24",
+      "rows": 256,
+      "trace_columns": 1172
+    }
+  ],
+  "config_security_metric_bits": 96,
+  "execution_target": "x86_64",
+  "felt252_aggregator_padded_rows": 0,
+  "felt252_aggregator_unique_rows": 0,
+  "felt252_public_memory_boundary_terms": 0,
+  "felt252_residual_hash_calls": 0,
+  "felt252_residual_permutations": 0,
+  "fri_pow_nonce": "81604813092",
+  "interaction_pow_bits": 24,
+  "interaction_pow_nonce": "85899869310",
+  "json_envelope_bytes": 487371,
+  "m31_padding_repeats": 126,
+  "m31_tree_requests": 130,
+  "m31_tree_rows_with_padding": 256,
+  "max_fri_columns": 16,
+  "mode": "tree_only",
+  "native_proof_verified": true,
+  "pcs_config": {
+    "fri_config": {
+      "fold_step": 4,
+      "log_blowup_factor": 3,
+      "log_last_layer_degree_bound": 0,
+      "n_queries": 23
+    },
+    "lifting_log_size": 11,
+    "pow_bits": 27
+  },
+  "phases": {
+    "base_commit_seconds": 0.011596838,
+    "base_witness_seconds": 0.004929145,
+    "interaction_commit_and_stark_prove_seconds": 0.234224354,
+    "interaction_pow_and_witness_seconds": 0.221270153,
+    "preprocessing_twiddles_and_commit_seconds": 0.001677442,
+    "public_transcript_regeneration_seconds": 0.002430648,
+    "verify_seconds": 0.002911083
+  },
+  "plonky3_pin": "00fe0a985b398d3ef1f10d69543ca2b8f9f236da",
+  "proof_verified_in_runtime": true,
+  "public_statement_json_bytes": 72120,
+  "reference_parity": true,
+  "runtime": "native shared in-memory core",
+  "scope": "public synthetic M31 membership; mixed mode adds exact RTN residual hash union workload; no private/payment proof or protocol migration",
+  "security_metric_note": "existing configured metric, not a new exact soundness bound for small domains",
+  "trusted_preprocessed_root": [
+    105,
+    33,
+    122,
+    48,
+    121,
+    144,
+    128,
+    148,
+    225,
+    17,
+    33,
+    208,
+    66,
+    53,
+    74,
+    124,
+    31,
+    85,
+    182,
+    72,
+    44,
+    161,
+    165,
+    30,
+    27,
+    37,
+    13,
+    253,
+    30,
+    208,
+    238,
+    249
+  ],
+  "wasm_linear_memory_bytes": null
+}
+	Command being timed: "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree bench/m31-tree/client/fixtures/tree-only.json bench/m31-tree/results/native-tree-v2-1g-r3/proof"
+	User time (seconds): 0.47
+	System time (seconds): 0.01
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.48
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 17820
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 5622
+	Voluntary context switches: 197
+	Involuntary context switches: 387
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 1360
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 486ms
+CPU time consumed: 485ms
+Memory peak: 8.1M
+Memory swap peak: 0B

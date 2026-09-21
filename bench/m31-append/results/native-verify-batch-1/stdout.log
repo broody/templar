@@ -1,0 +1,60 @@
+Running as unit: templar-m31-native-verify-batch-1-1789991323884700150.service
+{
+  "discarded_multiplicity_rejected": true,
+  "omitted_padding_rejected": true,
+  "rejected_mutations": [
+    "chain",
+    "pool",
+    "old_count",
+    "new_count",
+    "old_root",
+    "new_root",
+    "commitment_substitution",
+    "ordered_commitment_swap",
+    "sibling",
+    "interaction_pow",
+    "base_commitment",
+    "leaf_domain",
+    "leaf_padding",
+    "noncanonical_word",
+    "untrusted_config",
+    "sampled_value",
+    "sum",
+    "preprocessing_root",
+    "extra_empty_pp_sample",
+    "extra_empty_pp_query",
+    "extra_empty_pp_witness",
+    "structurally_valid_unused_output",
+    "trailing_envelope",
+    "truncated_envelope"
+  ]
+}
+	Command being timed: "/home/broody/development/templar/target/m31-append/frozen-native-v2/templar-m31-append --verify-tests /home/broody/development/templar/bench/m31-append/results/native-batch-1/proof/proof.bin /home/broody/development/templar/bench/m31-append/results/native-verify-batch-1/checks"
+	User time (seconds): 0.00
+	System time (seconds): 0.00
+	Percent of CPU this job got: 90%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.01
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 5540
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 614
+	Voluntary context switches: 1
+	Involuntary context switches: 9
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 13ms
+CPU time consumed: 12ms
+Memory peak: 2.4M
+Memory swap peak: 0B

@@ -1,0 +1,58 @@
+{
+  "source_hashes": {
+    "cairo/src/controller.cairo": "80fe1a23b7c5f0546a8eb433b4518688458b9e2f3f0edb7e3a8ff97695cca642",
+    "cairo/src/lib.cairo": "a1b6abb8ee074710c6db8c0250fcd0cefd23b4407cfc0aea02f12793719acb06",
+    "cairo/src/pool.cairo": "10d6124035911d1ea07e99a079d31a5ad3f072d9a2862f1496e76031334fc66c",
+    "cairo/src/proof_adapter.cairo": "c60ade37a138681c78f093a3ee25d9fccfc9133e1ffa9fcbc4efa21b8ae776e5",
+    "cairo/src/spend.cairo": "745c7240a3f750f775c8afcce261cbdf695d92407e8a9ec0015ea7d0dd343558",
+    "cairo/src/statement.cairo": "2e4cb101b72d0376b1cbbacc9f423a64a9e5d832970c926a1a1a7f54349544cc",
+    "cairo/src/statement_account.cairo": "ddbc22452636381e7d6db0983e7ce06aa76695250e7b7e358ba0712fdecfeea4",
+    "cairo/src/test_token.cairo": "52b812f5a3813af57bc52524741c5f10c5cff963254bd5f071c6deab38b9bc21",
+    "cairo/src/tests/golden.cairo": "a1286a806a49605493b4d20db89084a1927554972f62411e1673337e9a3678d5",
+    "cairo/src/tests/mock_tree.cairo": "bb41eaaa67682563f9748fc622237f76675eca76e0d7b852595a32fd3d64fbb5",
+    "cairo/src/tests/mock_verifier.cairo": "63841c3b5fe1dd1fda8ec01a8dab0844885ab2df55f3a402c3efd11970bf314b",
+    "cairo/src/tests/test_controller.cairo": "7dc2e18da73705d5a0251f5c6a34fa840dd380a0d6f27f0ac9b36d3d36a3fd35",
+    "cairo/src/tests/test_proof_adapter.cairo": "8ee05fd470abe1789541a6e14aa63e1b818904f85a942268b0dfee59357e9b49",
+    "cairo/src/tests/test_push.cairo": "de45449f298ce6c21c262025ff25b79950151c6b3ef72616e5d2f90b08d3ad88",
+    "cairo/src/tests/test_tree.cairo": "b1d9c6945ca6b093e6982c084a25c2a3a367708e6396799d23854a12a60705d9",
+    "cairo/src/tests.cairo": "7c13aa5974b35b1bdf484ed51d411394e4dc2c3a91e41d057678dd68db2c4def",
+    "cairo/src/tree.cairo": "995e89a06f6a73bc1831fcea7586ef49128e5fa6649536ea557f1b4de4080dcf"
+  },
+  "classes": {
+    "Pool": "0x075a9d07d648c7313627fad670f676200425d0a00ba326a52703ddb73517705a",
+    "StatementAccount": "0x053ec0d3c42e65ab7794371a21f20ada7348ab7ba8d1f437ce047fa2a6387b7e",
+    "NativeProofVerifier": "0x04f3492ad0c0a1947d6e5a365b4d62209f8cf2a62f0a433c06696a2d42e99b5f",
+    "E2EToken": "0xfb29a47941892d91a25179de02aee7564db6631cea9173e4763f07432a6f43",
+    "SignatureController": "0x010b7b74d0fdb5c6adbedb6109838a5249f92b5e5681408dd68eecbee8c23fc7"
+  },
+  "manifest": {
+    "prover": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/rust-target/release/starknet_transaction_prover",
+    "verifier": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/local-verifier",
+    "upstream": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/upstream/sequencer-e6b6fd2e9932909107833579e5b6efd6c75fa0af",
+    "toolchain": "Scarb 2.18.0 / snforge 0.63.0",
+    "runtime": "/tmp/templar-control-e2e-xedga9hb",
+    "deployment_salt_base": "0x39e31d4ccafec8084611d4a314e90d374acab3eba0450a485d1cb68c1fff64",
+    "protocol": "TEMPLAR_CONTROL_POC1",
+    "prover_sha256": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5",
+    "verifier_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+    "baseline_snapshot": {
+      "source_package": "packages/pool",
+      "copied_pool_files": {
+        "src/pool.cairo": "441f33ae8ff5290455300845e4a2a8aa8a09f66f0ceaad7d96d8c71d6bb7a3e9",
+        "src/spend.cairo": "1b7fe176139b911661b5ae945656aa475483d203e3f8ff0353f9ba01be4c5e9c",
+        "src/tree.cairo": "995e89a06f6a73bc1831fcea7586ef49128e5fa6649536ea557f1b4de4080dcf",
+        "src/hashes.cairo": "a1c47c45f1700a96fe1b5a9fe3c4ef1ac0d6e4269d534e37376e43054d7404c1"
+      },
+      "prover_sha256": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5",
+      "sequencer_revision": "e6b6fd2e9932909107833579e5b6efd6c75fa0af",
+      "proving_utils_revision": "3035dd00421daa541894297bd754db6e2787807b",
+      "compiler": "Scarb 2.18.0",
+      "foundry": "0.63.0"
+    }
+  },
+  "comment_correction": {
+    "file": "cairo/src/pool.cairo",
+    "original_sha256": "7e1e1ce2f114b6d5978606024aedbe51129b997859b7cc94bf99fb119740a783",
+    "release_classes_unchanged": true
+  }
+}

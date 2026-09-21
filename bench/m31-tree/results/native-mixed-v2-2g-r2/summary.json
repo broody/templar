@@ -1,0 +1,27 @@
+{
+  "scope": "mixed native proof v2 2 GiB probe r2; fresh-process repetition after r1 success",
+  "command": [
+    "/home/broody/development/templar/target/m31-tree/client-target/release/templar-m31-tree",
+    "bench/m31-tree/client/fixtures/mixed.json",
+    "bench/m31-tree/results/native-mixed-v2-2g-r2/proof"
+  ],
+  "binary_sha256": "afd206ceed8ebe44127840d4a3a908c48550934408e1c1a38bcba2dde0af6fc6",
+  "cap_gib": 2,
+  "cpu_budget_cores": 1,
+  "prover_workers": 1,
+  "cpu_affinity": "0",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "systemd_result": "success",
+  "final_cgroup_peak_bytes": null,
+  "final_cgroup_swap_peak_bytes": null,
+  "elapsed_seconds": 16.474120265993406,
+  "sampled_command_peak_rss_gib": 1.89923095703125,
+  "sampled_peak_cgroup_gib": 1.8965263366699219,
+  "effective_peak_cgroup_gib": 1.8965263366699219,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "sample_count": 635,
+  "cgroup_sample_count": 634,
+  "time_largest_process_peak_rss_gib": 1.89923095703125
+}

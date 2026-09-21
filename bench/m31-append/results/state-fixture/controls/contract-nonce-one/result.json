@@ -1,0 +1,12 @@
+{
+  "name": "contract-nonce-one",
+  "expected": "reject",
+  "exit_code": 101,
+  "passed": true,
+  "input": "bench/m31-append/results/state-fixture/controls/contract-nonce-one/fixture.json",
+  "input_sha256": "46ee23520400cb92acd339f28a4a6f8ee53dda1504c6bf611680739c895bc29a",
+  "report_path": null,
+  "stdout": "bench/m31-append/results/state-fixture/controls/contract-nonce-one/stdout.log",
+  "stderr": "bench/m31-append/results/state-fixture/controls/contract-nonce-one/stderr.log",
+  "cgroup": "bench/m31-append/results/state-fixture/controls/contract-nonce-one/cgroup.txt"
+}

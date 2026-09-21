@@ -1,0 +1,227 @@
+{
+  "purpose": "synthetic-diagnostic",
+  "channel": "Blake2sMerkleChannel",
+  "merkle_hasher": "Blake2sMerkleHasher",
+  "source_summary": "/home/broody/development/templar/bench/direct-air/results/eq-one-thread-8g/proof/summary.json",
+  "source_summary_sha256": "b6c728a93527d9e1b16591babc4f57bac24784f7690047a730800615ee20310d",
+  "pcs_config": {
+    "fri_config": {
+      "fold_step": 4,
+      "log_blowup_factor": 2,
+      "log_last_layer_degree_bound": 0,
+      "n_queries": 35
+    },
+    "lifting_log_size": 22,
+    "pow_bits": 26
+  },
+  "preprocessed_columns": [
+    {
+      "id": "eq_in0_address",
+      "log_size": 6
+    },
+    {
+      "id": "eq_in1_address",
+      "log_size": 6
+    },
+    {
+      "id": "triple_xor_input_addr_0",
+      "log_size": 6
+    },
+    {
+      "id": "triple_xor_input_addr_1",
+      "log_size": 6
+    },
+    {
+      "id": "triple_xor_input_addr_2",
+      "log_size": 6
+    },
+    {
+      "id": "triple_xor_output_addr",
+      "log_size": 6
+    },
+    {
+      "id": "triple_xor_multiplicity",
+      "log_size": 6
+    },
+    {
+      "id": "m31_to_u32_input_addr",
+      "log_size": 6
+    },
+    {
+      "id": "m31_to_u32_output_addr",
+      "log_size": 6
+    },
+    {
+      "id": "m31_to_u32_multiplicity",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_input_addr_a",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_input_addr_b",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_input_addr_c",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_input_addr_d",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_input_addr_f0",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_input_addr_f1",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_output_addr_a",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_output_addr_b",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_output_addr_c",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_output_addr_d",
+      "log_size": 6
+    },
+    {
+      "id": "blake_g_gate_multiplicity",
+      "log_size": 6
+    },
+    {
+      "id": "bitwise_xor_4_0",
+      "log_size": 8
+    },
+    {
+      "id": "bitwise_xor_4_1",
+      "log_size": 8
+    },
+    {
+      "id": "bitwise_xor_4_2",
+      "log_size": 8
+    },
+    {
+      "id": "qm31_ops_add_flag",
+      "log_size": 10
+    },
+    {
+      "id": "qm31_ops_sub_flag",
+      "log_size": 10
+    },
+    {
+      "id": "qm31_ops_mul_flag",
+      "log_size": 10
+    },
+    {
+      "id": "qm31_ops_pointwise_mul_flag",
+      "log_size": 10
+    },
+    {
+      "id": "qm31_ops_in0_address",
+      "log_size": 10
+    },
+    {
+      "id": "qm31_ops_in1_address",
+      "log_size": 10
+    },
+    {
+      "id": "qm31_ops_out_address",
+      "log_size": 10
+    },
+    {
+      "id": "qm31_ops_mults",
+      "log_size": 10
+    },
+    {
+      "id": "bitwise_xor_7_0",
+      "log_size": 14
+    },
+    {
+      "id": "bitwise_xor_7_1",
+      "log_size": 14
+    },
+    {
+      "id": "bitwise_xor_7_2",
+      "log_size": 14
+    },
+    {
+      "id": "seq_16",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_8_0",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_8_1",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_8_2",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_9_0",
+      "log_size": 18
+    },
+    {
+      "id": "bitwise_xor_9_1",
+      "log_size": 18
+    },
+    {
+      "id": "bitwise_xor_9_2",
+      "log_size": 18
+    },
+    {
+      "id": "bitwise_xor_10_0",
+      "log_size": 20
+    },
+    {
+      "id": "bitwise_xor_10_1",
+      "log_size": 20
+    },
+    {
+      "id": "bitwise_xor_10_2",
+      "log_size": 20
+    }
+  ],
+  "component_log_sizes": [
+    6,
+    10,
+    6,
+    6,
+    6,
+    16,
+    20,
+    8,
+    14,
+    18,
+    16
+  ],
+  "output_addresses": [
+    3,
+    4
+  ],
+  "u_address": 2,
+  "preprocessed_root_u32_le": [
+    1604679864,
+    148617383,
+    41873297,
+    730528251,
+    3129695464,
+    3682381642,
+    2410451025,
+    2848995608
+  ]
+}
