@@ -140,7 +140,7 @@ pub fn dump(out_path: &str) -> Result<()> {
         let zero_row = m31::Request { input: zero_input, output: zero_output };
         let zero_rows = vec![zero_row.clone(); rows];
         let zero_trace = m31::witness(&zero_rows)?;
-        for k in 0..128usize {
+        for k in 0..892usize {
             let mut rows_k = zero_rows.clone();
             let input: [u32; 24] = std::array::from_fn(|_| next_word());
             let output = m31::permute(input);
@@ -172,5 +172,16 @@ pub fn dump(out_path: &str) -> Result<()> {
     });
     std::fs::write(out_path, serde_json::to_vec_pretty(&report)?)?;
     println!("wrote {out_path}");
+
+    // Compact binary companion: expansion matrix only (892 x 1172 u32 LE) for fast rank analysis.
+    let bin_path = out_path.replace(".json", "-expansion.bin");
+    let mut bytes = Vec::with_capacity(expansion_samples.len() * ncols * 4);
+    for s in &expansion_samples {
+        for v in s["values"].as_array().unwrap() {
+            bytes.extend_from_slice(&(v.as_u64().unwrap() as u32).to_le_bytes());
+        }
+    }
+    std::fs::write(&bin_path, &bytes)?;
+    println!("wrote {bin_path} ({}x{})", expansion_samples.len(), ncols);
     Ok(())
 }

@@ -76,7 +76,7 @@ def main(path):
     print(f"expansion samples: {len(exp)}", flush=True)
     Mmat = np.stack([np.array(s["values"], dtype=np.int64) for s in exp])
     dimM = rank_modp(Mmat)
-    print(f"dim span(M) = {dimM} of {Mmat.shape[1]} (samples: {len(exp)})  <-- DECISIVE for the lemma precondition (need >= 68)")
+    print(f"dim span(M) = {dimM} of {Mmat.shape[1]} (samples: {len(exp)})  <-- DECISIVE: full 1172 closes the computational-hiding fork's noise subspace")
 
     # 4. secant family rank
     sec = d["secant_samples"]

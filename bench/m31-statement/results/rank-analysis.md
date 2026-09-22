@@ -105,6 +105,38 @@ the delta's column space. The direct test at B ≥ 68 needs a dump with
    this budget (132 semantic + ~100 pads ≪ 1,024) — the earlier
    cap-raise concern **dissolves** at the corrected budget.
 
+## Iteration 3 (this run): span saturation + containment — the structural closure
+
+Re-dumped with 892 expansion samples (the real pad count at log 10) plus a
+compact binary companion for fast rank computation.
+
+| Quantity | Value |
+| --- | --- |
+| dim span(M) at 892 pads | **666 of 1,172 — saturating** (128 samples → 128; 892 → 666: more pads stop buying directions) |
+| Delta-row-space containment (2 statement pairs, full 256 × 1,172 Δrows) | **CONTAINED — zero residual after M-span elimination, both pairs** |
+
+**Findings:**
+
+1. The expansion manifold's span is **structurally capped at 666 dims**
+   (the Poseidon2 round-structure correlations bound the reachable linear
+   space). The statement deltas live in the *same* constrained world: the
+   68-dim delta space is fully inside the 666-dim pad-reachable span.
+   **No structural exposure**: every direction the deterministic
+   statement-delta occupies is direction the pad noise can occupy.
+2. This closes the structural precondition of the **computational/
+   statistical fork (primary candidate)**: pads as random valid rows
+   (24 free words each) at the log-10 layout (892 slots, within the
+   existing 1,024-request cap — no cap raise); noise free-dimension
+   892 × 24 = **21,408 ≥ 3.3× the target family's 6,528** coordinates;
+   the hiding argument is a standard computational one (Poseidon2-M31
+   pseudorandomness + dimension/entropy accounting), not exotic
+   combinatorics. Client estimate: ~50–55 MiB.
+3. The exact forks (big-layout copies at log 12, ~170 MiB; the nonlinear
+   solve at B ≈ 136, blocked) drop to fallback status.
+4. Remaining for the lemma spec: formalize the entropy/PRF argument
+   (noise vs the 6,528-dim deterministic family) and the simulator
+   assembly; then Math Review. The measured anchors are all in place.
+
 ## Reproduction
 
 ```bash

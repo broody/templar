@@ -139,15 +139,20 @@ before (1)–(4) land numbers.
    ([results/binding-residual.md](results/binding-residual.md)).
 4. **Mini-verifier floor with the real M31 inner** (after E2) — sizes the
    server-side outer.
-5. ~~Rank harness~~ — **ITERATION 3 DONE**
+5. ~~Rank harness~~ — **ITERATION 4 DONE (structural closure)**
    ([results/rank-analysis.md](results/rank-analysis.md),
    [results/solve-probe.md](results/solve-probe.md)): the equalization
    target's matrix rank is **68 (identical across 24 statement pairs)**;
    `dim span(M) ≥ 128`. The numeric Gauss-Newton probe falsified iterative
    solving over F_p (0/8 from distant starts — no metric, no descent) and
-   produced the **copy-assignment reformulation**: pads are copies of the
-   prover's/simulator's own rows; the equalization becomes a one-hot
-   assignment feasibility problem over the measured weight family (96-dim,
-   full span) — zero nonlinear content. Client-with-hiding estimate:
-   **15–20 MiB**. Remaining: the one-hot assignment lemma (or the
-   statistical smoothing bound), then Math Review.
+   produced the **copy-assignment reformulation**; iteration 4 measured
+   the decisive structural facts: the expansion span **saturates at 666
+   dims** and the statement-delta space is **fully contained in it**
+   (zero-residual elimination, both pairs tested) — no structural
+   exposure. The primary hiding fork is now the **computational one**:
+   pads as random valid rows at the log-10 layout (892 slots, no cap
+   raise), noise dimension 21,408 vs target family 6,528 (3.3× margin),
+   argument = Poseidon2-M31 pseudorandomness + entropy accounting —
+   standard review territory. Client-with-hiding estimate: **~50 MiB**.
+   Exact forks (big-layout copies, nonlinear solve) are fallbacks.
+   Remaining: the PRF/entropy lemma spec, then Math Review.
