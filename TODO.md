@@ -55,6 +55,28 @@ experiment; the accepted local proving architecture is unchanged.
   browser budget. Add a minimal WASM build probe and remove filesystem coupling;
   qualify the whole wallet on physical desktops and portable CPU targets.
   Details and measurement limits are in the [memory review](docs/prover-memory-review.md).
+  **Client-side ZK pathfinding 2026-09-22:** three tracks, all on this
+  branch. [Client hiding](bench/client-hiding/measurement-plan.md): the C1
+  construction spec (random valid rows, observation-inventory-derived B)
+  passed Math Review as **conditional-go** with the L2 two-stage lemma as
+  the blocking condition ([review](bench/client-hiding/review.md)).
+  [Compact recursion](bench/compact-recursion/README.md): the mini-verifier
+  route (verify a custom-AIR proof in-circuit, blind with the existing
+  helper) measured an M0 floor of ~1.1 s / ~2.9 GiB at trace log 20;
+  corrected full estimate ~4.3–4.6 GiB; conditional-go for M2 with a
+  sample-structure extension blocking the adapter
+  ([review](bench/compact-recursion/review.md)).
+  [M31 statement](bench/m31-statement/inventory.md): the full-M31 payment
+  statement (Plonky3 width-24 Poseidon2, byte-identical vendored AIR)
+  measured **~11 MiB / 0.11 s** for the payment shape, pad-cost curve
+  measured, the felt-binding residual resolved to ~zero by a word-tuple
+  facts convention, and the rank probe measured the equalization target at
+  **matrix rank 68** (24/24 statement pairs) with `dim span(M) ≥ 128` —
+  an honest hiding budget of **B ≈ 68–100 pads**, client-with-hiding
+  estimate **15–20 MiB**. The remaining gate is the L2 lemma itself
+  (bounded nonlinear solves per pad position, or the statistical
+  smoothing bound), then Math Review. All measurement-grade; no format
+  commitment; the accepted local-proving architecture is unchanged.
   **Compact-client pathfinding:** the [synthetic Cairo bridge](bench/direct-air/README.md)
   accepts two saved Rust circuit proofs, rejects nine altered inputs, and passes
   four serialization/transcript tests. VM verification takes 2.03–2.12 seconds

@@ -12,3 +12,10 @@ dist/
 # Local environment / secrets
 .env
 .env.*
+
+# Large analysis substrate (regenerable via --dump-rank-substrate; recorded as not committed)
+bench/m31-statement/results/rank-substrate.json
+# Generated vocs router types
+docs/guide/src/pages.gen.ts
+# Local tooling configs
+opencode.json
