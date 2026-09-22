@@ -155,4 +155,10 @@ before (1)–(4) land numbers.
    argument = Poseidon2-M31 pseudorandomness + entropy accounting —
    standard review territory. Client-with-hiding estimate: **~50 MiB**.
    Exact forks (big-layout copies, nonlinear solve) are fallbacks.
-   Remaining: the PRF/entropy lemma spec, then Math Review.
+   Lemma spec written: [hiding-spec.md](hiding-spec.md) — the honest
+   shape is **Assumption H** (pad-feasibility hardness: the
+   slot-decomposition analysis shows the joint manifold-consistency test
+   is over-determined ~90,512 under wrong hypotheses, so the hiding claim
+   reduces to a multivariate feasibility-hardness assumption, NOT a
+   standard PRF claim). Next: Math Review on that assumption + the
+   degree-3+ relation audit.
