@@ -1,0 +1,21 @@
+{
+  "omitted_padding_rejected": true,
+  "rejected_mutations": [
+    "chain",
+    "pool",
+    "root",
+    "nullifier",
+    "leaf_substitution",
+    "sibling",
+    "index_bit",
+    "secret",
+    "interaction_pow",
+    "base_commitment",
+    "untrusted_config",
+    "sampled_value",
+    "sum",
+    "preprocessing_root",
+    "trailing_envelope",
+    "truncated_envelope"
+  ]
+}
