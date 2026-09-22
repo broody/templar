@@ -139,11 +139,15 @@ before (1)–(4) land numbers.
    ([results/binding-residual.md](results/binding-residual.md)).
 4. **Mini-verifier floor with the real M31 inner** (after E2) — sizes the
    server-side outer.
-5. ~~Rank harness~~ — **ITERATION 2 DONE**
-   ([results/rank-analysis.md](results/rank-analysis.md)): the equalization
+5. ~~Rank harness~~ — **ITERATION 3 DONE**
+   ([results/rank-analysis.md](results/rank-analysis.md),
+   [results/solve-probe.md](results/solve-probe.md)): the equalization
    target's matrix rank is **68 (identical across 24 statement pairs)**;
-   `dim span(M) ≥ 128` (sample-limited) satisfies the ≥ 68 precondition;
-   the constructive lemma reduces to **bounded nonlinear solves per pad
-   position at B ≈ 68–100** (mirror-pad structure). Client-with-hiding
-   estimate: **15–20 MiB**. Remaining: formalize the per-position solve
-   (L2-exact) or the smoothing bound (L2-stat), then Math Review.
+   `dim span(M) ≥ 128`. The numeric Gauss-Newton probe falsified iterative
+   solving over F_p (0/8 from distant starts — no metric, no descent) and
+   produced the **copy-assignment reformulation**: pads are copies of the
+   prover's/simulator's own rows; the equalization becomes a one-hot
+   assignment feasibility problem over the measured weight family (96-dim,
+   full span) — zero nonlinear content. Client-with-hiding estimate:
+   **15–20 MiB**. Remaining: the one-hot assignment lemma (or the
+   statistical smoothing bound), then Math Review.

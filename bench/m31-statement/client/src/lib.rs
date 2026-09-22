@@ -5,6 +5,8 @@ mod constants;
 mod m31;
 pub mod statement;
 pub mod rank_dump;
+pub mod dual;
+pub mod solve_probe;
 
 
 use crate::statement::{PaymentStatement, PublicData};

@@ -12,6 +12,11 @@ fn fresh(path: &str) -> Result<PathBuf> {
 }
 fn main() -> Result<()> {
     let args: Vec<String> = std::env::args().collect();
+    if args[1] == "--solve-probe" {
+        ensure!(args.len() == 3, "--solve-probe OUT.json");
+        templar_m31_statement::solve_probe::run(&args[2])?;
+        return Ok(());
+    }
     if args[1] == "--dump-rank-substrate" {
         ensure!(args.len() == 3, "--dump-rank-substrate OUT.json");
         templar_m31_statement::rank_dump::dump(&args[2])?;
