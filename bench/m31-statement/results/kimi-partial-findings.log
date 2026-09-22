@@ -1,0 +1,68 @@
+kimi version 2.0.2
+• Let me read the files first. They're likely large; I'll read them in parallel.
+
+• I'll read all the referenced files first.
+
+• Let me now carefully work through the slot-decomposition arithmetic myself, since the user asked me to check it.
+
+  Setup: 892 pad rows, each with 1,172 columns. Each pad row is an expansion E(x) of a 24-word input x ∈ F_p^24, where E: F_p^24 → F_p^1172 is the Poseidon2 expansion (width-24 state, round intermediates, output).
+
+  Under a hypothesis θ_hyp, the implied pad columns are shifted: implied_pad = real_pad − W_pad⁺ W_sem Δcols_sem (for the true hypothesis shift = 0). Actually more precisely: implied pads for a wrong hypothesis = real pads + shift, where shift = W_pad⁺ · W_sem · Δcols_sem.
+
+  Now the attacker test: do the implied pad rows lie on the expansion manifold? Each implied pad row is a vector in F_p^1172; must equal E(x) for some x ∈ F_p^24.
+
+  Manifold constraints per row: a point in F_p^1172 lying on a 24-dimensional manifold satisfies 1172 − 24 = 1,148 constraints (generically). Total constraints: 892 × 1,148 = 1,024,336. Hmm, spec says 1,024,624. Let me compute: 892 × 1148 = 892 × 1148. 892 × 1000 = 892,000; 892 × 148 = 131,  892×148 = 892×100 + 892×48 = 89,200 + 42,816 = 132,016. Total = 892,000 + 132,016 = 1,024,016. Spec says 1,024,624. Hmm, that doesn't match.
+
+  Wait, maybe they use 892 × 1148 = 1,024,016 but they wrote 1,024,624. Let me recompute: 892 × 1148. 900 × 1148 = 1,033,200; minus 8 × 1148 = 9,184; 1,033,200 − 9,184 = 1,024,016. So spec's "1,024,624" doesn't match 892 × 1148 = 1,024,016. Difference 608. Hmm.
+
+  Free dimensions: the implied-pad system unknowns are the pad inputs: 892 × 24 = 21,408 free dimensions. But the spec says "~934,112 free dimensions". Hmm — that's a different counting. Let me think: 892 × 1172 = 1,045,424. 1,045,424 − 21,408 = 1,024,016. Interesting: 892 × 1148 = 1,024,016 again.
+
+  What is 934,112? 892 × 1047? = 892×1047 = 933,924. 892 × 1047.3? Hmm. 934,112 / 892 = 1047.21... not integer. 934,112 = 892 × 1172 − something = 1,045,424 − 934,112 = 111,312. 111,312 / 892 = 124.79. Hmm.
+
+  Alternatively, maybe free dims = total coordinates minus constraints imposed by linear observation equations? The implied pads are determined by obs via W_pad⁺ — that's a linear map, so implied pad columns are fully determined given hypothesis (no free dims at all!). Wait — under the slot decomposition, obs = W_sem·cols_sem + W_pad·cols_pad, and given a hypothesis, implied pads = W_pad⁺(obs − W_sem cols_sem(θ_hyp)) — that's a specific vector (if W_pad has full column rank, W_pad⁺ is a left inverse; if not, there's a solution space). The free dimensions of the implied-pad system would be dim ker(W_pad) — the number of pad coordinates not pinned by the observation.
+
+  W_pad: 892 pads each contribute a rank-1 tensor w_p ⊗ row_p to the observation space of ~112k coordinates... Actually the observation is per column: obs ≈ 96 channels per column (24 points × 4 channels) × 1,172 columns ≈ 112,512 coordinates. W maps the full trace (1,024 rows × 1,172 cols = 1,200,128 entries) to 112k observations. Each row has its own weight vector w(i) ∈ F^96; the observation for column j is Σ_i w(i) row_ij. So W_pad as a linear map from pad-row entries (892 × 1,172 = 1,045,424 unknowns) to observations (112,512) has kernel of dimension ≥ 1,045,424 − 112,512 = 932,912. Hmm, spec says 934,112. Not quite.
+
+  Let me reconsider: 132 semantic + 892 pad = 1,024 rows. If W is full rank: rank of W as a map from 1,024×1,172 entries to obs: obs has 96 channels per column; per column the weights are a 96 × 1024 matrix w(i)_c. If that has rank 96 (measured full), then per column, the observations pin 96 linear combinations of the 1,024 row entries, leaving 1,024 − 96 = 928 free per column. But semantic rows are hypothesized (known under hypothesis), so pad entries per column: 892 unknowns with 96 − (semantic contribution removed... hmm, the semantic rows consume some of the 96 constraints. Actually under a hypothesis, semantic rows are known, so the pad entries must satisfy Σ_pads w(p) pad_pj = obs_j − Σ_sem w(i) sem_ij — 96 equations per column (if rank full 96). Free pad dims per column: 892 − 96 = 796. Total: 796 × 1,172 = 933, — compute: 796 × 1172 = 796 × 1000 + 796 × 172 = 796,000 + 136,912 = 932,912. Spec says 934,112. Off by 1,200. Hmm.
+
+  Hmm, maybe per-column equations are fewer: rank-analysis notes the real proof's query openings are base-field (1 channel), so the real per-column count ≈ 27 rather than 96. If per-column constraints = 27... 892 − 27 = 865? no.
+
+  Alternatively maybe free dims count differently: 934,112 = 892 × 1172 − 96 × 1172 = (892−96)×1172 = 796 × 1172 = 932,912. No.
+
+  934,112 − 932,912 = 1,200. Hmm what's 1,200? 96 × 12.5. Or maybe semantic rows: constraints per column from observation = 96, but some are absorbed... Let me try: free = 892×1172 − rank(W_pad projected)... If W as a map from pad entries to obs has rank = 96 × 1172 = 112,512, free = 1,045,424 − 112,512 = 932,912. To get 934,112, rank would be 111,312 = 1172 × 95? 1172 × 95 = 111,340. No. 111,312 / 1172 = 94.98. Hmm, 111,312 = 96 × 1159.5 no. 111,312 = 111,312; factor: 111,312 / 16 = 6,957; 6,957 = 3 × 2319 = 3 × 3 × 773. So 111,312 = 16 × 9 × 773 = 144 × 773. Weird.
+
+  Let me try the constraints number: 1,024,624. 892 × 1148 = 1,024,016; diff 608 = 16 × 38. Hmm. Or maybe they count manifold constraints as 1172 − 24 = 1148 per row but for 892 rows... What gives 1,024,624? 1,024,624 / 892 = 1,148.68. Not integer. Hmm, maybe 1,024,624 = 892 × 1172 − 892 × 24 = 892 × 1148 = 1,024,016 — no.
+
+  Maybe they used 893 pads? 893 × 1148 = 1,025,164. No. 896 × 1148 = 1,028,608. No. 888×1148=1,019,424. No.
+
+  Alternatively, maybe manifold constraints per row counted as 1,148 but the "over-determined by ~90,512" is constraints − free = 1,024,624 − 934,112 = 90,512. ✓ That's consistent internally: 1,024,624 − 934,112 = 90,512. So their two numbers are self-consistent; the question is how each was derived.
+
+  Free = 934,112. If free = pad unknowns (892 × 24 = 21,408 inputs) — no, they clearly count free dims as the solution-space dimension of the implied-pad linear system. Let me try: obs coordinates 112,512... Actually spec says "~112k joint observable coordinates". Free = total pad coordinates − obs rank = 1,045,424 − 111,312 = 934,112. So obs rank = 111,312? Hmm 111,312 = 96 × 1159.5 no; = 1172 × 94.98. Not clean.
+
+  Alternatively free = 1,045,424 − rank where rank = 96 × 1,159.5 — no. Let me try another decomposition: 934,112 = 892 × 1172 − 132 × 844? 132 × 844 = 111,408. Close to 111,312 but not exact. 132 × 843.3... no. 934,112 = 1,045,424 − 111,312; 111,312 / 132 = 843.27. No.
+
+  Try: obs coordinates = 96 channels × 1,172 columns = 112,512. But some are consumed... Actually maybe they subtract something for claimed sums or the FRI functionals: D_obs total ≈ 112k. Hmm.
+
+  Try free = 892×1172 − 96×1159.5 no. Try 934,112 = 796 × 1173.5 no. 934,112 / 1172 = 797.02. Interesting: 797 × 1172 = 934,084; no. 934,112/892 = 1047.21. Hmm.
+
+  Maybe they made arithmetic errors. Let me just compute what I believe are the correct numbers:
+
+  - Per-row manifold constraints: 1172 − 24 = 1,148. Over 892 rows: 892 × 1148 = 1,024,016.
+  - Implied-pad linear system free dimensions: given hypothesis, obs pins (assuming full 96 rank per column) 96 constraints per column on the 892 pad entries: 892 − 96 = 796 free per column; total 796 × 1172 = 932,912.
+
+  Over-determination = 1,024,016 − 932,912 = 91,104. Spec says 90,512 — close but not identical; off by 592. Hmm, interesting: 592 = 16 × 37. Whatever.
+
+  Alternatively with real channel count 27 per column: free = (892 − 27) × 1172 = 865 × 1172 = 1,013,780. Over-determination = 1,024,016 − 1,013,780 = 10,236. Still over-determined but only ~1%. Hmm! This matters — the rank-analysis notes the real proof's per-column count is ≈ 27, not 96. But then the observation also includes FRI fold complements (joint functionals ~6,900) and OOD samples... The spec's §1 says 96 channels (full channel span). Under the corrected C1 model, though, O2 query openings are base-field 1-channel. But there are also OOD samples (4 channels, QM31) and the FRI joint functionals. Actually per C1: O1 OOD ~1-3 points × 4 channels, O2 23 base-field, O4 joint. Per column informative channels ≈ 4·#OOD + 23 ≈ 27-35. The substrate dump used 24 generic SecureField points (4 channels each) = 96, acknowledging the real count ≈ 27 but saying "rank structure is unaffected" — that's true for rank of Δ (68), but the free-dimension count of the implied-pad system changes a lot!
+
+  Hold on. Let me redo this more carefully. The implied-pad free dimensions: with 27 informative channels per column (full rank 27 in the 96... wait the weight vectors live in channel space of dim = number of observation points/channels; if real obs = 27 channels per column, then per column constraints = 27 (assuming weights span the 27-dim space — 1,024 rows' weight vectors in F^27 generically span it). Free per column = 892 − 27 = 865; total free = 865 × 1172 = 1,013,780.
+
+  Manifold constraints total = 1,024,016. Over-determination = 10,236 — barely over-determined (~1%). And if channels = 28: free = 864×1172 = 1,012,608; over-det = 11,408. If 35 channels (C1's realistic count incl. OOD): free = 857×1172 = 1,004,404; over-det ≈ 19,612 (~1.9%). Hmm. Plus the FRI joint functionals (~6,900) add more constraints: those are joint linear functionals of all columns conditioned on OOD; they'd add up to ~6,900 more equations, pushing over-determination to ~17k–27k.
+
+  So the "~90,512 over-determined" figure depends on using 96 channels per column, which the rank-analysis itself flags as an artifact of the substrate dump (generic SecureField points rather than base-field coset points). With the real proof's ~27–35 channels per column, the margin shrinks by ~4–9×: roughly 10k–27k, i.e., over-determined by only ~1–2.7%. The qualitative conclusion (over-determined, wrong-hypothesis system generically infeasible) survives, but the "comfortable margin" framing weakens substantially. This is exactly the kind of arithmetic check the user asked for.
+
+  Wait — but I should double check the manifold constraint counting. Each implied pad row r ∈ F^1172 must lie on the image of E: F^24 → F^1172. Constraints per row = codimension = 1148. But wait — the observation structure: the attacker's consistency test is over the joint system: unknowns = free pad coordinates (932,912 or 1,013,780), constraints = each row on manifold. But actually many constraints per row are on the *same* row's coordinates; per row, the row has 796 (or 865) free coordinates out of 1172 (96 or 27 pinned per column... wait no — per column 96 constraints across the 892 pad rows, so per column free dims = 796, and these free coordinates are shared... hmm, per column j, free dims = 892 − 96; the row structure couples columns through the manifold constraints).
+
+  Let me redo: total unknowns after fixing hypothesis = pad entries: 892 × 1172 = 1,045,424. Linear observation equations: 96 per column × 1172 = 112,512 (independent, since weights span). Free = 932,912. Manifold constraints: 892 rows × 1148 = 1,024,016. Over-determined by 91,104 ≈ spec's 90,512. OK so with 96 channels, spec's ~90,512 is right (their numbers 1,024,624 and 934,112 are each off by ~600–1,200 from my exact count, but the difference 90,512 vs my 91,104 is within rounding of whatever intermediate they used; the structure is right). Actually wait, let me double-check their "1,148 constraints per row (1,024,624 total)": 892 × 1148 = 1,024,016 ≠ 1,024,624. And "934,112 free": (892−96) × 1172 = 932,912 ≠ 934,112. So both their numbers are slightly off but consistently give 90,512. Hmm, actually maybe they computed per-row constraints as 1172 − 24 = 1148, times 892 = 1,024,016... they wrote 1,024,624 — a transposition of digits (016 → 624?). Eh. And free: maybe they computed 892×1172 = 1,045,424, minus 96×1172 = 112,512 → 932,912, they wrote 934,112. Whatever — the qualitative figure ~90k is right under the 96-channel assumption.
+
+  Also they say "the implied-pad solution space has ~934,112 free dimensions and absorbs the ~8,028 quadratic equations many times over". 8,028? Degree-2 AIR constraints per... the AIR is quadratic; number of constraint equations over the free system? Hmm, 892 rows × 9 constraints/row? The width-24 Poseidon2 AIR has some
+

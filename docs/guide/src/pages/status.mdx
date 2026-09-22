@@ -113,8 +113,8 @@ A separate compact-client experiment has verified two synthetic Rust proofs in
 Cairo and rejected nine altered inputs. This establishes a serialization and
 verifier bridge, not a payment prover or a completed native PROOF1 round trip.
 The upstream circuit baseline still fails a 2 GiB client cap, completing at
-2.61 GiB RSS under an 8 GiB cap. Client privacy, a real depth-32 payment, server
-wrapping, and full private-client WASM remain unqualified. The accepted architecture is unchanged;
+2.61 GiB RSS under an 8 GiB cap. That baseline does not qualify client privacy,
+a real depth-32 payment, server wrapping or full private-client WASM. The accepted architecture is unchanged;
 the experiment and its limits are recorded in `bench/direct-air/`.
 
 A follow-up proves the actual felt252/Poseidon arithmetic for two **public**
@@ -131,8 +131,8 @@ capacity; a fresh browser passes a 4 GiB process-group cap. Browser plus harness
 memory peaks at 2.21–2.23 GiB with zero swap, and the page heartbeat remains active.
 These distinct memory measurements qualify this public workload's browser
 portability on the development host. A complete private payment, consumer
-hardware, other browsers, and mobile remain unqualified. The supported client
-privacy construction and its full cost are the next architecture decision.
+hardware, other browsers, and mobile remain unqualified. That public benchmark
+does not establish the privacy construction or cost of a complete private payment.
 Evidence and reproduction are in `bench/wasm-membership/`.
 
 A follow-up M31 tree experiment in
@@ -163,8 +163,8 @@ repeated deterministic fixtures (same proof-of-work search), not latency
 distributions; Cairo figures are local VM resources, not network fee quotes.
 RSS, WASM linear memory, and cgroup charge are distinct metrics above.
 
-Source review of the pinned and current upstream implementations has not yet
-established a supported compact client privacy construction. The concrete
+Source review of the pinned and current upstream implementations did not itself
+establish a supported compact client privacy construction. The concrete
 upstream fixed-Cairo privacy workflow does not by itself qualify a custom AIR
 or new verifier-circuit topology. Public membership's native path and lookup
 checks must also become proof constraints before those inputs can be hidden.
@@ -180,6 +180,51 @@ three completed synthetic proofs, including the unsplit reference, match
 byte-for-byte and pass the original verifier libraries. The unchanged wrapper
 therefore misses the client budget; this does not establish the footprint of a
 different compact private construction or its eventual WASM implementation.
+
+### Proposed compact-client architecture
+
+**ADR-0024 is Proposed; local Cairo/PROOF1 proving remains the accepted
+architecture.** The proposal evaluates a compact private proof on the client
+and a service that verifies and wraps it into PROOF1. The service receives
+public inputs and proof bytes; private payment validity must be enforced in
+the client proof, with the full verification enforced by the outer proof.
+
+The custom M31 membership experiment in `bench/m31-private-e2e/` demonstrates
+a private leaf preimage and one depth-32 path. Three native proofs take
+**1.17–1.20 seconds at 63–64 MiB peak RSS**. Three proofs in a Chrome WASM worker
+take **1.89–2.12 seconds**, with linear memory stable at **79.94 MiB**. All six
+pass a separate native verifier given only public input and proof; the browser
+also accepts a native artifact. Proofs are roughly 3.4 MiB. Whole-browser
+memory is additional: sampled totals peak near 1.08 GiB summed RSS and
+466.5 MiB summed PSS on the development workstation.
+
+Protocol/source review and the independent math/PCS challenge reviews support
+this research milestone under their explicit random-oracle and randomness
+assumptions. The numerical bound concerns single-proof knowledge error in the
+classical programmable random-oracle model; unrestricted adaptive multi-proof
+service composition remains open. This is not a production audit or a full
+payment benchmark.
+
+A separately versioned Blake candidate preserves the membership relation and
+M31 application tree. Native proofs take **0.98–1.03 seconds at 52.7–54.5 MiB
+peak RSS**; Chrome WASM proofs take **1.71–1.92 seconds at 63.25 MiB linear-memory
+high water**. Proofs are approximately 2 MB. Native/browser cross-checks and
+version/rejection controls pass; evidence is in `bench/m31-private-blake/`.
+
+A public hash-work component produces genuine PROOF1 accepted by the original
+verifier, but the complete private membership verifier has not been wrapped.
+A specialized server hash circuit verifies in Cairo; checked M31 inversion
+reduces its verification steps by **15.37%**. Actual OS work still requires
+log22 trace components. A larger experimental configuration exhausts a
+**96 GiB server cap** before producing a proof and requires different trusted
+verifier parameters. These are server capacity findings; the compact-client
+measurements above do not include wrapping. See `bench/m31-private-wrapper/`.
+
+Adoption requires reviewed complete ordinary payment constraints, measured
+server wrapping, actual Sepolia payment acceptance, and an explicit hash/note
+format and service-availability decision. The proposal is recorded in
+`docs/adr/0024-compact-client-proofs-and-server-wrapping.md`; source identities,
+measurements and limitations are in `bench/m31-private-e2e/results/README.md`.
 
 ### Sepolia reference measurements
 

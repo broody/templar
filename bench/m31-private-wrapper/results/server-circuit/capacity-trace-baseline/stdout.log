@@ -1,0 +1,31 @@
+Running as unit: templar-server-circuit-capacity-trace-baseline-1790075343459584872.service; invocation ID: 1f6957a62554406e9a8abd1115552080
+Trace generated: 2608 columns
+	Command being timed: "/home/broody/development/templar/target/m31-private-wrapper/capacity-build-original-v2/capacity trace /home/broody/development/templar/bench/m31-private-wrapper/results/bridge-capacity/os-capture/os.pie.zip /home/broody/development/templar/bench/m31-private-wrapper/results/bridge-capacity/trace-baseline"
+	User time (seconds): 66.87
+	System time (seconds): 10.65
+	Percent of CPU this job got: 300%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:25.76
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 21388316
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 6999780
+	Voluntary context switches: 1696
+	Involuntary context switches: 8687
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 1056
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 25.765s
+CPU time consumed: 1min 17.532s
+Memory peak: 1.9M
+Memory swap peak: 0B

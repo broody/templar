@@ -4,6 +4,8 @@ ADRs record the architectural decisions behind Templar. The current architecture
 is specified in [push payments](../push-payment-spec.md), with local S-two proving
 selected by ADR-0018, push receiving selected by ADR-0021, and atomic
 [return notes](../return-note-spec.md) added by ADR-0023.
+The [compact-client/server-wrapping proposal](0024-compact-client-proofs-and-server-wrapping.md)
+is pathfinding and has not replaced the accepted local proving architecture.
 [`PLAN.md`](../../PLAN.md) retains the development roadmap and earlier analysis.
 
 ## Process
@@ -42,3 +44,4 @@ selected by ADR-0018, push receiving selected by ADR-0021, and atomic
 | [0021](0021-push-only-payments.md) | Push-only payments with reusable receiving addresses | **Accepted** — product and architecture; production integration and format review pending; return-note extension in [0023](0023-return-notes-and-adapter-compatibility.md) |
 | [0022](0022-controlled-push-payments.md) | Controlled push payments with exact transition approval | Accepted experimental architecture; real signatures and native Sepolia lifecycle validated; production integration pending |
 | [0023](0023-return-notes-and-adapter-compatibility.md) | Return notes with upstream-compatible external settlement | Accepted architecture; experimental reference and production qualification tracked separately |
+| [0024](0024-compact-client-proofs-and-server-wrapping.md) | Compact private client proofs with server-side PROOF1 wrapping | **Proposed** — membership and scoped challenge reviews complete; full private-proof wrapping, complete payment and Sepolia acceptance pending |

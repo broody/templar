@@ -1,0 +1,46 @@
+[
+  {
+    "elapsed_seconds": 0.00019742001313716173,
+    "memory.current": "2454335488",
+    "memory.peak": "2723573760",
+    "memory.swap.current": "0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "cpu.stat": "usage_usec 3534883\nuser_usec 2354923\nsystem_usec 1179959\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 15\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "VmHWM_KiB": 2691836,
+    "VmRSS_KiB": 2432708,
+    "VmSwap_KiB": 0
+  },
+  {
+    "elapsed_seconds": 0.10224385900073685,
+    "memory.current": "2459054080",
+    "memory.peak": "2723573760",
+    "memory.swap.current": "0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "cpu.stat": "usage_usec 3634376\nuser_usec 2452554\nsystem_usec 1181821\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 16\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "VmHWM_KiB": 2691836,
+    "VmRSS_KiB": 2440332,
+    "VmSwap_KiB": 0
+  },
+  {
+    "elapsed_seconds": 0.2035920580092352,
+    "memory.current": "2461409280",
+    "memory.peak": "2723573760",
+    "memory.swap.current": "0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "cpu.stat": "usage_usec 3734195\nuser_usec 2550084\nsystem_usec 1184110\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 17\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "VmHWM_KiB": 2691836,
+    "VmRSS_KiB": 2444648,
+    "VmSwap_KiB": 0
+  },
+  {
+    "elapsed_seconds": 0.30491277200053446,
+    "memory.current": "2461667328",
+    "memory.peak": "2723573760",
+    "memory.swap.current": "0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "cpu.stat": "usage_usec 3834098\nuser_usec 2648305\nsystem_usec 1185793\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 18\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "VmHWM_KiB": 2691836,
+    "VmRSS_KiB": 2444652,
+    "VmSwap_KiB": 0
+  }
+]

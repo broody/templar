@@ -1,0 +1,15 @@
+   Compiling templar-private-membership v0.1.0 (/home/broody/development/templar/bench/m31-private-e2e/client)
+    Finished `release` profile [optimized] target(s) in 1.68s
+     Running unittests src/lib.rs (bench/m31-private-e2e/client/target/release/deps/templar_private_membership-2f30f002aaf9fd50)
+
+running 7 tests
+test tests::all_membership_constraints_and_negative_wiring ... ok
+test tests::complete_roundtrip_freshness_and_artifact_rejections ... ok
+test tests::field_and_context_canonicality ... ok
+test tests::hash_golden_vectors ... ok
+test tests::independent_sparse_folds_match_stwo ... ok
+test tests::invalid_trace_can_reach_proof_verifier_without_host_gate ... ok
+test tests::masks_preserve_trace_and_fit_reviewed_degree ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.72s
+

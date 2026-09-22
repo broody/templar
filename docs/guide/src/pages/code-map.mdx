@@ -43,6 +43,11 @@ The tree is reused from the pool package. The push note, delivery, spend ABI, an
 
 Within this workspace, `docs/push-payment-spec.md` and `docs/adr/0021-push-only-payments.md` record Templar's accepted architecture and first-release scope.
 
+`docs/adr/0024-compact-client-proofs-and-server-wrapping.md` records a **Proposed**
+alternative proving split. Its private membership reference and evidence live
+in `bench/m31-private-e2e/`. See the [pathfinding status](/status#proposed-compact-client-architecture)
+for demonstrated results and the remaining adoption criteria.
+
 ## A useful reading order
 
 Start with `protocol.py` for keys and notes. Read `spend.cairo` and `statement.cairo` together to compare the pool's public encoding with its private checks. Then inspect `pool.cairo`, `proof_adapter.cairo`, and `sync.py` to trace settlement and recovery.

@@ -1,0 +1,12 @@
+     Running cairo-test stwo_verifier_core
+warn: `scarb cairo-test` is deprecated and will be removed in a future version.
+help: please migrate to `snforge` for all your testing needs.
+help: to install snforge, please visit: https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html
+help: to learn how to migrate, see: https://foundry-rs.github.io/starknet-foundry/getting-started/first-steps.html#using-snforge-with-existing-scarb-projects
+   Compiling test(stwo_verifier_core_unittest) stwo_verifier_core v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/optimized-cairo/vendor/verifier_core/Scarb.toml)
+    Finished `dev` profile target(s) in 3 seconds
+     Testing stwo_verifier_core
+running 2 tests
+test stwo_verifier_core::fields::m31::naive::inverse_regression::zero_inverse_rejected ... ok
+test stwo_verifier_core::fields::m31::naive::inverse_regression::canonical_inverse_products ... ok
+test result: ok. 2 passed; 0 failed; 0 ignored; 72 filtered out;

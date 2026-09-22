@@ -1,0 +1,15 @@
+{
+  "task": "final artifact integrity audit (read-only verification, no builds/proving/timed runs)",
+  "date": "2026-09-22",
+  "m31-private-e2e_SHA256SUMS": {"entries": 78, "ok": 78, "mismatch": 0, "missing": 0, "method": "sha256sum -c, exit 0"},
+  "m31-private-blake_SHA256SUMS": {"entries": 163, "ok": 163, "mismatch": 0, "missing": 0, "method": "sha256sum -c, exit 0"},
+  "server-circuit_source-pins.json": {"entries": 15, "ok": 15, "mismatch": 0, "missing": 0, "method": "sha256 of each listed path vs recorded value"},
+  "run_server_outer_binary_pins": {
+    "source": "bench/m31-private-wrapper/run_server_outer.py:24-29 (PINS)",
+    "prover": {"path": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/rust-target/release/starknet_transaction_prover", "pin": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5", "match": true},
+    "local_verifier": {"path": "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/local-verifier", "pin": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934", "match": true}
+  },
+  "mismatches_total": 0,
+  "note_awareness_only": "Root reports a larger actual proof run OOMed at 96 GiB; no new proof exists. Not part of this audit's verified set.",
+  "frozen_files_modified": false
+}

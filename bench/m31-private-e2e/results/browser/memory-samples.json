@@ -1,0 +1,1734 @@
+[
+  {
+    "unix_ms": 1790064478539,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 147955712,
+        "pss_bytes": 36890624
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 124760064,
+        "pss_bytes": 51101696
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 108146688,
+        "pss_bytes": 23168000
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 49741824,
+        "pss_bytes": 10083328
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 430604288,
+    "pss_bytes": 121243648
+  },
+  {
+    "unix_ms": 1790064478797,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 205488128,
+        "pss_bytes": 62781440
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10565632
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 149868544,
+        "pss_bytes": 40419328
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145285120,
+        "pss_bytes": 38152192
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 139075584,
+        "pss_bytes": 45890560
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 115204096,
+        "pss_bytes": 25026560
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5687296
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 880087040,
+    "pss_bytes": 228523008
+  },
+  {
+    "unix_ms": 1790064479056,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 205475840,
+        "pss_bytes": 62768128
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10565632
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 166817792,
+        "pss_bytes": 53706752
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145289216,
+        "pss_bytes": 38154240
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 139468800,
+        "pss_bytes": 46091264
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 115204096,
+        "pss_bytes": 25026560
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5687296
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 897421312,
+    "pss_bytes": 241999872
+  },
+  {
+    "unix_ms": 1790064479315,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 206774272,
+        "pss_bytes": 63133696
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10565632
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 188215296,
+        "pss_bytes": 75056128
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145289216,
+        "pss_bytes": 38152192
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 139468800,
+        "pss_bytes": 46083072
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 118337536,
+        "pss_bytes": 25457664
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5686272
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 923250688,
+    "pss_bytes": 264134656
+  },
+  {
+    "unix_ms": 1790064479574,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 207220736,
+        "pss_bytes": 63269888
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10564608
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 211324928,
+        "pss_bytes": 98217984
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145784832,
+        "pss_bytes": 38267904
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 139468800,
+        "pss_bytes": 46081024
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 121311232,
+        "pss_bytes": 25899008
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5686272
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 950276096,
+    "pss_bytes": 287986688
+  },
+  {
+    "unix_ms": 1790064479832,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 207220736,
+        "pss_bytes": 63261696
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10564608
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 234168320,
+        "pss_bytes": 121189376
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145784832,
+        "pss_bytes": 38266880
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 139468800,
+        "pss_bytes": 46081024
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 121638912,
+        "pss_bytes": 25958400
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5686272
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 973447168,
+    "pss_bytes": 311008256
+  },
+  {
+    "unix_ms": 1790064480093,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 207286272,
+        "pss_bytes": 63269888
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10564608
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 271917056,
+        "pss_bytes": 157318144
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145784832,
+        "pss_bytes": 38266880
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 139468800,
+        "pss_bytes": 46081024
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 121638912,
+        "pss_bytes": 25958400
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5686272
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1011261440,
+    "pss_bytes": 347145216
+  },
+  {
+    "unix_ms": 1790064480355,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 207286272,
+        "pss_bytes": 63269888
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10564608
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 280195072,
+        "pss_bytes": 165475328
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145784832,
+        "pss_bytes": 38266880
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 139468800,
+        "pss_bytes": 46081024
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 121638912,
+        "pss_bytes": 25958400
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5686272
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1019539456,
+    "pss_bytes": 355302400
+  },
+  {
+    "unix_ms": 1790064480616,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 207286272,
+        "pss_bytes": 63269888
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10564608
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 285253632,
+        "pss_bytes": 170529792
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38270976
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 139468800,
+        "pss_bytes": 46081024
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 121638912,
+        "pss_bytes": 25958400
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5686272
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1024602112,
+    "pss_bytes": 360360960
+  },
+  {
+    "unix_ms": 1790064480879,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208838656,
+        "pss_bytes": 64048128
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 287899648,
+        "pss_bytes": 173171712
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38269952
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 139468800,
+        "pss_bytes": 46081024
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 121724928,
+        "pss_bytes": 25970688
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1028886528,
+    "pss_bytes": 363791360
+  },
+  {
+    "unix_ms": 1790064481138,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208846848,
+        "pss_bytes": 64056320
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 308330496,
+        "pss_bytes": 193351680
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38269952
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 139468800,
+        "pss_bytes": 46081024
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 121729024,
+        "pss_bytes": 25974784
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1049329664,
+    "pss_bytes": 383983616
+  },
+  {
+    "unix_ms": 1790064481400,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208904192,
+        "pss_bytes": 64086016
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 316022784,
+        "pss_bytes": 200358912
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38269952
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 139468800,
+        "pss_bytes": 46081024
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 121806848,
+        "pss_bytes": 26051584
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1057157120,
+    "pss_bytes": 391097344
+  },
+  {
+    "unix_ms": 1790064481659,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 209022976,
+        "pss_bytes": 64113664
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 319655936,
+        "pss_bytes": 203991040
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 139468800,
+        "pss_bytes": 46081024
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122044416,
+        "pss_bytes": 26182656
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1061146624,
+    "pss_bytes": 394887168
+  },
+  {
+    "unix_ms": 1790064481919,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 209403904,
+        "pss_bytes": 64235520
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 356896768,
+        "pss_bytes": 242242560
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 139468800,
+        "pss_bytes": 46081024
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122249216,
+        "pss_bytes": 26202112
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1098973184,
+    "pss_bytes": 433280000
+  },
+  {
+    "unix_ms": 1790064482209,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 210362368,
+        "pss_bytes": 65193984
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 329953280,
+        "pss_bytes": 213642240
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140288000,
+        "pss_bytes": 46502912
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122249216,
+        "pss_bytes": 26202112
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1073807360,
+    "pss_bytes": 406060032
+  },
+  {
+    "unix_ms": 1790064482470,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 210362368,
+        "pss_bytes": 65193984
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 331575296,
+        "pss_bytes": 215200768
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140288000,
+        "pss_bytes": 46502912
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122249216,
+        "pss_bytes": 26202112
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1075429376,
+    "pss_bytes": 407618560
+  },
+  {
+    "unix_ms": 1790064482733,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 210391040,
+        "pss_bytes": 65222656
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 330743808,
+        "pss_bytes": 214369280
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140288000,
+        "pss_bytes": 46502912
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122249216,
+        "pss_bytes": 26202112
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1074626560,
+    "pss_bytes": 406815744
+  },
+  {
+    "unix_ms": 1790064482994,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 210391040,
+        "pss_bytes": 65222656
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 331374592,
+        "pss_bytes": 215000064
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140288000,
+        "pss_bytes": 46502912
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122249216,
+        "pss_bytes": 26202112
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1075257344,
+    "pss_bytes": 407446528
+  },
+  {
+    "unix_ms": 1790064483256,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 210391040,
+        "pss_bytes": 65222656
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 331907072,
+        "pss_bytes": 215532544
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140288000,
+        "pss_bytes": 46502912
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122249216,
+        "pss_bytes": 26202112
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1075789824,
+    "pss_bytes": 407979008
+  },
+  {
+    "unix_ms": 1790064483519,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 210391040,
+        "pss_bytes": 65207296
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 333869056,
+        "pss_bytes": 217726976
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140288000,
+        "pss_bytes": 46501888
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26264576
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1078472704,
+    "pss_bytes": 410219520
+  },
+  {
+    "unix_ms": 1790064483782,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208642048,
+        "pss_bytes": 63966208
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 338341888,
+        "pss_bytes": 221966336
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140288000,
+        "pss_bytes": 47009792
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26264576
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1081196544,
+    "pss_bytes": 413725696
+  },
+  {
+    "unix_ms": 1790064484043,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208330752,
+        "pss_bytes": 63747072
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 346402816,
+        "pss_bytes": 230027264
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140288000,
+        "pss_bytes": 47101952
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26264576
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1088946176,
+    "pss_bytes": 421659648
+  },
+  {
+    "unix_ms": 1790064484304,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208330752,
+        "pss_bytes": 63747072
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 350003200,
+        "pss_bytes": 233627648
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140288000,
+        "pss_bytes": 47101952
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26264576
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1092546560,
+    "pss_bytes": 425260032
+  },
+  {
+    "unix_ms": 1790064484562,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208330752,
+        "pss_bytes": 63747072
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 373141504,
+        "pss_bytes": 257495040
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140288000,
+        "pss_bytes": 47101952
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26264576
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1115684864,
+    "pss_bytes": 449127424
+  },
+  {
+    "unix_ms": 1790064484955,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208334848,
+        "pss_bytes": 63751168
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 355733504,
+        "pss_bytes": 238761984
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140267520,
+        "pss_bytes": 46485504
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26264576
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1098260480,
+    "pss_bytes": 429782016
+  },
+  {
+    "unix_ms": 1790064485218,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208334848,
+        "pss_bytes": 63751168
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 369778688,
+        "pss_bytes": 252938240
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140267520,
+        "pss_bytes": 46485504
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26264576
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1112305664,
+    "pss_bytes": 443958272
+  },
+  {
+    "unix_ms": 1790064485481,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208338944,
+        "pss_bytes": 63755264
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 373755904,
+        "pss_bytes": 256784384
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140267520,
+        "pss_bytes": 46485504
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26264576
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1116286976,
+    "pss_bytes": 447808512
+  },
+  {
+    "unix_ms": 1790064485744,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208338944,
+        "pss_bytes": 63755264
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 392413184,
+        "pss_bytes": 275441664
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140267520,
+        "pss_bytes": 46485504
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26264576
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1134944256,
+    "pss_bytes": 466465792
+  },
+  {
+    "unix_ms": 1790064486004,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208338944,
+        "pss_bytes": 63755264
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 393605120,
+        "pss_bytes": 276633600
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140267520,
+        "pss_bytes": 46485504
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26264576
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1136136192,
+    "pss_bytes": 467657728
+  },
+  {
+    "unix_ms": 1790064486264,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208338944,
+        "pss_bytes": 63755264
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 394813440,
+        "pss_bytes": 277841920
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140267520,
+        "pss_bytes": 46485504
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26264576
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1137344512,
+    "pss_bytes": 468866048
+  },
+  {
+    "unix_ms": 1790064486525,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208338944,
+        "pss_bytes": 63755264
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 397774848,
+        "pss_bytes": 280803328
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140267520,
+        "pss_bytes": 46485504
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26264576
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1140305920,
+    "pss_bytes": 471827456
+  },
+  {
+    "unix_ms": 1790064486787,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208338944,
+        "pss_bytes": 63755264
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 399159296,
+        "pss_bytes": 282187776
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140267520,
+        "pss_bytes": 46485504
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26264576
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1141690368,
+    "pss_bytes": 473211904
+  },
+  {
+    "unix_ms": 1790064487048,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208338944,
+        "pss_bytes": 63755264
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 404168704,
+        "pss_bytes": 287197184
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140267520,
+        "pss_bytes": 46485504
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26264576
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1146699776,
+    "pss_bytes": 478221312
+  },
+  {
+    "unix_ms": 1790064487310,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208338944,
+        "pss_bytes": 63755264
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 412008448,
+        "pss_bytes": 298129408
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38268928
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140267520,
+        "pss_bytes": 46485504
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26263552
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 1154539520,
+    "pss_bytes": 489152512
+  },
+  {
+    "unix_ms": 1790064487754,
+    "processes": [
+      {
+        "id": 1479606,
+        "type": "browser",
+        "rss_bytes": 208347136,
+        "pss_bytes": 63734784
+      },
+      {
+        "id": 1479738,
+        "type": "renderer",
+        "rss_bytes": 73641984,
+        "pss_bytes": 10566656
+      },
+      {
+        "id": 1479710,
+        "type": "renderer",
+        "rss_bytes": 227373056,
+        "pss_bytes": 109816832
+      },
+      {
+        "id": 1479696,
+        "type": "renderer",
+        "rss_bytes": 145788928,
+        "pss_bytes": 38266880
+      },
+      {
+        "id": 1479645,
+        "type": "GPU",
+        "rss_bytes": 140922880,
+        "pss_bytes": 46813184
+      },
+      {
+        "id": 1479648,
+        "type": "network.mojom.NetworkService",
+        "rss_bytes": 122970112,
+        "pss_bytes": 26263552
+      },
+      {
+        "id": 1479663,
+        "type": "storage.mojom.StorageService",
+        "rss_bytes": 51523584,
+        "pss_bytes": 5683200
+      }
+    ],
+    "complete": true,
+    "rss_bytes": 970567680,
+    "pss_bytes": 301145088
+  }
+]

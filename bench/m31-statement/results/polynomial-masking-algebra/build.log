@@ -1,0 +1,11 @@
+warning: function `check_sponge` is never used
+   --> src/m31.rs:164:8
+    |
+164 | pub fn check_sponge(message: &[u32], requests: &[Request]) -> Result<Digest> {
+    |        ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `templar-m31-statement` (lib) generated 1 warning
+   Compiling templar-m31-statement v0.1.0 (/home/broody/development/templar/bench/m31-statement/client)
+    Finished `release` profile [optimized] target(s) in 1.27s

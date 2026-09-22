@@ -1,0 +1,15 @@
+{
+  "status": "failed",
+  "memory_cap_gib": 32,
+  "cores": 4,
+  "l2_gas_max_amount": 1000000000,
+  "scope": "public hash workload only; not membership verification",
+  "local_node_attachment": false,
+  "native_verification_passed": false,
+  "error": "{\"code\": -32603, \"message\": \"Internal error\", \"data\": \"Reverted transactions are not supported; hash: TransactionHash(0x31628a78156114dcda075413d56cee750011864a5532f701ff5ea8238b507c8), revert reason: Transaction execution has failed:\\n0: Error in the called contract (contract address: 0x076f60e9fc16df59e1132cdae38f35597dfb68bce8e995266aa8f80bd804fa50, class hash: 0x038c078a0f02a8adb5c62941ddbcdb78e4f236222b3e7fe87db65a3919db4a87, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\\nExecution failed. Failure reason:\\nError in contract (contract address: 0x076f60e9fc16df59e1132cdae38f35597dfb68bce8e995266aa8f80bd804fa50, class hash: 0x038c078a0f02a8adb5c62941ddbcdb78e4f236222b3e7fe87db65a3919db4a87, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\\n\\\"HASH_MISMATCH\\\".\\n\"}",
+  "error_type": "RuntimeError",
+  "peak_rss_gib": 2.5671348571777344,
+  "cgroup_peak_bytes": 2723573760,
+  "swap_peak_bytes": 0,
+  "resource_samples": 4
+}

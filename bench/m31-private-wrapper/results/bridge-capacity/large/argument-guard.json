@@ -1,0 +1,7 @@
+{
+  "log": 21,
+  "rejected": true,
+  "exit_code": 101,
+  "stderr": "\nthread 'main' (1639065) panicked at /home/broody/development/templar/bench/m31-private-wrapper/bridge-capacity/capacity.rs:31:5:\nassertion `left == right` failed: LOG must match the linked preprocessing variant\n  left: 21\n right: 22\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n",
+  "binary_sha256": "9fe600b39694c96d774d9a488bd5a9fa5083c9e931bfe905844bdc86b6b43b73"
+}

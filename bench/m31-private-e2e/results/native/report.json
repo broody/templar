@@ -1,0 +1,262 @@
+{
+  "binary_sha256": "cb963e1d7330e1d2b427c100e76124ec1d207235071dcfac729234295f2736f8",
+  "binary": "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+  "platform": "Linux-6.17.0-20-generic-x86_64-with-glibc2.39",
+  "cpu": "Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz",
+  "mem_total_kib": 131591896,
+  "threads": 1,
+  "fixture": "fresh synthetic, same witness for three randomized proofs",
+  "scope": "private depth32 membership; separate-process verification, no filesystem access sandbox",
+  "runs": [
+    {
+      "prove": {
+        "name": "prove-1",
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/broody/development/templar/target/m31-private-e2e/native-measurement/prove-1.time.log",
+          "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+          "prove",
+          "public.json",
+          "private.json",
+          "proof-1.bin"
+        ],
+        "cwd": "/home/broody/development/templar/target/m31-private-e2e/native-measurement/client",
+        "exit": 0,
+        "result": {
+          "action": "prove",
+          "deployment": "research only; no PROOF1",
+          "proof_bytes": 3586428,
+          "relation": "private depth32 membership",
+          "seconds": 1.197363853
+        },
+        "peak_rss_kib": 65008,
+        "elapsed_wall": "0:01.20"
+      },
+      "verify": {
+        "name": "verify-1",
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/broody/development/templar/target/m31-private-e2e/native-measurement/verify-1.time.log",
+          "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+          "verify",
+          "public.json",
+          "proof-1.bin"
+        ],
+        "cwd": "/home/broody/development/templar/target/m31-private-e2e/native-measurement/verifier",
+        "exit": 0,
+        "result": {
+          "accepted": true,
+          "action": "verify",
+          "proof_bytes": 3586428,
+          "seconds": 0.164334028
+        },
+        "peak_rss_kib": 7700,
+        "elapsed_wall": "0:00.16"
+      },
+      "proof_sha256": "ef2735e10988a2704be45f999e37f258df79e50d819e774b21b9508a8bcc2f37",
+      "proof_bytes": 3586428
+    },
+    {
+      "prove": {
+        "name": "prove-2",
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/broody/development/templar/target/m31-private-e2e/native-measurement/prove-2.time.log",
+          "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+          "prove",
+          "public.json",
+          "private.json",
+          "proof-2.bin"
+        ],
+        "cwd": "/home/broody/development/templar/target/m31-private-e2e/native-measurement/client",
+        "exit": 0,
+        "result": {
+          "action": "prove",
+          "deployment": "research only; no PROOF1",
+          "proof_bytes": 3580832,
+          "relation": "private depth32 membership",
+          "seconds": 1.171794176
+        },
+        "peak_rss_kib": 65920,
+        "elapsed_wall": "0:01.17"
+      },
+      "verify": {
+        "name": "verify-2",
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/broody/development/templar/target/m31-private-e2e/native-measurement/verify-2.time.log",
+          "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+          "verify",
+          "public.json",
+          "proof-2.bin"
+        ],
+        "cwd": "/home/broody/development/templar/target/m31-private-e2e/native-measurement/verifier",
+        "exit": 0,
+        "result": {
+          "accepted": true,
+          "action": "verify",
+          "proof_bytes": 3580832,
+          "seconds": 0.173091397
+        },
+        "peak_rss_kib": 7756,
+        "elapsed_wall": "0:00.17"
+      },
+      "proof_sha256": "db898b3db5f6ce7c080445fd7e14c0a60d41290057f0a3f8cacefc15f8dd351e",
+      "proof_bytes": 3580832
+    },
+    {
+      "prove": {
+        "name": "prove-3",
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/broody/development/templar/target/m31-private-e2e/native-measurement/prove-3.time.log",
+          "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+          "prove",
+          "public.json",
+          "private.json",
+          "proof-3.bin"
+        ],
+        "cwd": "/home/broody/development/templar/target/m31-private-e2e/native-measurement/client",
+        "exit": 0,
+        "result": {
+          "action": "prove",
+          "deployment": "research only; no PROOF1",
+          "proof_bytes": 3555140,
+          "relation": "private depth32 membership",
+          "seconds": 1.177180027
+        },
+        "peak_rss_kib": 65364,
+        "elapsed_wall": "0:01.18"
+      },
+      "verify": {
+        "name": "verify-3",
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/broody/development/templar/target/m31-private-e2e/native-measurement/verify-3.time.log",
+          "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+          "verify",
+          "public.json",
+          "proof-3.bin"
+        ],
+        "cwd": "/home/broody/development/templar/target/m31-private-e2e/native-measurement/verifier",
+        "exit": 0,
+        "result": {
+          "accepted": true,
+          "action": "verify",
+          "proof_bytes": 3555140,
+          "seconds": 0.162620253
+        },
+        "peak_rss_kib": 7660,
+        "elapsed_wall": "0:00.16"
+      },
+      "proof_sha256": "16781bc09ced9765ede481619af21097b5ca93c4049476402f1db99d275c2a95",
+      "proof_bytes": 3555140
+    }
+  ],
+  "negatives": [
+    {
+      "name": "reject-root",
+      "command": [
+        "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+        "verify",
+        "bad-root.json",
+        "proof-1.bin"
+      ],
+      "cwd": "/home/broody/development/templar/target/m31-private-e2e/native-measurement/verifier",
+      "exit": 1,
+      "rejection": "Error: OOD composition identity 0"
+    },
+    {
+      "name": "reject-pool",
+      "command": [
+        "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+        "verify",
+        "bad-pool.json",
+        "proof-1.bin"
+      ],
+      "cwd": "/home/broody/development/templar/target/m31-private-e2e/native-measurement/verifier",
+      "exit": 1,
+      "rejection": "Error: OOD composition identity 0"
+    },
+    {
+      "name": "reject-chain",
+      "command": [
+        "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+        "verify",
+        "bad-chain.json",
+        "proof-1.bin"
+      ],
+      "cwd": "/home/broody/development/templar/target/m31-private-e2e/native-measurement/verifier",
+      "exit": 1,
+      "rejection": "Error: OOD composition identity 0"
+    },
+    {
+      "name": "reject-flip",
+      "command": [
+        "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+        "verify",
+        "public.json",
+        "bad-flip.bin"
+      ],
+      "cwd": "/home/broody/development/templar/target/m31-private-e2e/native-measurement/verifier",
+      "exit": 1,
+      "rejection": "Error: Merkle authentication tree 3"
+    },
+    {
+      "name": "reject-truncated",
+      "command": [
+        "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+        "verify",
+        "public.json",
+        "bad-truncated.bin"
+      ],
+      "cwd": "/home/broody/development/templar/target/m31-private-e2e/native-measurement/verifier",
+      "exit": 1,
+      "rejection": "Error: truncated proof"
+    },
+    {
+      "name": "reject-trailing",
+      "command": [
+        "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+        "verify",
+        "public.json",
+        "bad-trailing.bin"
+      ],
+      "cwd": "/home/broody/development/templar/target/m31-private-e2e/native-measurement/verifier",
+      "exit": 1,
+      "rejection": "Error: trailing proof bytes"
+    },
+    {
+      "name": "reject-noncanonical",
+      "command": [
+        "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+        "verify",
+        "public.json",
+        "bad-noncanonical.bin"
+      ],
+      "cwd": "/home/broody/development/templar/target/m31-private-e2e/native-measurement/verifier",
+      "exit": 1,
+      "rejection": "Error: noncanonical field"
+    }
+  ],
+  "verifier_files_before_negatives": [
+    "proof-1.bin",
+    "proof-2.bin",
+    "proof-3.bin",
+    "public.json"
+  ],
+  "public_sha256": "d06115a1ee9b7e6d27ec2d45dd91aa0ce4009435f42bddf3a8e63c4d5631158b",
+  "status": "passed"
+}

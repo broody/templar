@@ -218,6 +218,7 @@ pub fn prove_fixture(fixture: &str) -> Result<Artifacts> {
     );
     let summary = json!({
         "scope": "payment-shaped M31 statement measurement; no private-payment or privacy claim; secrets synthetic and in the clear",
+        "statement_version": statement::VERSION,
         "requests": d.requests.len(),
         "rows": d.rows.len(),
         "trace_columns": m31::COLUMNS,
@@ -240,13 +241,14 @@ pub fn prove_fixture(fixture: &str) -> Result<Artifacts> {
 pub fn mutations(bytes: &[u8]) -> Result<String> {
     let e = decode(bytes)?;
     verify(e.clone())?;
+    let original_words = e.statement.validate()?.words;
     let mut names = vec![];
     macro_rules! reject {
         ($name:expr,$f:expr) => {{
             let mut bad = e.clone();
             ($f)(&mut bad);
             ensure!(verify(bad).is_err(), "accepted mutation {}", $name);
-            names.push($name);
+            names.push($name.to_string());
         }};
     }
     reject!("chain", |e: &mut Envelope| e.statement.chain_id = statement::hex(
@@ -255,6 +257,26 @@ pub fn mutations(bytes: &[u8]) -> Result<String> {
     reject!("pool", |e: &mut Envelope| e.statement.pool = statement::hex(
         statement::felt(&e.statement.pool).unwrap() + Felt::ONE
     ));
+    // V1 discarded seven groups of four bits. Change each one independently,
+    // leaving all witness/proof fields untouched. Check that each new context
+    // is valid and has different transcript words before testing proof rejection.
+    for field in ["chain", "pool"] {
+        for bit in (0..251).filter(|bit| bit % 32 >= 28) {
+            let mut bad = e.clone();
+            let context = if field == "chain" {
+                &mut bad.statement.chain_id
+            } else {
+                &mut bad.statement.pool
+            };
+            let mut context_bytes = statement::felt(context)?.to_bytes_le();
+            context_bytes[bit / 8] ^= 1 << (bit % 8);
+            *context = statement::hex(Felt::from_bytes_le(&context_bytes));
+            let changed = bad.statement.validate()?;
+            ensure!(changed.words != original_words, "context bit {field}/{bit} was dropped");
+            ensure!(verify(bad).is_err(), "accepted context bit {field}/{bit}");
+            names.push(format!("{field}_formerly_dropped_bit_{bit}"));
+        }
+    }
     reject!("root", |e: &mut Envelope| e.statement.root[0] = (e.statement.root[0] + 1) % m31::P);
     reject!("nullifier", |e: &mut Envelope| e.statement.nullifiers[0][0] =
         (e.statement.nullifiers[0][0] + 1) % m31::P);
@@ -276,12 +298,12 @@ pub fn mutations(bytes: &[u8]) -> Result<String> {
     let mut trailing = bytes.to_vec();
     trailing.push(0);
     ensure!(decode(&trailing).is_err(), "trailing envelope accepted");
-    names.push("trailing_envelope");
+    names.push("trailing_envelope".to_string());
     ensure!(
         decode(&bytes[..bytes.len() - 1]).is_err(),
         "truncated envelope accepted"
     );
-    names.push("truncated_envelope");
+    names.push("truncated_envelope".to_string());
     // Padding omission control: the unpadded request set must not balance.
     let d = e.statement.validate()?;
     let mut ch = initial(&e.statement, &d);
@@ -299,5 +321,4 @@ pub fn mutations(bytes: &[u8]) -> Result<String> {
         &json!({"rejected_mutations": names, "omitted_padding_rejected": true}),
     )?)
 }
-
 

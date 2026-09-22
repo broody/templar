@@ -1,0 +1,20 @@
+{
+  "scope": "public server hash circuit, no private witness or membership",
+  "command": [
+    "/home/broody/development/templar/target/direct-air/client-target/release/templar-server-hash-circuit",
+    "/home/broody/development/templar/bench/m31-private-wrapper/results/server-circuit/jobs.json",
+    "/home/broody/development/templar/bench/m31-private-wrapper/results/server-circuit/proof"
+  ],
+  "binary_sha256": "4476412352559d4a58ae94669de52da402255ce87c2b4fbeb34325c311a9e8cf",
+  "cap_gib": 16,
+  "threads": 4,
+  "cpu_affinity": "0 1 2 3",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "elapsed_seconds": 7.696685646020342,
+  "sampled_peak_rss_gib": 3.5344390869140625,
+  "sampled_peak_cgroup_gib": 3.5386962890625,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "time_peak_rss_gib": 3.5344390869140625
+}

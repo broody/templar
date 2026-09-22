@@ -1,0 +1,381 @@
+warning: patch `circuit-cairo-serialize v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/circuit_cairo_serialize)` was not used in the crate graph
+warning: patch `circuit-multiverifier v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/circuit_multiverifier)` was not used in the crate graph
+warning: patch `circuits-stark-verifier-examples v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/stark_verifier_examples)` was not used in the crate graph
+warning: patch `stwo-cairo-dev-utils v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/dev_utils)` was not used in the crate graph
+warning: patch `stwo-cairo-utils v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/utils)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+     Locking 16 packages to latest compatible versions
+      Adding cairo-air v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/cairo-air)
+      Adding cairo-program-runner-lib v1.2.2 (/home/broody/.cargo/git/checkouts/proving-utils-fe3a66dc6b32d5d3/3035dd0/crates/cairo-program-runner-lib)
+      Adding circuit-cairo-verifier v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/cairo_verifier)
+      Adding circuit-common v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/circuit_common)
+      Adding circuit-prover v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/circuit_prover)
+      Adding circuit-serialize v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/circuit_serialize)
+      Adding circuit-verifier v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/circuit_verifier)
+      Adding circuits v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/circuits)
+      Adding circuits-stark-verifier v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/stark_verifier)
+      Adding privacy-circuit-verify v1.2.2 (/home/broody/.cargo/git/checkouts/proving-utils-fe3a66dc6b32d5d3/3035dd0/crates/privacy_circuit_verify)
+      Adding privacy-prove v1.2.2 (/home/broody/.cargo/git/checkouts/proving-utils-fe3a66dc6b32d5d3/3035dd0/crates/privacy_prove)
+      Adding stwo-cairo-adapter v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/adapter)
+      Adding stwo-cairo-common v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/common)
+      Adding stwo-cairo-prover v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/prover)
+      Adding stwo-cairo-serialize v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize)
+      Adding stwo-cairo-serialize-derive v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize-derive)
+   Compiling proc-macro2 v1.0.103
+   Compiling quote v1.0.42
+   Compiling unicode-ident v1.0.22
+   Compiling libc v0.2.177
+   Compiling autocfg v1.5.0
+   Compiling cfg-if v1.0.4
+   Compiling serde_core v1.0.228
+   Compiling zerocopy v0.8.27
+   Compiling serde v1.0.228
+   Compiling version_check v0.9.5
+   Compiling num-traits v0.2.19
+   Compiling syn v2.0.110
+   Compiling generic-array v0.14.7
+   Compiling getrandom v0.2.16
+   Compiling rand_core v0.6.4
+   Compiling num-integer v0.1.46
+   Compiling crossbeam-utils v0.8.21
+   Compiling typenum v1.20.0
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.3.1
+   Compiling rand v0.8.5
+   Compiling parking_lot_core v0.9.12
+   Compiling either v1.15.0
+   Compiling once_cell v1.21.3
+   Compiling allocator-api2 v0.2.21
+   Compiling memchr v2.7.6
+   Compiling equivalent v1.0.2
+   Compiling rayon-core v1.13.0
+   Compiling smallvec v1.15.1
+   Compiling subtle v2.6.1
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling log v0.4.28
+   Compiling digest v0.10.7
+   Compiling num-bigint v0.4.6
+   Compiling foldhash v0.2.0
+   Compiling serde_derive v1.0.228
+   Compiling tracing-attributes v0.1.30
+   Compiling hashbrown v0.17.1
+   Compiling aho-corasick v1.1.4
+   Compiling regex-syntax v0.8.6
+   Compiling scopeguard v1.2.0
+   Compiling lock_api v0.4.14
+   Compiling crossbeam-epoch v0.9.18
+   Compiling lazy_static v1.5.0
+   Compiling itoa v1.0.15
+   Compiling crossbeam-deque v0.8.6
+   Compiling tracing-core v0.1.34
+   Compiling regex-automata v0.4.10
+   Compiling pin-project-lite v0.2.16
+   Compiling tracing v0.1.41
+   Compiling powerfmt v0.2.0
+   Compiling deranged v0.5.5
+   Compiling rayon v1.11.0
+   Compiling num-conv v0.1.0
+   Compiling time-core v0.1.6
+   Compiling matchers v0.2.0
+   Compiling time v0.3.44
+   Compiling tracing-log v0.2.0
+   Compiling sharded-slab v0.1.7
+   Compiling thread_local v1.1.9
+   Compiling thiserror v2.0.17
+   Compiling nu-ansi-term v0.50.3
+   Compiling tracing-subscriber v0.3.20
+   Compiling thiserror-impl v2.0.17
+   Compiling indexmap v2.14.0
+   Compiling foldhash v0.1.5
+   Compiling hashbrown v0.15.5
+   Compiling syn v1.0.109
+   Compiling zeroize_derive v1.4.2
+   Compiling memoffset v0.9.1
+   Compiling typeid v1.0.3
+   Compiling cpufeatures v0.2.17
+   Compiling ryu v1.0.20
+   Compiling serde_json v1.0.145
+   Compiling sha2 v0.10.9
+   Compiling portable-atomic v1.11.1
+   Compiling ref-cast v1.0.25
+   Compiling derivative v2.2.0
+   Compiling ref-cast-impl v1.0.25
+   Compiling blake2 v0.10.6
+   Compiling synstructure v0.13.2
+   Compiling salsa-macros v0.26.2
+   Compiling zeroize v1.8.2
+   Compiling keccak v0.1.5
+   Compiling sha3 v0.10.8
+   Compiling parking_lot v0.12.5
+   Compiling lambdaworks-math v0.13.0
+   Compiling itertools v0.14.0
+   Compiling serde_derive_internals v0.29.1
+   Compiling inventory v0.3.24
+   Compiling lambdaworks-crypto v0.13.0
+   Compiling schemars_derive v1.1.0
+   Compiling starknet-types-core v0.2.4
+   Compiling intrusive-collections v0.9.7
+   Compiling hashlink v0.10.0
+   Compiling crossbeam-queue v0.3.12
+   Compiling salsa-macro-rules v0.26.2
+   Compiling dyn-clone v1.0.20
+   Compiling boxcar v0.2.14
+   Compiling thin-vec v0.2.14
+   Compiling rustc-hash v2.1.1
+   Compiling salsa v0.26.2
+   Compiling schemars v1.1.0
+   Compiling vector-map v1.0.2
+   Compiling smol_str v0.3.4
+   Compiling cairo-lang-utils v2.19.0-rc.3
+   Compiling fnv v1.0.7
+   Compiling crypto-bigint v0.5.5
+   Compiling hex v0.4.3
+   Compiling enum-ordinalize-derive v4.3.2
+   Compiling hmac v0.12.1
+   Compiling rfc6979 v0.4.0
+   Compiling enum-ordinalize v4.3.2
+   Compiling jobserver v0.1.34
+   Compiling shlex v1.3.0
+   Compiling arrayvec v0.7.6
+   Compiling paste v1.0.15
+   Compiling find-msvc-tools v0.1.4
+   Compiling anyhow v1.0.100
+   Compiling cc v1.2.45
+   Compiling ark-ff-asm v0.4.2
+   Compiling ark-ff-macros v0.4.2
+   Compiling anstyle v1.0.13
+   Compiling ark-std v0.4.0
+   Compiling hybrid-array v0.4.12
+   Compiling byteorder v1.5.0
+   Compiling ark-serialize v0.4.2
+   Compiling starknet-curve v0.6.0
+   Compiling itertools v0.10.5
+   Compiling winnow v1.0.3
+   Compiling id-arena v2.2.1
+   Compiling ark-ff v0.4.2
+   Compiling toml_parser v1.1.2+spec-1.1.0
+   Compiling cairo-lang-debug v2.19.0-rc.3
+   Compiling block-buffer v0.12.0
+   Compiling crypto-common v0.2.2
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling serde_spanned v1.1.1
+   Compiling indoc v2.0.7
+   Compiling toml_writer v1.1.1+spec-1.1.0
+   Compiling const-oid v0.10.2
+   Compiling toml v1.1.2+spec-1.1.0
+   Compiling digest v0.11.3
+   Compiling cairo-lang-proc-macros v2.19.0-rc.3
+   Compiling semver v1.0.27
+   Compiling starknet-ff v0.3.7
+   Compiling siphasher v1.0.1
+   Compiling unicode-xid v0.2.6
+   Compiling lalrpop-util v0.23.1
+   Compiling path-clean v1.0.1
+   Compiling genco-macros v0.19.0
+   Compiling cairo-lang-filesystem v2.19.0-rc.3
+   Compiling starknet-curve v0.4.2
+   Compiling phf_shared v0.13.1
+   Compiling blake3 v1.8.3
+   Compiling matrixmultiply v0.3.10
+   Compiling keccak v0.2.0
+   Compiling new_debug_unreachable v1.0.6
+   Compiling fixedbitset v0.5.7
+   Compiling same-file v1.0.6
+   Compiling utf8parse v0.2.2
+   Compiling bit-vec v0.9.1
+   Compiling precomputed-hash v0.1.1
+   Compiling term v1.2.0
+   Compiling sponge-cursor v0.1.0
+   Compiling sha3 v0.12.0
+   Compiling ascii-canvas v4.0.0
+   Compiling string_cache v0.9.0
+   Compiling bit-set v0.9.1
+   Compiling anstyle-parse v0.2.7
+   Compiling walkdir v2.5.0
+   Compiling petgraph v0.8.3
+   Compiling starknet-crypto-codegen v0.3.3
+   Compiling regex v1.11.2
+   Compiling ena v0.14.3
+   Compiling bytemuck_derive v1.10.2
+   Compiling hashbrown v0.14.5
+   Compiling relative-path v1.9.3
+   Compiling constant_time_eq v0.4.2
+   Compiling colorchoice v1.0.4
+   Compiling xshell-macros v0.2.7
+   Compiling rawpointer v0.2.1
+   Compiling pico-args v0.5.0
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling anstyle-query v1.1.4
+   Compiling arrayref v0.3.9
+   Compiling anstream v0.6.21
+   Compiling lalrpop v0.23.1
+   Compiling xshell v0.2.7
+   Compiling genco v0.19.0
+   Compiling starknet-crypto v0.6.2
+   Compiling bytemuck v1.24.0
+   Compiling rustc_version v0.4.1
+   Compiling dashmap v6.1.0
+   Compiling educe v0.5.11
+   Compiling unescaper v0.1.6
+   Compiling itertools v0.12.1
+   Compiling num-complex v0.4.6
+   Compiling radium v0.7.0
+   Compiling heck v0.5.0
+   Compiling strsim v0.11.1
+   Compiling cairo-lang-primitive-token v1.0.0
+   Compiling stwo-std-shims v1.0.0
+   Compiling clap_lex v0.7.6
+   Compiling crc32fast v1.5.0
+   Compiling clap_builder v4.5.51
+   Compiling stwo v2.2.0 (https://github.com/starkware-libs/stwo?rev=489a0f3e#489a0f3e)
+   Compiling cairo-lang-syntax v2.19.0-rc.3
+   Compiling clap_derive v4.5.49
+   Compiling ndarray v0.17.1
+   Compiling cairo-lang-sierra v2.19.0-rc.3
+   Compiling heapless v0.7.17
+   Compiling cairo-lang-syntax-codegen v2.19.0-rc.3
+   Compiling cairo-lang-diagnostics v2.19.0-rc.3
+   Compiling erased-serde v0.4.9
+   Compiling colored v3.0.0
+   Compiling simd-adler32 v0.3.7
+   Compiling adler2 v2.0.1
+   Compiling tap v1.0.1
+   Compiling unicode-segmentation v1.12.0
+   Compiling convert_case v0.11.0
+   Compiling wyz v0.5.1
+   Compiling miniz_oxide v0.8.9
+   Compiling cairo-lang-parser v2.19.0-rc.3
+   Compiling sprs v0.11.4
+   Compiling clap v4.5.51
+   Compiling hash32 v0.2.1
+   Compiling spin v0.9.8
+   Compiling bstr v1.12.1
+   Compiling stable_deref_trait v1.2.1
+   Compiling rust_decimal v1.39.0
+   Compiling typetag v0.2.21
+   Compiling funty v2.0.0
+   Compiling const-fnv1a-hash v1.1.0
+   Compiling bitvec v1.0.1
+   Compiling microlp v0.2.11
+   Compiling globset v0.4.18
+   Compiling flate2 v1.1.5
+   Compiling lru v0.12.5
+   Compiling cobs v0.3.0
+   Compiling num-modular v0.5.1
+   Compiling typetag-impl v0.2.21
+   Compiling stwo-cairo-serialize-derive v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize-derive)
+   Compiling ruint-macro v1.2.1
+   Compiling minimal-lexical v0.2.1
+   Compiling ruint v1.17.0
+   Compiling nom v7.1.3
+   Compiling stwo-cairo-serialize v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize)
+   Compiling num-prime v0.4.4
+   Compiling postcard v1.1.3
+   Compiling zip v0.6.6
+   Compiling good_lp v1.14.2
+   Compiling ignore v0.4.25
+   Compiling stwo-constraint-framework v2.2.0 (https://github.com/starkware-libs/stwo?rev=489a0f3e#489a0f3e)
+   Compiling starknet-crypto v0.8.1
+   Compiling diffy v0.5.0
+   Compiling serde_arrays v0.1.0
+   Compiling xxhash-rust v0.8.15
+   Compiling diff v0.1.13
+   Compiling yansi v1.0.1
+   Compiling pretty_assertions v1.4.1
+   Compiling cairo-lang-defs v2.19.0-rc.3
+   Compiling stwo-cairo-common v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/common)
+   Compiling cairo-lang-formatter v2.19.0-rc.3
+   Compiling cairo-vm v3.2.0
+   Compiling cairo-lang-eq-solver v2.19.0-rc.3
+   Compiling cairo-lang-sierra-type-size v2.19.0-rc.3
+   Compiling indent v0.1.1
+   Compiling assert_matches v1.5.0
+   Compiling cairo-lang-plugins v2.19.0-rc.3
+   Compiling cairo-lang-test-utils v2.19.0-rc.3
+   Compiling cairo-lang-semantic v2.19.0-rc.3
+   Compiling cairo-lang-sierra-gas v2.19.0-rc.3
+   Compiling cairo-lang-sierra-ap-change v2.19.0-rc.3
+   Compiling cairo-lang-casm v2.19.0-rc.3
+   Compiling ark-serialize-derive v0.6.0
+   Compiling ark-std v0.6.0
+   Compiling ahash v0.8.12
+   Compiling ark-serialize v0.6.0
+   Compiling cairo-lang-sierra-to-casm v2.19.0-rc.3
+   Compiling educe v0.6.0
+   Compiling ark-ff-macros v0.6.0
+   Compiling ark-ff-asm v0.6.0
+   Compiling bytes v1.10.1
+   Compiling simdutf8 v0.1.5
+   Compiling faststr v0.2.32
+   Compiling ark-ff v0.6.0
+   Compiling cairo-lang-lowering v2.19.0-rc.3
+   Compiling circuits v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/circuits)
+   Compiling sonic-simd v0.1.2
+   Compiling sonic-number v0.1.0
+   Compiling pkg-config v0.3.32
+   Compiling bumpalo v3.19.0
+   Compiling sonic-rs v0.3.17
+   Compiling zstd-sys v2.0.16+zstd.1.5.7
+   Compiling circuits-stark-verifier v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/stark_verifier)
+   Compiling ark-poly v0.6.0
+   Compiling cairo-lang-sierra-generator v2.19.0-rc.3
+   Compiling cairo-lang-runnable-utils v2.19.0-rc.3
+   Compiling cairo-lang-project v2.19.0-rc.3
+   Compiling rand_core v0.10.1
+   Compiling libbz2-rs-sys v0.1.3
+   Compiling getrandom v0.4.2
+   Compiling cpufeatures v0.3.0
+   Compiling bzip2 v0.5.2
+   Compiling cairo-lang-compiler v2.19.0-rc.3
+   Compiling ark-ec v0.6.0
+   Compiling const_format_proc_macros v0.2.34
+   Compiling bincode v1.3.3
+   Compiling virtue v0.0.18
+   Compiling bincode_derive v2.0.1
+   Compiling cairo-air v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/cairo-air)
+   Compiling const_format v0.2.35
+   Compiling chacha20 v0.10.0
+   Compiling circuit-common v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/circuit_common)
+   Compiling cairo-lang-starknet-classes v2.19.0-rc.3
+   Compiling itertools v0.13.0
+   Compiling unty v0.0.4
+   Compiling zstd-safe v7.2.4
+   Compiling bincode v2.0.1
+   Compiling stwo-air-utils-derive v2.2.0 (https://github.com/starkware-libs/stwo?rev=489a0f3e#489a0f3e)
+   Compiling cairo-lang-starknet v2.19.0-rc.3
+   Compiling rand v0.10.1
+   Compiling ark-secp256k1 v0.6.0
+   Compiling ark-secp256r1 v0.6.0
+   Compiling sha2 v0.11.0
+   Compiling cairo-lang-executable-plugin v2.19.0-rc.3
+   Compiling memmap2 v0.9.10
+   Compiling thiserror v1.0.69
+   Compiling getrandom v0.3.4
+   Compiling rustix v1.1.2
+   Compiling stwo-cairo-adapter v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/adapter)
+   Compiling cairo-lang-executable v2.19.0-rc.3
+   Compiling cairo-lang-runner v2.19.0-rc.3
+   Compiling stwo-air-utils v2.2.0 (https://github.com/starkware-libs/stwo?rev=489a0f3e#489a0f3e)
+   Compiling circuit-verifier v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/circuit_verifier)
+   Compiling thiserror-impl-no-std v2.0.2
+   Compiling thiserror-impl v1.0.69
+   Compiling bitflags v2.10.0
+   Compiling linux-raw-sys v0.11.0
+   Compiling thiserror-no-std v2.0.2
+   Compiling zstd v0.13.3
+   Compiling stwo-cairo-prover v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/prover)
+   Compiling cairo-lang-execute-utils v2.19.0-rc.3
+   Compiling circuit-cairo-verifier v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/cairo_verifier)
+   Compiling circuit-serialize v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/circuit_serialize)
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.23.0
+   Compiling circuit-prover v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/circuit_prover)
+   Compiling cairo-program-runner-lib v1.2.2 (/home/broody/.cargo/git/checkouts/proving-utils-fe3a66dc6b32d5d3/3035dd0/crates/cairo-program-runner-lib)
+   Compiling privacy-circuit-verify v1.2.2 (/home/broody/.cargo/git/checkouts/proving-utils-fe3a66dc6b32d5d3/3035dd0/crates/privacy_circuit_verify)
+   Compiling privacy-prove v1.2.2 (/home/broody/.cargo/git/checkouts/proving-utils-fe3a66dc6b32d5d3/3035dd0/crates/privacy_prove)
+   Compiling templar-large-wrapper-capacity v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity)
+    Finished `release` profile [optimized] target(s) in 6m 16s

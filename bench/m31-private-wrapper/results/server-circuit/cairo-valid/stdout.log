@@ -1,0 +1,32 @@
+Running as unit: templar-server-circuit-cairo-valid-1790073743712338780.service; invocation ID: cddca508eb2749668a4bdecfef77be42
+{"status":"executing","message":"templar_server_hash_bridge"}
+{"program_output":"16395037\n4039736935\n3584290885\n2498661915\n1010425508\n4144414143\n973893265\n2643594634","resources":{"n_steps":5018523,"n_memory_holes":341779,"builtin_instance_counter":[["range_check_builtin",669669],["output_builtin",8]],"syscalls":[],"memory_segment_sizes":[["execution",4283944],["range_check",669669],["output",8]],"max_memory_address":5399079}}
+	Command being timed: "/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb --json --manifest-path /home/broody/development/templar/target/m31-private-wrapper/server-cairo/Scarb.toml execute --no-build -p templar_server_hash_bridge --arguments-file /home/broody/development/templar/bench/m31-private-wrapper/results/server-circuit/cairo-valid.json --print-program-output --print-resource-usage --output none"
+	User time (seconds): 1.29
+	System time (seconds): 0.97
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.28
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 818008
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 350656
+	Voluntary context switches: 46
+	Involuntary context switches: 240
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 16
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 2.286s
+CPU time consumed: 2.277s
+Memory peak: 1.4M
+Memory swap peak: 0B

@@ -1,0 +1,63 @@
+{
+  "scope": "public measurement harness context-binding repair only; no hiding or PROOF1 qualification",
+  "baseline_head": "0f5448bafe2885199482b8d5a512dc98745c5692",
+  "executor": "kimi-code/k3",
+  "session_id": "session_4fdcd331-dc53-4ee7-82ed-ea693c9dd8c4",
+  "source_hashes": {
+    "statement.rs": "ec9bdc993e3d0e6a527c546f313b6ce58ef306e94ae132731f817b97db3e4b59",
+    "lib.rs": "d1bd0f0eba9ba9f57a3dbab5ca5d1b0b630fbec05c6e398a7a37301022bb65e7"
+  },
+  "baseline_binary_sha256": "dd61333515aca444465ff076db83fd97f7006ea1e82bce268e6b9eb9b1a408b2",
+  "v2_binary_sha256": "e759dbd32e4694bb0925e0c7cbebaf945a7887389d6997783be894eb1912ff73",
+  "unit_tests_passed": 5,
+  "fresh_v2_verified": true,
+  "native_mutations_rejected": 72,
+  "omitted_padding_rejected": true,
+  "actual_v1_proof_rejected": true,
+  "prefix_mutation_suffix_checks": [
+    {
+      "version": 1,
+      "field": "chain",
+      "suffix_unchanged": true
+    },
+    {
+      "version": 1,
+      "field": "pool",
+      "suffix_unchanged": true
+    },
+    {
+      "version": 2,
+      "field": "chain",
+      "suffix_unchanged": true
+    },
+    {
+      "version": 2,
+      "field": "pool",
+      "suffix_unchanged": true
+    }
+  ],
+  "post_review_execution_conditions_met": true,
+  "artifact_sha256": {
+    "baseline-proof.bin": "0996b8d13a34ff894c75662aebca70c030f7220b7390a89fe16c091b374743f2",
+    "v2-proof.bin": "e959f70da168ae1499955373f4a70b5f620171e01c216955efa6b0506f2a1c73",
+    "fixture.json": "0a4b0600c204b41f03606efcd2d9d2d28071d3b1a641e0625adc508958637b59",
+    "negative-tests.json": "0c8c7390cc71cafe29225df1c7bde19695e013d2eccef2bfe5cb408cc0f16919",
+    "unit-tests.log": "aea02878db409cc9860902b1020029e2b971c9259b688792ec06650c41fbef39",
+    "verify-v2.log": "4825c38ba9e071bc3e19961e7c1bd0c1a2fcc575a5cff7e416d7f7c772597271",
+    "changed-chain.log": "a3d770856f31dd455bd2902c161ddb51120f3d583d72733479eb137ffe7fe327",
+    "changed-pool.log": "a3d770856f31dd455bd2902c161ddb51120f3d583d72733479eb137ffe7fe327",
+    "legacy-rejection.log": "a3d770856f31dd455bd2902c161ddb51120f3d583d72733479eb137ffe7fe327",
+    "pre-review.md": "6e7ead96abdb44ef5cfd6f7643ae7c40be209c85af70f4a711ea29e5d0c226bc",
+    "post-review.md": "de455cccc69e10ed2336b072b28cb645a4cdea057820a6c6abc2b6692eb8bd2b"
+  },
+  "raw_execution_reports": [
+    "target/context-binding/report.json",
+    "target/context-binding/postfix/report.json"
+  ],
+  "commands": {
+    "step1_tests": "CARGO_BUILD_JOBS=4 RAYON_NUM_THREADS=1 cargo +nightly-2026-01-15 test --release --locked --offline --manifest-path bench/m31-statement/client/Cargo.toml --lib -- --test-threads=1",
+    "step1_build": "CARGO_BUILD_JOBS=4 RAYON_NUM_THREADS=1 cargo +nightly-2026-01-15 build --release --locked --offline --manifest-path bench/m31-statement/client/Cargo.toml",
+    "step2_prove_verify": "RAYON_NUM_THREADS=1 ./postfix/prover fixtures/payment-2x32.json postfix/proof",
+    "step3_verify_tests": "RAYON_NUM_THREADS=1 ./postfix/prover --verify-tests postfix/proof/proof.bin postfix/negative-tests"
+  }
+}

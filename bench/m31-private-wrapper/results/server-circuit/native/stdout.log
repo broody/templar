@@ -1,0 +1,50 @@
+Running as unit: templar-server-circuit-native-1790073661661643213.service; invocation ID: 264a269ab21545a4a72221860b3edf3d
+
+thread 'main' (1589371) panicked at src/main.rs:83:5:
+assertion `left == right` failed
+  left: [(4555 + 46200i) + (0 + 0i)u, (43087 + 26766i) + (0 + 0i)u, (33011 + 2793i) + (0 + 0i)u, (39706 + 27021i) + (0 + 0i)u, (60313 + 1235i) + (0 + 0i)u, (43910 + 63463i) + (0 + 0i)u, (60790 + 54034i) + (0 + 0i)u, (25667 + 8348i) + (0 + 0i)u, (15509 + 32636i) + (0 + 0i)u, (2824 + 50326i) + (0 + 0i)u, (10956 + 6817i) + (0 + 0i)u, (34942 + 34432i) + (0 + 0i)u, (4457 + 25068i) + (0 + 0i)u, (41697 + 20778i) + (0 + 0i)u, (32085 + 25892i) + (0 + 0i)u, (14868 + 64867i) + (0 + 0i)u]
+ right: [(4554 + 46200i) + (0 + 0i)u, (43087 + 26766i) + (0 + 0i)u, (33011 + 2793i) + (0 + 0i)u, (39706 + 27021i) + (0 + 0i)u, (60313 + 1235i) + (0 + 0i)u, (43910 + 63463i) + (0 + 0i)u, (60790 + 54034i) + (0 + 0i)u, (25667 + 8348i) + (0 + 0i)u, (15509 + 32636i) + (0 + 0i)u, (2824 + 50326i) + (0 + 0i)u, (10956 + 6817i) + (0 + 0i)u, (34942 + 34432i) + (0 + 0i)u, (4457 + 25068i) + (0 + 0i)u, (41697 + 20778i) + (0 + 0i)u, (32085 + 25892i) + (0 + 0i)u, (14868 + 64867i) + (0 + 0i)u]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'main' (1589371) panicked at src/main.rs:109:5:
+assertion failed: channel.verify_pow_nonce(INTERACTION_POW_BITS, public.interaction_pow_nonce)
+
+thread 'main' (1589371) panicked at src/main.rs:77:5:
+assertion `left == right` failed
+  left: 0000000000000000000000000000000000000000000000000000000000000000
+ right: a354d9a642afe70f00d68afdf9f875c3af9f2a3fc72a6335854a62b6a8c25cdd
+
+thread 'main' (1589371) panicked at src/main.rs:81:5:
+assertion `left == right` failed
+  left: PcsConfig { pow_bits: 0, fri_config: FriConfig { log_blowup_factor: 2, log_last_layer_degree_bound: 0, n_queries: 35, fold_step: 4 }, lifting_log_size: Some(22) }
+ right: PcsConfig { pow_bits: 26, fri_config: FriConfig { log_blowup_factor: 2, log_last_layer_degree_bound: 0, n_queries: 35, fold_step: 4 }, lifting_log_size: Some(22) }
+{"blake_g_rows_padded":262144,"component_log_sizes":[15,15,16,4,18,16,20,8,14,18,16],"input_bytes":57046,"jobs":82,"native_negatives":["output","trace","topology","config"],"native_verify_seconds":0.002157333,"proof_felts":46596,"proving_seconds":6.752909284,"public_outputs":[[4554,46200,0,0],[43087,26766,0,0],[33011,2793,0,0],[39706,27021,0,0],[60313,1235,0,0],[43910,63463,0,0],[60790,54034,0,0],[25667,8348,0,0],[15509,32636,0,0],[2824,50326,0,0],[10956,6817,0,0],[34942,34432,0,0],[4457,25068,0,0],[41697,20778,0,0],[32085,25892,0,0],[14868,64867,0,0]],"qm31_ops_rows_padded":32768,"scope":"public hash batch with input/output bindings; no membership verification","total_seconds":7.4153732,"trace_log_size":20,"triple_xor_rows_padded":65536,"verification_output_u32_le":[16395037,4039736935,3584290885,2498661915,1010425508,4144414143,973893265,2643594634]}
+	Command being timed: "/home/broody/development/templar/target/direct-air/client-target/release/templar-server-hash-circuit /home/broody/development/templar/bench/m31-private-wrapper/results/server-circuit/jobs.json /home/broody/development/templar/bench/m31-private-wrapper/results/server-circuit/proof"
+	User time (seconds): 25.85
+	System time (seconds): 1.93
+	Percent of CPU this job got: 365%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:07.59
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3706128
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 1358469
+	Voluntary context switches: 1254
+	Involuntary context switches: 3755
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 2360
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 7.600s
+CPU time consumed: 27.797s
+Memory peak: 1.4M
+Memory swap peak: 0B

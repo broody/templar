@@ -1,0 +1,24 @@
+[
+  {
+    "name": "new-rejects-old",
+    "exit": 1,
+    "stderr": "Error: proof version\n",
+    "command": [
+      "/home/broody/development/templar/target/m31-private-blake/native/release/templar-private-membership",
+      "verify",
+      "/home/broody/development/templar/bench/m31-private-e2e/results/native/public.json",
+      "/home/broody/development/templar/bench/m31-private-e2e/results/native/proof-1.bin"
+    ]
+  },
+  {
+    "name": "old-rejects-new",
+    "exit": 1,
+    "stderr": "Error: proof version\n",
+    "command": [
+      "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+      "verify",
+      "/home/broody/development/templar/bench/m31-private-blake/results/native/public.json",
+      "/home/broody/development/templar/bench/m31-private-blake/results/native/proof-1.bin"
+    ]
+  }
+]

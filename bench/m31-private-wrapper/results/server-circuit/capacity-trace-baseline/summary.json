@@ -1,0 +1,21 @@
+{
+  "scope": "public captured OS AIR trace sizing only; no proof",
+  "command": [
+    "/home/broody/development/templar/target/m31-private-wrapper/capacity-build-original-v2/capacity",
+    "trace",
+    "/home/broody/development/templar/bench/m31-private-wrapper/results/bridge-capacity/os-capture/os.pie.zip",
+    "/home/broody/development/templar/bench/m31-private-wrapper/results/bridge-capacity/trace-baseline"
+  ],
+  "binary_sha256": "847b4d4018f07337061bee989e482f873400cdcccb7d2883700a6f7405307bcb",
+  "cap_gib": 32,
+  "threads": 4,
+  "cpu_affinity": "0 1 2 3",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "elapsed_seconds": 26.111675479012774,
+  "sampled_peak_rss_gib": 20.39748764038086,
+  "sampled_peak_cgroup_gib": 20.401309967041016,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "time_peak_rss_gib": 20.39748764038086
+}

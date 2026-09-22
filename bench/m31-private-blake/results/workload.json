@@ -1,0 +1,27 @@
+{
+  "format": "TMPZK002",
+  "digest_bytes": 32,
+  "salt_bytes": 96,
+  "proof_sha256": "3e17323f8f9516f141aa35981f17bb192b3e74b835deb9209aef764074633a7b",
+  "proof_bytes": 2044180,
+  "unique_queries": 118,
+  "trace_leaves": 233,
+  "uncached_counts": {
+    "claims": 1,
+    "small": 1739,
+    "base": 233,
+    "node": 21195
+  },
+  "cached_counts": {
+    "claims": 1,
+    "small": 1739,
+    "base": 233,
+    "node": 5812
+  },
+  "uncached_blake_compressions": 89315,
+  "cached_blake_compressions": 43166,
+  "candidate_cost_only": false,
+  "inspection_scope": "transcript/layout/authentication only; no AIR/FRI verification",
+  "candidate_prefix": "Templar-private-membership-BLAKE2S-v1",
+  "candidate_salts": {}
+}

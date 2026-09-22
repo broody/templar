@@ -1,6 +1,6 @@
 # Templar priorities
 
-Current tracker, updated 2026-09-21. This is the implementation backlog;
+Current tracker, updated 2026-09-22. This is the implementation backlog;
 [the specification](docs/push-payment-spec.md) and [ADRs](docs/adr/README.md)
 define the architecture. Keep this checklist current as work lands.
 
@@ -17,8 +17,9 @@ See [ordinary payments](bench/push-e2e/README.md),
 wrapping alongside portable allocation-lifetime and buffer-reuse improvements
 on the pinned PROOF1 pipeline. Browser/WASM proving is a strategic target, not
 a release requirement yet; preserve that path while qualifying native desktops.
-Record native-only workarounds separately. The server-wrapped design remains an
-experiment; the accepted local proving architecture is unchanged.
+Record native-only workarounds separately. The server-wrapped design is recorded
+in [Proposed ADR-0024](docs/adr/0024-compact-client-proofs-and-server-wrapping.md);
+the accepted local proving architecture is unchanged.
 
 - [ ] **1. Reduce desktop memory consumption.** Profile the prover's peak
   allocations and test changes to allocation lifetimes, trace construction, and
@@ -58,38 +59,104 @@ experiment; the accepted local proving architecture is unchanged.
   **Client-side ZK pathfinding 2026-09-22:** three tracks, all on this
   branch. [Client hiding](bench/client-hiding/measurement-plan.md): the C1
   construction spec (random valid rows, observation-inventory-derived B)
-  passed Math Review as **conditional-go** with the L2 two-stage lemma as
-  the blocking condition ([review](bench/client-hiding/review.md)).
+  received **conditional-go for investigation infrastructure only**; its
+  hiding lemmas remain unproved ([review](bench/client-hiding/review.md)).
   [Compact recursion](bench/compact-recursion/README.md): the mini-verifier
-  route (verify a custom-AIR proof in-circuit, blind with the existing
-  helper) measured an M0 floor of ~1.1 s / ~2.9 GiB at trace log 20;
-  corrected full estimate ~4.3–4.6 GiB; conditional-go for M2 with a
+  route measured an **unblinded** toy M0 floor of ~1.1 s / ~2.9 GiB at trace
+  log 20; corrected full estimate ~4.3–4.6 GiB; conditional-go for M2 with a
   sample-structure extension blocking the adapter
-  ([review](bench/compact-recursion/review.md)).
-  [M31 statement](bench/m31-statement/inventory.md): the full-M31 payment
-  statement (Plonky3 width-24 Poseidon2, byte-identical vendored AIR)
-  measured **~11 MiB / 0.11 s** for the payment shape, pad-cost curve
-  measured, the felt-binding residual resolved to ~zero by a word-tuple
-  facts convention, and the rank probe measured the equalization target at
-  **matrix rank 68** (24/24 statement pairs) with `dim span(M) ≥ 128` —
-  iterative solving over F_p falsified (0/8); the equalization target's
-  matrix rank is **68 (24/24 pairs)**, `dim span(M) ≥ 128`; and the
-  decisive structural facts: the expansion span **saturates at 666/1,172
-  dims** and the delta space is **fully contained in it** (zero-residual,
-  both pairs tested) — no structural exposure. Primary hiding fork is now
-  **computational**: pads as random rows at the log-10 layout (892 slots,
-  within the existing cap), noise dimension 21,408 vs target family 6,528
-  (3.3× margin), Poseidon2-M31 PRF argument — client-with-hiding estimate
-  **~50 MiB**. Remaining gate: the PRF/entropy lemma spec, then Math
-  Review. All measurement-grade; no format commitment; the accepted
-  local-proving architecture is unchanged.
+  ([review](bench/compact-recursion/review.md)). The existing
+  `add_zk_blinding` helper is the planned blinding route but was **not**
+  called by the measured M0 ([inventory](bench/m31-statement/masking-api-inventory.md)).
+  This is a generic toy recursion result; real M31-to-unchanged-PROOF1
+  compatibility remains unverified.
+  [M31 statement](bench/m31-statement/inventory.md): the public two-input
+  hash/membership fixture measured **~11 MiB / 0.11 s**; the 892-pad workload
+  measured roughly 48 MiB. The fixture has no output or conservation
+  constraints, and its verifier receives the private data in clear. These
+  figures do not measure a complete private payment. Rank/containment probes
+  do not establish hiding or a sufficient pad budget. Gamma introduces a new
+  pad-feasibility assumption; it is not qualified by a standard PRF argument.
+  The independent [hiding review](bench/m31-statement/hiding-review.md) is
+  complete: **NO-GO** for gamma as client privacy — the fixed-`x` simulator,
+  complete-transcript argument and private relation semantics are absent; no
+  practical attack claimed. The [private statement contract](bench/m31-statement/privacy-contract.md)
+  and [server observation inventory](bench/m31-statement/server-observation-inventory.md)
+  define the missing private relation and complete server boundary.
+  The [context-binding repair](bench/m31-statement/results/context-binding/README.md)
+  passed scoped review, five unit tests, a fresh V2 proof, 72 mutation
+  rejections and rejection of the actual preserved V1 proof.
+  **Polynomial masking M0:** the toy vector-product
+  [mapping](bench/m31-statement/polynomial-masking-spec.md) and
+  [source](bench/m31-statement/polynomial-masking-algebra-review.md) passed
+  scoped mathematical review. The
+  [exact-algebra diagnostic](bench/m31-statement/results/polynomial-masking-algebra/README.md) passes four
+  deterministic fixtures: trace preservation, degree/FFT identities,
+  same-public-input coupling, witness-free algebra-view simulation, pinned
+  PCS normalization and five negative assertions per fixture. This is not
+  FRI execution, a compiled private proof or a memory measurement.
+  **Private membership milestone passed:** the
+  [reviewed custom M31 proof](bench/m31-private-e2e/README.md) proves a private
+  leaf preimage and depth-32 path. Three native proofs take **1.17–1.20 s /
+  63–64 MiB peak RSS**; three Chrome WASM proofs take **1.89–2.12 s /
+  79.94 MiB linear-memory high water**, stable across repeats. All six pass
+  a separate native verifier given only public input and proof; browser
+  verification also accepts a native artifact. Seven unit tests, seven
+  external native negatives and twelve browser negatives pass. Proofs are
+  roughly **3.4 MiB**. Research protocol/source review supports the stated
+  96-bit classical RO-work target under its explicit assumptions; this is
+  not a production audit or a full payment. Exact evidence is in the
+  [results](bench/m31-private-e2e/results/README.md).
+  **Independent review checkpoint complete:** the fresh
+  [math challenge](bench/m31-private-e2e/independent-math-review.md) and
+  [bounded PCS review](bench/m31-private-e2e/independent-pcs-review.md) found
+  no concrete native acceptance bypass or single-proof witness disclosure.
+  The math review corrects the weighted-theorem citation and qualifies the
+  numerical claim as classical programmable-ROM knowledge error; an unrestricted
+  adaptive multi-proof service theorem remains open.
+  **Blake wrapper pathfinding:** the separately reviewed
+  [Blake client](bench/m31-private-blake/README.md) preserves the membership AIR
+  and M31 tree. Native proofs use **52.7–54.5 MiB / 0.98–1.03 s** and are
+  **2.04–2.08 MB**; three Chrome WASM runs use **63.25 MiB** linear-memory
+  high water. Native/browser cross-checks and version/mutation controls pass.
+  A representative [954-compression Blake batch](bench/m31-private-wrapper/README.md)
+  produces genuine unchanged PROOF1, accepted by the original verifier with
+  exact facts, in **28.22 s / 29.05 GiB server RSS**. This proves hash work,
+  not complete membership verification. Full cached authentication still
+  exceeds the preserved direct-Cairo trace capacity.
+  **Server circuit capacity checkpoint:** a
+  [public hash circuit](bench/m31-private-wrapper/server-circuit/README.md) now
+  proves in **6.75 s / 3.53 GiB** and verifies natively and in Cairo; seven Cairo
+  mutation controls pass. The final unchanged PROOF1 attempt fails
+  `Not enough twiddles!` after **7,301,958 OS steps / 34.35 GiB** under a64GiB
+  cap, with no OOM. No PROOF1 was produced. Profile/reduce the Cairo bridge or
+  establish supported larger final-wrapper capacity before porting the full
+  client verifier; keep the working private client unchanged.
+  **Capacity experiments completed:** [checked M31 inversion](bench/m31-private-wrapper/bridge-capacity/README.md)
+  lowers bridge steps by **15.37%** and OS steps by **15.01%**, with all seven
+  rejection controls passing. Actual padded Blake work still needs log22.
+  The enlarged configuration builds, but proving is **OOM-killed at96GiB**;
+  no new outer proof. Next measure proof-calldata/OS overhead reductions or
+  prover allocation changes before another enlarged attempt.
+  **Next architecture gate:** implement and measure an actual server verifier
+  route to unchanged PROOF1. The existing recursive adapter is
+  [not directly compatible](bench/m31-private-e2e/wrapper-compatibility.md)
+  with this proof format. Its wider salted hash and different transcript,
+  samples and composition need new verifier code; native acceptance does not
+  close that gate.
+  **Remaining client gates:** R0 payment constraints and any required private
+  range/lookup machinery, then complete ordinary 2-in/2-out native and WASM
+  client measurements.
+  No format migration or production change is approved by these
+  experiments; the accepted local-proving architecture is unchanged.
   **Compact-client pathfinding:** the [synthetic Cairo bridge](bench/direct-air/README.md)
   accepts two saved Rust circuit proofs, rejects nine altered inputs, and passes
   four serialization/transcript tests. VM verification takes 2.03–2.12 seconds
   and 0.77–0.78 GiB RSS; this is not PROOF1 wrapping time. The upstream circuit
   baseline fails a 2 GiB client cap and completes at 2.61 GiB under an 8 GiB cap.
-  Fixed lookup tables still dominate this tiny relation. Client privacy is not
-  qualified; further disclosure diagnostics are deferred at the user's request.
+  Fixed lookup tables still dominate this tiny relation. That baseline's
+  client privacy is not qualified; its further disclosure diagnostics are
+  deferred at the user's request.
   **Poseidon/membership follow-up:** the [public two-path benchmark](bench/poseidon-membership/README.md)
   proves the real felt252 hash at depth 32 without Cairo CPU/OS execution.
   Existing bounded storage cuts RSS from 4.28 to 1.97 GiB; three fresh runs pass

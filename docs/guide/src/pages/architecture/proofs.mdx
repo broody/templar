@@ -77,10 +77,12 @@ The current implementation still materializes one complete commitment tree at
 a time. Proof security parameters and verification remain unchanged; desktop
 qualification is still in progress.
 
-Browser proving through WebAssembly is a longer-term target, not a current
-capability or release requirement. Reaching it requires a substantially smaller
-working set and a browser-compatible execution core. Native memory measurements
-alone do not establish that a proof will fit or run well in a browser.
+Browser proving of complete payments remains a qualification target rather than
+a release requirement. A separate compact M31 membership proof now runs in a
+WASM worker, as recorded in [Proposed ADR-0024's status](/status#proposed-compact-client-architecture).
+That proposal explores server-side PROOF1 wrapping; the local payment pipeline
+described here remains the accepted architecture. Full payment constraints,
+actual wrapping and consumer-device qualification remain open.
 
 ## Verification has three layers
 

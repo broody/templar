@@ -2266,6 +2266,7 @@ dependencies = [
  "cairo-air",
  "num-bigint",
  "num-traits",
+ "rand 0.8.8",
  "rayon",
  "serde",
  "serde_json",

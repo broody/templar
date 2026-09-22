@@ -1,0 +1,18 @@
+warning: patch `stwo-cairo-utils v1.2.2 (/home/broody/development/templar/target/direct-air/stwo-cairo/stwo_cairo_prover/crates/utils)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling templar-server-hash-circuit v0.1.0 (/home/broody/development/templar/bench/m31-private-wrapper/server-circuit)
+    Finished `release` profile [optimized] target(s) in 0.99s
+     Running unittests src/main.rs (target/direct-air/client-target/release/deps/templar_server_hash_circuit-29b31c4380ba2f0b)
+
+running 5 tests
+test bridge_serialize::tests::full_config_transcript_fixture ... ok
+test bridge_serialize::tests::full_config_wire_schema ... ok
+test tests::noncanonical_padding_is_constrained ... ok
+test tests::canonical_packed_words_and_value_independent_topology ... ok
+test tests::full_digest_boundaries_and_topology ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

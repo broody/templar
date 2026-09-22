@@ -8,12 +8,14 @@
 //! constants.rs sha256 46ea8e2ffb0149af567fd09622d3ddfc73ce08f6c7f3f64ef3960f929ce064f3).
 use crate::m31::{self, Digest, Request};
 use anyhow::{Result, ensure};
+use num_bigint::BigUint;
 use serde::{Deserialize, Serialize};
 use starknet_types_core::felt::Felt;
 use stwo::core::channel::Channel;
 
 pub const DOMAIN_WORD: u32 = 0x4d335053; // "M31S"
-pub const VERSION: u32 = 1;
+// V2 repairs context encoding. V1 proof artifacts are not accepted via a fallback.
+pub const VERSION: u32 = 2;
 pub const KIND_LEAF: u32 = 1;
 pub const KIND_NULLIFIER: u32 = 2;
 pub const KIND_NODE: u32 = 3;
@@ -24,7 +26,7 @@ pub const REQUESTS: usize = 2 + 2 + PATHS * DEPTH;
 
 pub fn felt(s: &str) -> Result<Felt> {
     let f = Felt::from_hex(s).map_err(|_| anyhow::anyhow!("bad felt literal {s}"))?;
-    ensure!(f.to_bytes_le()[31] & 0x80 == 0, "felt at or above 2^251");
+    ensure!(hex(f) == s, "noncanonical felt252");
     Ok(f)
 }
 pub fn hex(f: Felt) -> String {
@@ -32,21 +34,12 @@ pub fn hex(f: Felt) -> String {
 }
 /// Little-endian 28-bit words (252 bits), matching the append transcript convention.
 pub fn felt_words(f: Felt) -> [u32; 9] {
-    let be = f.to_bytes_le();
-    let mut words = [0u32; 9];
-    for (i, w) in words.iter_mut().enumerate() {
-        let mut v = 0u32;
-        for b in 0..4u32 {
-            let idx = i as u32 * 4 + b;
-            if idx < 31 {
-                v |= (be[idx as usize] as u32) << (8 * b);
-            } else if idx == 31 {
-                v |= ((be[31] as u32) & 0x0f) << 24;
-            }
-        }
-        *w = v & ((1 << 28) - 1);
-    }
-    words
+    let bytes = f.to_bytes_le();
+    std::array::from_fn(|i| {
+        (0..28).fold(0, |v, b| {
+            v | ((((bytes[(i * 28 + b) / 8] >> ((i * 28 + b) % 8)) & 1) as u32) << b)
+        })
+    })
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -104,6 +97,13 @@ impl PaymentStatement {
     pub fn validate(&self) -> Result<PublicData> {
         let chain = felt(&self.chain_id)?;
         let pool = felt(&self.pool)?;
+        ensure!(chain != Felt::ZERO, "zero chain ID");
+        let pool_number = BigUint::from_bytes_le(&pool.to_bytes_le());
+        ensure!(
+            pool_number > BigUint::from(0u32)
+                && pool_number < (BigUint::from(1u32) << 251) - BigUint::from(256u32),
+            "pool address bounds"
+        );
         m31::canonical(&self.root)?;
         for p in 0..PATHS {
             m31::canonical(&self.nullifiers[p])?;
@@ -243,4 +243,82 @@ pub fn synthetic(chain: &str, pool: &str, seed: u64) -> Result<PaymentStatement>
         pad_seed: 0,
         pad_count: 0,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn assert_encoding_round_trip(value: Felt) {
+        let words = felt_words(value);
+        assert!(words.iter().all(|&word| word < (1 << 28)));
+        // Independent integer reconstruction, not the encoder's bit extraction.
+        let decoded = words.iter().enumerate().fold(BigUint::from(0u32), |sum, (i, &word)| {
+            sum + (BigUint::from(word) << (28 * i))
+        });
+        assert_eq!(decoded, BigUint::from_bytes_le(&value.to_bytes_le()));
+    }
+
+    #[test]
+    fn context_encoding_preserves_every_felt_bit() {
+        for bit in 0..252 {
+            let mut bytes = [0u8; 32];
+            bytes[bit / 8] = 1 << (bit % 8);
+            assert_encoding_round_trip(Felt::from_bytes_le(&bytes));
+        }
+        for value in [Felt::ZERO, Felt::ONE, Felt::MAX] {
+            assert_encoding_round_trip(value);
+        }
+        // Exercise carries across every radix boundary below the field maximum.
+        for bit in (28..252).step_by(28) {
+            let mut bytes = [0u8; 32];
+            bytes[bit / 8] = 1 << (bit % 8);
+            let power = Felt::from_bytes_le(&bytes);
+            for value in [power - Felt::ONE, power, power + Felt::ONE] {
+                assert_encoding_round_trip(value);
+            }
+        }
+        let mut state = 0x5eed_u64;
+        for _ in 0..128 {
+            let mut bytes = [0u8; 32];
+            for byte in &mut bytes {
+                state ^= state << 13;
+                state ^= state >> 7;
+                state ^= state << 17;
+                *byte = state as u8;
+            }
+            assert_encoding_round_trip(Felt::from_bytes_le(&bytes));
+        }
+    }
+
+    #[test]
+    fn canonical_context_parser_rejects_aliases_and_field_overflow() {
+        for value in [Felt::ZERO, Felt::ONE, Felt::MAX, Felt::from(10u32)] {
+            assert_eq!(felt(&hex(value)).unwrap(), value);
+        }
+        for text in ["", "1", "0x", "0x00", "0x01", "0X1", "0xA", " 0x1", "0x1 "] {
+            assert!(felt(text).is_err(), "accepted alias {text:?}");
+        }
+        let prime = BigUint::from_bytes_le(&Felt::MAX.to_bytes_le()) + BigUint::from(1u32);
+        for value in [prime.clone(), prime + BigUint::from(1u32), BigUint::from(1u32) << 256] {
+            assert!(felt(&format!("0x{value:x}")).is_err());
+        }
+    }
+
+    #[test]
+    fn chain_and_pool_have_distinct_numeric_bounds() {
+        let mut s = synthetic("0x1", "0x1", 1).unwrap();
+        s.chain_id = hex(Felt::MAX);
+        assert!(s.validate().is_ok(), "chain IDs may use the full felt domain");
+        s.chain_id = "0x0".into();
+        assert!(s.validate().is_err());
+        s.chain_id = "0x1".into();
+        let limit = (BigUint::from(1u32) << 251) - BigUint::from(256u32);
+        s.pool = format!("0x{:x}", &limit - BigUint::from(1u32));
+        assert!(s.validate().is_ok());
+        for value in [BigUint::from(0u32), limit, BigUint::from(1u32) << 251] {
+            s.pool = format!("0x{value:x}");
+            assert!(s.validate().is_err(), "accepted invalid pool {}", s.pool);
+        }
+    }
 }

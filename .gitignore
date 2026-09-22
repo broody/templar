@@ -8,6 +8,8 @@ dist/
 .vocs/
 .waku/
 *.tsbuildinfo
+__pycache__/
+*.pyc
 
 # Local environment / secrets
 .env

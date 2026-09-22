@@ -1,0 +1,60 @@
+{
+  "command": [
+    "cargo",
+    "+nightly-2026-01-15",
+    "build",
+    "--release",
+    "--lib",
+    "--locked",
+    "--offline",
+    "--target",
+    "wasm32-unknown-unknown",
+    "--manifest-path",
+    "bench/m31-private-e2e/client/Cargo.toml"
+  ],
+  "environment": {
+    "RUSTUP_HOME": "/tmp/templar-stwo-privacy-dtgn6e8l/rustup",
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_TARGET_DIR": "/home/broody/development/templar/target/m31-private-e2e/wasm-target",
+    "RUSTFLAGS": "-C target-feature=+simd128 -C link-arg=-zstack-size=8388608 -C link-arg=--max-memory=2147483648"
+  },
+  "build_exit": 0,
+  "bindgen_command": [
+    "target/wasm-membership/tools/bin/wasm-bindgen",
+    "--target",
+    "web",
+    "--out-dir",
+    "target/m31-private-e2e/pkg",
+    "--out-name",
+    "membership",
+    "/home/broody/development/templar/target/m31-private-e2e/wasm-target/wasm32-unknown-unknown/release/templar_private_membership.wasm"
+  ],
+  "bindgen_exit": 0,
+  "artifacts": [
+    {
+      "path": "target/m31-private-e2e/wasm-target/wasm32-unknown-unknown/release/templar_private_membership.wasm",
+      "bytes": 918558,
+      "sha256": "e2c7238b16a7a4bc1750e8baebe0f5f591d513070cb15d7cd596d0e935e77805"
+    },
+    {
+      "path": "target/m31-private-e2e/pkg/membership.d.ts",
+      "bytes": 1946,
+      "sha256": "bc692c8a63076ac2c46fb56446d41cc92a70e7579bf83252930fccc33b8cab3b"
+    },
+    {
+      "path": "target/m31-private-e2e/pkg/membership.js",
+      "bytes": 12382,
+      "sha256": "9cc12b1f062a06ab38ca503d077e5a9c9905b4869b2347d65ca3620417642ea4"
+    },
+    {
+      "path": "target/m31-private-e2e/pkg/membership_bg.wasm",
+      "bytes": 465929,
+      "sha256": "4648ff4c4167825b2aefd18812d9239a1aaf5e27283b55ddf104d534077c0d66"
+    },
+    {
+      "path": "target/m31-private-e2e/pkg/membership_bg.wasm.d.ts",
+      "bytes": 789,
+      "sha256": "c0ddb91cf9d78a228d81145ed67fa087cb06f738115070b1f12464ad1e32d51b"
+    }
+  ]
+}

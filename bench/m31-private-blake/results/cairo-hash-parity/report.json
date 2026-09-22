@@ -1,0 +1,1104 @@
+{
+  "status": "passed",
+  "scope": "exact unkeyed Blake2s-256 component, not private proof verification",
+  "positive_cases": [
+    {
+      "name": "abc-rfc7693",
+      "bytes": 3,
+      "compressions": 1,
+      "digest": "508c5e8c327c14e2e1a72ba34eeb452f37458b209ed63a294d999b4c86675982",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 465,
+        "n_memory_holes": 3,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            16
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            366
+          ],
+          [
+            "range_check",
+            16
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 1252
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/abc-rfc7693.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "boundary-0",
+      "bytes": 0,
+      "compressions": 1,
+      "digest": "69217a3079908094e11121d042354a7c1f55b6482ca1a51e1b250dfd1ed0eef9",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 427,
+        "n_memory_holes": 3,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            12
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            340
+          ],
+          [
+            "range_check",
+            12
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 1226
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/boundary-0.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "boundary-1",
+      "bytes": 1,
+      "compressions": 1,
+      "digest": "b480c25c1e06eea9e9c3e36754715cf0958e4d14b22a8c2a7bc34ebf75208602",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 463,
+        "n_memory_holes": 4,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            16
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            366
+          ],
+          [
+            "range_check",
+            16
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 1252
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/boundary-1.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "boundary-63",
+      "bytes": 63,
+      "compressions": 1,
+      "digest": "8e620874a34c397ba45a8d85a36ce1319f7defcd13caf725ea28ab8150aa34cb",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 720,
+        "n_memory_holes": 3,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            46
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            546
+          ],
+          [
+            "range_check",
+            46
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 1480
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/boundary-63.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "boundary-64",
+      "bytes": 64,
+      "compressions": 1,
+      "digest": "72babd9b6b297820059c4e1f36774a17c3d572994830dcd7c04ea1b8595652c3",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 699,
+        "n_memory_holes": 3,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            44
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            532
+          ],
+          [
+            "range_check",
+            44
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 1466
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/boundary-64.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "boundary-65",
+      "bytes": 65,
+      "compressions": 2,
+      "digest": "a9e42d20d189d752836f345c771255ce078cdd972fc69a98b8fe77779640cea7",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 759,
+        "n_memory_holes": 4,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            51
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            578
+          ],
+          [
+            "range_check",
+            51
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 1512
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/boundary-65.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "boundary-127",
+      "bytes": 127,
+      "compressions": 2,
+      "digest": "fbc56a9c533471c7a48c704af3996236bbb30d955068edeb348b75fddea16113",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 1016,
+        "n_memory_holes": 3,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            81
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            758
+          ],
+          [
+            "range_check",
+            81
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 1756
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/boundary-127.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "boundary-128",
+      "bytes": 128,
+      "compressions": 2,
+      "digest": "7afa731ebe81721b8684274914e2a615e95e533ba38be49f48fca32417560381",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 995,
+        "n_memory_holes": 3,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            79
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            744
+          ],
+          [
+            "range_check",
+            79
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 1742
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/boundary-128.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "boundary-129",
+      "bytes": 129,
+      "compressions": 3,
+      "digest": "b1b4311e151cc49fb187cb50ed67a55a1df2278bc92e3e19bc8c8551d0abc2d9",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 1059,
+        "n_memory_holes": 4,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            87
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            793
+          ],
+          [
+            "range_check",
+            87
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 1791
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/boundary-129.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "original-frame-node",
+      "bytes": 161,
+      "compressions": 3,
+      "digest": "1eb112cee03644ec3fa5c1624e3361fbd01caaf0fa9fbdcebadf68390d9194c7",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 1195,
+        "n_memory_holes": 4,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            103
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            889
+          ],
+          [
+            "range_check",
+            103
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 1887
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/original-frame-node.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "candidate-frame-node",
+      "bytes": 161,
+      "compressions": 3,
+      "digest": "8e4e3a31030665213c037b3dffa82dbf62c5d000f68812d08854294b34b6de62",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 1195,
+        "n_memory_holes": 4,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            103
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            889
+          ],
+          [
+            "range_check",
+            103
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 1887
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/candidate-frame-node.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "original-frame-small",
+      "bytes": 213,
+      "compressions": 4,
+      "digest": "ab62b635481f6c63cf9d32f8124423a22d2fe5d405a848a607e6b52d042196a8",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 1444,
+        "n_memory_holes": 4,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            133
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            1068
+          ],
+          [
+            "range_check",
+            133
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 2194
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/original-frame-small.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "candidate-frame-small",
+      "bytes": 213,
+      "compressions": 4,
+      "digest": "ab62b635481f6c63cf9d32f8124423a22d2fe5d405a848a607e6b52d042196a8",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 1444,
+        "n_memory_holes": 4,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            133
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            1068
+          ],
+          [
+            "range_check",
+            133
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 2194
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/candidate-frame-small.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "original-frame-base",
+      "bytes": 4961,
+      "compressions": 78,
+      "digest": "0642f4f504badf388be37de5dd984b66b088adbca67f5a98f440486cb94e8efb",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 23695,
+        "n_memory_holes": 4,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            2803
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            17014
+          ],
+          [
+            "range_check",
+            2803
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 21980
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/original-frame-base.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "candidate-frame-base",
+      "bytes": 4961,
+      "compressions": 78,
+      "digest": "0642f4f504badf388be37de5dd984b66b088adbca67f5a98f440486cb94e8efb",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 23695,
+        "n_memory_holes": 4,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            2803
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            17014
+          ],
+          [
+            "range_check",
+            2803
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 21980
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/candidate-frame-base.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "original-frame-claims",
+      "bytes": 38373,
+      "compressions": 600,
+      "digest": "66878ea43c8847f0ac20e32badcaf6de8cc39518d5fee42ef057908aa1b2cdef",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 180312,
+        "n_memory_holes": 4,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            21597
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            129256
+          ],
+          [
+            "range_check",
+            21597
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 162894
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/original-frame-claims.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "candidate-frame-claims",
+      "bytes": 38373,
+      "compressions": 600,
+      "digest": "66878ea43c8847f0ac20e32badcaf6de8cc39518d5fee42ef057908aa1b2cdef",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 180312,
+        "n_memory_holes": 4,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            21597
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            129256
+          ],
+          [
+            "range_check",
+            21597
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 162894
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/candidate-frame-claims.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "actual-circuit",
+      "bytes": 43503,
+      "compressions": 680,
+      "digest": "e0848f7dcf23c7a9532e3da5eacd32e9cb20880453c192995753d73080010345",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 204348,
+        "n_memory_holes": 3,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            24481
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            146480
+          ],
+          [
+            "range_check",
+            24481
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 180118
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/actual-circuit.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "actual-public",
+      "bytes": 257,
+      "compressions": 5,
+      "digest": "73355b3db6d150cf9723d23ecd0636657012ce37f7957ffc27e7227e65f6fe60",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 1659,
+        "n_memory_holes": 4,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            159
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            1223
+          ],
+          [
+            "range_check",
+            159
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 2349
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/actual-public.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "actual-state",
+      "bytes": 150,
+      "compressions": 3,
+      "digest": "89f7344c33a1a248e5cc90c0f291687c298122ae382465b78f021a48f9f5bdb9",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 1146,
+        "n_memory_holes": 3,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            97
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            853
+          ],
+          [
+            "range_check",
+            97
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 1851
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/actual-state.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    },
+    {
+      "name": "actual-coins-block14",
+      "bytes": 320,
+      "compressions": 5,
+      "digest": "8d4d4bd4c3836e5821dc968701f0e9ebf80669315873c87c1764293b18f6324e",
+      "all_256_bits_match": true,
+      "resources": {
+        "n_steps": 1895,
+        "n_memory_holes": 3,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            187
+          ],
+          [
+            "output_builtin",
+            9
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            1389
+          ],
+          [
+            "range_check",
+            187
+          ],
+          [
+            "output",
+            9
+          ]
+        ],
+        "max_memory_address": 2515
+      },
+      "command": [
+        "scarb",
+        "--json",
+        "--manifest-path",
+        "/home/broody/development/templar/bench/m31-private-wrapper/blake/Scarb.toml",
+        "execute",
+        "--no-build",
+        "--arguments-file",
+        "/home/broody/development/templar/bench/m31-private-blake/results/cairo-hash-parity/actual-coins-block14.arguments.json",
+        "--print-program-output",
+        "--print-resource-usage",
+        "--output",
+        "none"
+      ]
+    }
+  ],
+  "negative_cases": 4,
+  "workload": {
+    "format": "TMPZK002",
+    "digest_bytes": 32,
+    "salt_bytes": 96,
+    "proof_sha256": "3e17323f8f9516f141aa35981f17bb192b3e74b835deb9209aef764074633a7b",
+    "proof_bytes": 2044180,
+    "unique_queries": 118,
+    "trace_leaves": 233,
+    "uncached_counts": {
+      "claims": 1,
+      "small": 1739,
+      "base": 233,
+      "node": 21195
+    },
+    "cached_counts": {
+      "claims": 1,
+      "small": 1739,
+      "base": 233,
+      "node": 5812
+    },
+    "uncached_shake_permutations": 54772,
+    "cached_shake_permutations": 24006,
+    "uncached_blake_compressions": 89315,
+    "cached_blake_compressions": 43166
+  },
+  "source_sha256": "5aa2d88b8f7e417a5b4778dc96456a8214f8e08620cd8fbdd9eca0d10533a817"
+}

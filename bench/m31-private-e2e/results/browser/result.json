@@ -1,0 +1,64 @@
+{
+  "started_utc": "2026-09-22T08:07:58.384Z",
+  "repeat": 3,
+  "scope": "Private membership research; synthetic witness; no payment or PROOF1 qualification",
+  "browser_version": "153.0.8010.47",
+  "report": {
+    "events": [
+      {
+        "type": "ready",
+        "native_proof_verified": true,
+        "linear_memory_bytes": 14155776
+      },
+      {
+        "type": "run",
+        "run": 1,
+        "prove_ms": 2119.8400000035763,
+        "verify_ms": 192.9399999976158,
+        "memory_before_bytes": 14155776,
+        "memory_after_prove_bytes": 83820544,
+        "memory_after_checks_bytes": 83820544,
+        "proof_bytes": 3593832,
+        "proof_sha256": "8e19ae45e2581b742cd75e42a75014cb7bf65d4f39a214fb00b8745b99aec987",
+        "accepted": true,
+        "negative_rejections": 4
+      },
+      {
+        "type": "run",
+        "run": 2,
+        "prove_ms": 1888.8149999976158,
+        "verify_ms": 187.34000000357628,
+        "memory_before_bytes": 83820544,
+        "memory_after_prove_bytes": 83820544,
+        "memory_after_checks_bytes": 83820544,
+        "proof_bytes": 3595216,
+        "proof_sha256": "8d1e6f39379691a76a3b8f8b3f609c5f46c4ebc51cb63bc073cce7a754d9faa9",
+        "accepted": true,
+        "negative_rejections": 4
+      },
+      {
+        "type": "run",
+        "run": 3,
+        "prove_ms": 1895.669999986887,
+        "verify_ms": 185.14500001072884,
+        "memory_before_bytes": 83820544,
+        "memory_after_prove_bytes": 83820544,
+        "memory_after_checks_bytes": 83820544,
+        "proof_bytes": 3629688,
+        "proof_sha256": "66e836199968fd4d9bcf860d433cbdcd061558a0131b75135c97c6e00ae3d0c4",
+        "accepted": true,
+        "negative_rejections": 4
+      },
+      {
+        "type": "complete",
+        "linear_memory_high_water_bytes": 83820544
+      }
+    ],
+    "maxHeartbeatMs": 100.1550000011921
+  },
+  "status": "passed",
+  "server_error": null,
+  "completed_utc": "2026-09-22T08:08:08.069Z",
+  "sampled_peak_browser_rss_bytes": 1154539520,
+  "sampled_peak_browser_pss_bytes": 489152512
+}

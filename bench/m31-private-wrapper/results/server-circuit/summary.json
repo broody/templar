@@ -1,0 +1,31 @@
+{
+  "date": "2026-09-22",
+  "scope": "public hash-workload server circuit and Cairo bridge capacity; no complete private-membership verifier",
+  "client_unchanged": true,
+  "native": {
+    "proof_seconds": 6.752909284,
+    "verify_seconds": 0.002157333,
+    "peak_rss_gib": 3.5344390869140625,
+    "trace_log_size": 20,
+    "proof_felts": 46596,
+    "negative_controls": 4
+  },
+  "cairo": {
+    "n_steps": 5018523,
+    "elapsed_seconds": 2.4950690279947594,
+    "peak_rss_gib": 0.7801132202148438,
+    "negative_controls": 7,
+    "exact_binding_matched": true
+  },
+  "outer": {
+    "os_steps": 7301958,
+    "os_seconds": 4.571,
+    "peak_rss_gib": 34.35340881347656,
+    "memory_cap_gib": 64,
+    "swap_peak_bytes": 0,
+    "error": "Not enough twiddles!",
+    "proof1_produced": false,
+    "preserved_verifier_executed": false
+  },
+  "decision": "Native circuit and Cairo compatibility pass. Preserved PROOF1 capacity fails. Resolve bridge/final-wrapper capacity before porting all membership/AIR/FRI checks."
+}

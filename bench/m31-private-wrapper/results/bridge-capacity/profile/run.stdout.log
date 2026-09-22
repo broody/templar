@@ -1,0 +1,23 @@
+   Executing templar_server_hash_bridge
+Program output:
+16395037
+4039736935
+3584290885
+2498661915
+1010425508
+4144414143
+973893265
+2643594634
+Resources:
+	steps: 5,018,523
+	max memory address: 5,399,079
+	memory holes: 341,779
+	builtins:
+		range_check_builtin: 669,669
+		output_builtin: 8
+	memory segments:
+		execution: 4,283,944
+		range_check: 669,669
+		output: 8
+Saving output to: target/execute/templar_server_hash_bridge/execution9
+error: Failed to write profiler trace data into a file — missing sierra code for target `templar_server_hash_bridge`. Set `sierra = true` under your `[executable]` target in the config and try again.

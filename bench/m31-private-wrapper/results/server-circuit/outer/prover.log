@@ -1,0 +1,521 @@
+Running as unit: templar-server-outer-1591605.service; invocation ID: 5d660850cd5749fe8ccd3717854c343b
+[2m2026-09-22T10:42:58.320914Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: rpc_node_url: <unset> -> http://127.0.0.1:49957
+[2m2026-09-22T10:42:58.320987Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: chain_id: SN_MAIN -> SN_SEPOLIA
+[2m2026-09-22T10:42:58.321007Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: port: 3000 -> 36489
+[2m2026-09-22T10:42:58.321019Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: ip: 0.0.0.0 -> 127.0.0.1
+[2m2026-09-22T10:42:58.321034Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: max_concurrent_requests: 2 -> 1
+[2m2026-09-22T10:42:58.321047Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: max_queued_requests: 8 -> 0
+[2m2026-09-22T10:42:58.321063Z[0m [32m INFO[0m [2mstarknet_transaction_prover::server::config[0m[2m:[0m CLI override: compiled_class_cache_size: 600 -> 16
+[2m2026-09-22T10:42:58.321107Z[0m [32m INFO[0m [2mstarknet_transaction_prover[0m[2m:[0m Starting Starknet transaction prover. [3mversion[0m[2m=[0m"0.19.0-rc.2" [3mgit_sha[0m[2m=[0m"unknown" [3mchain_id[0m[2m=[0mSN_SEPOLIA [3mrpc_node_host[0m[2m=[0mhttp://127.0.0.1:49957 [3mvalidate_zero_fee_fields[0m[2m=[0mtrue [3mblocking_check_enabled[0m[2m=[0mfalse [3mblocking_check_fail_open[0m[2m=[0mfalse [3mohttp_enabled[0m[2m=[0mfalse
+[2m2026-09-22T10:42:58.850886Z[0m [32m INFO[0m [1mprepare_privacy_recursiveprover_precomputes[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prepare the twiddles
+[2m2026-09-22T10:42:58.870799Z[0m [32m INFO[0m [1mprepare_privacy_recursiveprover_precomputes[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prepare the cairo prover preprocessed trace and tree
+[2m2026-09-22T10:42:59.205768Z[0m [32m INFO[0m [1mprepare_privacy_recursiveprover_precomputes[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Prepare the circuit prover preprocessed trace and tree
+[2m2026-09-22T10:42:59.768297Z[0m [32m INFO[0m [2mstarknet_transaction_prover[0m[2m:[0m JSON-RPC proving server is running. [3mlocal_address[0m[2m=[0m127.0.0.1:36489 [3mscheme[0m[2m=[0m"http" [3mmax_concurrent_requests[0m[2m=[0m1 [3mmax_connections[0m[2m=[0m10 [3mcors_mode[0m[2m=[0m"disabled" [3mcors_allow_origin[0m[2m=[0m[] [3mohttp_enabled[0m[2m=[0mfalse
+[2m2026-09-22T10:43:00.010059Z[0m [32m INFO[0m [1mprove_transaction[0m[1m{[0m[3mblock_id[0m[2m=[0mNumber(BlockNumber(100)) [3mtx_hash[0m[2m=[0m0x419fed321a08ba7a8e572ed1c9e7c049bdadb82e481c0a72f5ba34f01576d04[1m}[0m[2m:[0m [2mstarknet_transaction_prover::running::runner[0m[2m:[0m Starting transaction proving
+[2m2026-09-22T10:43:04.385560Z[0m [32m INFO[0m [1mprove_transaction[0m[1m{[0m[3mblock_id[0m[2m=[0mNumber(BlockNumber(100)) [3mtx_hash[0m[2m=[0m0x419fed321a08ba7a8e572ed1c9e7c049bdadb82e481c0a72f5ba34f01576d04[1m}[0m[2m:[0m [2mstarknet_transaction_prover::running::runner[0m[2m:[0m Virtual OS execution resources [3mn_steps[0m[2m=[0m7301958 [3mn_memory_holes[0m[2m=[0m340742 [3mbuiltins[0m[2m=[0m{output: 6, range_check: 912903, pedersen: 8, ecdsa: 0, keccak: 0, bitwise: 0, ec_op: 0, poseidon: 23333, range_check96: 0, add_mod: 0, mul_mod: 0}
+[2m2026-09-22T10:43:04.386363Z[0m [32m INFO[0m [1mprove_transaction[0m[1m{[0m[3mblock_id[0m[2m=[0mNumber(BlockNumber(100)) [3mtx_hash[0m[2m=[0m0x419fed321a08ba7a8e572ed1c9e7c049bdadb82e481c0a72f5ba34f01576d04[1m}[0m[2m:[0m [2mstarknet_transaction_prover::proving::virtual_snos_prover[0m[2m:[0m OS execution completed [3mos_duration_ms[0m[2m=[0m4571
+[2m2026-09-22T10:43:04.386539Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Run privacy bootloader and get the prover input and output preimage
+[2m2026-09-22T10:43:04.400059Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Running the program
+[2m2026-09-22T10:43:07.259340Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Reading the bootloader output preimage
+[2m2026-09-22T10:43:07.259451Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m[1mget_prover_input[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Adapting the runner output for the prover
+[2m2026-09-22T10:43:08.925406Z[0m [32m INFO[0m [1mprivacy_recursive_prove[0m[2m:[0m [2mprivacy_prove[0m[2m:[0m Generate the cairo proof
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591657) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591658) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591656) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+
+thread '<unnamed>' (1591657) panicked at /home/broody/.cargo/git/checkouts/stwo-59e22971a65c0edb/489a0f3/crates/stwo/src/core/poly/utils.rs:103:5:
+Not enough twiddles!
+[2m2026-09-22T10:43:36.061219Z[0m [33m WARN[0m [2mstarknet_transaction_prover::server::rpc_impl[0m[2m:[0m prove_transaction failed: ProvingError(TaskJoin(JoinError::Panic(Id(29), "Not enough twiddles!", ...)))
+Finished with result: success
+Main processes terminated with: code=killed/status=TERM
+Service runtime: 37.765s
+CPU time consumed: 1min 50.444s
+Memory peak: 34.3G
+Memory swap peak: 0B

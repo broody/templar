@@ -1,0 +1,21 @@
+{
+  "scope": "opcode counts only, concurrent build; timing not comparable",
+  "command": [
+    "/home/broody/development/templar/target/m31-private-wrapper/capacity-build-original-v3/capacity",
+    "boot",
+    "/home/broody/development/templar/bench/m31-private-wrapper/results/bridge-capacity/optimized/os-capture/os.pie.zip",
+    "/home/broody/development/templar/bench/m31-private-wrapper/results/bridge-capacity/optimized/boot-counts"
+  ],
+  "binary_sha256": "27cf06db20a3b7b887ae47bb9640992acaf7fef8e2da4e1a2aab187b41713726",
+  "cap_gib": 16,
+  "threads": 4,
+  "cpu_affinity": "0 1 2 3",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 0,
+  "elapsed_seconds": 5.377888194023399,
+  "sampled_peak_rss_gib": 1.6414375305175781,
+  "sampled_peak_cgroup_gib": 1.6141281127929688,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "time_peak_rss_gib": 1.6414375305175781
+}

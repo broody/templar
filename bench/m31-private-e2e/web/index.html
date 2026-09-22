@@ -1,0 +1,27 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Templar private membership experiment</title>
+<h1>Private depth-32 membership</h1>
+<p>Research experiment: one browser worker. Synthetic witness stays on this computer.</p>
+<pre id="status">Ready</pre>
+<script type="module">
+  window.runExperiment = (repeat) => new Promise((resolve, reject) => {
+    const events = [];
+    let previous = performance.now(), maxHeartbeatMs = 0;
+    const heartbeat = setInterval(() => {
+      const now = performance.now();
+      maxHeartbeatMs = Math.max(maxHeartbeatMs, now - previous);
+      previous = now;
+    }, 100);
+    const worker = new Worker('/worker.js', { type: 'module' });
+    const finish = () => { clearInterval(heartbeat); worker.terminate(); };
+    worker.onerror = (e) => { finish(); reject(new Error(e.message)); };
+    worker.onmessage = ({ data }) => {
+      events.push(data);
+      document.querySelector('#status').textContent = JSON.stringify(events, null, 2);
+      if (data.type === 'failure') { finish(); reject(new Error(data.message)); }
+      if (data.type === 'complete') { finish(); resolve({ events, maxHeartbeatMs }); }
+    };
+    worker.postMessage({ repeat });
+  });
+</script>

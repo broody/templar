@@ -1,0 +1,29 @@
+[workspace]
+members = [
+    "bridge",
+    "account",
+    "vendor/bounded_int",
+    "vendor/constraint_framework",
+    "vendor/verifier_core",
+    "vendor/verifier_utils",
+    "vendor/circuit_air",
+]
+
+[workspace.tool.cairo-lint]
+collapsible_if_else = false
+double_parens = false
+ifs_same_cond = false
+manual_assert = false
+
+[cairo]
+enable-gas = false
+allow-warnings = false
+
+[profile.proving.cairo]
+enable-gas = false
+unsafe-panic = true
+allow-warnings = false
+
+[profile.contract.cairo]
+enable-gas = true
+allow-warnings = false

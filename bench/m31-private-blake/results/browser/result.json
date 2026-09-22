@@ -1,0 +1,64 @@
+{
+  "started_utc": "2026-09-22T09:09:54.629Z",
+  "repeat": 3,
+  "scope": "Private membership research; synthetic witness; no payment or PROOF1 qualification",
+  "browser_version": "153.0.8010.47",
+  "report": {
+    "events": [
+      {
+        "type": "ready",
+        "native_proof_verified": true,
+        "linear_memory_bytes": 12582912
+      },
+      {
+        "type": "run",
+        "run": 1,
+        "prove_ms": 1920.8100000023842,
+        "verify_ms": 153.07000002264977,
+        "memory_before_bytes": 12582912,
+        "memory_after_prove_bytes": 66322432,
+        "memory_after_checks_bytes": 66322432,
+        "proof_bytes": 2053828,
+        "proof_sha256": "47b958308b07da406398078678d019158307113afd375b3e47a47293931fae4f",
+        "accepted": true,
+        "negative_rejections": 4
+      },
+      {
+        "type": "run",
+        "run": 2,
+        "prove_ms": 1724.7649999856949,
+        "verify_ms": 156.60499998927116,
+        "memory_before_bytes": 66322432,
+        "memory_after_prove_bytes": 66322432,
+        "memory_after_checks_bytes": 66322432,
+        "proof_bytes": 2025716,
+        "proof_sha256": "f7b026b1519bade2599ea43b7dc8b8ba90185a471ce97d8c8e93b9a3a05638d7",
+        "accepted": true,
+        "negative_rejections": 4
+      },
+      {
+        "type": "run",
+        "run": 3,
+        "prove_ms": 1713.7650000154972,
+        "verify_ms": 153.9350000023842,
+        "memory_before_bytes": 66322432,
+        "memory_after_prove_bytes": 66322432,
+        "memory_after_checks_bytes": 66322432,
+        "proof_bytes": 2026680,
+        "proof_sha256": "3ad7ef69f19db500175a233ce00580bb862b07296ead70ecb53590b5b1e8da5b",
+        "accepted": true,
+        "negative_rejections": 4
+      },
+      {
+        "type": "complete",
+        "linear_memory_high_water_bytes": 66322432
+      }
+    ],
+    "maxHeartbeatMs": 100.5799999833107
+  },
+  "status": "passed",
+  "server_error": null,
+  "completed_utc": "2026-09-22T09:10:02.561Z",
+  "sampled_peak_browser_rss_bytes": 1137717248,
+  "sampled_peak_browser_pss_bytes": 464080896
+}

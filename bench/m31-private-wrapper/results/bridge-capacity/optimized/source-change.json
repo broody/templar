@@ -1,0 +1,7 @@
+{
+  "scope": "same trusted server hash circuit, checked M31 inversion implementation",
+  "original_sha256": "6d71b99339f7582300a7830d1d81b00c1d7653e2dca455b8b8144efa0f9560d7",
+  "changed_sha256": "d8052bfaac1ce986953212a2c272e2965dd41fdc3bb2183f625763c5e76edf48",
+  "source": "/home/broody/development/templar/target/m31-private-wrapper/server-cairo/vendor/verifier_core/src/fields/m31/naive.cairo",
+  "changed": "/home/broody/development/templar/target/m31-private-wrapper/optimized-cairo/vendor/verifier_core/src/fields/m31/naive.cairo"
+}

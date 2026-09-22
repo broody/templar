@@ -2,6 +2,7 @@
 name = "templar-m31-statement"
 version = "0.1.0"
 edition = "2024"
+default-run = "templar-m31-statement"
 
 [lib]
 crate-type = ["rlib"]
@@ -19,6 +20,7 @@ bincode = "1.3"
 anyhow = "1"
 rayon = "=1.12.0"
 num-bigint = "0.4"
+rand = "=0.8.8"
 stwo-cairo-serialize = { path = "../../../target/m31-append/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize" }
 starknet-types-core = { version = "=0.2.4", features = ["hash", "serde"] }
 

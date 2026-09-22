@@ -1,0 +1,54 @@
+{
+  "cases": [
+    {
+      "complete_h_coefficients_identical": true,
+      "distinct_raw_queries": 23,
+      "fft_and_pair_identity_points": 4096,
+      "fixture_seed": 0,
+      "negative_controls": 5,
+      "observation_coordinates": 27,
+      "pcs_normalization_matches": true,
+      "same_public_input_coupling": true,
+      "trace_preservation_points": 256,
+      "witness_free_algebra_simulator": true
+    },
+    {
+      "complete_h_coefficients_identical": true,
+      "distinct_raw_queries": 23,
+      "fft_and_pair_identity_points": 4096,
+      "fixture_seed": 1,
+      "negative_controls": 5,
+      "observation_coordinates": 27,
+      "pcs_normalization_matches": true,
+      "same_public_input_coupling": true,
+      "trace_preservation_points": 256,
+      "witness_free_algebra_simulator": true
+    },
+    {
+      "complete_h_coefficients_identical": true,
+      "distinct_raw_queries": 23,
+      "fft_and_pair_identity_points": 4096,
+      "fixture_seed": 2,
+      "negative_controls": 5,
+      "observation_coordinates": 27,
+      "pcs_normalization_matches": true,
+      "same_public_input_coupling": true,
+      "trace_preservation_points": 256,
+      "witness_free_algebra_simulator": true
+    },
+    {
+      "complete_h_coefficients_identical": true,
+      "distinct_raw_queries": 22,
+      "fft_and_pair_identity_points": 4096,
+      "fixture_seed": 3,
+      "negative_controls": 5,
+      "observation_coordinates": 26,
+      "pcs_normalization_matches": true,
+      "same_public_input_coupling": true,
+      "trace_preservation_points": 256,
+      "witness_free_algebra_simulator": true
+    }
+  ],
+  "deterministic_fixtures_not_prover_randomness": true,
+  "scope": "synthetic exact algebra only; no FRI execution, commitments, soundness or compiled privacy claim"
+}

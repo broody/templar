@@ -1,0 +1,22 @@
+{
+  "scope": "source-derived trace work for a direct unchanged Cairo port; not a full inner-verifier run",
+  "proof_sha256": "3e17323f8f9516f141aa35981f17bb192b3e74b835deb9209aef764074633a7b",
+  "cached_authentication_compressions": 43166,
+  "uncached_authentication_compressions": 89315,
+  "blake_g_rows_per_compression": 80,
+  "cached_blake_g_rows": 3453280,
+  "cached_blake_g_trace_log": 22,
+  "base_leaf_only_compressions": 18174,
+  "base_leaf_only_blake_g_rows": 1453920,
+  "preserved_cairo_trace_log": 20,
+  "preserved_blowup_log": 3,
+  "preserved_lifting_log": 23,
+  "conclusion": "full authentication alone exceeds preserved component capacity; excludes transcript, AIR/OOD/batch/FRI arithmetic and OS work",
+  "source_sha256": {
+    "/home/broody/.cargo/git/checkouts/proving-utils-fe3a66dc6b32d5d3/3035dd0/crates/privacy_circuit_verify/src/consts.rs": "9b6d4d844bdc7f81c616f6f323687af361f36e4121d9f209091dd92c4943700e",
+    "/home/broody/.cargo/git/checkouts/proving-utils-fe3a66dc6b32d5d3/3035dd0/crates/privacy_prove/src/lib.rs": "b7b6449a5ae6713ddba810b3ed3feaacba6294541b289939658fc1640cf9a446",
+    "/home/broody/.cargo/git/checkouts/stwo-cairo-ef02e8e85a2fe399/9b6be27/stwo_cairo_prover/crates/prover/src/witness/components/blake_compress_opcode.rs": "badb9bfdb9f9d6557027344430b15359516195d3cfed2de25341d2e9eb628be6",
+    "/home/broody/.cargo/git/checkouts/stwo-cairo-ef02e8e85a2fe399/9b6be27/stwo_cairo_prover/crates/prover/src/witness/components/blake_round.rs": "d47f907e4c7c2c3c360adbf4c9316fd1db8859cb522dde87b6b54183d19d4542",
+    "/home/broody/.cargo/git/checkouts/stwo-cairo-ef02e8e85a2fe399/9b6be27/stwo_cairo_prover/crates/prover/src/witness/components/blake_g.rs": "e82a4eb266b6b6c0849e9d4ac2f3fb1674cf81e1bd6267115ffc2566cb23615d"
+  }
+}

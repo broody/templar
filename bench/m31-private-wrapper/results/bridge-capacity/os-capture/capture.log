@@ -1,0 +1,30 @@
+Running as unit: templar-capture-1790075290336516694.service; invocation ID: d7652c7be17f4b459661882eed5f62f9
+	Command being timed: "/home/broody/development/templar/target/m31-private-wrapper/capacity-capture-build-v3/capture http://127.0.0.1:60969 /home/broody/development/templar/bench/m31-private-wrapper/results/server-circuit/outer/public-request.json /home/broody/development/templar/bench/m31-private-wrapper/results/bridge-capacity/os-capture"
+	User time (seconds): 11.66
+	System time (seconds): 0.73
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:12.47
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1184104
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 519426
+	Voluntary context switches: 154
+	Involuntary context switches: 468
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 92200
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 12.476s
+CPU time consumed: 12.407s
+Memory peak: 512.0K
+Memory swap peak: 0B

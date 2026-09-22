@@ -1,0 +1,37 @@
+[package]
+name = "templar-server-hash-circuit"
+version = "0.1.0"
+edition = "2024"
+
+[workspace]
+
+[dependencies]
+circuits = { path = "../../../target/direct-air/stwo-circuits/crates/circuits" }
+circuit-common = { path = "../../../target/direct-air/stwo-circuits/crates/circuit_common", features = ["prover"] }
+circuit-prover = { path = "../../../target/direct-air/stwo-circuits/crates/circuit_prover" }
+circuit-verifier = { path = "../../../target/direct-air/stwo-circuits/crates/circuit_verifier" }
+circuit-cairo-serialize = { path = "../../../target/direct-air/stwo-circuits/crates/circuit_cairo_serialize" }
+stwo = { path = "../../../target/direct-air/stwo/crates/stwo", features = ["prover", "parallel"] }
+stwo-constraint-framework = { path = "../../../target/direct-air/stwo/crates/constraint-framework", features = ["prover", "parallel"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+num-traits = "0.2.19"
+blake2 = "=0.10.6"
+starknet-ff = "0.3"
+stwo-cairo-serialize = { path = "../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize" }
+
+[patch."https://github.com/starkware-libs/stwo"]
+stwo = { path = "../../../target/direct-air/stwo/crates/stwo" }
+stwo-constraint-framework = { path = "../../../target/direct-air/stwo/crates/constraint-framework" }
+stwo-air-utils = { path = "../../../target/direct-air/stwo/crates/air-utils" }
+stwo-air-utils-derive = { path = "../../../target/direct-air/stwo/crates/air-utils-derive" }
+
+[patch."https://github.com/starkware-libs/stwo-cairo"]
+cairo-air = { path = "../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/cairo-air" }
+stwo-cairo-prover = { path = "../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/prover" }
+stwo-cairo-common = { path = "../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/common" }
+stwo-cairo-utils = { path = "../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/utils" }
+stwo-cairo-serialize = { path = "../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize" }
+
+[profile.release]
+debug = false

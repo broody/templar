@@ -1,0 +1,16 @@
+{
+  "status": "failed",
+  "memory_cap_gib": 16,
+  "cores": 4,
+  "l2_gas_max_amount": 1000000000,
+  "scope": "public hash workload only; not membership verification",
+  "local_node_attachment": false,
+  "native_verification_passed": false,
+  "error": "Remote end closed connection without response",
+  "error_type": "RemoteDisconnected",
+  "peak_rss_gib": 15.882110595703125,
+  "cgroup_peak_bytes": 17179869184,
+  "swap_peak_bytes": 0,
+  "resource_samples": 88,
+  "os_seconds": 0.719
+}
