@@ -1,0 +1,95 @@
+---
+showAskAi: false
+title: Lookups (LogUp)
+description: Proving a value is in a table — and why this is where STARK memory goes.
+---
+
+<div className="guide-eyebrow">Part 3 · STARK anatomy</div>
+
+# Lookups (LogUp)
+
+## Why lookups exist
+
+AIR constraints are polynomials — smooth, algebraic. Real computations are
+full of *discrete* relations: "this value is a valid 9-bit limb", "this is
+the correct S-box output", "this memory read returned what was written".
+Checking those by polynomial equations alone is miserable; checking them by
+**table lookup** is natural:
+
+> Prove: *the prover's value `v` appears in a public table `T`.*
+
+Example: to prove `v < 2²⁰` in range-check-friendly form, the table is the
+integers `0 … 2²⁰−1` and the claim is "some row of the table equals `v`".
+
+## How it works (LogUp)
+
+The trick that makes lookups cheap is to turn membership into **one
+equation over fractions**:
+
+1. Every row of the table gets a committed **multiplicity** `mᵢ` — how many
+   times the prover used table entry `i`.
+2. The channel draws a random `z` (and per-column combining randomness).
+   Each table row's identity is mixed into a field element `z + combo(row)`.
+3. The check is one identity:
+
+```
+Σᵢ  mᵢ / (z + combo(rowᵢ))   =   claimed sum
+```
+
+A cheater using a value *not* in the table must invent a denominator — the
+probability that a random `z` makes their fake denominator's contribution
+sum to the same total is ~`1/p` (~2⁻¹²⁴). One random point, same
+Schwartz–Zippel magic as Part 3.1.
+
+The `mᵢ / (z + …)` identity is enforced **via the interaction trace**: the
+prover writes cumulative sums of the fractions as extra committed columns
+(the "interaction tree" from Part 3.3), whose per-row consistency is just
+degree-2 AIR constraints. That is how "one big fraction identity" becomes
+row-checkable algebra.
+
+The **claimed sum** is public — mixed into the transcript — and in this
+stack, application-level checks (e.g. "the tree's public lookup boundary
+matches") also consume it.
+
+## Why this dominates client memory
+
+The tables are committed *as trace*. The felt252 limb encoding (Part 4.2)
+generates a ladder of range-check tables: measured in this repo, for one
+payment-sized proof —
+
+| Table | Rows | Why it exists |
+| --- | --- | --- |
+| `range_check_20` | 2²⁰ | top limbs of felt252 values |
+| `range_check_9_9`, `_18` | 2¹⁸ | 9-bit limb pairs |
+| `range_check_4_4_4_4`, `_3_3_3_3_3` | 2¹⁵–2¹⁶ | carry/borrow decompositions |
+| `poseidon_round_keys` | 2⁶ | the hash's round constants |
+
+~1.3 million table rows *before any witness rows* — the reason a client
+proof costs ~2 GB of RAM even when the logical work is 128 hash
+permutations. Memory-reduction work in this repo (bounded FRI batches,
+coefficient-backed storage) attacks exactly this.
+
+## The privacy wrinkle
+
+Look again at that multiplicity column. It is **committed, OOD-sampled, and
+query-opened** like any other column (Part 3.3). So it reveals — subject to
+sampling — *which table rows were used and how often*. If a private value
+was range-checked, its row's multiplicity ticked up by one, and the table's
+row index *is* the value. This is one of the sneakier leak channels in
+Part 5's analysis: even if the witness columns were perfectly hidden, the
+table side would still testify. Any real hiding construction must randomize
+the multiplicities too — a fact the naive "add some random rows" proposals
+miss.
+
+> **Check.** A table of values `0…7` with multiplicity column
+> `(0, 1, 0, 2, 0, 1, 0, 0)`. Which values were used, and with what
+> frequency? You read the entire answer off one committed column — that is
+> the wrinkle.
+
+## What to carry forward
+
+1. Lookups turn discrete membership into one random-fraction identity,
+   enforced via committed cumulative-sum columns.
+2. Range-check tables dominate client memory (~2¹⁵–2²⁰ rows each).
+3. Multiplicity columns are committed and open — they are a leak channel of
+   their own, independent of witness-column hiding.

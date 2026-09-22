@@ -1,0 +1,69 @@
+---
+showAskAi: false
+title: Overview
+description: Zero-knowledge and STARK concepts from first principles, in the context of Starknet.
+---
+
+<div className="guide-eyebrow">ZK Fundamentals</div>
+
+# From finite fields to zero-knowledge
+
+This is a self-contained course on how modern cryptographic proving works —
+built up from arithmetic you can check by hand, ending at the exact machinery
+that Starknet runs, and finishing on the question this project cares about:
+**what does a proof leak, and how do we stop it leaking.**
+
+No cryptography background is assumed. Every page uses small numbers and
+runnable Python so you can verify each claim yourself before trusting it.
+
+## The running example
+
+Throughout the course we follow one concrete goal:
+
+> **A private payment.** Alice owns a note in a public commitment tree. She
+> wants to prove to the network *"this note exists, it is mine, and I am
+> spending it exactly once"* — without revealing which note is hers, how much
+> it holds, or who she is.
+
+Everything we build — fields, polynomials, commitments, FRI, STARKs — exists
+to make that sentence checkable by a machine that saw none of Alice's secrets.
+
+## The path
+
+**Part 1 — Foundations.** The arithmetic of the proving world.
+
+- [Finite fields](/foundations/fields) — division that never rounds
+- [Polynomials](/foundations/polynomials) — the "few unknowns" principle
+- [The circle group](/foundations/circles) — where fast math lives in this stack
+
+**Part 2 — Proof systems.** What a proof is, mechanically.
+
+- [What a proof system is](/proofs/what-is-a-proof-system) — soundness, hiding, Fiat–Shamir
+- [Commitments](/proofs/commitments) — Merkle trees over big tables
+- [SNARK vs STARK](/proofs/snark-vs-stark) — the two families and their tradeoffs
+
+**Part 3 — STARK anatomy.** The actual machinery, piece by piece.
+
+- [Trace and AIR](/starks/trace-and-air) — turning a computation into algebra
+- [FRI](/starks/fri) — proving a polynomial is low-degree without revealing it
+- [What the verifier sees](/starks/openings) — the full observation inventory
+- [Lookups](/starks/lookups) — LogUp, range checks, and why memory explodes
+
+**Part 4 — Starknet.** Where this machinery actually runs.
+
+- [How Starknet proves](/starknet/how-starknet-proves) — Cairo, the OS, batch proofs
+- [Cairo and S-two](/starknet/cairo-and-s-two) — the felt252 stack in practice
+
+**Part 5 — Privacy.** The part that motivated this guide.
+
+- [What zero-knowledge really means](/privacy/what-zk-means) — simulators and leaks
+- [Blinding in practice](/privacy/blinding) — what exists today, what is missing
+
+Plus a [glossary](/glossary) for quick lookups.
+
+## How to read it
+
+Read in order the first time. Each page ends with one or two *checks* —
+small claims you can verify with the provided Python in under a minute.
+If a page's check feels tedious, trust the pattern and move on; the goal is
+intuition, and the code is there to convert intuition into certainty.

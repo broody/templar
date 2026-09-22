@@ -1,0 +1,103 @@
+---
+showAskAi: false
+title: Trace and AIR
+description: Turning a computation into an algebra problem — execution tables and per-row equations.
+---
+
+<div className="guide-eyebrow">Part 3 · STARK anatomy</div>
+
+# Trace and AIR
+
+## The trace: a computation as a table
+
+Run a computation step by step and write every intermediate value into a
+table: one row per step, one column per "register". That table is the
+**trace** (also: witness). In a payment proof the trace holds, row by row,
+every value the spend statement computed — including the secret note key,
+the hash chain up the tree, the nullifier.
+
+A trace of `2ⁿ` rows is encoded as one polynomial per column (Part 1.2):
+column `c`'s row values become the evaluations of a degree-`<2ⁿ` polynomial
+`c(x)` on the trace's coset domain (Part 1.3).
+
+## AIR: honesty as per-row equations
+
+**AIR** — Algebraic Intermediate Representation — is the honesty condition
+written as equations that must hold **row-wise** across the trace. Each
+constraint is a polynomial identity in the column values at one row and its
+neighbors.
+
+A toy example — verifying a Fibonacci-like chain with columns `a`, `b`:
+
+```
+b(next) − (b + a) = 0        (the chain advances correctly)
+a(next) − b        = 0        (the window slides)
+a(0) − a₀          = 0        (boundary: the public starting point)
+```
+
+Real systems' constraints are degree ≤ 2 in the columns (so they compose
+cheaply): multiplication gates, boolean-selectors, hash-round equations.
+A Poseidon round contributes equations like `s₁' − (s₀ + c₁) = 0` and a
+nonlinear part expressed via lookups (Part 3.4).
+
+Note what this form buys: **the honesty of 2²⁰ rows is `~k` short
+equations.** The verifier will test them at random points — Schwartz–Zippel
+(Part 1.2) turns each equation into a one-sample test with ~2⁻¹²⁴ failure
+probability.
+
+## From constraints to one polynomial
+
+The verifier tests constraints at *random* points `x`, but "at the trace
+rows" must mean *every* row, not just sampled ones. The trick that makes
+"holds on the whole domain" checkable from random points:
+
+1. Build the **composition polynomial**: a random linear combination of all
+   constraint expressions (random coefficients from the channel):
+
+   ```
+   C(x) = Σᵢ αᵢ · constraintᵢ(x)
+   ```
+
+   If every constraint is honest, `C` vanishes on all `2ⁿ` trace points.
+2. Divide by the **vanishing polynomial** `Z(x)` — the degree-`2ⁿ` object
+   that is zero exactly on the trace domain:
+
+   ```
+   Q(x) = C(x) / Z(x)
+   ```
+
+   If `C` is honest, `Q` is a *polynomial* (division exact). If any row
+   cheats, `C` is nonzero somewhere on the domain, and the division leaves
+   a pole — detectable at random points with overwhelming probability.
+
+`Q` is committed like everything else (split into halves for degree
+reasons — 8 M31 columns in the real system). Now the entire honesty claim is:
+"these committed polynomials are low-degree, and `C = Q · Z` holds." Both
+claims are testable by random sampling — which FRI (next page) makes
+sound.
+
+## The first glimpse of hiding
+
+Look at the trace table's bottom rows. Nothing requires the computation to
+use all of them: a 128-permutation workload can sit in a component padded to
+a power of two. **What goes in the unused rows?** Anything that satisfies
+the constraints — including *random valid rows*. Rows that are provably
+irrelevant to the statement, filled with randomness the prover knows and the
+verifier cannot predict.
+
+That observation — padding is a place where entropy can enter the proof —
+is the seed of every real zero-knowledge construction in STARKs (Part 5).
+It also raises the obvious question, "how much randomness is enough?", whose
+careful answer is the difference between a hiding system and a decorative one.
+
+> **Check.** For the toy AIR above with trace rows `a = (1, 1, 2, 3, 5)`,
+> write the five rows' `(a, b)` values and verify both advancement equations
+> hold on rows 0–3. Then change one value and count how many equations fail —
+> that count is what the random-point test exploits.
+
+## What to carry forward
+
+1. Trace = table; columns become polynomials on the trace domain.
+2. AIR = short per-row equations; honest ⇒ composition vanishes on the whole
+   domain; divided by `Z`, the quotient must be a real low-degree polynomial.
+3. Unused trace rows are free real estate for randomness — the seed of hiding.

@@ -1,0 +1,118 @@
+---
+showAskAi: false
+title: Blinding in practice
+description: What exists today (row padding), why it falls short, and the honest design menu.
+---
+
+<div className="guide-eyebrow">Part 5 · Privacy</div>
+
+# Blinding in practice
+
+## The idea: entropy in the free rows
+
+Part 3.1 planted the seed: unused trace rows can hold *random valid rows*.
+Run the simulator test on a padded trace. The simulator cannot know the
+random rows — they are fresh per proof — so every opened value (Part 3.3),
+being a weighted sum over *all* rows, now includes unknown terms:
+
+```
+v = (honest rows' contribution) + (random rows' contribution)
+```
+
+If the random contribution has enough independent entropy, `v` is
+simulatable. The questions are *how much*, *where*, and *provable how* —
+and the honest answer today is: the ecosystem has a partial, unproven
+mechanism, and this repo's research mapped its gaps.
+
+## What exists: upstream's row-padding helper
+
+The circuit layer (`stwo-circuits`) ships one helper — the one actually used
+by upstream's privacy pipeline:
+
+- It appends `n_padding` random **valid rows** to **five specific gate
+  components** (QM31 arithmetic, equality, triple-XOR, M31→u32, Blake-G) —
+  components whose rows are trivially randomizable (`x + 0 = x`, `x == x`).
+- It is seeded per proof from a caller-supplied seed (in the real pipeline:
+  derived from the inner proof's witness commitment).
+- The padding size is set to the **query count** — a heuristic, not a
+  derivation.
+
+Why it is *partial*, per this repo's Math Review and measurements:
+
+1. **Coverage.** It knows five gate types. A custom AIR — say the payment
+   statement's Poseidon components — has no code path. "What is a random
+   valid row" is component-specific (a valid Poseidon row is a full
+   permutation; a range-check table row is a multiplicity entry), so a
+   general version needs per-component generators that do not exist.
+2. **Budget.** The observation inventory (Part 3.3) is ~40–50k functionals;
+   query-count padding supplies ~hundreds of free parameters. By the entropy
+   accounting of Part 5.1, it is structurally under-padded for wide traces —
+   consistent with the repo's diagnostic, which recovered a secret *through*
+   this blinding from a small circuit (the correlated rows cancelled in the
+   attacker's differences).
+3. **Theory.** No simulator argument, no parameter-to-security lemma exists
+   for this construction. The general STARK-hiding theory (Haböck–Al Kindi,
+   2024) uses a different tool — see next — and does not cover
+   valid-row-constrained masks.
+
+## The principled construction: polynomial masking
+
+Instead of padding *rows*, mask *polynomials*: commit to `f + r · V` where
+`V` is a polynomial that is zero on the whole constraint domain and `r` is
+prover-random. Consequences:
+
+- On the constraint domain the masked polynomial is **identical** to the
+  honest one — every check (constraints, lookups, quotients) is unchanged.
+- Off the domain — at the OOD point, at query positions, in FRI layers —
+  the value is `f(·) + r·V(·)`: statistically the honest content plus a
+  one-time pad with ~domain-sized entropy per column. The ~50k observables
+  meet their entropy budget *per column*, not per proof.
+
+The catch is mechanical: `V` has degree equal to the domain size, so the
+masked polynomial needs one extra bit of degree room — the **degree slack**
+— which means committing on a doubled domain: real memory cost, and
+protocol-level changes in the prover's column layout. Sound theory, real
+price. This is the construction the repo's design docs treat as the
+gold-standard fallback.
+
+## Recursion is not hiding
+
+A natural-sounding shortcut: "prove the (transparent) statement, then prove
+*that proof verifies* inside a zk circuit." Trace the trust boundary: whoever
+observes the *inner* transparent proof reads the witness (Part 5.1). If that
+observer is the wrapping server, the leak already happened — a wrapper cannot
+undo disclosure. Recursion helps only when the inner artifact never crosses
+an untrusted boundary (i.e., it stays on-device) *and* the outer circuit's
+own padding is sound. It is a transport tool, not a hiding tool.
+
+## The design menu, honestly
+
+| Route | Hiding status | Client cost | The catch |
+| --- | --- | --- | --- |
+| Transparent STARK (today's default) | none | lowest | leaks the witness |
+| + row padding (upstream helper) | unproven, partial | low | under-padded; no theorem |
+| + polynomial masking (H-A-K-style) | provable | ~2× memory | prover changes, mapping work |
+| ZK-native SNARK for the statement | native | lowest measured | trusted setup, on-chain cost, format break |
+| Trust an operator (no hiding needed) | n/a | none | the trust hole this project exists to remove |
+
+The repo's active program is the second and third rows for a *compact client
+statement* — with the explicit discipline that a measured "we tried to
+recover the secret and failed" is evidence, never a qualification; only a
+reviewed simulator argument qualifies.
+
+> **Check.** Revisit Part 5.1's entropy accounting with the row-padding
+> mechanism: `n_padding` random rows × their free parameters per component.
+> For the five-gate helper at query-count padding, is the budget above or
+> below the ~50k-observable inventory? Compute both numbers and state which
+> failure mode (coverage, budget, theory) each row of the table above
+> addresses.
+
+## What to carry forward
+
+1. Free rows are real entropy — but the amount, placement, and proof all
+   matter, and today's helper delivers only a fraction.
+2. Polynomial masking is the principled version, priced in memory and
+   protocol work.
+3. No measured attack failure qualifies a construction; only a simulator
+   argument does. That distinction is the repo's quality bar, and it is the
+   right one.

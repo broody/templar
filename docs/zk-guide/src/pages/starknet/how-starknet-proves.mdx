@@ -1,0 +1,89 @@
+---
+showAskAi: false
+title: How Starknet proves
+description: Cairo, the Starknet OS, batch proofs, and the native proof-verification path.
+---
+
+<div className="guide-eyebrow">Part 4 · Starknet</div>
+
+# How Starknet proves
+
+## Cairo: a computer whose traces are proofs
+
+Cairo is a virtual machine with one design goal: **every execution is
+provable**. A Cairo program compiles to instructions the VM executes;
+the VM's state (program counter, memory, registers) advances step by step,
+producing exactly the kind of trace table Part 3.1 described. The Cairo AIR
+turns "the VM ran correctly" into per-row equations.
+
+This is why anything written in Cairo — a token transfer, a DeFi swap, a
+payment statement — is automatically STARK-provable. There is no separate
+"circuit design" step: the *language is the arithmetization*.
+
+## The Starknet flow
+
+1. Users submit transactions; the **sequencer** executes them inside the
+   **Starknet OS** — a Cairo program that defines the chain's rules.
+2. Thousands of transactions become one giant trace.
+3. A proving service (historically SHARP) STARK-proves the batch.
+4. The proof goes on-chain (L1 Ethereum) where a small contract verifies it;
+   the new state root becomes canonical.
+
+For most Starknet history, all of this was **transparent by necessity**:
+the trace contains transaction data that is public anyway (senders,
+amounts, contract calls). Witness privacy is worthless when the witness is
+the public ledger — which is exactly why the core proving stack (Part 3)
+was built with zero zero-knowledge features. Soundness only.
+
+## The native proof-verification path
+
+Starknet itself accepts STARK proofs as first-class transaction payloads.
+A proof-carrying transaction specifies a **proof version** (PROOF1, PROOF2)
+and carries proof bytes plus **proof facts** — the public inputs the proof
+commits to. The gateway/sequencer verifies the STARK *natively* (protocol
+level), and the receiving contract learns only the verified facts.
+
+Measured in this repo: a full payment lifecycle's proofs (~232 KB each)
+submitted through the official Sepolia gateway, accepted at ~80–95M gas
+per spend — with **no in-contract verification cost at all**, because the
+sequencer did the verification. For contrast, verifying a SNARK in-contract
+(Garaga) costs ~150–270M gas *per proof* on top of everything else. This
+asymmetry decided the proof system for user-proven designs (Part 2.3).
+
+Caveats from the same measurements: proof-version acceptance is a rollout
+property (the tested RPC's estimator rejected PROOF1 even as the gateway
+accepted it), and facts/bindings must be checked contract-side with care —
+the proof proves *a* statement; the contract must check it proves *the
+intended* one.
+
+## Where user-held secrets fit — and where they don't
+
+A payment protocol wants the *user* to prove statements over **secrets the
+sequencer never receives**: note ownership, membership, nullifier
+derivation. Two architectures:
+
+1. **Centralized prover (upstream's deployment)**: the user sends
+   everything — per this repo's inspection of upstream's SDK, the proving
+   service receives the user's address, private key, and every action in
+   plaintext — and the operator's proof wraps the public outputs. The
+   posted artifact hides nothing the operator didn't already know.
+2. **Client-side proving (this repo's architecture)**: the user generates
+   the proof locally, submits it directly. No privileged party. The cost:
+   the proving hardware moves to the user (Part 4.2 has the numbers), and
+   the artifact's privacy becomes *the user's own* engineering problem —
+   Part 5.
+
+Both run on the same STARK machinery; they differ in *who is trusted with
+secrets* and *who bears the memory bill*.
+
+> **Check.** In architecture 1, list what each party knows: user, operator,
+> chain observers. Do the same for architecture 2 — one row of the table is
+> empty. Which empty row forced this repo to build client-side proving?
+
+## What to carry forward
+
+1. Cairo makes *everything* provable; the OS makes the *chain* provable.
+2. Starknet verifies STARK proofs natively — proof-carrying transactions
+   are cheap on-chain.
+3. Transparency is the default because public-ledger traces need no hiding;
+   private-payment traces change that, and Part 5 begins there.

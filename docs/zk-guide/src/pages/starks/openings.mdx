@@ -1,0 +1,108 @@
+---
+showAskAi: false
+title: What the verifier sees
+description: The complete observation inventory — the page privacy analysis is built on.
+---
+
+<div className="guide-eyebrow">Part 3 · STARK anatomy</div>
+
+# What the verifier sees
+
+Soundness (Parts 3.1–3.2) needs the verifier to *see a lot*. Privacy (Part 5)
+needs it to *learn nothing*. The tension lives in this page's list: exactly
+what travels inside a proof artifact. This inventory is taken from the real
+pinned stack (S-two) for a payment-sized statement; counts are measured, not
+hand-waved.
+
+## The artifact, item by item
+
+**Config and claims.** Parameters (pow bits, blowup, query count, fold
+step, lifting size), the public statement (tree root, nullifier, output
+commitments), and the **claimed sums** of every lookup component (Part 3.4).
+All public by design; mixed into the channel.
+
+**Merkle roots — 9 trees.** Preprocessed columns, trace columns (~820 M31
+columns), interaction columns (~400), the split composition polynomial (8),
+and the five FRI layer trees (Part 3.2). The roots pin everything.
+
+**OOD samples — the global cross-section.** One random point ζ *off* every
+commitment domain; **every committed column is evaluated there and sent in
+the clear** (columns read at neighboring-row offsets get extra points).
+These values are what the DEEP-ALI check consumes — the verifier rebuilds
+the constraint expression at ζ from them and compares against the committed
+composition polynomial evaluated at ζ. One point, every column, all of it.
+
+**Query openings.** ≤23 random positions; at each, **every committed column
+of every tree** is opened (Merkle path + value). Trace rows themselves are
+never opened — trace and evaluation cosets are disjoint (Part 1.3) — but
+each opened value is a *fixed public linear combination* of the trace rows.
+
+**FRI fold complements.** Per query per layer, the 15 coset-sibling values
+that complete the folding check (Part 3.2): `5 × 23 × 15 ≈ 1725` QM31
+values, plus the last-layer constant, sent in full.
+
+**Proof-of-work nonces and channel draws.** Two ground nonces; the
+transcript itself (what was hashed, in what order) is public protocol, not
+a leak.
+
+## The counting
+
+Per committed column, the verifier learns roughly:
+
+- 1–3 OOD evaluations, and
+- 23 query evaluations.
+
+Everything else (FRI witnesses, last layer) is a further linear-ish
+functional *of the same columns*. Summed over a payment-sized statement:
+~1,228 committed columns → **~40–50k independent observables**, each a
+publicly computable linear (or mildly polynomial) functional of the trace.
+
+## The two structural facts that matter for Part 5
+
+**Fact 1 — openings are linear combinations of rows.** Every revealed value
+equals a weighted sum over trace rows with publicly computable weights (the
+Lagrange/LDE structure of the circle-coset domains). So the artifact exposes
+a fixed *linear measurement matrix* applied to the trace.
+
+**Fact 2 — sparsity kills.** If a secret value occupies a single trace row
+`j` of a column whose other rows are known or attacker-derivable, then one
+opened value `v` at point `x` gives `v = L_j(x) · s + (known part)`, and
+`L_j(x)` is computable for every candidate `j`:
+
+```
+s = (v − known) / L_j(x)
+```
+
+Division recovers the secret outright. And there is almost always a public
+checker: `hash(s)` against the on-chain note commitment, so the attacker can
+*verify* each candidate instead of guessing which row.
+
+This is not hypothetical — it was reproduced experimentally in this repo's
+`direct-air` diagnostic: a private value in a sparsely-occupied column was
+recovered in full from query + OOD observations.
+
+## Why soundness needs this much light
+
+Consider what each item prevents: roots bind the tables; OOD samples stop
+"crafted-at-the-queries" polynomials (Part 3.1); query openings test the
+constraints where it matters; FRI complements keep the low-degree ladder
+honest; PoW keeps the challenge positions unchoosable. Remove any one and a
+cheat class opens up. **The surveillance and the soundness are the same
+surface.** That is the central engineering problem of STARK privacy, and it
+is why "just don't open so much" is not an option — the openings are what
+makes the proof sound in the first place.
+
+> **Check.** For the single-secret recovery above: given `v = 5`,
+> `L_j(x) = 2` for the candidate row and known-part `= 1`, compute `s`.
+> Then confirm the public check `hash(s) == y` filters wrong rows: with
+> `L_j(x) = 2` for a *different* row `j'`, you would get `s' = 2` — check
+> its hash fails. The filtering is what makes enumeration cheap.
+
+## What to carry forward
+
+1. The artifact exposes ~50k linear-ish measurements of the trace — the
+   **observation inventory**.
+2. Opened values are linear in rows; sparse secrets are recoverable by
+   division plus a public check.
+3. The light is load-bearing: privacy must be added *on top of* the same
+   openings that make the proof sound — next part shows how.

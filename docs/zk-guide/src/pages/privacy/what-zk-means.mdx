@@ -1,0 +1,130 @@
+---
+showAskAi: false
+title: What zero-knowledge really means
+description: Simulators, the observation inventory, and why a transparent proof of a private statement is a leak.
+---
+
+<div className="guide-eyebrow">Part 5 · Privacy</div>
+
+# What zero-knowledge really means
+
+## Hiding is a property of the transcript, not the intent
+
+Part 2.1 defined the three dials. Here is the precise version of the third:
+
+> **Zero-knowledge.** For every observer, there exists a **simulator** — an
+> efficient algorithm that knows *only the public data* — whose output
+> transcript is indistinguishable from the real prover's. Whatever the
+> observer could compute from a real proof, they could compute from the
+> simulated one; therefore the proof taught them nothing.
+
+Read it in the negative and it becomes an engineering spec: *list everything
+the transcript contains; for each item, ask what a simulator could have put
+there without knowing the witness.* Anything the simulator cannot fake is a
+leak.
+
+## Apply it to a STARK artifact
+
+Part 3.3's inventory gives the list. For a payment-sized statement:
+~1,228 columns × (1 OOD sample + 23 query openings) plus ~1,725 FRI witness
+values — **~40–50k observables**, each a publicly computable linear-ish
+functional of the trace (Fact 1 from Part 3.3). Now run the simulator test
+on the trace:
+
+- Does the simulator know the trace? **No** — the trace *is* the witness.
+- Can it fake ~50k linear measurements of the trace? Only if the
+  measurements carry **no information** about the witness. In a transparent
+  STARK, they carry *all* of it: the measurements, taken together, determine
+  the trace. There is no simulator. **Zero-knowledge fails — by design,
+  loudly, on the first line.**
+
+## The attack, worked through
+
+Part 3.3's Fact 2 makes the failure concrete. Suppose the note secret `s`
+occupies one row `j` of one trace column, the other rows being values
+anyone can derive from the public tree. An observer reads the OOD sample of
+that column:
+
+```
+v = L_j(ζ) · s  +  (contribution of all other rows)
+```
+
+`L_j(ζ)` — the Lagrange weight of row `j` at the OOD point — is a *public
+number the attacker can compute for every candidate row*. So:
+
+```python
+P = 2**31 - 1
+
+# toy column: 8 rows on points x = 0..7; the secret sits in row 5;
+# the attacker knows rows 0..7 except 5, plus one opened value v.
+rows_known = [3, 1, 4, 1, 5, None, 9, 2]      # row 5 hidden
+zeta = 1234567                                # the OOD point
+
+def lagrange_weight(j, zeta, n=8):
+    # weight of row j at point zeta, rows on a toy domain 0..n-1
+    w = 1
+    for i in range(n):
+        if i != j:
+            w = w * (zeta - i) * pow(j - i, -1, P) % P
+    return w
+
+def contribution(rows):
+    return sum(lagrange_weight(i, zeta) * (rows[i] if rows[i] is not None else 0)
+               for i in range(8)) % P
+
+true_rows = rows_known.copy(); true_rows[5] = 77
+v = contribution(true_rows)                   # the one opened value
+
+# the attack: one equation, one unknown -> division, not brute force
+for j in range(8):
+    if rows_known[j] is None:
+        num = (v - sum(lagrange_weight(i, zeta) * (rows_known[i] if rows_known[i] is not None else 0)
+                       for i in range(8) if i != j)) % P
+        s = num * pow(lagrange_weight(j, zeta), -1, P) % P
+        print(f"row {j}: secret = {s}")       # recovers 77 instantly
+```
+
+In the toy the hidden row's position is known; in the real system the
+*public check* (`Poseidon(s) = note commitment`) replaces even that
+knowledge: the attacker recovers a candidate per row by division and keeps
+the one whose hash matches — **the whole attack is a few field operations
+per candidate row.** This is not a hypothetical: it was reproduced against
+a real circuit in this repo's `direct-air` diagnostic, which recovered a
+secret in full from query + OOD observations.
+
+## Marginal versus joint hiding
+
+A tempting shortcut: "if I randomize *something* in each column, each
+individual opening looks random — done?" No. **Marginal** uniformity of
+each observable is weak; the observer sees all ~50k *jointly*, and the
+joint distribution still constrains the witness. The correct intuition is
+entropy accounting: the observer extracts ~50k equations about a witness
+with ~256 bits of entropy — hopeless *for them* only if at least ~50k
+equations' worth of **independent unknown randomness** is mixed into the
+trace first. How to arrange that — cheaply, soundly, provably — is the
+subject of the next page and of the project's open research.
+
+Two clarifications that prevent common misunderstandings:
+
+1. **Soundness ≠ hiding.** The same transcript that makes cheating
+   probabilistically impossible makes the witness readable. They are the
+   same surface (Part 3.3), and hiding must be built *on* it.
+2. **One-way functions don't save you.** The secret never appears as
+   "the answer to a hash inversion" in the trace — it appears *as a
+   computation input*. The attacker never inverts anything; they read a
+   linear equation and divide.
+
+> **Check.** In the snippet, remove the public check and note the attacker
+> still recovers the secret — the check only *speeds up* real-world
+> recovery. Then double the padding rows (two unknowns per column) and see
+> the toy's enumeration collapse into solving a linear system — the toy
+> has too few observables to make the point, which is exactly the lesson:
+> the real system has ~50k of them.
+
+## What to carry forward
+
+1. ZK = simulator test; the STARK transcript fails it by design.
+2. Sparse secrets in linearly-opened columns are recoverable by division
+   plus a public check.
+3. Marginal hiding is not hiding; the entropy budget must cover the whole
+   joint observation space.

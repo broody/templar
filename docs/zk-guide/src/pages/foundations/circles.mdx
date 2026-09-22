@@ -1,0 +1,80 @@
+---
+showAskAi: false
+title: The circle group
+description: Where the evaluation domain lives in this stack — and why M31 needs a circle instead of roots of unity.
+---
+
+<div className="guide-eyebrow">Part 1 · Foundations</div>
+
+# The circle group
+
+## The FFT needs a group of size 2ⁿ
+
+Fast polynomial arithmetic (NTT/FFT — turning coefficients into values and
+back in `n log n` time) needs an evaluation group with a power-of-two size
+and a nested sub-group structure: size 2³¹ split cleanly into 2³⁰, 2²⁹, …
+down to 2. Classical STARKs get this from **roots of unity**: in a field
+where `p − 1` is divisible by 2³¹, the element `ω = g^((p−1)/2³¹)` generates
+such a group.
+
+## Why M31 cannot do that
+
+The multiplicative group of a field has order `p − 1`. For `p = 2³¹ − 1`:
+
+```
+p − 1 = 2³¹ − 2 = 2 · (2³⁰ − 1)
+```
+
+The power-of-two part of `p − 1` is just **2¹**. The largest "FFT-shaped"
+multiplicative subgroup has two elements. Usable for nothing.
+
+## The fix: use a different group
+
+Over M31, the solutions to
+
+```
+x² + y² = 1
+```
+
+form a group of exactly **2³¹ points** under a tangent-style addition law —
+the **circle group**. Concretely: `p ≡ 3 (mod 4)` means `−1` has no square
+root, and over such fields the unit circle has `p + 1 = 2³¹` points. A
+generator `G` generates the whole group, and it has the nested structure
+FFT needs: points of order `2ⁿ` sit inside points of order `2ⁿ⁺¹`.
+
+So this stack runs the entire polynomial machinery — trace domains, FRI
+domains, the "vanishing polynomial" — on **circle cosets** instead of
+root-of-unity subgroups. The names change (`CanonicCoset`, `odds(n)`,
+coset trees), the roles do not: a domain of size `2ⁿ` is a coset of the
+order-`2ⁿ` subgroup.
+
+Details you will meet in Part 3, translated:
+
+| Classical (roots of unity) | This stack (circle) |
+| --- | --- |
+| subgroups of `F_p*` of size 2ⁿ | order-2ⁿ subgroups of the circle |
+| evaluation domain = subgroup | domain = a coset of the subgroup |
+| FFT twiddles `ω^k` | "circle twiddles" from point doubling |
+| vanishing polynomial `xⁿ − 1` | a degree-2ⁿ circle vanishing polynomial |
+
+Two structural facts worth remembering, because they matter for privacy in
+Part 5:
+
+1. A trace of `2ⁿ` rows lives on the coset `odds(n)`; its low-degree
+   extension lives on the larger coset `odds(n + blowup)` — and **these two
+   cosets share no points**. The verifier samples the big coset, so raw rows
+   are never opened directly.
+2. Every opened value is a weighted sum of the row values with publicly
+   computable weights. "Openings leak linear combinations" is a property of
+   this geometry, and it is the hinge of the privacy analysis.
+
+> **Check.** In Python, count solutions of `x² + y² ≡ 1 (mod 7)` for
+> `x, y` in `0…6`. You should find 8 — and indeed `p + 1 = 8` when
+> `p = 7 ≡ 3 (mod 4)`. Then try `p = 11 (≡ 3 mod 4)` and confirm 12 points.
+
+## What to carry forward
+
+1. M31's multiplicative group is FFT-unusable; the circle group fixes it.
+2. All domains are circle cosets of power-of-two size.
+3. Trace domain and evaluation domain are *disjoint* cosets — geometry that
+   becomes privacy-relevant later.
