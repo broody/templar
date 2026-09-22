@@ -1,0 +1,63 @@
+{
+  "circuit_check": "inner proof verified in-circuit (NoValue check passed)",
+  "component_log_sizes": [
+    {
+      "component": "eq",
+      "log_size": 9
+    },
+    {
+      "component": "qm31_ops",
+      "log_size": 15
+    },
+    {
+      "component": "triple_xor",
+      "log_size": 11
+    },
+    {
+      "component": "m_31_to_u_32",
+      "log_size": 12
+    },
+    {
+      "component": "blake_g_gate",
+      "log_size": 15
+    },
+    {
+      "component": "verify_bitwise_xor_8",
+      "log_size": 16
+    },
+    {
+      "component": "verify_bitwise_xor_12",
+      "log_size": 20
+    },
+    {
+      "component": "verify_bitwise_xor_4",
+      "log_size": 8
+    },
+    {
+      "component": "verify_bitwise_xor_7",
+      "log_size": 14
+    },
+    {
+      "component": "verify_bitwise_xor_9",
+      "log_size": 18
+    },
+    {
+      "component": "range_check_16",
+      "log_size": 16
+    }
+  ],
+  "context_stats": "Stats { equals: 512, add: 13121, sub: 1360, mul: 9066, inv: 101, div: 12, pointwise_mul: 7928, guess: 769, blake_updates: 242, permutation_inputs: 72, outputs: 1, triple_xor: 2048, m31_to_u32: 4096 }",
+  "experiment": "compact-recursion-m0",
+  "inner": "simple_air squared-fibonacci (pinned example)",
+  "lifting_log_size": 22,
+  "native_verify": "accepted; mutated trace-root rejected",
+  "outer_config": {
+    "blowup": 2,
+    "fold_step": 4,
+    "pow_bits": 26,
+    "queries": 35
+  },
+  "proving_seconds": 1.083990387,
+  "trace_log_size": 20,
+  "verify_seconds": 0.002678365
+}

@@ -1,0 +1,29 @@
+[package]
+name = "templar-compact-recursion-m0"
+version = "0.1.0"
+edition = "2024"
+
+[workspace]
+
+[dependencies]
+circuits = { path = "../../../target/direct-air/stwo-circuits/crates/circuits" }
+circuit-common = { path = "../../../target/direct-air/stwo-circuits/crates/circuit_common", features = ["prover"] }
+circuit-prover = { path = "../../../target/direct-air/stwo-circuits/crates/circuit_prover" }
+circuit-verifier = { path = "../../../target/direct-air/stwo-circuits/crates/circuit_verifier" }
+circuits-stark-verifier = { path = "../../../target/direct-air/stwo-circuits/crates/stark_verifier" }
+circuits-stark-verifier-examples = { path = "../../../target/direct-air/stwo-circuits/crates/stark_verifier_examples" }
+circuit-serialize = { path = "../../../target/direct-air/stwo-circuits/crates/circuit_serialize" }
+stwo = { path = "../../../target/direct-air/stwo/crates/stwo", features = ["prover", "parallel"] }
+stwo-constraint-framework = { path = "../../../target/direct-air/stwo/crates/constraint-framework", features = ["prover", "parallel"] }
+num-traits = "0.2.19"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[patch."https://github.com/starkware-libs/stwo"]
+stwo = { path = "../../../target/direct-air/stwo/crates/stwo" }
+stwo-constraint-framework = { path = "../../../target/direct-air/stwo/crates/constraint-framework" }
+stwo-air-utils = { path = "../../../target/direct-air/stwo/crates/air-utils" }
+stwo-air-utils-derive = { path = "../../../target/direct-air/stwo/crates/air-utils-derive" }
+
+[profile.release]
+debug = false
