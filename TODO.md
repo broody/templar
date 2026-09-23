@@ -170,8 +170,9 @@ the accepted local proving architecture is unchanged.
   ([2.75 GiB client, PROOF2 140 s / 63.1 GiB](bench/m31-private-wrapper/client-port/results/stwo-client-stock/README.md))
   and with our **arithmetic-only profile** (eq + qm31_ops, fork
   `broody/proving` branch `templar/arithmetic-profile`):
-  - client **0.56 GiB**, 1 thread; timing is PoW-dominated, 2.5–5.5 s
-    typical;
+  - client **0.56 GiB**, 1 thread, or **0.28 GiB** with the bounded-memory
+    PCS mode (ported onto the fork; the proof is identical); timing is
+    PoW-dominated, 2.5–10 s;
   - the statement is output directly as limbs, with no hash;
   - the bridge takes 3.38M steps, 10/10 checks, including a claimed sum moved
     onto an absent component;

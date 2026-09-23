@@ -3,12 +3,13 @@
 2026-09-23. **The membership relation is proved on the client as a blinded stwo-circuits
 proof that uses only `eq` and `qm31_ops`. It is verified by the Cairo bridge inside the
 virtual OS and wrapped as a verified PROOF2.** There are no Blake, XOR or M31-to-u32
-components, no lookup tables and no statement hash. The client peak is 0.56 GiB, down
-from 2.75 GiB on the stock component set.
+components, no lookup tables and no statement hash. The client peak is 0.56 GiB, or
+0.28 GiB in bounded-memory mode, down from 2.75 GiB on the stock component set.
 
 | Stage | Where | Time | Peak memory | Evidence |
 | --- | --- | ---: | ---: | --- |
 | Client proof (membership + statement, 45-row blinding) | client, 1 thread | 2.5–5.5 s typical, 17.5 s outlier | 0.56 GiB | `client/` |
+| Same, bounded-memory mode (16-column FRI batches) | client, 1 thread | 4.1–10.2 s | **0.28 GiB** | `bounded-memory/` |
 | Bridge, standalone Cairo | server | — | — | 3.38M steps, 10/10 checks (`bridge-validation/`) |
 | Virtual OS execution of the account | server | 8.8 s | 0.84 GiB | 4.93M steps, exact message (`os-capture/`) |
 | PROOF2 large path | server | 116 s | 52.2 GiB | verified, 3/3 rejections (`proof2/`) |
@@ -56,6 +57,31 @@ steps, OS 7.22M steps, PROOF2 140 s / 63.1 GiB.
   production constants, so it is not run on a regenerated shape. The layout test and the
   pinned circuit hash cover that instead.
 
+## Bounded-memory mode
+
+The fork also carries our bounded-memory PCS mode (`8acdbe55d`), a three-way merge of
+`bench/bounded-memory/stwo.patch` from stwo `489a0f3` onto this stwo. It includes the runtime
+files only; the unused streamed-Merkle API is left out.
+- Owned trees keep polynomial coefficients instead of expanded evaluations.
+- Each tree is regenerated alone to open it, and its root is checked.
+- FRI quotients are accumulated `max_fri_columns` columns at a time.
+
+It changes storage only. A new circuit-prover test checks that bounded proofs equal
+unbounded ones field for field, for both profiles, and verify. The ported PCS and framework
+tests pass (13 PCS/quotient, 18 framework), as do the full stwo (299) and circuit-prover
+(29) suites.
+
+Same binary, same circuit, 1 thread, three fresh witnesses each (`bounded-memory/runs.json`):
+
+| Mode | Peak RSS | Proving |
+| --- | ---: | ---: |
+| Unbounded | 587 MB (0.56 GiB) | 2.8–5.9 s |
+| Bounded, 16-column batches | **295 MB (0.28 GiB)** | 4.1–10.2 s |
+| Bounded, 1-column batches | 304 MB | 4.4–12.5 s |
+
+A bounded-mode proof is accepted by the same pinned Cairo bridge (3.37M steps). The circuit
+hash is unchanged, since the mode does not touch the circuit.
+
 ## Tamper controls
 
 - **Native** (Rust, `examples/support`): output, trace root, preprocessed root, circuit hash,
@@ -69,8 +95,6 @@ steps, OS 7.22M steps, PROOF2 140 s / 63.1 GiB.
 
 - **Timing.** Proving time on one thread is dominated by the 26-bit PoW grind, so it varies
   run to run: 17.5 s recorded, 2.5 / 3.2 / 5.5 s on repeats. Memory is stable at 0.56 GiB.
-  The earlier 0.26 GiB figure used our local bounded-FRI-memory patch, which this fork
-  does not include.
 - **Hiding** rests on upstream row padding (45 rows of `eq` and `qm31_ops`), which is
   unproven. With no lookup tables, no table multiplicity depends on the witness. The
   remaining question is the one in broody/templar#2.

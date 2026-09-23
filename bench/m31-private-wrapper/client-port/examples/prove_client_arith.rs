@@ -21,7 +21,7 @@ use circuit_cairo_serialize::prepare_circuit_proof_for_cairo_verifier;
 use circuit_common::N_RESERVED;
 use circuit_common::finalize::{Profile, add_zk_blinding_for, pad_context_for};
 use circuit_common::preprocessed::PreprocessedCircuit;
-use circuit_prover::prover::{BaseColumnPool, SimdBackend, prove_circuit_assignment_with_channel};
+use circuit_prover::prover::{BaseColumnPool, SimdBackend, prove_circuit_assignment_bounded};
 use circuit_verifier::statement::{all_circuit_components, circuit_component_log_sizes};
 use circuits::context::{Context, FinalizedContext, Var};
 use circuits::ivalue::{IValue, NoValue, qm31_from_u32s};
@@ -81,8 +81,11 @@ fn expected(public: &Public) -> Vec<QM31> {
 
 fn main() {
     let a: Vec<String> = std::env::args().collect();
-    assert_eq!(a.len(), 2, "prove_client_arith OUT");
+    assert!(a.len() == 2 || a.len() == 3, "prove_client_arith OUT [MAX_FRI_COLUMNS]");
     let out = Path::new(&a[1]);
+    // Optional bounded-memory mode (fork patch): FRI quotients over this many columns at a time,
+    // owned trees keep coefficients only. The proof is identical either way.
+    let max_fri_columns: Option<usize> = a.get(2).map(|n| n.parse().unwrap());
     fs::create_dir_all(out).unwrap();
     let mut rng = rand::rngs::OsRng;
     let (public, private) = air::fresh(&mut rng).unwrap();
@@ -103,7 +106,7 @@ fn main() {
     let wanted = expected(&public);
     let build_seconds = started.elapsed().as_secs_f64();
     let t = Instant::now();
-    let mut proof = prove_circuit_assignment_with_channel::<support::MC>(context.values(), &pp, &BaseColumnPool::<SimdBackend>::new(), cfg).unwrap();
+    let mut proof = prove_circuit_assignment_bounded::<support::MC>(context.values(), &pp, &BaseColumnPool::<SimdBackend>::new(), cfg, max_fri_columns).unwrap();
     let proving_seconds = t.elapsed().as_secs_f64();
     drop(context);
     support::native_verify(&proof, &pp, root, &wanted);
@@ -129,6 +132,7 @@ fn main() {
         "component_log_sizes": log_sizes.into_array().to_vec(),
         "preprocessed_columns": pp.preprocessed_trace.n_columns(),
         "blinding_rows": BLINDING,
+        "max_fri_columns": max_fri_columns,
         "build_seconds": build_seconds,
         "proving_seconds": proving_seconds,
         "proof_felts": felts.len(),

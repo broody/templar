@@ -92,13 +92,16 @@ Measured for the membership relation (65 Poseidon2-M31 permutations, about
 | Trivial circuit, stock component set (the floor) | 2.60 GiB | 14 s | log20 |
 | `eq` + `qm31_ops` only | 0.53 GiB | 8 s | log18 |
 | `eq` + `qm31_ops` only, bounded FRI memory | **0.26 GiB** | 8.5 s | log18 |
-| Arithmetic-only profile, blinded, verified end to end | **0.56 GiB** | 2.5–5.5 s | log18 |
+| Arithmetic-only profile, blinded, verified end to end | 0.56 GiB | 2.5–5.5 s | log18 |
+| Same, bounded-memory mode | **0.28 GiB** | 4–10 s | log18 |
 
 The relation itself costs about 0.15 GiB. The rest is lookup machinery it
-never touches. The first three rows were measurements only. The last row is the
-working profile described below; its time is mostly the proof-of-work grind,
-which varies from run to run. The bounded-memory row used a local prover patch
-that the working profile does not include yet.
+never touches. The first three rows were measurements only. The last two rows are the
+working profile described below. Their time is mostly the proof-of-work grind,
+which varies from run to run. Bounded-memory mode keeps each committed
+polynomial as coefficients, not as its expanded evaluations. It rebuilds one tree
+at a time when the tree is opened, and computes the FRI quotients a batch of
+columns at a time. The proof is identical; only when memory is used changes.
 
 ## Removing the tables, soundly
 
@@ -225,8 +228,8 @@ no lookup table to leak through.
 
 | | Custom protocol (TMPZK002) | Blinded stwo-circuits |
 | --- | --- | --- |
-| Client memory, membership | ~53 MiB native, 63 MiB WASM | 0.56 GiB (arithmetic-only; ~0.26 GiB with bounded FRI memory) |
-| Client time, membership | ~1 s | 2.5–5.5 s (host, 1 thread, PoW-dominated) |
+| Client memory, membership | ~53 MiB native, 63 MiB WASM | 0.28 GiB (arithmetic-only, bounded-memory mode) |
+| Client time, membership | ~1 s | 4–10 s (host, 1 thread, PoW-dominated) |
 | Hiding construction | polynomial masking + salted commitments (ours) | row padding (StarkWare's) |
 | Hiding evidence | research review of a fixed relation | intuition; the question above |
 | Server layers | circuit A (verifies our protocol) → Cairo → PROOF2 | Cairo → PROOF2 |
@@ -238,8 +241,9 @@ The custom route is lighter on the phone. Both routes now run end to end. The
 stwo-circuits route moves the hardest cryptography onto StarkWare's
 maintained code, removes circuit A from the server, and puts client, bridge
 and PROOF2 on one code line. It also costs the server less: the account verifies a smaller proof, so the
-OS trace and the PROOF2 are smaller. The price is roughly 10× the client memory
-and a fork of the component set until upstream offers one.
+OS trace and the PROOF2 are smaller. The price is more client memory
+and a fork of the component set until upstream offers one. The client-memory gap
+is roughly 5× with bounded-memory mode.
 
 ## How the choice gets made
 
