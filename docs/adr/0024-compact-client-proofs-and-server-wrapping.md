@@ -237,7 +237,14 @@ The two routes differ most here.
   witness-only values. It is fixed in the fork with a mul blinding row, and a per-component
   rank audit now finds no unblinded column combination
   ([results](../../bench/m31-private-wrapper/client-port/results/hiding-leak/README.md)). All
-  earlier R0 proofs, including the Sepolia run's, predate the fix. The arithmetic-only profile removes
+  earlier R0 proofs, including the Sepolia run's, predate the fix. Further tests
+  ([plan](../../bench/m31-private-wrapper/client-port/reviews/hiding-test-plan.md)):
+  - the openings a proof reveals are exactly uniform (a per-point rank test);
+  - with challenges pinned, no linear combination of the whole transcript depends on the
+    witness at the production query count; FRI, composition and interaction values are
+    included, and the pre-fix control catches H2.
+
+  Nonlinear relations remain for the written argument. The arithmetic-only profile removes
   the lookup tables whose multiplicities would leak. What remains is a
   simulation argument over the full transcript: interaction and composition
   openings, unsalted Merkle leaves, and correlations (broody/templar#2).

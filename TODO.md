@@ -260,7 +260,11 @@ the accepted local proving architecture is unchanged.
     mul blinding row; the rank audit finds 0 unblinded combinations
     ([results](bench/m31-private-wrapper/client-port/results/hiding-leak/README.md)).
     Upstream's blinding has the same structure; draft in broody/templar first.
-    Next: the per-point rank test, then attack tests;
+    Done since: per-point rank test (openings exactly uniform), seed-invariant
+    search over base and interaction trees, and a full-transcript search
+    with pinned challenges (0 witness-dependent invariants at 35 queries;
+    the pre-fix control finds H2). Remaining: the written argument for the
+    nonlinear parts, and review;
   - the payment relation written once for both routes;
   - a WASM measurement.
   **Remaining client gates:** R0 payment constraints and any required private

@@ -39,9 +39,15 @@ interaction parts, which are nonlinear and are covered by layer 2 and the argume
 values across all base and interaction columns is seed-independent (rank 336/336). The pre-fix
 control finds exactly H2's 48.
 
-**Next: the full-transcript version.** The prover would run with pinned challenges: a
-test-only channel whose draws ignore commitments, with PoW 0, on a small circuit. The search
-then covers every opened value in all trees, plus all FRI layers and OODS samples.
+**Done: full-transcript version** (`hiding_transcript`,
+[results](../results/hiding-transcript/README.md)). Pinned challenges, every revealed value
+(all trees, all FRI layers, claimed sums), and a second witness with the same public output.
+At 35 queries (6,449 coordinates): 813 invariants, all public structure, **0
+witness-dependent**. The pre-fix control finds 72 witness-dependent invariants.
+
+**What remains for hiding:** nonlinear relations and distributional properties (the
+interaction `1/(γ − ·)` values, unsalted Merkle hashes) belong to the written argument. The
+tests now pin down its linear part and rule out H2-type structural leaks.
 
 **Original design of the per-point test:**
 
