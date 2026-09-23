@@ -187,3 +187,24 @@ pub fn sponge_lanes<V: Lanes>(ctx: &mut Context<V>, messages: &[Vec<Var>]) -> Ve
     }
     (0..messages.len()).map(|m| digest.iter().map(|l| l[m]).collect()).collect()
 }
+
+/// Up to four width-24 states at once, one per lane: each state (at most 24 words, zero-padded)
+/// goes through one permutation, truncated to its first nine words. The tree-node compression of
+/// `payment::Tree::Compress`.
+pub fn compress_lanes<V: Lanes>(ctx: &mut Context<V>, states: &[Vec<Var>]) -> Vec<Vec<Var>> {
+    assert!((1..=4).contains(&states.len()) && states.iter().all(|s| s.len() <= WIDTH));
+    let zero = ctx.zero();
+    let lane = |m: usize, i: usize| states.get(m).and_then(|s| s.get(i).copied()).unwrap_or(zero);
+    let packed: Vec<Var> = (0..WIDTH).map(|i| pack(ctx, std::array::from_fn(|m| lane(m, i)))).collect();
+    let out = permute_lanes(ctx, &packed);
+    for v in &out {
+        ctx.mark_as_maybe_unused(v);
+    }
+    let digest: Vec<[Var; 4]> = out[..9].iter().map(|v| unpack(ctx, *v)).collect();
+    for word in &digest {
+        for v in &word[states.len()..] {
+            ctx.mark_as_maybe_unused(v);
+        }
+    }
+    (0..states.len()).map(|m| digest.iter().map(|l| l[m]).collect()).collect()
+}

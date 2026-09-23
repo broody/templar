@@ -200,7 +200,16 @@ the accepted local proving architecture is unchanged.
   - PROOF2 117.5 s / 55.0 GiB, verified
     ([results](bench/m31-private-wrapper/client-port/results/stwo-client-r0-lanes/README.md)).
 
-  log18 needs single-permutation tree nodes, which is a format change.
+  **Single-permutation tree nodes (experimental format):** a truncated
+  Poseidon2 permutation per Merkle node, with the tree still 32 deep, takes
+  R0 to 175k rows (log18):
+  - client **0.58 GiB**, or **0.30 GiB / 1.7–2.0 s** bounded (4 threads);
+  - bridge 3.39M steps, 15/15 checks;
+  - OS 4.96M steps;
+  - PROOF2 120.3 s / 54.4 GiB, verified
+    ([results](bench/m31-private-wrapper/client-port/results/stwo-client-r0-compress/README.md)).
+
+  The node format needs review before adoption.
   Not yet measured: the pool's on-chain `apply_spend` with an M31-tree
   append.
 

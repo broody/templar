@@ -67,4 +67,5 @@ each level is two sequential permutations (a 22-word message through a rate-15 s
 two paths fill only two lanes. Making each tree node **one** permutation would take the paths
 from 64 to 32 lane steps, about 170k rows in total. That means a truncated-permutation
 compression of the 22-word node input, as Plonky3's Merkle trees do. It is a **format change**
-that needs its own security review, so it is not done here.
+that needs its own security review. It is measured as an experimental variant in
+[`../stwo-client-r0-compress/`](../stwo-client-r0-compress/README.md): 175k rows, log18.

@@ -118,6 +118,7 @@ network.**
 | stwo-circuits, arithmetic-only, membership | 3.38M steps | 4.93M steps | 116 s / 52.2 GiB |
 | stwo-circuits, arithmetic-only, R0 payment | 3.77M steps | 5.42M steps | 139 s / 64.2 GiB |
 | **Same, lane-packed hashing (log19)** | 3.53M steps | 5.13M steps | **117.5 s / 55.0 GiB** |
+| Same, single-permutation tree nodes (experimental format, log18) | 3.39M steps | 4.96M steps | 120.3 s / 54.4 GiB |
 
 - Every PROOF2 is accepted by the V2 verifier. Each run rejects a changed output, a
   flipped proof byte and a truncated proof.
@@ -129,7 +130,8 @@ network.**
   [stock](../../bench/m31-private-wrapper/client-port/results/stwo-client-stock/README.md),
   [arithmetic](../../bench/m31-private-wrapper/client-port/results/stwo-client-arith/README.md)
   [R0](../../bench/m31-private-wrapper/client-port/results/stwo-client-r0/README.md)
-  and [R0 lane-packed](../../bench/m31-private-wrapper/client-port/results/stwo-client-r0-lanes/README.md).
+  [R0 lane-packed](../../bench/m31-private-wrapper/client-port/results/stwo-client-r0-lanes/README.md)
+  and [R0 single-permutation nodes](../../bench/m31-private-wrapper/client-port/results/stwo-client-r0-compress/README.md).
 
 ### Client
 
@@ -142,6 +144,7 @@ network.**
 | stwo-circuits membership, arithmetic-only (default / bounded) | 1 | 0.56 / 0.28 GiB | 2.5–10 s |
 | R0 payment, arithmetic-only (default / bounded) | 4 | 2.2 / 1.1 GiB | 2.5–3.8 / 4.4–5.2 s |
 | **R0 payment, lane-packed hashing (default / bounded)** | 4 | **1.1 / 0.54 GiB** | 2.0–3.6 / 2.4–2.6 s |
+| R0, single-permutation tree nodes (experimental format) | 4 | 0.58 / 0.30 GiB | 1.4–4.1 / 1.7–2.0 s |
 
 The R0 client proves:
 - ownership keys;
@@ -161,8 +164,9 @@ Checks:
   absent component.
 
 Lane packing runs four Poseidon2 permutations per QM31 row, which takes R0 from 631k to 295k
-rows (log19) with the same statement. log18 would need single-permutation tree nodes, a
-format change.
+rows (log19) with the same statement. An experimental single-permutation tree-node format
+(truncated Poseidon2, depth still 32) reaches 175k rows (log18); it needs review before
+adoption.
 
 ### Implementation state
 

@@ -10,7 +10,10 @@
 //! - `ak = H(AUTH, sk)`, `nk = H(NK, sk)`, `receiver = H(OWNER, ak ‖ nk)`
 //! - `inner = H(INNER, receiver ‖ rho)`
 //! - `cm = H(NOTE, chain₉ ‖ pool₉ ‖ token₉ ‖ amount₈ ‖ inner)`
-//! - `node = H(NODE, level, left ‖ right)`
+//! - `node = H(NODE, level, left ‖ right)` ([`Tree::Sponge`], two permutations per node), or
+//!   `node = P([TAG, 1, NODE1, level] ++ left ++ right ++ [0, 0])[..9]` ([`Tree::Compress`]:
+//!   one truncated permutation per node, as Plonky3's Merkle compression; an **experimental
+//!   format variant** pending its own review)
 //! - `nf = H(NF, nk ‖ cm ‖ pos_lo ‖ pos_hi)`
 //!
 //! Felts (chain, pool, token, delivery digests) are nine 28-bit little-endian limbs; amounts are
@@ -30,7 +33,7 @@ use serde::{Deserialize, Serialize};
 use stwo::core::fields::m31::M31;
 
 use crate::hash::WIDTH;
-use crate::membership::{Lanes, permute, sponge_lanes};
+use crate::membership::{Lanes, compress_lanes, permute, sponge_lanes};
 use crate::merkle::guess_bits;
 use crate::ro::guess_m31;
 
@@ -50,6 +53,18 @@ pub const OWNER: u32 = 3;
 pub const INNER: u32 = 4;
 pub const NOTE: u32 = 5;
 pub const NODE: u32 = 6;
+/// Node kind for [`Tree::Compress`], distinct from every sponge-mode kind.
+pub const NODE1: u32 = 8;
+
+/// How tree nodes are hashed.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Tree {
+    /// `H(NODE, level, left ‖ right)`: the framed rate-15 sponge, two permutations.
+    Sponge,
+    /// One width-24 permutation over `[TAG, 1, NODE1, level, left, right, 0, 0]`, truncated to
+    /// nine words.
+    Compress,
+}
 pub const NF: u32 = 7;
 
 pub type Digest = [u32; 9];
@@ -173,11 +188,26 @@ pub fn commitment(context: &[u32], amount: u128, receiver: &Digest, rho: &Digest
     h(NOTE, 0, &cat(&[context, &amount_limbs(amount), &inner]))
 }
 
-pub fn climb(leaf: &Digest, position: u32, siblings: &[Digest]) -> Digest {
+/// A tree node at `level` from its two children.
+pub fn node(tree: Tree, level: u32, l: &Digest, r: &Digest) -> Digest {
+    match tree {
+        Tree::Sponge => h(NODE, level, &cat(&[l, r])),
+        Tree::Compress => {
+            let mut state = [M31::from(0); WIDTH];
+            for (i, v) in [TAG, 1, NODE1, level].iter().chain(l).chain(r).enumerate() {
+                state[i] = M31::from(*v);
+            }
+            let out = permute(state);
+            std::array::from_fn(|i| out[i].0)
+        }
+    }
+}
+
+pub fn climb(tree: Tree, leaf: &Digest, position: u32, siblings: &[Digest]) -> Digest {
     let mut cur = *leaf;
     for (level, sib) in siblings.iter().enumerate() {
         let (l, r) = if (position >> level) & 1 == 0 { (cur, *sib) } else { (*sib, cur) };
-        cur = h(NODE, level as u32, &cat(&[&l, &r]));
+        cur = node(tree, level as u32, &l, &r);
     }
     cur
 }
@@ -187,7 +217,7 @@ pub fn nullifier(nk: &Digest, cm: &Digest, position: u32) -> Digest {
 }
 
 /// The public statement a valid witness proves, or an error naming the first broken rule.
-pub fn statement(chain: &str, pool: &str, token: &str, deliveries: [String; 2], w: &Private) -> Result<Public, String> {
+pub fn statement(tree: Tree, chain: &str, pool: &str, token: &str, deliveries: [String; 2], w: &Private) -> Result<Public, String> {
     let context = [felt_limbs(chain), felt_limbs(pool), felt_limbs(token)].concat();
     let nonzero = |d: &Digest| d.iter().any(|v| *v != 0);
     let mut roots = vec![];
@@ -201,7 +231,7 @@ pub fn statement(chain: &str, pool: &str, token: &str, deliveries: [String; 2], 
         }
         let (receiver, nk) = receiver_of(&i.sk);
         let cm = commitment(&context, i.amount, &receiver, &i.rho);
-        roots.push(climb(&cm, i.position, &i.siblings));
+        roots.push(climb(tree, &cm, i.position, &i.siblings));
         nullifiers.push(nullifier(&nk, &cm, i.position));
     }
     if roots[0] != roots[1] {
@@ -235,7 +265,7 @@ pub fn statement(chain: &str, pool: &str, token: &str, deliveries: [String; 2], 
 
 /// A fresh random R0 payment: two notes at independent positions of one sparse depth-32 tree
 /// (the paths share nodes only where they meet), and two outputs splitting the total.
-pub fn fresh(rng: &mut impl RngCore) -> (Public, Private) {
+pub fn fresh(tree: Tree, rng: &mut impl RngCore) -> (Public, Private) {
     let chain = "0x534e5f5345504f4c4941";
     let pool = format!("0x{:x}", rng.gen_range(1u64..u64::MAX));
     let token = format!("0x{:x}", rng.gen_range(1u64..u64::MAX));
@@ -278,7 +308,7 @@ pub fn fresh(rng: &mut impl RngCore) -> (Public, Private) {
             }
             let get = |k: u64| known.iter().find(|(j, _)| *j == k).unwrap().1;
             let (l, r) = (get(parent << 1), get((parent << 1) | 1));
-            parents.push((parent, h(NODE, level as u32, &cat(&[&l, &r]))));
+            parents.push((parent, node(tree, level as u32, &l, &r)));
         }
         known = parents;
         index.iter_mut().for_each(|i| *i >>= 1);
@@ -299,7 +329,7 @@ pub fn fresh(rng: &mut impl RngCore) -> (Public, Private) {
         ],
     };
     let deliveries = [format!("0x{:x}", rng.next_u64() | 1), format!("0x{:x}", rng.next_u64() | 1)];
-    let public = statement(chain, &pool, &token, deliveries, &private).expect("fresh witness is valid");
+    let public = statement(tree, chain, &pool, &token, deliveries, &private).expect("fresh witness is valid");
     (public, private)
 }
 
@@ -401,7 +431,7 @@ fn hash_batch<V: Lanes>(c: &mut Context<V>, requests: Vec<(u32, u32, Vec<Var>)>)
 
 /// Builds R0 and returns the 23 output variables (the public statement). Hashes run four to a
 /// row where they are independent, two along the membership paths.
-pub fn build<V: Lanes>(c: &mut Context<V>, public: &Public, w: &Private) -> Vec<Var> {
+pub fn build<V: Lanes>(c: &mut Context<V>, tree: Tree, public: &Public, w: &Private) -> Vec<Var> {
     let tag: Vec<Var> = STATEMENT_TAG.iter().map(|t| c.constant(M31::from(*t).into())).collect();
     let context = guess_words(c, &context_limbs(public));
     // Private inputs, with their nonzero and range checks.
@@ -468,9 +498,22 @@ pub fn build<V: Lanes>(c: &mut Context<V>, public: &Public, w: &Private) -> Vec<
                 left.push(eval!(c, (x) + (d)));
                 right.push(eval!(c, (y) - (d)));
             }
-            reqs.push((NODE, level as u32, [left, right].concat()));
+            reqs.push((level as u32, [left, right].concat()));
         }
-        let next = hash_batch(c, reqs);
+        let next = match tree {
+            Tree::Sponge => hash_batch(c, reqs.into_iter().map(|(l, x)| (NODE, l, x)).collect()),
+            Tree::Compress => {
+                let states = reqs
+                    .into_iter()
+                    .map(|(l, x)| {
+                        let mut st: Vec<Var> = [TAG, 1, NODE1, l].iter().map(|v| c.constant(M31::from(*v).into())).collect();
+                        st.extend(x);
+                        st
+                    })
+                    .collect::<Vec<_>>();
+                compress_lanes(c, &states)
+            }
+        };
         cur = [next[0].clone(), next[1].clone()];
     }
     for (a, b) in cur[0].clone().into_iter().zip(cur[1].clone()) {

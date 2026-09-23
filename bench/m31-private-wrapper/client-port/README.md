@@ -28,6 +28,7 @@ stwo-circuits proof that the bridge verifies directly:
 | Arithmetic-only profile (fork) | 0.56 GiB (0.28 GiB bounded mode) | 3.38M steps | 4.93M steps | 116 s / 52.2 GiB | [results/stwo-client-arith/](results/stwo-client-arith/README.md) |
 | R0 payment (2-in/2-out), arithmetic-only, log20 | 2.2 GiB (1.1 GiB bounded), 4 threads | 3.77M steps | 5.42M steps | 139 s / 64.2 GiB | [results/stwo-client-r0/](results/stwo-client-r0/README.md) |
 | **R0 payment, lane-packed hashing, log19** | **1.1 GiB (0.54 GiB bounded)**, 4 threads | 3.53M steps | 5.13M steps | 117.5 s / 55.0 GiB | [results/stwo-client-r0-lanes/](results/stwo-client-r0-lanes/README.md) |
+| R0, lane-packed, single-permutation tree nodes (experimental format), log18 | 0.58 GiB (0.30 GiB bounded), 4 threads | 3.39M steps | 4.96M steps | 120.3 s / 54.4 GiB | [results/stwo-client-r0-compress/](results/stwo-client-r0-compress/README.md) |
 
 The arithmetic-only profile needs our fork of `proving` (`target/proving-arith`, branch
 `templar/arithmetic-profile`), which this crate now builds against. The full-profile paths

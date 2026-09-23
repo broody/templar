@@ -1,6 +1,8 @@
 //! R0 payment (2-in/2-out, one token) as a blinded arithmetic-only stwo-circuits client proof.
 //! The relation is `src/payment.rs`; the 23 outputs carry the 92-limb public statement.
-//! `prove_payment_r0 OUT [MAX_FRI_COLUMNS]` (bounded-memory mode when the batch size is given).
+//! `prove_payment_r0 OUT [MAX_FRI_COLUMNS] [--compress-nodes]`: bounded-memory mode when the
+//! batch size is given; `--compress-nodes` selects the experimental single-permutation tree
+//! nodes (`Tree::Compress`) instead of the sponge nodes.
 use std::{fs, path::Path, time::Instant};
 #[path = "support/mod.rs"]
 mod support;
@@ -13,14 +15,14 @@ use circuits::context::{Context, FinalizedContext};
 use circuits::ivalue::{NoValue, qm31_from_u32s};
 use serde_json::json;
 use stwo::core::fields::qm31::QM31;
-use templar_client_verifier_circuit::payment::{self, N_OUTPUTS, Private, Public, STATEMENT_TAG, statement_limbs};
+use templar_client_verifier_circuit::payment::{self, N_OUTPUTS, Private, Public, STATEMENT_TAG, Tree, statement_limbs};
 
 /// Upstream sizing: n_queries + NON_QUERY_INFO_LEAK.
 const BLINDING: usize = 35 + 10;
 
-fn circuit<V: templar_client_verifier_circuit::membership::Lanes>(public: &Public, private: &Private, seed: [u8; 32]) -> FinalizedContext<V> {
+fn circuit<V: templar_client_verifier_circuit::membership::Lanes>(tree: Tree, public: &Public, private: &Private, seed: [u8; 32]) -> FinalizedContext<V> {
     let mut c = Context::<V>::new(N_OUTPUTS);
-    let outputs = payment::build(&mut c, public, private);
+    let outputs = payment::build(&mut c, tree, public, private);
     c.set_outputs(&outputs);
     let mut c = c.finalize(true);
     add_zk_blinding_for(&mut c, seed, BLINDING, Profile::Arithmetic);
@@ -29,19 +31,25 @@ fn circuit<V: templar_client_verifier_circuit::membership::Lanes>(public: &Publi
 }
 
 fn main() {
-    let a: Vec<String> = std::env::args().collect();
-    assert!(a.len() == 2 || a.len() == 3, "prove_payment_r0 OUT [MAX_FRI_COLUMNS]");
+    let mut a: Vec<String> = std::env::args().collect();
+    let tree = if let Some(k) = a.iter().position(|x| x == "--compress-nodes") {
+        a.remove(k);
+        Tree::Compress
+    } else {
+        Tree::Sponge
+    };
+    assert!(a.len() == 2 || a.len() == 3, "prove_payment_r0 OUT [MAX_FRI_COLUMNS] [--compress-nodes]");
     let out = Path::new(&a[1]);
     let max_fri_columns: Option<usize> = a.get(2).map(|n| n.parse().unwrap());
     fs::create_dir_all(out).unwrap();
     let mut rng = rand::rngs::OsRng;
-    let (public, private) = payment::fresh(&mut rng);
+    let (public, private) = payment::fresh(tree, &mut rng);
     let mut seed = [0u8; 32];
     rand::RngCore::fill_bytes(&mut rng, &mut seed);
     let started = Instant::now();
     // Topology is independent of the witness and of the blinding seed.
-    let topology = circuit::<NoValue>(&public, &private, [0; 32]);
-    let context = circuit::<QM31>(&public, &private, seed);
+    let topology = circuit::<NoValue>(tree, &public, &private, [0; 32]);
+    let context = circuit::<QM31>(tree, &public, &private, seed);
     assert!(topology.circuit() == context.circuit());
     context.validate_circuit();
     let pp = PreprocessedCircuit::from_finalized_circuit(topology.circuit());
@@ -71,6 +79,7 @@ fn main() {
             "statement_tag_u32": STATEMENT_TAG,
             "statement_layout": "92 limbs, 4 per output: tag 2, chain 9, pool 9, token 9 (28-bit LE), root 9, nf0 9, nf1 9, cm0 9, delivery0 9 (28-bit LE), cm1 9, delivery1 9 (28-bit LE)",
             "blinding_rows": BLINDING,
+            "tree_nodes": format!("{tree:?}"),
         }),
     ));
     let mut arguments = vec![format!("0x{:x}", felts.len())];
@@ -83,6 +92,7 @@ fn main() {
         "component_log_sizes": log_sizes.into_array().to_vec(),
         "blinding_rows": BLINDING,
         "max_fri_columns": max_fri_columns,
+        "tree_nodes": format!("{tree:?}"),
         "build_seconds": build_seconds,
         "proving_seconds": proving_seconds,
         "proof_felts": felts.len(),

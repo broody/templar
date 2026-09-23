@@ -1,0 +1,282 @@
+{
+  "scope": "R0 client proof, lane-packed, single-permutation tree nodes (Tree::Compress, experimental format); same binary, 16 GiB cap, zero swap, taskset cores 0-3, fresh witness per run",
+  "qm31_ops_rows_before_padding": 174615,
+  "runs": [
+    {
+      "threads": 4,
+      "max_fri_columns": null,
+      "run": 1,
+      "tree_nodes": "Compress",
+      "proving_seconds": 4.08,
+      "wall_seconds": 4.31,
+      "peak_rss_kib": 597960,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        11,
+        18
+      ],
+      "proof_felts": 29898,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": null,
+      "run": 2,
+      "tree_nodes": "Compress",
+      "proving_seconds": 3.08,
+      "wall_seconds": 3.32,
+      "peak_rss_kib": 616508,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        11,
+        18
+      ],
+      "proof_felts": 30006,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": null,
+      "run": 3,
+      "tree_nodes": "Compress",
+      "proving_seconds": 1.38,
+      "wall_seconds": 1.61,
+      "peak_rss_kib": 602072,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        11,
+        18
+      ],
+      "proof_felts": 29154,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": 16,
+      "run": 1,
+      "tree_nodes": "Compress",
+      "proving_seconds": 1.99,
+      "wall_seconds": 2.2,
+      "peak_rss_kib": 308040,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        11,
+        18
+      ],
+      "proof_felts": 29958,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": 16,
+      "run": 2,
+      "tree_nodes": "Compress",
+      "proving_seconds": 1.82,
+      "wall_seconds": 2.03,
+      "peak_rss_kib": 321808,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        11,
+        18
+      ],
+      "proof_felts": 30058,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": 16,
+      "run": 3,
+      "tree_nodes": "Compress",
+      "proving_seconds": 1.67,
+      "wall_seconds": 1.88,
+      "peak_rss_kib": 323832,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        11,
+        18
+      ],
+      "proof_felts": 29634,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": null,
+      "run": 1,
+      "tree_nodes": "Compress",
+      "proving_seconds": 6.93,
+      "wall_seconds": 7.39,
+      "peak_rss_kib": 589588,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        11,
+        18
+      ],
+      "proof_felts": 29606,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": null,
+      "run": 2,
+      "tree_nodes": "Compress",
+      "proving_seconds": 6.21,
+      "wall_seconds": 6.68,
+      "peak_rss_kib": 589460,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        11,
+        18
+      ],
+      "proof_felts": 29782,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": null,
+      "run": 3,
+      "tree_nodes": "Compress",
+      "proving_seconds": 6.64,
+      "wall_seconds": 7.12,
+      "peak_rss_kib": 589368,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        11,
+        18
+      ],
+      "proof_felts": 29418,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": 16,
+      "run": 1,
+      "tree_nodes": "Compress",
+      "proving_seconds": 10.36,
+      "wall_seconds": 10.8,
+      "peak_rss_kib": 296236,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        11,
+        18
+      ],
+      "proof_felts": 29906,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": 16,
+      "run": 2,
+      "tree_nodes": "Compress",
+      "proving_seconds": 5.27,
+      "wall_seconds": 5.72,
+      "peak_rss_kib": 296480,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        11,
+        18
+      ],
+      "proof_felts": 29850,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": 16,
+      "run": 3,
+      "tree_nodes": "Compress",
+      "proving_seconds": 4.67,
+      "wall_seconds": 5.14,
+      "peak_rss_kib": 296064,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        11,
+        18
+      ],
+      "proof_felts": 29310,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    }
+  ]
+}
