@@ -702,3 +702,35 @@ pub fn build<V: Lanes>(c: &mut Context<V>, tree: Tree, public: &Public, w: &Priv
     limbs.resize(4 * N_OUTPUTS, zero);
     limbs.chunks_exact(4).map(|q| from_partial_evals(c, q.try_into().unwrap())).collect()
 }
+
+// ---------------------------------------------------------------- wallet support
+
+/// The root of the depth-32 tree holding `leaves` at indices 0..n (empty subtrees elsewhere) and,
+/// for each of `positions`, its 32 siblings from the leaf up. Matches the pool's appends.
+pub fn tree_paths(tree: Tree, leaves: &[Digest], positions: &[u32]) -> (Digest, Vec<Vec<Digest>>) {
+    let mut zeros = vec![[0u32; 9]];
+    for level in 0..DEPTH {
+        let z = *zeros.last().unwrap();
+        zeros.push(node(tree, level as u32, &z, &z));
+    }
+    let mut level_nodes = leaves.to_vec();
+    let mut index: Vec<u64> = positions.iter().map(|p| *p as u64).collect();
+    let mut paths = vec![vec![]; positions.len()];
+    for level in 0..DEPTH {
+        for (i, idx) in index.iter().enumerate() {
+            let sib = (*idx ^ 1) as usize;
+            paths[i].push(level_nodes.get(sib).copied().unwrap_or(zeros[level]));
+        }
+        let mut next = vec![];
+        for pair in level_nodes.chunks(2) {
+            let r = if pair.len() == 2 { pair[1] } else { zeros[level] };
+            next.push(node(tree, level as u32, &pair[0], &r));
+        }
+        if next.is_empty() {
+            next.push(zeros[level + 1]);
+        }
+        level_nodes = next;
+        index.iter_mut().for_each(|i| *i >>= 1);
+    }
+    (level_nodes[0], paths)
+}

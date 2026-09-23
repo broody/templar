@@ -145,3 +145,25 @@ fn circuit_finalizes_with_lint() {
         }
     }
 }
+
+/// `tree_paths` (the wallet's path source) agrees with climbing from each leaf and with the
+/// pool's golden roots (bench/m31-pool/vectors.json, same leaves in order).
+#[test]
+fn wallet_tree_paths_match_pool() {
+    let v: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../../m31-pool/vectors.json")).unwrap(),
+    )
+    .unwrap();
+    let leaves: Vec<payment::Digest> = serde_json::from_value(v["leaves"].clone()).unwrap();
+    for (tree, name) in [(Tree::Sponge, "Sponge"), (Tree::Compress, "Compress")] {
+        let roots: Vec<payment::Digest> = serde_json::from_value(v["formats"][name]["roots"].clone()).unwrap();
+        for n in 1..=leaves.len() {
+            let positions: Vec<u32> = (0..n as u32).collect();
+            let (root, paths) = payment::tree_paths(tree, &leaves[..n], &positions);
+            assert_eq!(root, roots[n - 1], "{name} root after {n}");
+            for (p, path) in paths.iter().enumerate() {
+                assert_eq!(payment::climb(tree, &leaves[p], p as u32, path), root, "{name} path {p} of {n}");
+            }
+        }
+    }
+}
