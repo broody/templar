@@ -10,7 +10,7 @@ use circuit_common::preprocessed::PreprocessedCircuit;
 use circuit_prover::prover::{BaseColumnPool, SimdBackend, prove_circuit_assignment_bounded};
 use circuit_verifier::statement::{all_circuit_components, circuit_component_log_sizes};
 use circuits::context::{Context, FinalizedContext};
-use circuits::ivalue::{IValue, NoValue, qm31_from_u32s};
+use circuits::ivalue::{NoValue, qm31_from_u32s};
 use serde_json::json;
 use stwo::core::fields::qm31::QM31;
 use templar_client_verifier_circuit::payment::{self, N_OUTPUTS, Private, Public, STATEMENT_TAG, statement_limbs};
@@ -18,7 +18,7 @@ use templar_client_verifier_circuit::payment::{self, N_OUTPUTS, Private, Public,
 /// Upstream sizing: n_queries + NON_QUERY_INFO_LEAK.
 const BLINDING: usize = 35 + 10;
 
-fn circuit<V: IValue>(public: &Public, private: &Private, seed: [u8; 32]) -> FinalizedContext<V> {
+fn circuit<V: templar_client_verifier_circuit::membership::Lanes>(public: &Public, private: &Private, seed: [u8; 32]) -> FinalizedContext<V> {
     let mut c = Context::<V>::new(N_OUTPUTS);
     let outputs = payment::build(&mut c, public, private);
     c.set_outputs(&outputs);

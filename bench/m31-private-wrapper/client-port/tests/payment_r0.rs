@@ -69,3 +69,14 @@ fn native_rules() {
     p.outputs[1].receiver = [0; 9];
     assert!(redo(&p).is_err());
 }
+
+/// The full client pipeline's finalization (unused-variable lint included) accepts the circuit.
+#[test]
+fn circuit_finalizes_with_lint() {
+    let (public, private) = payment::fresh(&mut StdRng::seed_from_u64(10));
+    let mut c = Context::<QM31>::new(N_OUTPUTS);
+    let out = build(&mut c, &public, &private);
+    c.set_outputs(&out);
+    let f = c.finalize(true);
+    f.validate_circuit();
+}

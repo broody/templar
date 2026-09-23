@@ -3,7 +3,7 @@
 - Status: Proposed — both client routes verified end to end locally; Sepolia, hiding and
   review gates open
 - Date: 2026-09-22
-- Evidence updated: 2026-09-23 (PROOF2 wrapping, both client routes, R0 payment)
+- Evidence updated: 2026-09-23 (PROOF2 wrapping, both client routes, R0 payment, lane packing)
 - Deciders: broody
 - If accepted, would amend: [ADR-0018](0018-stwo-private-proving.md) for the
   client/server proving split, private hash format and device assumptions;
@@ -116,7 +116,8 @@ network.**
 | Custom route: circuit A verifying a TMPZK002 membership proof | 5.80M steps | 8.13M steps | 142 s / 66.0 GiB |
 | stwo-circuits, stock components, membership | 5.06M steps | 7.22M steps | 140 s / 63.1 GiB |
 | stwo-circuits, arithmetic-only, membership | 3.38M steps | 4.93M steps | 116 s / 52.2 GiB |
-| **stwo-circuits, arithmetic-only, R0 payment** | 3.77M steps | 5.42M steps | **139 s / 64.2 GiB** |
+| stwo-circuits, arithmetic-only, R0 payment | 3.77M steps | 5.42M steps | 139 s / 64.2 GiB |
+| **Same, lane-packed hashing (log19)** | 3.53M steps | 5.13M steps | **117.5 s / 55.0 GiB** |
 
 - Every PROOF2 is accepted by the V2 verifier. Each run rejects a changed output, a
   flipped proof byte and a truncated proof.
@@ -127,7 +128,8 @@ network.**
   results for [proving-stack](../../bench/m31-private-wrapper/client-port/results/proving-stack/README.md),
   [stock](../../bench/m31-private-wrapper/client-port/results/stwo-client-stock/README.md),
   [arithmetic](../../bench/m31-private-wrapper/client-port/results/stwo-client-arith/README.md)
-  and [R0](../../bench/m31-private-wrapper/client-port/results/stwo-client-r0/README.md).
+  [R0](../../bench/m31-private-wrapper/client-port/results/stwo-client-r0/README.md)
+  and [R0 lane-packed](../../bench/m31-private-wrapper/client-port/results/stwo-client-r0-lanes/README.md).
 
 ### Client
 
@@ -138,7 +140,8 @@ network.**
 | TMPZK002 membership, native / Chrome WASM | 1 | 53 MiB / 63 MiB linear | ~1.0 s / ~2 s |
 | stwo-circuits membership, stock components | 1 | 2.75 GiB | 15.5 s |
 | stwo-circuits membership, arithmetic-only (default / bounded) | 1 | 0.56 / 0.28 GiB | 2.5–10 s |
-| **R0 payment, arithmetic-only (default / bounded)** | 4 | **2.2 / 1.1 GiB** | 2.5–3.8 / 4.4–5.2 s |
+| R0 payment, arithmetic-only (default / bounded) | 4 | 2.2 / 1.1 GiB | 2.5–3.8 / 4.4–5.2 s |
+| **R0 payment, lane-packed hashing (default / bounded)** | 4 | **1.1 / 0.54 GiB** | 2.0–3.6 / 2.4–2.6 s |
 
 The R0 client proves:
 - ownership keys;
@@ -157,8 +160,9 @@ Checks:
 - The bridge rejects 14 altered inputs, including a claimed sum moved onto an
   absent component.
 
-The R0 trace is log20: 631k rows, about 40% of it padding. Each Poseidon2 row uses
-one of four QM31 lanes, which leaves client headroom.
+Lane packing runs four Poseidon2 permutations per QM31 row, which takes R0 from 631k to 295k
+rows (log19) with the same statement. log18 would need single-permutation tree nodes, a
+format change.
 
 ### Implementation state
 
@@ -193,10 +197,10 @@ in the upload.
 
 ## Consequences and alternatives
 
-- **Client.** Client cost drops roughly 5× in memory and 4–6× in time for an
+- **Client.** Client cost drops roughly 8–11× in memory and 5–9× in time for an
   ordinary payment, which makes browser and phone proving plausible. WASM and
   whole-wallet budgets still need measurement.
-- **Server cost.** Wrapping costs ~150 s and ~64 GiB per payment on the server,
+- **Server cost.** Wrapping costs ~125 s and ~55 GiB per payment on the server,
   close to the PROOF2 path's fixed floor.
 - **Service dependency.** Wrapping adds a dependency for availability, latency and
   pricing. A service can delay or censor and see network metadata, but cannot learn

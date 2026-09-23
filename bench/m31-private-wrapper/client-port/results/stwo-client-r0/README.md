@@ -1,5 +1,9 @@
 # R0 payment through the split architecture, up to submission
 
+> **Superseded by [`../stwo-client-r0-lanes/`](../stwo-client-r0-lanes/README.md)**: the same
+> relation with lane-packed hashing (log19, half the memory). These log20 figures are from
+> commit `f421cdd`.
+
 2026-09-23. **An ordinary 2-in/2-out private payment (R0) is proved on the client as a blinded
 arithmetic-only stwo-circuits proof, verified by the Cairo bridge inside the virtual OS, and
 wrapped as a verified PROOF2.** Every stage before Sepolia submission ran locally against a

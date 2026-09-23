@@ -105,3 +105,85 @@ pub fn build<V: IValue>(ctx: &mut Context<V>, secret: &[u32; 9], siblings: &[[u3
     }
     cur
 }
+
+/// The width-24 permutation on four lane-packed states at once (see `sym::compile_lanes`).
+pub fn permute_lanes<V: IValue>(ctx: &mut Context<V>, input: &[Var]) -> Vec<Var> {
+    let syms = Sym::begin(WIDTH);
+    let out = permute::<Sym>(syms.try_into().unwrap());
+    crate::sym::compile_lanes(ctx, input, &out)
+}
+
+/// Packs four M31 variables into one QM31 variable, lane `k` in coordinate `k`. The inputs must be
+/// base-field values, which makes the packing injective.
+pub fn pack<V: IValue>(ctx: &mut Context<V>, lanes: [Var; 4]) -> Var {
+    circuits::ops::from_partial_evals(ctx, lanes)
+}
+
+/// Reads the four lanes of a value; the topology-only `NoValue` reads zeros.
+pub trait Lanes: IValue {
+    fn lanes(&self) -> [u32; 4];
+}
+impl Lanes for stwo::core::fields::qm31::QM31 {
+    fn lanes(&self) -> [u32; 4] {
+        self.to_m31_array().map(|m| m.0)
+    }
+}
+impl Lanes for circuits::ivalue::NoValue {
+    fn lanes(&self) -> [u32; 4] {
+        [0; 4]
+    }
+}
+
+/// Splits a packed variable into its four lanes: guesses them as base-field values (pinned to M31
+/// at finalization) and asserts they repack to `v`, so the split is unique.
+pub fn unpack<V: Lanes>(ctx: &mut Context<V>, v: Var) -> [Var; 4] {
+    let lanes = ctx.get(v).lanes().map(|l| crate::ro::guess_m31(ctx, l));
+    let repacked = pack(ctx, lanes);
+    circuits::ops::eq(ctx, repacked, v);
+    lanes
+}
+
+/// [`sponge`] over up to four messages of **equal length** at once, one per lane; returns each
+/// message's 9-word digest. Missing lanes hash an all-zero message whose result is discarded.
+pub fn sponge_lanes<V: Lanes>(ctx: &mut Context<V>, messages: &[Vec<Var>]) -> Vec<Vec<Var>> {
+    assert!((1..=4).contains(&messages.len()));
+    let len = messages[0].len();
+    assert!(messages.iter().all(|m| m.len() == len), "lanes need equal message lengths");
+    let zero = ctx.zero();
+    let one4 = ctx.constant(circuits::ivalue::qm31_from_u32s(1, 1, 1, 1));
+    let lane = |m: usize, i: usize| messages.get(m).map_or(zero, |msg| msg[i]);
+    let mut state = vec![zero; WIDTH];
+    let mut offset = 0;
+    loop {
+        let n = (len - offset).min(15);
+        for i in 0..n {
+            state[i] = pack(ctx, std::array::from_fn(|m| lane(m, offset + i)));
+        }
+        offset += n;
+        let done = offset == len;
+        if n < 15 {
+            state[n] = one4;
+            for s in &mut state[n + 1..15] {
+                *s = zero;
+            }
+        } else if done {
+            let s15 = state[15];
+            state[15] = eval!(ctx, (s15) + (one4));
+        }
+        state = permute_lanes(ctx, &state);
+        for v in &state {
+            ctx.mark_as_maybe_unused(v);
+        }
+        if done {
+            break;
+        }
+    }
+    let digest: Vec<[Var; 4]> = state[..9].iter().map(|v| unpack(ctx, *v)).collect();
+    // Lanes without a message carry a discarded hash.
+    for word in &digest {
+        for v in &word[messages.len()..] {
+            ctx.mark_as_maybe_unused(v);
+        }
+    }
+    (0..messages.len()).map(|m| digest.iter().map(|l| l[m]).collect()).collect()
+}

@@ -231,3 +231,70 @@ pub fn compile<Value: IValue>(ctx: &mut Context<Value>, inputs: &[Var], outputs:
     }
     outputs.iter().map(|s| vars[s.0 as usize].unwrap()).collect()
 }
+
+/// [`compile`] for **four independent instances at once**, one per QM31 lane. Every input and
+/// output variable holds four M31 lanes `(l₀, l₁, l₂, l₃)`. The recorded graph must be over the
+/// base field (M31 constants), and each operation is emitted lane-wise:
+/// - a constant added or subtracted becomes the broadcast `(c, c, c, c)`;
+/// - a product with a constant uses the base-field scalar `(c, 0, 0, 0)`, since multiplying a
+///   QM31 value by an M31 scalar scales each coordinate;
+/// - a product of two variables is a `pointwise_mul` gate.
+///
+/// So lane `k` of each output is exactly the recorded function of lane `k` of the inputs.
+pub fn compile_lanes<Value: IValue>(ctx: &mut Context<Value>, inputs: &[Var], outputs: &[Sym]) -> Vec<Var> {
+    let nodes = ARENA.with(|a| a.borrow().clone());
+    let mut live = vec![false; nodes.len()];
+    let mut stack: Vec<u32> = outputs.iter().map(|s| s.0).collect();
+    while let Some(i) = stack.pop() {
+        if std::mem::replace(&mut live[i as usize], true) {
+            continue;
+        }
+        match nodes[i as usize] {
+            Node::Add(a, b) | Node::Sub(a, b) | Node::Mul(a, b) => stack.extend([a, b]),
+            _ => {}
+        }
+    }
+    let base = |c: QM31| -> u32 {
+        let [c0, c1, c2, c3] = c.to_m31_array();
+        assert!(c1.0 == 0 && c2.0 == 0 && c3.0 == 0, "lane compilation needs base-field constants");
+        c0.0
+    };
+    let broadcast = |ctx: &mut Context<Value>, c: QM31| {
+        let c = base(c);
+        ctx.constant(circuits::ivalue::qm31_from_u32s(c, c, c, c))
+    };
+    let mut vars: Vec<Option<Var>> = vec![None; nodes.len()];
+    for (i, n) in nodes.iter().enumerate() {
+        if !live[i] {
+            continue;
+        }
+        let get = |k: u32| vars[k as usize].expect("operand compiled");
+        let konst = |k: u32| match nodes[k as usize] {
+            Node::Const(c) => Some(c),
+            _ => None,
+        };
+        vars[i] = Some(match *n {
+            // Constants are materialized per use below, as a broadcast or a scalar.
+            Node::Const(_) => continue,
+            Node::Input(k) => inputs[k as usize],
+            Node::Add(a, b) | Node::Sub(a, b) => {
+                let a = konst(a).map_or_else(|| get(a), |c| broadcast(ctx, c));
+                let b = konst(b).map_or_else(|| get(b), |c| broadcast(ctx, c));
+                if matches!(n, Node::Add(..)) { eval!(ctx, (a) + (b)) } else { eval!(ctx, (a) - (b)) }
+            }
+            Node::Mul(a, b) => match (konst(a), konst(b)) {
+                (Some(c), None) => { base(c); let (s, v) = (ctx.constant(c), get(b)); eval!(ctx, (s) * (v)) }
+                (None, Some(c)) => { base(c); let (v, s) = (get(a), ctx.constant(c)); eval!(ctx, (v) * (s)) }
+                (None, None) => circuits::ops::pointwise_mul(ctx, get(a), get(b)),
+                (Some(_), Some(_)) => unreachable!("constant products are folded"),
+            },
+        });
+    }
+    outputs
+        .iter()
+        .map(|s| match nodes[s.0 as usize] {
+            Node::Const(c) => broadcast(ctx, c),
+            _ => vars[s.0 as usize].unwrap(),
+        })
+        .collect()
+}

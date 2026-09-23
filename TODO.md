@@ -191,6 +191,16 @@ the accepted local proving architecture is unchanged.
   - PROOF2 **139 s / 64.2 GiB**, verified
     ([results](bench/m31-private-wrapper/client-port/results/stwo-client-r0/README.md)).
 
+  **Lane-packed hashing:** four Poseidon2 permutations per QM31 row
+  halves the trace to log19 (295k rows), with the same statement:
+  - client **1.1 GiB / 2.0–3.6 s**, or **0.54 GiB / 2.4–2.6 s** bounded
+    (4 threads);
+  - bridge 3.53M steps, 15/15 checks;
+  - OS 5.13M steps;
+  - PROOF2 117.5 s / 55.0 GiB, verified
+    ([results](bench/m31-private-wrapper/client-port/results/stwo-client-r0-lanes/README.md)).
+
+  log18 needs single-permutation tree nodes, which is a format change.
   Not yet measured: the pool's on-chain `apply_spend` with an M31-tree
   append.
 

@@ -30,7 +30,7 @@ use serde::{Deserialize, Serialize};
 use stwo::core::fields::m31::M31;
 
 use crate::hash::WIDTH;
-use crate::membership::{permute, sponge};
+use crate::membership::{Lanes, permute, sponge_lanes};
 use crate::merkle::guess_bits;
 use crate::ro::guess_m31;
 
@@ -309,12 +309,6 @@ fn guess_words<V: IValue>(c: &mut Context<V>, words: &[u32]) -> Vec<Var> {
     words.iter().map(|w| guess_m31(c, *w)).collect()
 }
 
-fn hash<V: IValue>(c: &mut Context<V>, kind: u32, level: u32, payload: &[Var]) -> Vec<Var> {
-    let mut x: Vec<Var> = [TAG, 1, kind, level].iter().map(|v| c.constant(M31::from(*v).into())).collect();
-    x.extend_from_slice(payload);
-    sponge(c, &x)[..9].to_vec()
-}
-
 /// Asserts `v ≠ 0` with a witness inverse.
 fn nonzero<V: IValue>(c: &mut Context<V>, v: Var, value: u32) {
     let inv = if value == 0 { 0 } else { M31::from(value).inverse().0 };
@@ -391,76 +385,124 @@ fn conservation<V: IValue>(c: &mut Context<V>, ins: [&[Var]; 2], outs: [&[Var]; 
     }
 }
 
-/// Builds R0 and returns the 23 output variables (the public statement).
-pub fn build<V: IValue>(c: &mut Context<V>, public: &Public, w: &Private) -> Vec<Var> {
+/// Hashes independent requests of equal framed length, four per lane-packed sponge
+/// (`membership::sponge_lanes`); returns each request's digest in order.
+fn hash_batch<V: Lanes>(c: &mut Context<V>, requests: Vec<(u32, u32, Vec<Var>)>) -> Vec<Vec<Var>> {
+    let messages: Vec<Vec<Var>> = requests
+        .into_iter()
+        .map(|(kind, level, payload)| {
+            let mut x: Vec<Var> = [TAG, 1, kind, level].iter().map(|v| c.constant(M31::from(*v).into())).collect();
+            x.extend(payload);
+            x
+        })
+        .collect();
+    messages.chunks(4).flat_map(|group| sponge_lanes(c, group)).collect()
+}
+
+/// Builds R0 and returns the 23 output variables (the public statement). Hashes run four to a
+/// row where they are independent, two along the membership paths.
+pub fn build<V: Lanes>(c: &mut Context<V>, public: &Public, w: &Private) -> Vec<Var> {
     let tag: Vec<Var> = STATEMENT_TAG.iter().map(|t| c.constant(M31::from(*t).into())).collect();
     let context = guess_words(c, &context_limbs(public));
-    let mut roots: Vec<Vec<Var>> = vec![];
-    let mut nfs: Vec<Var> = vec![];
-    let mut amounts_in = vec![];
+    // Private inputs, with their nonzero and range checks.
+    let mut sk = vec![];
+    let mut rho = vec![];
+    let mut amt_in = vec![];
+    let mut bits = vec![];
     for i in &w.inputs {
-        let sk = guess_words(c, &i.sk);
-        nonzero_vector(c, &sk, &i.sk);
-        let rho = guess_words(c, &i.rho);
-        nonzero_vector(c, &rho, &i.rho);
-        let amt = amount(c, i.amount);
-        let ak = hash(c, AUTH, 0, &sk);
-        let nk = hash(c, NK, 0, &sk);
-        let receiver = hash(c, OWNER, 0, &[ak, nk.clone()].concat());
-        let inner = hash(c, INNER, 0, &[receiver, rho].concat());
-        let cm = hash(c, NOTE, 0, &[context.clone(), amt.clone(), inner].concat());
-        let bits = guess_bits(c, i.position as usize, DEPTH as u32);
-        let mut cur = cm.clone();
-        for (level, s) in i.siblings.iter().enumerate() {
-            let sib = guess_words(c, s);
-            let bit = bits[level];
+        let s = guess_words(c, &i.sk);
+        nonzero_vector(c, &s, &i.sk);
+        let r = guess_words(c, &i.rho);
+        nonzero_vector(c, &r, &i.rho);
+        sk.push(s);
+        rho.push(r);
+        amt_in.push(amount(c, i.amount));
+        bits.push(guess_bits(c, i.position as usize, DEPTH as u32));
+    }
+    let mut recv_out = vec![];
+    let mut rho_out = vec![];
+    let mut amt_out = vec![];
+    for o in &w.outputs {
+        let r = guess_words(c, &o.receiver);
+        nonzero_vector(c, &r, &o.receiver);
+        let q = guess_words(c, &o.rho);
+        nonzero_vector(c, &q, &o.rho);
+        recv_out.push(r);
+        rho_out.push(q);
+        amt_out.push(amount(c, o.amount));
+    }
+    // ak, nk for both inputs.
+    let keys = hash_batch(c, vec![(AUTH, 0, sk[0].clone()), (NK, 0, sk[0].clone()), (AUTH, 0, sk[1].clone()), (NK, 0, sk[1].clone())]);
+    let (nk0, nk1) = (keys[1].clone(), keys[3].clone());
+    // Input receivers and output inner hashes.
+    let b = hash_batch(c, vec![
+        (OWNER, 0, [keys[0].clone(), keys[1].clone()].concat()),
+        (OWNER, 0, [keys[2].clone(), keys[3].clone()].concat()),
+        (INNER, 0, [recv_out[0].clone(), rho_out[0].clone()].concat()),
+        (INNER, 0, [recv_out[1].clone(), rho_out[1].clone()].concat()),
+    ]);
+    let inner_in = hash_batch(c, vec![
+        (INNER, 0, [b[0].clone(), rho[0].clone()].concat()),
+        (INNER, 0, [b[1].clone(), rho[1].clone()].concat()),
+    ]);
+    // All four note commitments.
+    let note = |ctxv: &[Var], amt: &[Var], inner: &[Var]| (NOTE, 0, [ctxv.to_vec(), amt.to_vec(), inner.to_vec()].concat());
+    let cms = hash_batch(c, vec![
+        note(&context, &amt_in[0], &inner_in[0]),
+        note(&context, &amt_in[1], &inner_in[1]),
+        note(&context, &amt_out[0], &b[2]),
+        note(&context, &amt_out[1], &b[3]),
+    ]);
+    // Both membership paths, level by level.
+    let mut cur = [cms[0].clone(), cms[1].clone()];
+    for level in 0..DEPTH {
+        let mut reqs = vec![];
+        for p in 0..2 {
+            let sib = guess_words(c, &w.inputs[p].siblings[level]);
+            let bit = bits[p][level];
             let mut left = vec![];
             let mut right = vec![];
-            for (x, y) in cur.iter().zip(&sib) {
+            for (x, y) in cur[p].iter().zip(&sib) {
                 let (x, y) = (*x, *y);
                 let d = eval!(c, (bit) * ((y) - (x)));
                 left.push(eval!(c, (x) + (d)));
                 right.push(eval!(c, (y) - (d)));
             }
-            cur = hash(c, NODE, level as u32, &[left, right].concat());
+            reqs.push((NODE, level as u32, [left, right].concat()));
         }
-        roots.push(cur);
-        let pack = |c: &mut Context<V>, bits: &[Var]| {
-            let mut v = c.zero();
-            for (k, b) in bits.iter().enumerate() {
-                let w = c.constant(M31::from(1u32 << k).into());
-                v = eval!(c, (v) + ((*b) * (w)));
-            }
-            v
-        };
-        let lo = pack(c, &bits[..16]);
-        let hi = pack(c, &bits[16..]);
-        nfs.extend(hash(c, NF, 0, &[nk, cm, vec![lo, hi]].concat()));
-        amounts_in.push(amt);
+        let next = hash_batch(c, reqs);
+        cur = [next[0].clone(), next[1].clone()];
     }
-    for (a, b) in roots[0].clone().into_iter().zip(roots[1].clone()) {
+    for (a, b) in cur[0].clone().into_iter().zip(cur[1].clone()) {
         eq(c, a, b);
     }
+    let pack = |c: &mut Context<V>, bits: &[Var]| {
+        let mut v = c.zero();
+        for (k, b) in bits.iter().enumerate() {
+            let w = c.constant(M31::from(1u32 << k).into());
+            v = eval!(c, (v) + ((*b) * (w)));
+        }
+        v
+    };
+    let mut nf_reqs = vec![];
+    for (p, nk) in [nk0, nk1].into_iter().enumerate() {
+        let lo = pack(c, &bits[p][..16]);
+        let hi = pack(c, &bits[p][16..]);
+        nf_reqs.push((NF, 0, [nk, cms[p].clone(), vec![lo, hi]].concat()));
+    }
+    let nfs = hash_batch(c, nf_reqs).concat();
     let mut outs: Vec<Var> = vec![];
-    let mut amounts_out = vec![];
-    for (j, o) in w.outputs.iter().enumerate() {
-        let receiver = guess_words(c, &o.receiver);
-        nonzero_vector(c, &receiver, &o.receiver);
-        let rho = guess_words(c, &o.rho);
-        nonzero_vector(c, &rho, &o.rho);
-        let amt = amount(c, o.amount);
-        let inner = hash(c, INNER, 0, &[receiver, rho].concat());
-        outs.extend(hash(c, NOTE, 0, &[context.clone(), amt.clone(), inner].concat()));
+    for j in 0..2 {
+        outs.extend(cms[2 + j].clone());
         outs.extend(guess_words(c, &felt_limbs(&public.deliveries[j])));
-        amounts_out.push(amt);
     }
     conservation(
         c,
-        [&amounts_in[0], &amounts_in[1]],
-        [&amounts_out[0], &amounts_out[1]],
+        [&amt_in[0], &amt_in[1]],
+        [&amt_out[0], &amt_out[1]],
         ([w.inputs[0].amount, w.inputs[1].amount], [w.outputs[0].amount, w.outputs[1].amount]),
     );
-    let limbs: Vec<Var> = [tag, context, roots[0].clone(), nfs, outs].concat();
+    let limbs: Vec<Var> = [tag, context, cur[0].clone(), nfs, outs].concat();
     assert_eq!(limbs.len(), 4 * N_OUTPUTS);
     limbs.chunks_exact(4).map(|q| from_partial_evals(c, q.try_into().unwrap())).collect()
 }
