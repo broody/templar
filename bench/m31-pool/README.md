@@ -59,7 +59,7 @@ storage modes.
 Fee = `L2 gas × L2 price + L1 data gas × L1 data price`, for the pool call only.
 
 **Mainnet** (`results/fees-mainnet.json`, read through the local mainnet node): 201 blocks
-sampled every 100 over 9.4 hours (blocks 15,292,723–15,312,723, Starknet 0.14.3).
+sampled every 100 over 9.4 hours (blocks 15,292,777–15,312,777, Starknet 0.14.3).
 
 | Price | Min | Median | p90 | Max |
 | --- | ---: | ---: | ---: | ---: |
