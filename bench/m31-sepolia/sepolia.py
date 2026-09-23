@@ -28,7 +28,7 @@ CHAIN = int.from_bytes(b'SN_SEPOLIA', 'big')
 # Hard ceilings on one transaction's maximum fee, in fri. Declarations cost 40,960 L2 gas per
 # class felt (Sierra + CASM): about 3.5-3.7B L2 gas for the pool and the statement account.
 # Actual fees are charged at the block's price, below the bound.
-MAX_FEE_FRI = 20 * 10**18
+MAX_FEE_FRI = 25 * 10**18
 MAX_DECLARE_FEE_FRI = 170 * 10**18
 L2_PRICE_BOUND = 40_000_000_000
 

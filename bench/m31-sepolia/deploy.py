@@ -87,7 +87,7 @@ for name, crate, package, contract, gas in CLASSES:
 def deploy(name, data):
     salt = (int(manifest['salt_base'], 16) + int.from_bytes(('M31_SEPOLIA_' + name).encode(), 'big')) % 2**251
     v = normal_tx('deploy-' + name, ['deploy', '--class-hash', classes[name], '--salt', hex(salt),
-                                     '--constructor-calldata', *[h(x) for x in data], *bounds(60_000_000)], HERE)
+                                     *(['--constructor-calldata', *[h(x) for x in data]] if data else []), *bounds(60_000_000)], HERE)
     return v['contract_address']
 
 

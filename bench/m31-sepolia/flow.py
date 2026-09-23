@@ -14,7 +14,7 @@ import proof2, wallet
 D = load(RUN / 'deployment.json')
 POOL, TOKEN = int(D['pool'], 16), int(D['token'], 16)
 BOB_OUT, ALICE_OUT = 0xb0b, 0xa11ce
-PROOF_TX_L2 = 400_000_000
+PROOF_TX_L2 = 550_000_000
 W = load(RUN / 'private-wallets.json')
 for w in W.values():
     w.update(wallet.keys(w['sk']))
@@ -81,7 +81,7 @@ def new_note(name, owner, amount):
 
 def deposit(name, owner, amount):
     n = new_note(name, owner, amount)
-    invoke('deposit-' + name, POOL, 'deposit', [TOKEN, amount, 9, *n['inner'], 10, *n['ciphertext']], 150_000_000, HERE)
+    invoke('deposit-' + name, POOL, 'deposit', [TOKEN, amount, 9, *n['inner'], 10, *n['ciphertext']], 300_000_000, HERE)
     r = load(RUN / 'steps' / ('deposit-' + name) / 'receipt.json')
     key = int(selector('NotePublished'), 16)
     published = [[int(x, 16) for x in e['data']] for e in r['events'] if int(e['from_address'], 16) == POOL and int(e['keys'][0], 16) == key]

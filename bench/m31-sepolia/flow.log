@@ -1,0 +1,15 @@
+{"tx": "0x0484b2cf195d5b8a8155e8833f75b501a92b26aea999a4eac13de769c504da78", "status": "SUCCEEDED", "block": 15513997, "fee_STRK": 3.956671808860837, "revert_reason": null}
+{"tx": "0x002373a649bf1bde0da29fae96faf9c7f9426811d4777952f8b3e4b3b87bb1a4", "status": "SUCCEEDED", "block": 15514003, "fee_STRK": 3.404454212969056, "revert_reason": null}
+{"tx": "0x03fab7d58163cfd9ed370f16da3d795b28592e6997732ad933528768bab430fc", "status": "SUCCEEDED", "block": 15514010, "fee_STRK": 3.404447445171241, "revert_reason": null}
+{"tx": "0x07ca78ee3fbcdbbdf6432edc2c5c91339054bf6b332df87cef0c245659cfe30a", "status": "SUCCEEDED", "block": 15514016, "fee_STRK": 3.411089285624924, "revert_reason": null}
+transfer: alice -> bob 700, change 300
+{"base_block": 15514024, "capture_seconds": 11.78990896200412, "proof2_wall_seconds": 118.82667427297565, "proof_bytes": 250814}
+Traceback (most recent call last):
+  File "/home/broody/development/templar/bench/m31-sepolia/flow.py", line 154, in <module>
+    submit(c)
+  File "/home/broody/development/templar/bench/m31-sepolia/flow.py", line 126, in submit
+    return proof_invoke(name or case['name'], POOL, 'apply_spend', calldata or case['calldata'], folder, PROOF_TX_L2, HERE,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/broody/development/templar/bench/m31-sepolia/sepolia.py", line 218, in proof_invoke
+    raise RuntimeError(f'gateway rejected {name}: {json.dumps(response)[:1500]}')
+RuntimeError: gateway rejected transfer: {"code": "StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED", "message": "Proof version 88314448135730 (PROOF2) is not accepted by this gateway."}

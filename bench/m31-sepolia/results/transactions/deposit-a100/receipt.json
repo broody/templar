@@ -1,0 +1,84 @@
+{
+  "actual_fee": {
+    "amount": "0x2f569fa1eed08700",
+    "unit": "FRI"
+  },
+  "block_hash": "0x435841597629e56691b03f7ed4713f53f5c2a9bf66994920793e6276089420e",
+  "block_number": 15514016,
+  "events": [
+    {
+      "data": [
+        "0x3",
+        "0x9",
+        "0x349af5a3",
+        "0x7bb11f50",
+        "0x54497a49",
+        "0x73ff7e51",
+        "0x2c3f8dd",
+        "0x1d6b9fcf",
+        "0x52397596",
+        "0x645da84f",
+        "0x29dbe86e",
+        "0x1c1bd97df102e9bfc7d132083cee8c1c3d6d9e4bf9872033af93889f104758d",
+        "0xa",
+        "0x56feb028b0271709e09d8aff93fd862e3c8281ecb961344988efc8c67ff6b4",
+        "0x167568a77d980c1a3bdef708f1bddbda2666a349412fe8dbd581c98f60b75c",
+        "0x6edd3e8bde1fe7548a0773efb654829b65ea77b0f158de05c82747852469d1",
+        "0x7f039bfd112f1c84981a376406d6696ce43c96fb88320cec2a3cfc6463cbe5",
+        "0xeb3ae93cde1cdc1d458cb85be06830f51202d73940b4ad19fe3d1d8510f591",
+        "0x3fec2250c30d722935c953c0be19076e58799e06fd3f0795ef9b7a3433ae36",
+        "0x5ee6937d3b6bcb1868651ff5edfba1eb57ac6e3f4656c465a2a199f977bc8d",
+        "0x50acf401f1d5c19c62a0367e13f4ae47a1eafd9585fb7d1b9a9629d006c452",
+        "0xa25cfe1926955fa366ccdb49cfe166795239ea6cc3f66e05b82561fd3df262",
+        "0x746ae71e2ad024fed340747d29af6a71a47c3af94840250dbb"
+      ],
+      "from_address": "0x723cf2e96220d78ca0ea1f51f9a62c8c45a79ac848151771c3049e5a7a3aa09",
+      "keys": [
+        "0x10a7e8aac45030c9785c0c740540eb083470c45ac5bcb7f9b1c09d5c2648aa6"
+      ]
+    },
+    {
+      "data": [
+        "0x26b2153c669f904d2f3d4ff8e17253d7475d7da48116d7b92e07b1b56fe0f5f",
+        "0x64"
+      ],
+      "from_address": "0x723cf2e96220d78ca0ea1f51f9a62c8c45a79ac848151771c3049e5a7a3aa09",
+      "keys": [
+        "0x69105484e3b5f553164aa6de1f67321ea2757275a5e614365c90b9ed0a5e9b"
+      ]
+    },
+    {
+      "data": [
+        "0x1",
+        "0x0"
+      ],
+      "from_address": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+      "keys": [
+        "0x1dcde06aabdbca2f80aa51392b345d7549d7757aa855f7e37f5d335ac8243b1",
+        "0x7ca78ee3fbcdbbdf6432edc2c5c91339054bf6b332df87cef0c245659cfe30a"
+      ]
+    },
+    {
+      "data": [
+        "0x2f569fa1eed08700",
+        "0x0"
+      ],
+      "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+      "keys": [
+        "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8"
+      ]
+    }
+  ],
+  "execution_resources": {
+    "l1_data_gas": 4832,
+    "l1_gas": 0,
+    "l2_gas": 162173680
+  },
+  "execution_status": "SUCCEEDED",
+  "finality_status": "ACCEPTED_ON_L2",
+  "messages_sent": [],
+  "transaction_hash": "0x7ca78ee3fbcdbbdf6432edc2c5c91339054bf6b332df87cef0c245659cfe30a",
+  "type": "INVOKE"
+}

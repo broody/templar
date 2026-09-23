@@ -1,0 +1,255 @@
+{
+ "date": "2026-09-23",
+ "status": "PROOF2_REJECTED_BY_GATEWAY",
+ "deployment": {
+  "token": "0x026b2153c669f904d2f3d4ff8e17253d7475d7da48116d7b92e07b1b56fe0f5f",
+  "pool": "0x0723cf2e96220d78ca0ea1f51f9a62c8c45a79ac848151771c3049e5a7a3aa09",
+  "statement": "0x02cf1508719af6bea1642429465a622812f8e5dc8d8f72fa52e2a6ac757907cf",
+  "adapter": "0x029356229c06913f8c58b548559e7192f4975db46084d85140fac79c1c59b158",
+  "classes": {
+   "token": "0x05f88de8bc92876d2542daaccaeed8323156799e68e45e763563df1ac9882dda",
+   "pool": "0x0078d6924a21ce829cb94e7ae307946d1723eab507bdf9b7d3ae56e1de0f479b",
+   "adapter": "0x05a4044e5e626f566735e43f01268d4a0954647710582fcfd278acca01cc0c09",
+   "statement": "0x0242955fcd57fc3952339dddf28cadc88c68467fd8e05c8f5caa040ef623cba2"
+  },
+  "os_program": "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+  "max_proof_age": 4096,
+  "supply": 10000,
+  "start_block": 15513908,
+  "statement_build": {
+   "circuit_hash_u32_le": [
+    1537955674,
+    2704590172,
+    567193057,
+    1383214718,
+    2752535231,
+    2534439410,
+    971290200,
+    3062293219
+   ],
+   "trusted_manifest_sha256": "fc3d1c7a128cbfd1f17a8a791aa0e6aa0ae86f4d23f1defbde94c3c87f089bfd",
+   "fork_commit": "14718352853befced0118611c39e5eacdabd041e"
+  }
+ },
+ "gateway_response": {
+  "code": "StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED",
+  "message": "Proof version 88314448135730 (PROOF2) is not accepted by this gateway."
+ },
+ "transfer": {
+  "client": {
+   "blinding_rows": 2390,
+   "build_seconds": 0.2513954389999995,
+   "proof_felts": 29866,
+   "proving_seconds": 4.701062955,
+   "revealed_fri_values": 1752,
+   "trace_log_size": 18,
+   "max_rss_gib": 0.2995758056640625
+  },
+  "server": {
+   "base_block": 15514024,
+   "capture_seconds": 11.78990896200412,
+   "proof2_wall_seconds": 118.82667427297565,
+   "proof2_max_rss_gib": 52.546356201171875,
+   "proof_bytes": 250814,
+   "proof_sha256": "e6219b2aede5fccbc6d64a43465fb3e46e28fdb6dc3537917549b2cb8ffa8309",
+   "facts": [
+    "0x50524f4f4632",
+    "0x5649525455414c5f534e4f53",
+    "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+    "0x5649525455414c5f534e4f5330",
+    "0xecb9a8",
+    "0x2fd23098ca9f64e219e2e8a63add6fa4635b63ce46962b7ad5a5599b281fe42",
+    "0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57",
+    "0x1",
+    "0x1511d7341e42dbba02e670ae3c822fd0c5df0e7fab3b1dbf880074eaa7b4dc9"
+   ],
+   "binding": "0x3b86d77f6919c3dda46371e58fd9e5b4b3ea8d4f238cb48a1adf31f86927568",
+   "message_hash": "0x1511d7341e42dbba02e670ae3c822fd0c5df0e7fab3b1dbf880074eaa7b4dc9",
+   "os_resources": {
+    "builtin_instance_counter": {
+     "add_mod_builtin": 0,
+     "bitwise_builtin": 0,
+     "ec_op_builtin": 0,
+     "ecdsa_builtin": 0,
+     "keccak_builtin": 0,
+     "mul_mod_builtin": 0,
+     "output_builtin": 6,
+     "pedersen_builtin": 52,
+     "poseidon_builtin": 15025,
+     "range_check96_builtin": 0,
+     "range_check_builtin": 339884
+    },
+    "n_memory_holes": 142665,
+    "n_steps": 3364485
+   }
+  },
+  "signed_tx_simulation": {
+   "result": "SUCCEEDED (with validation, local node, latest block)",
+   "fee_estimation": {
+    "l1_data_gas_consumed": "0x1380",
+    "l1_data_gas_price": "0x8878bf37f6",
+    "l1_gas_consumed": "0x0",
+    "l1_gas_price": "0x78f1eb84de09",
+    "l2_gas_consumed": "0xd267020",
+    "l2_gas_price": "0x4e4a395f8",
+    "overall_fee": "0x4062c8bc91a27c00",
+    "unit": "FRI"
+   },
+   "l2_gas": {
+    "total": 220622880,
+    "validate": 640000,
+    "apply_spend": 138098880,
+    "adapter_verify": 240000,
+    "fee_transfer": 453960
+   }
+  }
+ },
+ "transactions": {
+  "approve": {
+   "tx": "0x22c7ff8fa90de2ae44617150e352d946fee2e80610bf960099f7aedb0e8eda3",
+   "status": "SUCCEEDED",
+   "block": 15513944,
+   "fee_STRK": 0.03640417064217389,
+   "l2_gas": 1723920,
+   "l1_data_gas": 288,
+   "revert_reason": null
+  },
+  "declare-adapter": {
+   "tx": "0x184241ec7bdfd9228128ee3fe85d83544f20ba4ead45cee44771a20f9d36280",
+   "status": "SUCCEEDED",
+   "block": 15513882,
+   "fee_STRK": 3.0494520269350316,
+   "l2_gas": 145097280,
+   "l1_data_gas": 192,
+   "revert_reason": null
+  },
+  "declare-pool": {
+   "tx": "0x765df47b744fd59744206057a013c84a65f4cd56b4fc1449a476846e00de8f",
+   "status": "SUCCEEDED",
+   "block": 15513863,
+   "fee_STRK": 73.01030133638046,
+   "l2_gas": 3474062400,
+   "l1_data_gas": 192,
+   "revert_reason": null
+  },
+  "declare-statement": {
+   "tx": "0x3facdb60ff6b5d3082b08f7b4523a585d2eaf8bfec759311e8748d76dcc315d",
+   "status": "SUCCEEDED",
+   "block": 15513902,
+   "fee_STRK": 77.45967772717881,
+   "l2_gas": 3685778240,
+   "l1_data_gas": 192,
+   "revert_reason": null
+  },
+  "declare-token": {
+   "tx": "0x78013528035dffd220b9d0f18286d3ef0a3affb4fe8f6c402d5b9244dbd287e",
+   "status": "SUCCEEDED",
+   "block": 15513842,
+   "fee_STRK": 4.785780862618173,
+   "l2_gas": 227717440,
+   "l1_data_gas": 192,
+   "revert_reason": null
+  },
+  "deploy-adapter": {
+   "tx": "0x737ab32b38078fc2a794600a4fa8ff4fe34118125db5896c8b0088351bfec01",
+   "status": "SUCCEEDED",
+   "block": 15513933,
+   "fee_STRK": 0.08342366847683079,
+   "l2_gas": 3949200,
+   "l1_data_gas": 704,
+   "revert_reason": null
+  },
+  "deploy-pool": {
+   "tx": "0x3d716f38475d5d525b090fc56b7964c292332334b8c9cca1515632d0e425eca",
+   "status": "SUCCEEDED",
+   "block": 15513913,
+   "fee_STRK": 0.10610769393295949,
+   "l2_gas": 5022960,
+   "l1_data_gas": 896,
+   "revert_reason": null
+  },
+  "deploy-statement": {
+   "tx": "0x1ff6250d8cac9253e65f3674a0c7775ae96d04d04e2d22980682504e22786f4",
+   "status": "SUCCEEDED",
+   "block": 15513929,
+   "fee_STRK": 0.028885818310478303,
+   "l2_gas": 1368000,
+   "l1_data_gas": 224,
+   "revert_reason": null
+  },
+  "deploy-token": {
+   "tx": "0x6ba271c7b5d392f4743ddb121ee82eeb3c41a74fd2c86fa319d5247d937fe04",
+   "status": "SUCCEEDED",
+   "block": 15513908,
+   "fee_STRK": 0.0422417915120208,
+   "l2_gas": 2000720,
+   "l1_data_gas": 320,
+   "revert_reason": null
+  },
+  "deposit-a100": {
+   "tx": "0x7ca78ee3fbcdbbdf6432edc2c5c91339054bf6b332df87cef0c245659cfe30a",
+   "status": "SUCCEEDED",
+   "block": 15514016,
+   "fee_STRK": 3.411089285624924,
+   "l2_gas": 162173680,
+   "l1_data_gas": 4832,
+   "revert_reason": null
+  },
+  "deposit-a400": {
+   "tx": "0x2373a649bf1bde0da29fae96faf9c7f9426811d4777952f8b3e4b3b87bb1a4",
+   "status": "SUCCEEDED",
+   "block": 15514003,
+   "fee_STRK": 3.404454212969056,
+   "l2_gas": 161853680,
+   "l1_data_gas": 4960,
+   "revert_reason": null
+  },
+  "deposit-a600": {
+   "tx": "0x484b2cf195d5b8a8155e8833f75b501a92b26aea999a4eac13de769c504da78",
+   "status": "SUCCEEDED",
+   "block": 15513997,
+   "fee_STRK": 3.956671808860837,
+   "l2_gas": 188065680,
+   "l1_data_gas": 7200,
+   "revert_reason": null
+  },
+  "deposit-b200": {
+   "tx": "0x3fab7d58163cfd9ed370f16da3d795b28592e6997732ad933528768bab430fc",
+   "status": "SUCCEEDED",
+   "block": 15514010,
+   "fee_STRK": 3.404447445171241,
+   "l2_gas": 161853680,
+   "l1_data_gas": 4960,
+   "revert_reason": null
+  },
+  "reverted-deposit-a600-gas-bound": {
+   "tx": "0x7db3415cdd55c4a2adc3c2ef001d5e685a4014966dac71a1d4d37034e3ad2b2",
+   "status": "REVERTED",
+   "block": 15513957,
+   "fee_STRK": 3.156727943466432,
+   "l2_gas": 46548480,
+   "l1_data_gas": 128,
+   "revert_reason": "Insufficient max L2Gas: max amount: 150000000, actual used: 188065680."
+  },
+  "set-verifier": {
+   "tx": "0x27e2d2f270b8dcae9a33b082080eacce3259cd503720438105a1143244f6b3a",
+   "status": "SUCCEEDED",
+   "block": 15513939,
+   "fee_STRK": 0.034400346082738946,
+   "l2_gas": 1628560,
+   "l1_data_gas": 288,
+   "revert_reason": null
+  }
+ },
+ "onchain_vs_snforge": {
+  "deposit_pool_call_l2_gas": {
+   "sepolia": 155548480,
+   "snforge": 57696252
+  },
+  "transfer_apply_spend_l2_gas_even_index": {
+   "sepolia_simulated": 138098880,
+   "snforge": 51810000
+  }
+ },
+ "total_test_STRK_spent": 175.97006613816217
+}

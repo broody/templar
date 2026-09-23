@@ -1,5 +1,43 @@
 # Sepolia run: option-A pool with R0 client proofs wrapped in PROOF2
 
+## Outcome (2026-09-23): the Sepolia gateway rejects PROOF2
+
+Everything up to submission ran live on Sepolia. The gateway then refused the transaction on
+its version alone:
+
+> `StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED`: Proof version 88314448135730 (PROOF2) is not
+> accepted by this gateway.
+
+The rejection is stateless: no fee was charged and no nonce was used. The OS-level versioned
+constants (0.14.4) list PROOF2 as allowed, so the gate is the gateway's own configuration.
+
+| Stage | Result |
+| --- | --- |
+| Declare and deploy 4 classes, configure | done, 158.6 test STRK (declarations 158.3) |
+| 4 deposits, commitments equal the wallet's | done, 3.96 / 3.40 / 3.40 / 3.41 STRK |
+| Wallet proof from on-chain events, 4 threads, bounded | log18, 4.7 s, 0.30 GiB peak RSS |
+| Virtual OS on live Sepolia state (base block 15,514,024) | 11.8 s, exact message |
+| PROOF2 | 118.8 s, 52.5 GiB peak RSS, 250,814 bytes, verified; 9 facts checked |
+| Signed transfer (relayer `apply_spend`), simulated on the local node | **SUCCEEDED** with validation: 220.6M L2 gas, ~4.64 STRK |
+| Gateway | **PROOF_VERSION_NOT_ALLOWED** |
+
+In the simulation, the adapter checked the real facts (OS program, base-block age, message
+hash) and the pool applied the spend against the live root. The proof itself is only verified
+by the gateway and sequencer, so here it was checked locally (`prove_large`).
+
+**Gas finding: on-chain execution is about 2.7× the snforge measurement.**
+- Deposit, pool call: 155.5M on Sepolia against 57.7M in snforge. The whole transaction is
+  188M, about 3.4-4.0 STRK.
+- Transfer at an even index, `apply_spend`: 138.1M simulated against 51.8M.
+- Transfer transaction: 220.6M, which includes about 75M for `gas_per_proof`.
+- Builtin and step gas costs are the same in 0.14.1 through 0.14.4, so the cause is still open.
+- The fee tables in `bench/m31-pool` understate on-chain cost by about this factor.
+
+Total spent: 176.0 test STRK. That includes one deposit reverted on a 150M gas bound (3.16
+STRK). Evidence: `results/` (`outcome.json`, receipts, gateway response, facts, benchmarks).
+The flow is checkpointed at the transfer: `flow.py` resumes if PROOF2 is enabled later, but
+the proof's base block must then be within the adapter's 4,096-block window, or be re-proved.
+
 Tooling for a live Sepolia lifecycle on the M31 pool (`bench/m31-pool`, frontier storage,
 single-permutation nodes). Each spend is proved on the client (`client-port` `wallet` example,
 R0 V2), then wrapped on the server. The server runs the statement account's `__execute__` in

@@ -1,0 +1,122 @@
+Running as unit: templar-proof2-large-1790166999.service; invocation ID: c1b77452ee8f4c739d348eb12488a62c
+[2m2026-09-23T12:36:40.032918Z[0m [32m INFO[0m [1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::cairo_run[0m[2m:[0m Initializing Cairo runner. [3mlayout[0m[2m=[0mall_cairo_stwo [3mproof_mode[0m[2m=[0mtrue [3mtrace_enabled[0m[2m=[0mtrue [3mdisable_trace_padding[0m[2m=[0mtrue [3mallow_missing_builtins[0m[2m=[0mtrue
+[2m2026-09-23T12:36:40.032952Z[0m [32m INFO[0m [1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Initializing builtins.
+[2m2026-09-23T12:36:40.032965Z[0m [32m INFO[0m [1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Initializing segments.
+[2m2026-09-23T12:36:40.032968Z[0m [32m INFO[0m [1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Initializing main entrypoint.
+[2m2026-09-23T12:36:40.033004Z[0m [32m INFO[0m [1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Initializing zero segments.
+[2m2026-09-23T12:36:40.033007Z[0m [32m INFO[0m [1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Initializing VM.
+[2m2026-09-23T12:36:40.033009Z[0m [32m INFO[0m [1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::cairo_run[0m[2m:[0m Running until PC.
+[2m2026-09-23T12:36:41.109789Z[0m [32m INFO[0m [1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::cairo_run[0m[2m:[0m Ending run. [3mdisable_trace_padding[0m[2m=[0mtrue [3mfill_holes[0m[2m=[0mtrue
+[2m2026-09-23T12:36:41.109814Z[0m [32m INFO[0m [1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Relocating memory.
+[2m2026-09-23T12:36:41.239063Z[0m [32m INFO[0m [1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::vm::runners::cairo_runner[0m[2m:[0m Computing effective sizes of segments.
+[2m2026-09-23T12:36:41.239091Z[0m [32m INFO[0m [1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::cairo_run[0m[2m:[0m Reading return values.
+[2m2026-09-23T12:36:41.239100Z[0m [32m INFO[0m [1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::cairo_run[0m[2m:[0m In proof mode, finalizing segments.
+[2m2026-09-23T12:36:41.239116Z[0m [32m INFO[0m [1mcairo_run_program[0m[2m:[0m[1mcairo run[0m[2m:[0m [2mcairo_vm::cairo_run[0m[2m:[0m Relocating. [3mrelocate_mem[0m[2m=[0mfalse [3mrelocate_trace[0m[2m=[0mfalse
+[2m2026-09-23T12:36:41.239132Z[0m [32m INFO[0m [2mleaf_prover::prove_leaf[0m[2m:[0m Program execution done
+[2m2026-09-23T12:36:41.239136Z[0m [32m INFO[0m [1madapt[0m[2m:[0m [2mstwo_cairo_adapter::adapter[0m[2m:[0m Num steps: 3563959
+[2m2026-09-23T12:36:41.284932Z[0m [32m INFO[0m [1madapt[0m[2m:[0m[1mpad_relocatble_builtin_segments[0m[2m:[0m [2mstwo_cairo_adapter::builtins[0m[2m:[0m Padded builtin segment 'pedersen_builtin' from 53 to 64 instances.
+[2m2026-09-23T12:36:41.294696Z[0m [32m INFO[0m [1madapt[0m[2m:[0m[1mpad_relocatble_builtin_segments[0m[2m:[0m [2mstwo_cairo_adapter::builtins[0m[2m:[0m Padded builtin segment 'range_check_builtin' from 351344 to 524288 instances.
+[2m2026-09-23T12:36:41.294724Z[0m [32m INFO[0m [1madapt[0m[2m:[0m[1mpad_relocatble_builtin_segments[0m[2m:[0m [2mstwo_cairo_adapter::builtins[0m[2m:[0m Padded builtin segment 'bitwise_builtin' from 1 to 16 instances.
+[2m2026-09-23T12:36:41.294729Z[0m [32m INFO[0m [1madapt[0m[2m:[0m[1mpad_relocatble_builtin_segments[0m[2m:[0m [2mstwo_cairo_adapter::builtins[0m[2m:[0m Padded builtin segment 'ec_op_builtin' from 1 to 16 instances.
+[2m2026-09-23T12:36:41.295432Z[0m [32m INFO[0m [1madapt[0m[2m:[0m[1mpad_relocatble_builtin_segments[0m[2m:[0m [2mstwo_cairo_adapter::builtins[0m[2m:[0m Padded builtin segment 'poseidon_builtin' from 15026 to 16384 instances.
+[2m2026-09-23T12:36:41.295456Z[0m [32m INFO[0m [1madapt[0m[2m:[0m[1mpad_relocatble_builtin_segments[0m[2m:[0m [2mstwo_cairo_adapter::builtins[0m[2m:[0m Padded builtin segment 'range_check96_builtin' from 12 to 16 instances.
+[2m2026-09-23T12:36:41.295461Z[0m [32m INFO[0m [1madapt[0m[2m:[0m[1mpad_relocatble_builtin_segments[0m[2m:[0m [2mstwo_cairo_adapter::builtins[0m[2m:[0m Padded builtin segment 'add_mod_builtin' from 1 to 16 instances.
+[2m2026-09-23T12:36:41.295464Z[0m [32m INFO[0m [1madapt[0m[2m:[0m[1mpad_relocatble_builtin_segments[0m[2m:[0m [2mstwo_cairo_adapter::builtins[0m[2m:[0m Padded builtin segment 'mul_mod_builtin' from 1 to 16 instances.
+[2m2026-09-23T12:36:41.431051Z[0m [32m INFO[0m [1madapt[0m[2m:[0m [2mstwo_cairo_adapter::adapter[0m[2m:[0m Builtin segments: BuiltinSegments { add_mod_builtin: Some(MemorySegmentAddresses { begin_addr: 3476072, stop_ptr: 3476184 }), bitwise_builtin: Some(MemorySegmentAddresses { begin_addr: 3377560, stop_ptr: 3377640 }), output: Some(MemorySegmentAddresses { begin_addr: 2853078, stop_ptr: 2853080 }), mul_mod_builtin: Some(MemorySegmentAddresses { begin_addr: 3476184, stop_ptr: 3476296 }), pedersen_builtin: Some(MemorySegmentAddresses { begin_addr: 2853080, stop_ptr: 2853272 }), poseidon_builtin: Some(MemorySegmentAddresses { begin_addr: 3377752, stop_ptr: 3476056 }), range_check96_builtin: Some(MemorySegmentAddresses { begin_addr: 3476056, stop_ptr: 3476072 }), range_check_builtin: Some(MemorySegmentAddresses { begin_addr: 2853272, stop_ptr: 3377560 }), ec_op_builtin: Some(MemorySegmentAddresses { begin_addr: 3377640, stop_ptr: 3377752 }) }
+[2m2026-09-23T12:36:41.929455Z[0m [32m INFO[0m [1madapt[0m[2m:[0m [2mstwo_cairo_adapter::adapter[0m[2m:[0m Opcode counts: [("generic_opcode", 1), ("add_ap_opcode", 95208), ("add_opcode", 447632), ("add_opcode_small", 617667), ("assert_eq_opcode", 463663), ("assert_eq_opcode_double_deref", 972857), ("assert_eq_opcode_imm", 141545), ("call_opcode_abs", 3), ("call_opcode_rel_imm", 76594), ("jnz_opcode_non_taken", 52673), ("jnz_opcode_taken", 290692), ("jump_opcode_rel_imm", 108223), ("jump_opcode_rel", 1), ("jump_opcode_double_deref", 3), ("jump_opcode_abs", 1), ("mul_opcode_small", 138756), ("mul_opcode", 68225), ("ret_opcode", 76597), ("blake_compress_opcode", 13616), ("qm_31_add_mul_opcode", 1)]
+[2m2026-09-23T12:36:41.941493Z[0m [32m INFO[0m [2mleaf_prover::prove_leaf[0m[2m:[0m Adapter done. Program created 2 outputs.
+[2m2026-09-23T12:37:09.582205Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m [2mstwo_cairo_prover::prover[0m[2m:[0m Witness trace cells: [543100528, 888082096, 848636352]
+[2m2026-09-23T12:37:52.540675Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 14: 1
+[2m2026-09-23T12:37:52.540713Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 16: 40
+[2m2026-09-23T12:37:52.540716Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 11: 1
+[2m2026-09-23T12:37:52.540719Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 20: 498
+[2m2026-09-23T12:37:52.540722Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 15: 759
+[2m2026-09-23T12:37:52.540725Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 5: 3220
+[2m2026-09-23T12:37:52.540727Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 23: 1
+[2m2026-09-23T12:37:52.540740Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 21: 191
+[2m2026-09-23T12:37:52.540742Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 13: 1258
+[2m2026-09-23T12:37:52.540744Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 9: 21
+[2m2026-09-23T12:37:52.540746Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 22: 483
+[2m2026-09-23T12:37:52.540748Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 7: 282
+[2m2026-09-23T12:37:52.540750Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 12: 563
+[2m2026-09-23T12:37:52.540753Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 6: 1
+[2m2026-09-23T12:37:52.540755Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 19: 528
+[2m2026-09-23T12:37:52.540757Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 24: 70
+[2m2026-09-23T12:37:52.540759Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 18: 532
+[2m2026-09-23T12:37:52.540761Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 8: 8
+[2m2026-09-23T12:37:52.540763Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 10: 1
+[2m2026-09-23T12:37:52.540765Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 25: 1
+[2m2026-09-23T12:37:52.540767Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 17: 40
+[2m2026-09-23T12:37:52.540769Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 26: 1
+[2m2026-09-23T12:38:02.016453Z[0m [32m INFO[0m [1mprove_cairo[0m[2m:[0m[1mProve STARKs[0m[2m:[0m[1mprove_ex[0m[2m:[0m [2mstwo::prover[0m[2m:[0m [3mproof_size_estimate[0m[2m=[0m3102456
+[2m2026-09-23T12:38:02.535072Z[0m [32m INFO[0m [2mleaf_prover::prove_leaf[0m[2m:[0m Cairo proving done
+[2m2026-09-23T12:38:03.555799Z[0m [32m INFO[0m [2mleaf_prover::prove_leaf[0m[2m:[0m Verifier config:
+    program: (2910 felts)
+    n_outputs: 2
+    Cairo preprocessed trace: Canonical
+    Cairo preprocessed trace root: HashValue([U32((36521 + 16930i) + (0 + 0i)u), U32((62779 + 13778i) + (0 + 0i)u), U32((8088 + 13835i) + (0 + 0i)u), U32((14809 + 22190i) + (0 + 0i)u), U32((15343 + 30178i) + (0 + 0i)u), U32((22556 + 12976i) + (0 + 0i)u), U32((33714 + 28190i) + (0 + 0i)u), U32((47652 + 25603i) + (0 + 0i)u)])
+    Proof pow bits: 26
+    Proof FRI config: FriConfig { pow_bits: 26, log_blowup_factor: 1, log_last_layer_degree_bound: 0, n_queries: 70, fold_step: 1 }
+[2m2026-09-23T12:38:33.263261Z[0m [32m INFO[0m [1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 25: 151
+[2m2026-09-23T12:38:33.263294Z[0m [32m INFO[0m [1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 16: 8
+[2m2026-09-23T12:38:33.263297Z[0m [32m INFO[0m [1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 18: 15
+[2m2026-09-23T12:38:33.263308Z[0m [32m INFO[0m [1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 20: 8
+[2m2026-09-23T12:38:33.263310Z[0m [32m INFO[0m [1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 10: 8
+[2m2026-09-23T12:38:33.263312Z[0m [32m INFO[0m [1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 22: 110
+[2m2026-09-23T12:38:33.263313Z[0m [32m INFO[0m [1mprove_ex[0m[2m:[0m [2mstwo::prover::pcs[0m[2m:[0m Log size 23: 19
+[2m2026-09-23T12:38:35.729045Z[0m [32m INFO[0m [1mprove_ex[0m[2m:[0m [2mstwo::prover[0m[2m:[0m [3mproof_size_estimate[0m[2m=[0m211356
+[2m2026-09-23T12:38:35.729324Z[0m [32m INFO[0m [2mleaf_prover::prove_leaf[0m[2m:[0m Circuit proving done
+[2m2026-09-23T12:38:35.729330Z[0m [32m INFO[0m [2mleaf_prover::prove_leaf[0m[2m:[0m Circuit preprocessed root: [218, 175, 59, 208, 210, 241, 9, 105, 152, 129, 25, 120, 219, 143, 133, 203, 162, 130, 126, 23, 196, 118, 213, 164, 177, 194, 30, 105, 132, 194, 245, 118]
+[2m2026-09-23T12:38:35.729334Z[0m [32m INFO[0m [2mleaf_prover::prove_leaf[0m[2m:[0m Circuit hash: DigestHex([30388801, 876704475, 2265271392, 771337257, 4159622063, 3249563621, 2624934923, 4083029534])
+[2m2026-09-23T12:38:36.590686Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Decompress and deserialize the proof
+[2m2026-09-23T12:38:36.591796Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Compute the output values
+[2m2026-09-23T12:38:36.591820Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Call the verifier
+[2m2026-09-23T12:38:36.696051Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Decompress and deserialize the proof
+[2m2026-09-23T12:38:36.696560Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Compute the output values
+[2m2026-09-23T12:38:36.696572Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Call the verifier
+[2m2026-09-23T12:38:36.777768Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Decompress and deserialize the proof
+[2m2026-09-23T12:38:36.778277Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Compute the output values
+[2m2026-09-23T12:38:36.778295Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Call the verifier
+[2m2026-09-23T12:38:36.861577Z[0m [32m INFO[0m [1mverify_privacy_circuit[0m[2m:[0m [2mprivacy_circuit_verify[0m[2m:[0m Decompress and deserialize the proof
+{
+  "gateway_max_proof_size": 480000,
+  "leaf_verifier_trace_log_size": 25,
+  "output_preimage_len": 7,
+  "proof_bytes": 250814,
+  "prove_seconds": 116.560967123,
+  "rejects_changed_output": true,
+  "rejects_flipped_proof_byte": true,
+  "rejects_truncated_proof": true,
+  "verified": true,
+  "verify_seconds": 0.105442787
+}
+	Command being timed: "/home/broody/development/templar/target/proof2-large/proving/target/release/examples/prove_large /tmp/templar-m31-sepolia-0rwn0mgy/cases/transfer/server/capture/os.pie.zip /tmp/templar-m31-sepolia-0rwn0mgy/cases/transfer/server/proof2"
+	User time (seconds): 354.09
+	System time (seconds): 53.12
+	Percent of CPU this job got: 343%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:58.54
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 55098848
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 37838410
+	Voluntary context switches: 8488
+	Involuntary context switches: 48803
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 560
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 1min 58.549s
+CPU time consumed: 6min 47.226s
+Memory peak: 512.0K
+Memory swap peak: 0B
+exit_code=0 cap=115G
