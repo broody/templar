@@ -145,7 +145,15 @@ and §4.3.
 | H2 | Add-only qm31 blinding leaves `dst − op0 − op1` unblinded | fixed in the fork (mul row) |
 | **H3** | Blinding limbs are `u32` reduced mod `p`: 0 and 1 are 1.5× as likely. That is ~2⁻³¹ statistical distance per limb, and ~2⁻¹⁶ over the ~38k limbs of one proof | **open**; fix: rejection-sample (`< p`) or reduce a `u64`. Upstream code, all profiles |
 
+| **H4** | Upstream full profile: one `blake_g_gate` LogUp batch is unblinded. Blinding rows never use the gate outputs, so their output yields have multiplicity 0 | **open upstream**; does not apply to the arithmetic profile (no `blake_g_gate`) |
+
 H3 caps any statistical ZK bound near `2⁻¹⁶` per proof until fixed.
+
+**Upstream status** ([`stock-hiding/`](../../stock-hiding/README.md), unmodified `proving@5a7c5ed`,
+full profile, production config): H2 is confirmed end to end on an upstream proof (70/70
+queries matched in another seed's extension). H4 was found by the same rank audit. H1 and
+H3 are in the same code. Upstream's `privacy_circuit_verify` and `leaf_prover` use this
+blinding.
 
 ## 6. Open items and design options
 

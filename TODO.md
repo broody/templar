@@ -267,7 +267,13 @@ the accepted local proving architecture is unchanged.
     [hiding-argument.md](bench/m31-private-wrapper/client-port/reviews/hiding-argument.md),
     which reduces to open items O1–O5: composition and deep-FRI values are the
     missing piece (a FRI masking polynomial would close it). **H3:** blinding
-    limbs are u32 mod p (~2⁻¹⁶ statistical distance per proof), unfixed;
+    limbs are u32 mod p (~2⁻¹⁶ statistical distance per proof), unfixed.
+    **Upstream (stock `5a7c5ed`, full profile, production config):** H2
+    confirmed end to end (70/70); new **H4**, an unblinded `blake_g_gate`
+    LogUp batch (unused blinding outputs, multiplicity 0)
+    ([stock-hiding](bench/m31-private-wrapper/stock-hiding/README.md)). These
+    affect StarkWare's privacy-proof blinding; disclose privately (draft in
+    broody/templar#2);
   - the payment relation written once for both routes;
   - a WASM measurement.
   **Remaining client gates:** R0 payment constraints and any required private
