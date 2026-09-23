@@ -75,7 +75,7 @@ t += ['', '// A real R0 V3 statement (change, budget, intent and identity handle
       f"pub const BIND_EXPECTED: felt252 = {hex(validate_bridge_r0.binding(pub))};"]
 rf = json.loads((HERE / 'real-proof2-facts.json').read_text())
 pl = [int(x, 16) for x in rf['message']['payload']]
-t += ['', '// Facts of a real PROOF2 (R0 full withdrawal, synthetic fixture, client-port results/stwo-client-r0-withdraw)',
+t += ['', '// Facts of a real PROOF2 (R0 V3 shadow spend with intent and identity, synthetic fixture, 2026-09-24)',
       '// and the statement account message it carries.',
       f"pub const REAL_FACTS: [felt252; 9] = [{', '.join(rf['facts'])}];",
       f"pub const REAL_STATEMENT: felt252 = {rf['message']['from']};",
