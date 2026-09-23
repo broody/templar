@@ -15,6 +15,10 @@ condition written as short per-row polynomial equations over the trace
 **AIR constraint** — one such equation; must hold on every row (and across
 row neighborhoods). Degree ≤ 2 in this stack.
 
+**Arithmetic-only profile** — a stwo-circuits component set of just `eq` and
+`qm31_ops`, dropping the XOR/range lookup tables that dominate client memory
+([two ways to build the client proof](/starknet/client-proof-routes)).
+
 **Blowup** — the ratio of evaluation-domain size to trace size; buys room
 for FRI and cheap random testing. Pinned config: `3` (8× domain)
 ([commitments](/proofs/commitments)).
@@ -50,6 +54,10 @@ Starknet's programming language
 device for the private payment transition. In the compact architecture, a
 server verifies it without receiving the witness
 ([client proofs and server wrapping](/starknet/client-proof-wrapping)).
+
+**Circuit hash** — `H(blowup, component log sizes, preprocessed root)`; mixed
+into a stwo-circuits proof's transcript and pinned by the verifier so it
+accepts exactly one circuit ([two ways to build the client proof](/starknet/client-proof-routes)).
 
 **DEEP-ALI** — the check tying OOD samples, query openings, and the
 composition polynomial together via line quotients; "ALI" for algebraic

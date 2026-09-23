@@ -16,6 +16,7 @@ type Page =
   | { path: '/proofs/snark-vs-stark'; render: 'static' }
   | { path: '/proofs/what-is-a-proof-system'; render: 'static' }
   | { path: '/starknet/cairo-and-s-two'; render: 'static' }
+  | { path: '/starknet/client-proof-routes'; render: 'static' }
   | { path: '/starknet/client-proof-wrapping'; render: 'static' }
   | { path: '/starknet/how-starknet-proves'; render: 'static' }
   | { path: '/starks/fri'; render: 'static' }

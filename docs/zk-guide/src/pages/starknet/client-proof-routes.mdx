@@ -1,0 +1,225 @@
+---
+showAskAi: false
+title: Two ways to build the client proof
+description: A custom zero-knowledge protocol versus a standard blinded stwo-circuits proof — what each costs, where the risk lives, and why lookup tables decide the question.
+---
+
+<div className="guide-eyebrow">Part 4 · Starknet</div>
+
+# Two ways to build the client proof
+
+## The question behind the question
+
+The [split architecture](/starknet/client-proof-wrapping) fixes *what* the
+phone proves: the private payment rules. It leaves open *which proof system*
+the phone uses to prove it. Two answers are on the table:
+
+1. **A custom protocol (TMPZK002).** A purpose-built AIR over M31 with our
+   own polynomial masking, salted Merkle commitments and transcript. It is
+   small and fast, but every line of its cryptography is ours to get right.
+2. **A standard blinded stwo-circuits proof.** The same relation written in
+   StarkWare's circuit language and proved by their prover, with their
+   row-padding blinding. The server's Cairo account can verify it directly.
+
+The first route works end to end today. The second is cryptographically
+simpler to trust, if one question about hiding gets a firm answer. This page
+builds the background needed to weigh them.
+
+## stwo-circuits: one AIR for every circuit
+
+Part 3 described an AIR as a table plus per-row equations
+([trace and AIR](/starks/trace-and-air)). A custom AIR, like TMPZK002's, is
+designed for one computation: its 1,191 columns *are* the membership relation.
+
+stwo-circuits takes the opposite approach. It fixes a small set of **gate
+types** once, and every circuit is expressed in them:
+
+| Gate type (component) | What one row proves |
+| --- | --- |
+| `qm31_ops` | one add, sub, mul or pointwise mul of QM31 values |
+| `eq` | two wires carry the same value |
+| `blake_g_gate` | one Blake2s mixing step on u32 words |
+| `triple_xor` | `a ⊕ b ⊕ c` on u32 words |
+| `m31_to_u32` | split an M31 value into two 16-bit limbs |
+
+A circuit is a list of gates connected by **wires** (variables). Each
+component is a table with one row per gate of its type. The wiring is
+enforced by a lookup relation named `Gate`: every gate *yields* its output
+wires and *uses* its input wires, and the [LogUp](/starks/lookups) sum
+across all components must balance. A wire can be consumed only if some gate
+produced it with exactly that value.
+
+Which gate reads which wire is the circuit's **topology**. It is fixed by the
+circuit, not by the witness, so it lives in **preprocessed columns** that are
+committed once. Their Merkle root, together with the component sizes and the
+FRI blowup, forms the **circuit hash**. A verifier that pins the circuit hash
+accepts proofs of exactly that circuit and nothing else.
+
+> **Check.** Two circuits have the same gate counts but read their wires in a
+> different order. Do they have the same preprocessed root? The same circuit
+> hash? Why does a verifier need the hash rather than just the gate counts?
+
+## Why every proof carries XOR tables
+
+Blake2s works on 32-bit words with XOR and rotations. XOR is not a field
+operation, so the AIR proves it by lookup. It splits words into small limbs
+and checks each `(a, b, a ⊕ b)` triple against a preprocessed table listing
+*every* pair of n-bit values. For 10-bit limbs that table has
+2¹⁰ × 2¹⁰ = 2²⁰ rows.
+
+These tables exist because StarkWare built stwo-circuits mainly for
+**recursion**: verifying STARK proofs whose Merkle trees and transcripts use
+Blake2s. For that job they are essential. But they are part of the fixed
+component set, so **every** stwo-circuits proof commits them, whether or not
+any row uses Blake.
+
+The cost is structural. Prover work scales with the largest domain and the
+number of columns:
+
+- **The largest table sets the trace size.** A 2²⁰-row table makes the whole
+  proof a log20 proof, so every evaluation domain, twiddle table and
+  composition polynomial is sized for 2²⁰ rows × blowup.
+- **Each table brings columns.** There are three preprocessed columns per
+  table, plus a committed multiplicity column and QM31 interaction columns,
+  all extended and committed even when every multiplicity is zero.
+
+Measured for the membership relation (65 Poseidon2-M31 permutations, about
+253k `qm31_ops` rows, or log18):
+
+| Build (1 thread) | Peak RSS | Time | Trace size |
+| --- | ---: | ---: | ---: |
+| Stock component set | 2.75 GiB | 21 s | log20 |
+| Trivial circuit, stock component set (the floor) | 2.60 GiB | 14 s | log20 |
+| `eq` + `qm31_ops` only | 0.53 GiB | 8 s | log18 |
+| `eq` + `qm31_ops` only, bounded FRI memory | **0.26 GiB** | 8.5 s | log18 |
+
+The relation itself costs about 0.15 GiB. The rest is lookup machinery it
+never touches.
+
+## Removing the tables, soundly
+
+Poseidon2 over M31 is additions, multiplications and x⁵, so the membership
+relation compiles entirely to `qm31_ops` and `eq`. An **arithmetic-only
+profile** keeps just those two components. Why is that sound?
+
+Recall the LogUp identity: the sum over all components of
+`multiplicity / (α − tuple)` must be zero.
+
+- A table component whose multiplicities are all zero contributes exactly
+  zero.
+- A gate component with no rows contributes nothing.
+
+Removing both deletes only zero terms, and the relation's own constraints are
+unchanged. What *must* change is everything that fixes the component set:
+
+1. **The prover** stops generating those traces and columns.
+2. **The verifier** stops expecting them. Every component that *uses* a
+   table must go too. Kept, its lookups could never balance; kept with its
+   lookups ignored, its rows would go unchecked.
+3. **The circuit hash** must commit to the reduced component set, so a proof
+   can never be checked under the wrong profile.
+
+Who controls those pieces? The prover ships in our app. The verifier of the
+client proof is a Cairo library copied into our own account class; Starknet
+only checks, through PROOF2, that the virtual OS ran that account correctly.
+So the profile is something we can build and review ourselves. Upstreaming it
+would mean StarkWare maintains it too, but the protocol does not require it.
+
+> **Check.** Why is it safe to delete a table whose multiplicity column is all
+> zeros, but not one with nonzero multiplicities? Now suppose a buggy verifier
+> deletes the XOR tables *and* skips the lookup terms of `triple_xor` while
+> still accepting its rows. What can a malicious prover now claim?
+
+## Hiding with padding rows
+
+stwo-circuits hides the witness with **row padding**: `add_zk_blinding` appends
+random rows to each witness-carrying component. The intuition is an entropy
+budget per column:
+
+- A verifier learns a column's polynomial only through evaluations: one per
+  FRI query, plus the out-of-domain samples.
+- Every evaluation outside the trace domain is a linear combination of *all*
+  the column's rows, including the random ones.
+- If the column has more random rows than the verifier sees evaluations, the
+  observations can be made to look uniformly random, and a simulator can
+  produce them without the witness.
+
+Upstream sizes the padding as
+`n_queries + NON_QUERY_INFO_LEAK = 35 + 10 = 45` rows. The 10 covers two
+out-of-domain points of 4 M31 coordinates each, plus 2 to spare. That is
+the intuition, not a theorem. The [blinding page](/privacy/blinding) lists
+this route as "unproven, partial" for good reason: interaction columns,
+constraint correlations and queries on repeated positions all complicate the
+counting.
+
+Now the lookup wrinkle from [Part 3.4](/starks/lookups) returns. A **table's
+multiplicity column depends on the witness**. If a private amount is
+range-checked against a 16-bit table, that value's row gains a use, and the
+row index *is* the value. Padding the gate components does not obviously
+randomize the table side.
+
+This is why the arithmetic-only profile makes the hiding question tractable.
+With only `eq` and `qm31_ops`, there are no witness-dependent table
+multiplicities. The `Gate` relation's multiplicities count how many times each
+*wire* is read, which is topology, not witness. The question narrows to:
+
+> Does 45-row blinding of `qm31_ops` and `eq`, including their LogUp
+> interaction columns, hide the witness for any circuit built from them?
+
+A payment still needs **range checks**, since amounts must not wrap around the
+field. The arithmetic-only way is bit decomposition: write
+`v = Σ bᵢ·2ⁱ` with `bᵢ·(bᵢ − 1) = 0` for each bit. That is about 32 boolean
+constraints per 32-bit amount, which is cheap at payment scale, and it adds
+no lookup table to leak through.
+
+> **Check.** A 64-bit amount is range-checked two ways: (a) by four lookups
+> into a 16-bit table, (b) by 64 boolean constraints. For each, which
+> committed column could reveal something about the amount, and what does
+> blinding have to cover?
+
+## The two routes side by side
+
+| | Custom protocol (TMPZK002) | Blinded stwo-circuits |
+| --- | --- | --- |
+| Client memory, membership | ~53 MiB native, 63 MiB WASM | ~0.26 GiB (arithmetic-only, bounded) |
+| Client time, membership | ~1 s | ~8.5 s (host, 1 thread) |
+| Hiding construction | polynomial masking + salted commitments (ours) | row padding (StarkWare's) |
+| Hiding evidence | research review of a fixed relation | intuition; the question above |
+| Server layers | circuit A (verifies our protocol) → Cairo → PROOF2 | Cairo → PROOF2 |
+| Server peak | ~66 GiB (PROOF2); circuit A adds a 40 GiB, 67 s stage | ~66 GiB (PROOF2) |
+| Code we must review forever | protocol, prover, verifier, circuit A | the arithmetic-only profile |
+| Status | end to end to a verified PROOF2 | client proof verified in Cairo; arithmetic-only profile not yet verifiable |
+
+The custom route is lighter on the phone and already proven end to end. The
+stwo-circuits route moves the hardest cryptography onto StarkWare's
+maintained code, removes circuit A from the server, and puts client, bridge
+and PROOF2 on one code line. The price is roughly 5× the client memory and a
+fork of the component set until upstream offers one.
+
+## How the choice gets made
+
+Both routes are developed in parallel until one question is settled:
+
+1. **Hiding.** StarkWare (or an independent reviewer) confirms that padding
+   hides the witness for arithmetic-only circuits.
+2. **Scale.** The complete 2-in/2-out payment, written once as a
+   field-generic relation, is measured on the arithmetic-only profile, in
+   WASM as well as native.
+3. **End to end.** The arithmetic-only client proof reaches a verified PROOF2
+   through a reviewed Rust and Cairo profile.
+
+If all three hold, stwo-circuits becomes the client proof and TMPZK002 retires.
+If hiding fails, the custom route stays, and the work is not wasted, because
+the payment relation is written to compile to both.
+
+## What to carry forward
+
+1. stwo-circuits is one fixed AIR: gates are components, wires are LogUp
+   uses and yields, and the topology is committed as preprocessed columns.
+2. Its XOR tables serve Blake2s inside recursion. For an arithmetic relation
+   they are dead weight that sets the trace size, about 90% of the client's
+   memory.
+3. Dropping unused components removes only zero LogUp terms. It is sound if
+   the prover, the verifier and the circuit hash all agree on the reduced set.
+4. Padding-row hiding is an entropy budget of 45 rows per component. Lookup
+   multiplicities escape it, so range checks should use bits, not tables.

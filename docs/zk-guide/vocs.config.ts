@@ -41,6 +41,7 @@ export default defineConfig({
         { text: 'How Starknet proves', link: '/starknet/how-starknet-proves' },
         { text: 'Cairo and S-two', link: '/starknet/cairo-and-s-two' },
         { text: 'Client proofs & server wrapping', link: '/starknet/client-proof-wrapping' },
+        { text: 'Two ways to build the client proof', link: '/starknet/client-proof-routes' },
       ],
     },
     {
