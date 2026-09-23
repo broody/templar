@@ -1,0 +1,17 @@
+{
+  "authority": {
+    "compiled_class_v2": "0x6541afed22bca546e577f548f1b9bdadbe55b9454f5da5b8fa63e1a32b9a0e0",
+    "constructor_calldata": [],
+    "deployer": "0x0",
+    "os_config_hash": "0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57",
+    "pool": "0x456",
+    "salt": "0x4d33315f415050454e445f464958545552455f5631",
+    "statement": "0x4d981b5d1928b83c3f3d9881536459dd026641e94d23a96eec415d27389b69c",
+    "statement_class": "0x1ddea3834002cc515eaea650a2693bdd22aa65c8b9e632fd98038c770e0e8c1"
+  },
+  "base_block_hash": "0x76caf4cc29d80a919de9f87fb082a21cf8253f6095e62e4cfca5f2c9e21f87a",
+  "base_root": "0x420804ba7cb141f5fdceaf6b6e8c6eab2dbd5f2f838a5c7b2aaf4eda5d31422",
+  "canonical_reconstruction": true,
+  "pinned_rpc_parsers": true,
+  "scope": "separate reconstruction using the same pinned libraries; original OS verification still required"
+}

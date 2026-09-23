@@ -23,15 +23,20 @@ def sha(p):
     return hashlib.sha256(p.read_bytes()).hexdigest()
 
 
+PREFIX = None  # statement prefix override (hex) for non-TMPZK002 statements
+TAG = None
+
+
 def expected_payload(fixture, public):
-    x = builder.statement_prefix() + json.dumps(public, separators=(',', ':')).encode()
+    prefix = bytes.fromhex(PREFIX) if PREFIX else builder.statement_prefix()
+    x = prefix + json.dumps(public, separators=(',', ':')).encode()
     if TAG_VERSION == 'V2':
         x += b''.join(r.to_bytes(4, 'little') for r in public['root'])
     d = hashlib.blake2s(x, digest_size=32).digest()
     lo, hi = int.from_bytes(d[:16], 'little'), int.from_bytes(d[16:], 'little')
     chain = int.from_bytes(b'SN_SEPOLIA', 'big')
     assert int(public['chain'], 16) == chain
-    tag = int.from_bytes(b'TMPZK002_MEMBERSHIP_' + TAG_VERSION.encode(), 'big')
+    tag = int.from_bytes((TAG or 'TMPZK002_MEMBERSHIP_' + TAG_VERSION).encode(), 'big')
     tail = [] if TAG_VERSION == 'V2' else public['root']
     return [int(fixture['authority']['statement_class'], 16), tag, chain, lo, hi, *tail]
 
@@ -44,9 +49,11 @@ def main():
     ap.add_argument('--output', type=Path, required=True)
     ap.add_argument('--l2-gas', default='0x3b9aca00')
     ap.add_argument('--tag-version', default='V1', choices=['V1', 'V2'])
+    ap.add_argument('--prefix-hex')
+    ap.add_argument('--tag')
     a = ap.parse_args()
-    global TAG_VERSION
-    TAG_VERSION = a.tag_version
+    global TAG_VERSION, PREFIX, TAG
+    TAG_VERSION, PREFIX, TAG = a.tag_version, a.prefix_hex, a.tag
     out = a.output.resolve()
     out.mkdir(parents=True, exist_ok=False)
     fixture_path = out / 'state-fixture.json'

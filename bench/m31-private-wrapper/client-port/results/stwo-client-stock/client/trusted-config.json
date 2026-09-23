@@ -1,0 +1,231 @@
+{
+  "blinding_rows": 45,
+  "channel": "Blake2sMerkleChannel",
+  "circuit_hash_u32_le": [
+    1555106399,
+    4101192273,
+    1276965389,
+    3100393437,
+    2781018702,
+    1927840177,
+    3967519209,
+    365739668
+  ],
+  "component_log_sizes": [
+    9,
+    18,
+    9,
+    6,
+    9,
+    16,
+    20,
+    8,
+    14,
+    18,
+    16
+  ],
+  "fri_config": {
+    "fold_step": 4,
+    "log_blowup_factor": 2,
+    "log_last_layer_degree_bound": 0,
+    "n_queries": 35,
+    "pow_bits": 26
+  },
+  "n_outputs": 8,
+  "preprocessed_columns": [
+    {
+      "id": "m31_to_u32_input_addr",
+      "log_size": 6
+    },
+    {
+      "id": "m31_to_u32_output_addr",
+      "log_size": 6
+    },
+    {
+      "id": "m31_to_u32_multiplicity",
+      "log_size": 6
+    },
+    {
+      "id": "bitwise_xor_4_0",
+      "log_size": 8
+    },
+    {
+      "id": "bitwise_xor_4_1",
+      "log_size": 8
+    },
+    {
+      "id": "bitwise_xor_4_2",
+      "log_size": 8
+    },
+    {
+      "id": "eq_in0_address",
+      "log_size": 9
+    },
+    {
+      "id": "eq_in1_address",
+      "log_size": 9
+    },
+    {
+      "id": "triple_xor_input_addr_0",
+      "log_size": 9
+    },
+    {
+      "id": "triple_xor_input_addr_1",
+      "log_size": 9
+    },
+    {
+      "id": "triple_xor_input_addr_2",
+      "log_size": 9
+    },
+    {
+      "id": "triple_xor_output_addr",
+      "log_size": 9
+    },
+    {
+      "id": "triple_xor_multiplicity",
+      "log_size": 9
+    },
+    {
+      "id": "blake_g_gate_input_addr_a",
+      "log_size": 9
+    },
+    {
+      "id": "blake_g_gate_input_addr_b",
+      "log_size": 9
+    },
+    {
+      "id": "blake_g_gate_input_addr_c",
+      "log_size": 9
+    },
+    {
+      "id": "blake_g_gate_input_addr_d",
+      "log_size": 9
+    },
+    {
+      "id": "blake_g_gate_input_addr_f0",
+      "log_size": 9
+    },
+    {
+      "id": "blake_g_gate_input_addr_f1",
+      "log_size": 9
+    },
+    {
+      "id": "blake_g_gate_output_addr_a",
+      "log_size": 9
+    },
+    {
+      "id": "blake_g_gate_output_addr_b",
+      "log_size": 9
+    },
+    {
+      "id": "blake_g_gate_output_addr_c",
+      "log_size": 9
+    },
+    {
+      "id": "blake_g_gate_output_addr_d",
+      "log_size": 9
+    },
+    {
+      "id": "blake_g_gate_multiplicity",
+      "log_size": 9
+    },
+    {
+      "id": "bitwise_xor_7_0",
+      "log_size": 14
+    },
+    {
+      "id": "bitwise_xor_7_1",
+      "log_size": 14
+    },
+    {
+      "id": "bitwise_xor_7_2",
+      "log_size": 14
+    },
+    {
+      "id": "seq_16",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_8_0",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_8_1",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_8_2",
+      "log_size": 16
+    },
+    {
+      "id": "qm31_ops_add_flag",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_sub_flag",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_mul_flag",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_pointwise_mul_flag",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_in0_address",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_in1_address",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_out_address",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_mults",
+      "log_size": 18
+    },
+    {
+      "id": "bitwise_xor_9_0",
+      "log_size": 18
+    },
+    {
+      "id": "bitwise_xor_9_1",
+      "log_size": 18
+    },
+    {
+      "id": "bitwise_xor_9_2",
+      "log_size": 18
+    },
+    {
+      "id": "bitwise_xor_10_0",
+      "log_size": 20
+    },
+    {
+      "id": "bitwise_xor_10_1",
+      "log_size": 20
+    },
+    {
+      "id": "bitwise_xor_10_2",
+      "log_size": 20
+    }
+  ],
+  "preprocessed_root_u32_le": [
+    715339984,
+    4246761006,
+    2578070011,
+    3193470372,
+    548570686,
+    690787111,
+    1447126025,
+    3607743405
+  ],
+  "purpose": "tmpzsc-client-membership",
+  "stack": "starkware-libs/proving@5a7c5ed, stock components, bridge FRI",
+  "statement_prefix_hex": "544d505a53433031",
+  "trace_log_size": 20
+}
