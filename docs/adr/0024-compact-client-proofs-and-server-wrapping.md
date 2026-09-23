@@ -187,11 +187,18 @@ adoption.
 
 The two routes differ most here.
 
-- **stwo-circuits** hides the witness with upstream row padding, 45 random rows
-  per component. That is an entropy-budget argument, not a proof. The
-  arithmetic-only profile removes the lookup tables whose multiplicities would
-  leak, so the question narrows to whether padding hides `eq` and `qm31_ops`,
-  including their LogUp interaction columns. It is open (broody/templar#2).
+- **stwo-circuits** hides the witness with row padding. Upstream's 45 rows per
+  component (queries + 10) leave FRI out, as the
+  [math review](../../bench/m31-private-wrapper/client-port/reviews/math-review.md)
+  found (H1). Each FRI layer opens the query's whole coset, about 1,700 extra
+  values per R0 proof. Our provers now size padding for every opened value,
+  2,390 iterations at a 2¹⁸ trace, and assert that each proof fits. This costs
+  nothing measurable
+  ([results](../../bench/m31-private-wrapper/client-port/results/stwo-client-r0-blinding/README.md)).
+  The count is necessary, not sufficient. The arithmetic-only profile removes
+  the lookup tables whose multiplicities would leak. What remains is a
+  simulation argument over the full transcript: interaction and composition
+  openings, unsalted Merkle leaves, and correlations (broody/templar#2).
 - **TMPZK002** uses polynomial masking and salted commitments with the research
   reviews above. Its unrestricted adaptive multi-proof argument is open.
 

@@ -155,3 +155,39 @@ pub fn circuit_hash_of(pp: &PreprocessedCircuit, cfg: &PcsConfig, root: Blake2sH
 pub fn write(path: &std::path::Path, v: &serde_json::Value) {
     fs::write(path, serde_json::to_vec_pretty(v).unwrap()).unwrap();
 }
+
+/// Upstream's allowance for non-query openings: two OOD points × 4 coordinates + 2
+/// (`cairo_verifier/src/verify.rs`, `NON_QUERY_INFO_LEAK`).
+pub const NON_QUERY_INFO_LEAK: usize = 10;
+
+/// FRI fold steps for a trace of `trace_log_size` under the bridge FRI config: the first layer
+/// and each inner layer fold `fold_step` at a time until the last layer
+/// (`log_last_layer_degree_bound + log_blowup_factor`).
+pub fn fri_fold_schedule(trace_log_size: u32) -> Vec<u32> {
+    let fri = bridge_fri();
+    let mut remaining = (trace_log_size + fri.log_blowup_factor) - (fri.log_last_layer_degree_bound + fri.log_blowup_factor);
+    let mut steps = vec![];
+    while remaining > 0 {
+        let s = remaining.min(fri.fold_step);
+        steps.push(s);
+        remaining -= s;
+    }
+    steps
+}
+
+/// Blinding iterations sized for everything a proof opens (math review H1): every FRI layer's
+/// full coset per query, not only the queried point, plus the out-of-domain samples. Each
+/// iteration adds one random row per witness component, so every committed column gets at least
+/// this many random rows.
+pub fn blinding_budget(trace_log_size: u32) -> usize {
+    let per_query: usize = fri_fold_schedule(trace_log_size).iter().map(|s| 1usize << s).sum();
+    bridge_fri().n_queries * per_query + NON_QUERY_INFO_LEAK
+}
+
+/// Field values a proof reveals through FRI beyond the trace openings: every layer's witness and
+/// the last-layer polynomial.
+pub fn revealed_fri_values(proof: &CircuitProof<Blake2sMerkleHasher>) -> usize {
+    let fri = &proof.stark_proof.proof.fri_proof;
+    std::iter::once(&fri.first_layer).chain(&fri.inner_layers).map(|l| l.fri_witness.len()).sum::<usize>()
+        + fri.last_layer_poly.len()
+}

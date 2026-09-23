@@ -183,8 +183,8 @@ stwo-circuits hides the witness with **row padding**: `add_zk_blinding` appends
 random rows to each witness-carrying component. The intuition is an entropy
 budget per column:
 
-- A verifier learns a column's polynomial only through evaluations: one per
-  FRI query, plus the out-of-domain samples.
+- A verifier learns a column's polynomial only through evaluations: at each
+  FRI query, at the out-of-domain samples, and through the FRI layers (below).
 - Every evaluation outside the trace domain is a linear combination of *all*
   the column's rows, including the random ones.
 - If the column has more random rows than the verifier sees evaluations, the
@@ -193,11 +193,32 @@ budget per column:
 
 Upstream sizes the padding as
 `n_queries + NON_QUERY_INFO_LEAK = 35 + 10 = 45` rows. The 10 covers two
-out-of-domain points of 4 M31 coordinates each, plus 2 to spare. That is
-the intuition, not a theorem. The [blinding page](/privacy/blinding) lists
-this route as "unproven, partial" for good reason: interaction columns,
-constraint correlations and queries on repeated positions all complicate the
-counting.
+out-of-domain points of 4 M31 coordinates each, plus 2 to spare.
+
+**That count misses the FRI layers.** Our math review found this. FRI folds
+`2^fold_step` points into one per step, so to check a query the prover opens
+the **whole coset**, the query point and its siblings, in every layer. With
+fold step 4, each query opens 16 values in the first layer and up to 16 more
+per inner layer. Each opened value is a public linear combination of every
+committed column, evaluated at a point the verifier has not otherwise seen.
+For R0 that is about 1,700 extra field values per proof, against 45 random
+rows.
+
+We now size the padding for everything a proof reveals:
+`n_queries × Σ_layers 2^fold + 10`. That is 35 × (16+16+16+16+4) + 10 = 2,390
+blinding iterations at a 2¹⁸ trace. Each prover run also checks that the
+proof's actual FRI openings fit that budget. It costs about 10k rows, so
+memory barely moves.
+
+A large enough count is **necessary, not sufficient**. The
+[blinding page](/privacy/blinding) still lists this route as "unproven,
+partial". A simulator argument must cover the whole transcript: interaction
+and composition openings, which carry no randomness of their own, unsalted
+Merkle leaves, constraint correlations and repeated query positions.
+
+> **Check.** A proof has 35 queries, fold step 4 and five FRI layers. Why
+> does a column need more random rows than 35 + 10? Which opened values are
+> derived by the verifier and reveal nothing new, and which are new?
 
 Now the lookup wrinkle from [Part 3.4](/starks/lookups) returns. A **table's
 multiplicity column depends on the witness**. If a private amount is
@@ -210,8 +231,9 @@ With only `eq` and `qm31_ops`, there are no witness-dependent table
 multiplicities. The `Gate` relation's multiplicities count how many times each
 *wire* is read, which is topology, not witness. The question narrows to:
 
-> Does 45-row blinding of `qm31_ops` and `eq`, including their LogUp
-> interaction columns, hide the witness for any circuit built from them?
+> Does padding sized for every opened value, in `qm31_ops` and `eq` and their
+> LogUp interaction columns, hide the witness for any circuit built from
+> them?
 
 A payment still needs **range checks**, since amounts must not wrap around the
 field. The arithmetic-only way is bit decomposition: write
@@ -271,8 +293,10 @@ the payment relation is written to compile to both.
    memory.
 3. Dropping unused components removes only zero LogUp terms. It is sound if
    the prover, the verifier and the circuit hash all agree on the reduced set.
-4. Padding-row hiding is an entropy budget of 45 rows per component. Lookup
-   multiplicities escape it, so range checks should use bits, not tables.
+4. Padding-row hiding is an entropy budget per column. It must cover every
+   value the proof opens, FRI cosets included, which means thousands of rows,
+   not 45. Lookup multiplicities escape it, so range checks should use bits,
+   not tables.
 5. A verifier for a reduced profile must reject a nonzero claimed sum from any
    absent component. Otherwise that sum is a free term in the LogUp check.
 6. Public outputs are LogUp terms the verifier adds itself, so they can carry

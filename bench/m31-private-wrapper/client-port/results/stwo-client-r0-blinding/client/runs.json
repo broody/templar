@@ -1,0 +1,293 @@
+{
+  "scope": "R0 client proof (lane-packed, Tree::Compress) with blinding sized per math review H1; same binary, 16 GiB cap, zero swap, taskset cores 0-3",
+  "runs": [
+    {
+      "threads": 4,
+      "max_fri_columns": null,
+      "run": 1,
+      "tree_nodes": "Compress",
+      "blinding_rows": 2390,
+      "revealed_fri_values": 1752,
+      "proving_seconds": 2.94,
+      "wall_seconds": 3.21,
+      "peak_rss_kib": 617240,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        12,
+        18
+      ],
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": null,
+      "run": 2,
+      "tree_nodes": "Compress",
+      "blinding_rows": 2390,
+      "revealed_fri_values": 1767,
+      "proving_seconds": 1.45,
+      "wall_seconds": 1.75,
+      "peak_rss_kib": 613772,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        12,
+        18
+      ],
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": null,
+      "run": 3,
+      "tree_nodes": "Compress",
+      "blinding_rows": 2390,
+      "revealed_fri_values": 1782,
+      "proving_seconds": 3.85,
+      "wall_seconds": 4.13,
+      "peak_rss_kib": 605840,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        12,
+        18
+      ],
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": 16,
+      "run": 1,
+      "tree_nodes": "Compress",
+      "blinding_rows": 2390,
+      "revealed_fri_values": 1707,
+      "proving_seconds": 1.99,
+      "wall_seconds": 2.24,
+      "peak_rss_kib": 312572,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        12,
+        18
+      ],
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": 16,
+      "run": 2,
+      "tree_nodes": "Compress",
+      "blinding_rows": 2390,
+      "revealed_fri_values": 1707,
+      "proving_seconds": 1.61,
+      "wall_seconds": 1.88,
+      "peak_rss_kib": 325108,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        12,
+        18
+      ],
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": 16,
+      "run": 3,
+      "tree_nodes": "Compress",
+      "blinding_rows": 2390,
+      "revealed_fri_values": 1692,
+      "proving_seconds": 2.08,
+      "wall_seconds": 2.34,
+      "peak_rss_kib": 310356,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        12,
+        18
+      ],
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": null,
+      "run": 1,
+      "tree_nodes": "Compress",
+      "blinding_rows": 2390,
+      "revealed_fri_values": 1752,
+      "proving_seconds": 3.19,
+      "wall_seconds": 3.68,
+      "peak_rss_kib": 590420,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        12,
+        18
+      ],
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": null,
+      "run": 2,
+      "tree_nodes": "Compress",
+      "blinding_rows": 2390,
+      "revealed_fri_values": 1707,
+      "proving_seconds": 13.64,
+      "wall_seconds": 14.15,
+      "peak_rss_kib": 590160,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        12,
+        18
+      ],
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": null,
+      "run": 3,
+      "tree_nodes": "Compress",
+      "blinding_rows": 2390,
+      "revealed_fri_values": 1722,
+      "proving_seconds": 6.49,
+      "wall_seconds": 7.01,
+      "peak_rss_kib": 590540,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        12,
+        18
+      ],
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": 16,
+      "run": 1,
+      "tree_nodes": "Compress",
+      "blinding_rows": 2390,
+      "revealed_fri_values": 1707,
+      "proving_seconds": 5.93,
+      "wall_seconds": 6.44,
+      "peak_rss_kib": 297724,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        12,
+        18
+      ],
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": 16,
+      "run": 2,
+      "tree_nodes": "Compress",
+      "blinding_rows": 2390,
+      "revealed_fri_values": 1737,
+      "proving_seconds": 17.13,
+      "wall_seconds": 17.64,
+      "peak_rss_kib": 297924,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        12,
+        18
+      ],
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": 16,
+      "run": 3,
+      "tree_nodes": "Compress",
+      "blinding_rows": 2390,
+      "revealed_fri_values": 1752,
+      "proving_seconds": 5.18,
+      "wall_seconds": 5.67,
+      "peak_rss_kib": 297972,
+      "trace_log_size": 18,
+      "component_log_sizes": [
+        12,
+        18
+      ],
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    }
+  ]
+}

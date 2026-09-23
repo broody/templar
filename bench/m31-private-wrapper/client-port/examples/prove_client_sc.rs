@@ -21,8 +21,6 @@ use templar_client_verifier_circuit::membership;
 use templar_client_verifier_circuit::ro::{blake2s, guess_bytes, m31_bytes};
 
 pub const PREFIX: &[u8; 8] = b"TMPZSC01";
-/// Upstream sizing: n_queries + NON_QUERY_INFO_LEAK.
-const BLINDING: usize = 35 + 10;
 
 fn statement_x(public: &Public) -> Vec<u8> {
     let mut x = PREFIX.to_vec();
@@ -30,7 +28,7 @@ fn statement_x(public: &Public) -> Vec<u8> {
     x
 }
 
-fn circuit<V: IValue>(public: &Public, private: &Private, seed: [u8; 32]) -> FinalizedContext<V> {
+fn circuit<V: IValue>(public: &Public, private: &Private, seed: [u8; 32], blinding: usize) -> FinalizedContext<V> {
     let mut c = Context::<V>::new(N_RESERVED);
     let root = membership::build(&mut c, &private.secret, &private.siblings, &private.bits);
     let mut message = guess_bytes(&mut c, &statement_x(public));
@@ -40,7 +38,7 @@ fn circuit<V: IValue>(public: &Public, private: &Private, seed: [u8; 32]) -> Fin
     let digest = blake2s(&mut c, &message);
     c.set_outputs(&digest);
     let mut c = c.finalize(true);
-    add_zk_blinding(&mut c, seed, BLINDING);
+    add_zk_blinding(&mut c, seed, blinding);
     pad_context(&mut c);
     c
 }
@@ -64,11 +62,20 @@ fn main() {
     rand::RngCore::fill_bytes(&mut rng, &mut seed);
     let started = Instant::now();
     // Topology is independent of values and of the blinding seed.
-    let topology = circuit::<NoValue>(&public, &private, [0; 32]);
-    let context = circuit::<QM31>(&public, &private, seed);
+    // Size the blinding for the final trace: every FRI layer's coset per query (math review H1).
+    let mut blinding = 0;
+    let (topology, pp) = loop {
+        let topology = circuit::<NoValue>(&public, &private, [0; 32], blinding);
+        let pp = PreprocessedCircuit::from_finalized_circuit(topology.circuit());
+        let need = support::blinding_budget(pp.trace_log_size());
+        if blinding >= need {
+            break (topology, pp);
+        }
+        blinding = need;
+    };
+    let context = circuit::<QM31>(&public, &private, seed, blinding);
     assert!(topology.circuit() == context.circuit());
     context.validate_circuit();
-    let pp = PreprocessedCircuit::from_finalized_circuit(topology.circuit());
     drop(topology);
     let cfg = support::config(pp.trace_log_size());
     let root = pp.preprocessed_root(cfg.fri_config.log_blowup_factor);
@@ -78,6 +85,8 @@ fn main() {
     let t = Instant::now();
     let mut proof = prove_circuit_assignment_with_channel::<support::MC>(context.values(), &pp, &BaseColumnPool::<SimdBackend>::new(), cfg).unwrap();
     let proving_seconds = t.elapsed().as_secs_f64();
+    let revealed = support::revealed_fri_values(&proof);
+    assert!(revealed + support::NON_QUERY_INFO_LEAK <= blinding, "blinding {blinding} < revealed {revealed}");
     drop(context);
     support::native_verify(&proof, &pp, root, &wanted);
     let negatives = support::negatives(&mut proof, &pp, root, &wanted);
@@ -85,7 +94,7 @@ fn main() {
     let felts = prepare_circuit_proof_for_cairo_verifier(proof, &log_sizes);
     support::write(&out.join("trusted-config.json"), &support::manifest(
         "tmpzsc-client-membership", &pp, &cfg, root, circuit_hash,
-        json!({"stack": "starkware-libs/proving@5a7c5ed, stock components, bridge FRI", "statement_prefix_hex": hex(PREFIX), "blinding_rows": BLINDING}),
+        json!({"stack": "starkware-libs/proving@5a7c5ed, stock components, bridge FRI", "statement_prefix_hex": hex(PREFIX), "blinding_rows": blinding}),
     ));
     let mut arguments = vec![format!("0x{:x}", felts.len())];
     arguments.extend(felts.iter().map(|f| format!("{f:#x}")));
@@ -95,7 +104,8 @@ fn main() {
         "scope": "stock blinded stwo-circuits client membership proof (proving@5a7c5ed)",
         "trace_log_size": pp.trace_log_size(),
         "component_log_sizes": log_sizes.into_array().to_vec(),
-        "blinding_rows": BLINDING,
+        "blinding_rows": blinding,
+        "revealed_fri_values": revealed,
         "build_seconds": build_seconds,
         "proving_seconds": proving_seconds,
         "proof_felts": felts.len(),

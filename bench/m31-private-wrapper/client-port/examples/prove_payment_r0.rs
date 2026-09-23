@@ -17,15 +17,13 @@ use serde_json::json;
 use stwo::core::fields::qm31::QM31;
 use templar_client_verifier_circuit::payment::{self, N_OUTPUTS, Private, Public, STATEMENT_TAG, Tree, statement_limbs};
 
-/// Upstream sizing: n_queries + NON_QUERY_INFO_LEAK.
-const BLINDING: usize = 35 + 10;
 
-fn circuit<V: templar_client_verifier_circuit::membership::Lanes>(tree: Tree, public: &Public, private: &Private, seed: [u8; 32]) -> FinalizedContext<V> {
+fn circuit<V: templar_client_verifier_circuit::membership::Lanes>(tree: Tree, public: &Public, private: &Private, seed: [u8; 32], blinding: usize) -> FinalizedContext<V> {
     let mut c = Context::<V>::new(N_OUTPUTS);
     let outputs = payment::build(&mut c, tree, public, private);
     c.set_outputs(&outputs);
     let mut c = c.finalize(true);
-    add_zk_blinding_for(&mut c, seed, BLINDING, Profile::Arithmetic);
+    add_zk_blinding_for(&mut c, seed, blinding, Profile::Arithmetic);
     pad_context_for(&mut c, Profile::Arithmetic);
     c
 }
@@ -48,11 +46,21 @@ fn main() {
     rand::RngCore::fill_bytes(&mut rng, &mut seed);
     let started = Instant::now();
     // Topology is independent of the witness and of the blinding seed.
-    let topology = circuit::<NoValue>(tree, &public, &private, [0; 32]);
-    let context = circuit::<QM31>(tree, &public, &private, seed);
+    // Size the blinding for the final trace: every FRI layer's coset per query (math review H1).
+    let mut blinding = 0;
+    let (topology, pp) = loop {
+        let topology = circuit::<NoValue>(tree, &public, &private, [0; 32], blinding);
+        let pp = PreprocessedCircuit::from_finalized_circuit(topology.circuit());
+        let need = support::blinding_budget(pp.trace_log_size());
+        if blinding >= need {
+            break (topology, pp);
+        }
+        blinding = need;
+    };
+    let context = circuit::<QM31>(tree, &public, &private, seed, blinding);
     assert!(topology.circuit() == context.circuit());
     context.validate_circuit();
-    let pp = PreprocessedCircuit::from_finalized_circuit(topology.circuit());
+
     assert_eq!(pp.preprocessed_trace.profile(), Profile::Arithmetic);
     drop(topology);
     let cfg = support::config(pp.trace_log_size());
@@ -67,6 +75,10 @@ fn main() {
     )
     .unwrap();
     let proving_seconds = t.elapsed().as_secs_f64();
+    // Every FRI value the proof reveals, plus the out-of-domain allowance, is covered by the
+    // blinding rows each committed column received.
+    let revealed = support::revealed_fri_values(&proof);
+    assert!(revealed + support::NON_QUERY_INFO_LEAK <= blinding, "blinding {blinding} < revealed {revealed}");
     drop(context);
     support::native_verify(&proof, &pp, root, &wanted);
     let negatives = support::negatives(&mut proof, &pp, root, &wanted);
@@ -78,7 +90,7 @@ fn main() {
             "stack": "broody/proving templar/arithmetic-profile (on starkware-libs/proving@5a7c5ed), arithmetic profile, bridge FRI",
             "statement_tag_u32": STATEMENT_TAG,
             "statement_layout": "92 limbs, 4 per output: tag 2, chain 9, pool 9, token 9 (28-bit LE), root 9, nf0 9, nf1 9, cm0 9, delivery0 9 (28-bit LE), cm1 9, delivery1 9 (28-bit LE)",
-            "blinding_rows": BLINDING,
+            "blinding_rows": blinding,
             "tree_nodes": format!("{tree:?}"),
         }),
     ));
@@ -90,7 +102,9 @@ fn main() {
         "scope": "blinded arithmetic-only R0 payment client proof (2-in/2-out, depth 32; fork templar/arithmetic-profile)",
         "trace_log_size": pp.trace_log_size(),
         "component_log_sizes": log_sizes.into_array().to_vec(),
-        "blinding_rows": BLINDING,
+        "blinding_rows": blinding,
+        "blinding_rule": "n_queries * sum over FRI layers of 2^fold_step + NON_QUERY_INFO_LEAK (math review H1)",
+        "revealed_fri_values": revealed,
         "max_fri_columns": max_fri_columns,
         "tree_nodes": format!("{tree:?}"),
         "build_seconds": build_seconds,

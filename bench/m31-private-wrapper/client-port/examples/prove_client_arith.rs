@@ -37,8 +37,6 @@ use templar_client_verifier_circuit::ro::guess_m31;
 pub const TAG: [u32; 2] = [0x544d_505a, 0x5341_3031];
 const LIMB_BITS: usize = 28;
 const N_FELT_LIMBS: usize = 9;
-/// Upstream sizing: n_queries + NON_QUERY_INFO_LEAK.
-const BLINDING: usize = 35 + 10;
 
 /// A felt252 given as `0x` hex, as nine 28-bit little-endian limbs.
 fn felt_limbs(hex: &str) -> [u32; N_FELT_LIMBS] {
@@ -58,7 +56,7 @@ fn statement_limbs(public: &Public) -> [u32; 4 * N_RESERVED] {
     limbs.try_into().unwrap()
 }
 
-fn circuit<V: IValue>(public: &Public, private: &Private, seed: [u8; 32]) -> FinalizedContext<V> {
+fn circuit<V: IValue>(public: &Public, private: &Private, seed: [u8; 32], blinding: usize) -> FinalizedContext<V> {
     let mut c = Context::<V>::new(N_RESERVED);
     let root = membership::build(&mut c, &private.secret, &private.siblings, &private.bits);
     let limbs = statement_limbs(public);
@@ -70,7 +68,7 @@ fn circuit<V: IValue>(public: &Public, private: &Private, seed: [u8; 32]) -> Fin
     let outputs: Vec<Var> = vars.chunks_exact(4).map(|q| from_partial_evals(&mut c, q.try_into().unwrap())).collect();
     c.set_outputs(&outputs);
     let mut c = c.finalize(true);
-    add_zk_blinding_for(&mut c, seed, BLINDING, Profile::Arithmetic);
+    add_zk_blinding_for(&mut c, seed, blinding, Profile::Arithmetic);
     pad_context_for(&mut c, Profile::Arithmetic);
     c
 }
@@ -93,11 +91,21 @@ fn main() {
     rand::RngCore::fill_bytes(&mut rng, &mut seed);
     let started = Instant::now();
     // Topology is independent of values and of the blinding seed.
-    let topology = circuit::<NoValue>(&public, &private, [0; 32]);
-    let context = circuit::<QM31>(&public, &private, seed);
+    // Size the blinding for the final trace: every FRI layer's coset per query (math review H1).
+    let mut blinding = 0;
+    let (topology, pp) = loop {
+        let topology = circuit::<NoValue>(&public, &private, [0; 32], blinding);
+        let pp = PreprocessedCircuit::from_finalized_circuit(topology.circuit());
+        let need = support::blinding_budget(pp.trace_log_size());
+        if blinding >= need {
+            break (topology, pp);
+        }
+        blinding = need;
+    };
+    let context = circuit::<QM31>(&public, &private, seed, blinding);
     assert!(topology.circuit() == context.circuit());
     context.validate_circuit();
-    let pp = PreprocessedCircuit::from_finalized_circuit(topology.circuit());
+
     assert_eq!(pp.preprocessed_trace.profile(), Profile::Arithmetic);
     drop(topology);
     let cfg = support::config(pp.trace_log_size());
@@ -108,6 +116,10 @@ fn main() {
     let t = Instant::now();
     let mut proof = prove_circuit_assignment_bounded::<support::MC>(context.values(), &pp, &BaseColumnPool::<SimdBackend>::new(), cfg, max_fri_columns).unwrap();
     let proving_seconds = t.elapsed().as_secs_f64();
+    // Every FRI value the proof reveals, plus the out-of-domain allowance, is covered by the
+    // blinding rows each committed column received.
+    let revealed = support::revealed_fri_values(&proof);
+    assert!(revealed + support::NON_QUERY_INFO_LEAK <= blinding, "blinding {blinding} < revealed {revealed}");
     drop(context);
     support::native_verify(&proof, &pp, root, &wanted);
     let negatives = support::negatives(&mut proof, &pp, root, &wanted);
@@ -119,7 +131,7 @@ fn main() {
             "stack": "broody/proving templar/arithmetic-profile (on starkware-libs/proving@5a7c5ed), arithmetic profile, bridge FRI",
             "statement_tag_u32": TAG,
             "statement_layout": "limbs 0..2 tag, 2..11 chain (28-bit LE), 11..20 pool (28-bit LE), 20..29 root, 29..32 zero; 4 limbs per output",
-            "blinding_rows": BLINDING,
+            "blinding_rows": blinding,
         }),
     ));
     let mut arguments = vec![format!("0x{:x}", felts.len())];
@@ -131,7 +143,9 @@ fn main() {
         "trace_log_size": pp.trace_log_size(),
         "component_log_sizes": log_sizes.into_array().to_vec(),
         "preprocessed_columns": pp.preprocessed_trace.n_columns(),
-        "blinding_rows": BLINDING,
+        "blinding_rows": blinding,
+        "blinding_rule": "n_queries * sum over FRI layers of 2^fold_step + NON_QUERY_INFO_LEAK (math review H1)",
+        "revealed_fri_values": revealed,
         "max_fri_columns": max_fri_columns,
         "build_seconds": build_seconds,
         "proving_seconds": proving_seconds,

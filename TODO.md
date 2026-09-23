@@ -210,6 +210,21 @@ the accepted local proving architecture is unchanged.
     ([results](bench/m31-private-wrapper/client-port/results/stwo-client-r0-compress/README.md)).
 
   The node format needs review before adoption.
+  **Reviews 2026-09-23** (`client-port/reviews/`): math, bounded PCS,
+  binding and Cairo performance are all CONDITIONAL GO for research use;
+  `Tree::Compress` is NO-GO as laid out.
+  - **Hiding H1, fixed:** blinding is now sized for every FRI coset
+    opening (2,390 iterations, was 45), with no measurable cost
+    ([results](bench/m31-private-wrapper/client-port/results/stwo-client-r0-blinding/README.md)).
+  - **Next:** the fix list:
+    - account CASM 82,828 is over the 81,920 limit, so prune absent
+      components;
+    - verifier inversion batching;
+    - absent-sum forgery negatives;
+    - node layout;
+    - binding negatives;
+    - then the M31-tree append cost (~92–181M gas per spend) and the
+      PROOF2 Poseidon tier.
   Not yet measured: the pool's on-chain `apply_spend` with an M31-tree
   append.
 
