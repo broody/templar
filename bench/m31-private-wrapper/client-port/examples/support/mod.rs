@@ -32,7 +32,17 @@ pub fn bridge_fri() -> FriConfig {
     let path = format!("{PROVING}/circuit_registry_definitions/production/circuit_fri_config.json");
     let production: FriConfig = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
     assert_eq!((production.pow_bits, production.log_blowup_factor, production.n_queries), (26, 1, 70));
-    FriConfig { log_blowup_factor: 2, n_queries: 35, ..production }
+    // `TEMPLAR_FRI=log_blowup,n_queries[,pow_bits]` selects another point on the same security
+    // line (server log20 study); the default is the frozen 2/35/26.
+    let (log_blowup_factor, n_queries, pow_bits) = match std::env::var("TEMPLAR_FRI") {
+        Ok(v) => {
+            let x: Vec<u32> = v.split(',').map(|t| t.trim().parse().expect("TEMPLAR_FRI")).collect();
+            (x[0], x[1] as usize, *x.get(2).unwrap_or(&26))
+        }
+        Err(_) => (2, 35, 26),
+    };
+    assert!(pow_bits as usize + log_blowup_factor as usize * n_queries >= 96, "FRI security below 96 bits");
+    FriConfig { log_blowup_factor, n_queries, pow_bits, ..production }
 }
 
 /// Component row targets read from the Cairo verifier's `COMPONENT_LOG_SIZES`, so circuit A is

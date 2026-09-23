@@ -34,7 +34,9 @@ def main():
     assert m['n_outputs'] == n_outputs
     logs = m['component_log_sizes']
     assert logs[0] > 0 and logs[1] > 0 and all(l == 0 for l in logs[2:]), 'arithmetic profile'
-    assert m['fri_config'] == {'pow_bits': 26, 'log_blowup_factor': 2, 'log_last_layer_degree_bound': 0, 'n_queries': 35, 'fold_step': 4}
+    fri = m['fri_config']
+    assert {k: fri[k] for k in ('log_last_layer_degree_bound', 'fold_step')} == {'log_last_layer_degree_bound': 0, 'fold_step': 4}
+    assert fri['pow_bits'] + fri['log_blowup_factor'] * fri['n_queries'] >= 96, 'FRI security below 96 bits'
     fork_commit = subprocess.run(['git', '-C', str(FORK), 'rev-parse', 'HEAD'], capture_output=True, text=True, check=True).stdout.strip()
     dirty = subprocess.run(['git', '-C', str(FORK), 'status', '--porcelain', 'stwo_cairo_verifier'], capture_output=True, text=True, check=True).stdout
     assert not dirty, 'fork Cairo verifier has uncommitted changes'
