@@ -39,14 +39,14 @@ pub fn permute<F: Field + From<M31>>(input: [F; WIDTH]) -> [F; WIDTH] {
     s
 }
 
-fn permute_gates<V: IValue>(ctx: &mut Context<V>, input: &[Var]) -> Vec<Var> {
+pub fn permute_gates<V: IValue>(ctx: &mut Context<V>, input: &[Var]) -> Vec<Var> {
     let syms = Sym::begin(WIDTH);
     let out = permute::<Sym>(syms.try_into().unwrap());
     compile(ctx, input, &out)
 }
 
 /// `hash::sponge` over variables: 15-element overwrite rate, 9-element capacity.
-fn sponge<V: IValue>(ctx: &mut Context<V>, message: &[Var]) -> Vec<Var> {
+pub fn sponge<V: IValue>(ctx: &mut Context<V>, message: &[Var]) -> Vec<Var> {
     let zero = ctx.zero();
     let one = ctx.one();
     let mut state = vec![zero; WIDTH];

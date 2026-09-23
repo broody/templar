@@ -28,3 +28,4 @@ mod constants;
 #[path = "../../../m31-private-blake/client/src/hash.rs"]
 pub mod hash;
 pub mod membership;
+pub mod payment;

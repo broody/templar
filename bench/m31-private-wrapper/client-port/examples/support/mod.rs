@@ -137,7 +137,7 @@ pub fn manifest(purpose: &str, pp: &PreprocessedCircuit, cfg: &PcsConfig, root: 
         "trace_log_size": pp.trace_log_size(),
         "preprocessed_columns": columns,
         "component_log_sizes": log_sizes.into_array().to_vec(),
-        "n_outputs": 8,
+        "n_outputs": pp.n_outputs,
         "preprocessed_root_u32_le": words(root),
         "circuit_hash_u32_le": words(circuit_hash),
     });

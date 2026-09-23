@@ -180,6 +180,20 @@ the accepted local proving architecture is unchanged.
   - PROOF2 takes **116 s / 52.2 GiB**, verified
     ([results](bench/m31-private-wrapper/client-port/results/stwo-client-arith/README.md)).
 
+  **R0 payment up to submission 2026-09-23:** an ordinary 2-in/2-out
+  payment (`src/payment.rs`, experimental Poseidon2-M31 formats) goes client
+  → bridge → OS → PROOF2 locally:
+  - client **2.2 GiB / 2.5–3.8 s**, or **1.1 GiB / 4.4–5.2 s** bounded, on 4
+    threads; the original client-proves-everything pipeline measured
+    9.00 / 6.12 GiB and 16.7 / 22.7 s on the same cores;
+  - bridge 3.77M steps, 15/15 checks;
+  - OS 5.42M steps, exact binding message;
+  - PROOF2 **139 s / 64.2 GiB**, verified
+    ([results](bench/m31-private-wrapper/client-port/results/stwo-client-r0/README.md)).
+
+  Not yet measured: the pool's on-chain `apply_spend` with an M31-tree
+  append.
+
   Open for this route:
   - review of the fork's profile;
   - the hiding question (broody/templar#2);
