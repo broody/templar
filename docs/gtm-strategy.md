@@ -106,7 +106,7 @@ not silently supersede architecture decisions or remove implemented features.
 | Open-note equivalent | Use external DeFi and return proceeds into funded private notes | Authorize a swap with a minimum return and recover the resulting note | Templar's reference uses ReturnNote; this is not a claim of identical upstream semantics or arbitrary DeFi support |
 | Controlled notes | Bind private funds to application-defined spending rules | A sealed-bid auction with funded bids, correct settlement, and refunds | The auction needs its own reviewed protocol; controlled-note support alone does not establish it |
 
-The existing [return-note reference](return-note-spec.md) covers transaction-local
+The existing [return-note reference](open-note-spec.md) covers transaction-local
 external settlement. Public execution amounts and return metadata can remain
 visible. Do not call all DeFi activity confidential merely because funds start
 and end in the pool.

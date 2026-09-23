@@ -1,4 +1,4 @@
-# ADR-0023: Return notes with upstream-compatible external settlement
+# ADR-0023: Open notes (formerly return notes) with upstream-compatible external settlement
 
 - Date: 2026-09-21
 - Status: Accepted architecture; experimental integration and production qualification tracked separately
@@ -6,7 +6,8 @@
 - Partially supersedes: ADR-0009's removal of open-note funding and ADR-0010's exclusion of external invokes
 - Extends: ADR-0021's push-payment scope and ADR-0018's native proof architecture
 - Amends: ADR-0007 publication metadata and ADR-0014 operation binding/output accounting for this execution path
-- Specification: [return notes](../return-note-spec.md)
+- Specification: [open notes](../open-note-spec.md)
+- Amended: 2026-09-24 (rename; compact client-proof path; shadow accounts), see below
 - Reference: [upstream adapter integration](../../bench/return-note-e2e/README.md)
 
 ## Context
@@ -112,3 +113,24 @@ integration, independent format and security review, production tokens, supporte
 route policies, reliable submission, bulk synchronization and desktop memory
 qualification remain required. No improvement in proving memory or anonymity is
 claimed from introducing this abstraction.
+
+## Amendment (2026-09-24): open notes on the compact client-proof path
+
+- **Name.** "Return note" becomes **open note**, matching upstream and the `OpenNoteDeposit` wire
+  type. Semantics are unchanged: upstream also requires every open note to be filled in its creating
+  transaction. Templar appends the funded commitment instead of filling a stored placeholder. The
+  first reference keeps its `ReturnNote` type names.
+- **Compact path.** ADR-0024's R0 relation gains a public execution `intent` and an optional identity
+  handle (R0 V3). The M31 pool gains `apply_spend_with_invoke`; see the
+  [specification](../open-note-spec.md#compact-client-proof-path-r0-v3). The budget is the
+  statement's withdrawal and may be zero; the intent names its recipient.
+- **Shadow accounts.** A bounded form of upstream's `ComputeAndInvoke`: the client proves the
+  identity handle `H(IDENTITY, sk₀ ‖ scope)`, and the pool derives upstream's identity commitment
+  from it. This supports persistent pseudonymous positions through upstream's shadow-account
+  anonymizer. General `privacy_compute` (arbitrary application logic on private data) needs
+  per-application circuits and remains out of scope.
+- **Limits.** 2 destinations, 4 new notes, 64 calldata felts, one adapter call and one input token
+  per transaction.
+- **Process deviation.** At the user's direction, the independent math review and the adversarial
+  test suite follow implementation rather than precede it, contrary to the default order in
+  `AGENTS.md`. The implementation is not qualified until both are done.

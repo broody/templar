@@ -1,8 +1,82 @@
-# Return notes — atomic external funding
+# Open notes — atomic external funding
 
 Status: accepted architecture under [ADR-0023](adr/0023-return-notes-and-adapter-compatibility.md).
-Executable reference: [bench/return-note-e2e](../bench/return-note-e2e/README.md).
+**Renamed from "return notes" on 2026-09-24** (ADR-0023 amendment). Sections below the compact-path
+section describe the first reference, on the client-side Cairo pipeline, where the construction is
+called `ReturnNote`.
+
+Executable references:
+- first reference (client-side Cairo pipeline, `ReturnNote`):
+  [bench/return-note-e2e](../bench/return-note-e2e/README.md);
+- compact client-proof path (R0 V3): [bench/m31-pool](../bench/m31-pool/README.md), and the client
+  relation in `bench/m31-private-wrapper/client-port`.
+
 Production encoding and maintained-package integration remain pending.
+
+## Compact client-proof path (R0 V3)
+
+An open note is a transaction-local funding destination: a note of a declared token for a committed
+owner, funded by one external call in the same transaction. The final note is ordinary. Upstream's
+open note must also be filled in its creating transaction (`UNDEPOSITED_OPEN_NOTES`); upstream
+writes an empty stored note and fills it, while Templar appends the funded commitment, which is the
+natural form on an append-only M31 tree whose commitment includes the amount.
+
+**Client statement (R0 V3).** V2's statement plus two public fields:
+- `intent` (a felt): the execution the spend authorizes, `0x0` for an ordinary spend. The circuit
+  carries it verbatim, so the proof commits the owner to exactly that execution.
+- `identity` (nine M31 words): `H(IDENTITY, sk₀ ‖ scope)` under a private flag, zero otherwise.
+
+The execution's budget is the statement's withdrawal (possibly zero); its recipient is part of the
+intent. Binding: `TMR0_BIND_V3`. Tags: `R0V3`, `R0C3`. Account message tag: `TMPZR0_PAYMENT_V3`.
+
+**Intent.** `ExecutionIntent { kind, adapter, nonce, expiry, calldata, destinations }`, with each
+destination `OpenDestination { note_id, token, minimum, inner (9 words), ciphertext }`:
+
+```
+intent = Poseidon('OPEN_EXEC_V1', chain, pool, token, kind, adapter, nonce,
+                  budget_recipient, budget, expiry, selector, |calldata|, calldata…,
+                  |destinations|, (note_id, token, minimum, inner₉, delivery_digest(ciphertext))…)
+```
+
+- `kind = INVOKE`: selector `privacy_invoke`, calldata passed as is (upstream Ekubo and Vesu
+  anonymizers).
+- `kind = COMPUTE`: selector `privacy_invoke_with_computation`, calldata
+  `[identity_commitment] ++ calldata`, where
+  `identity_commitment = Poseidon(partial, nonce)` (upstream `commitment_from_partial`) and
+  `partial = Poseidon('TEMPLAR_IDENTITY_V1', identity₉)`. Only the owner of `sk₀` can produce a
+  handle, so only they can address their shadow accounts. Upstream's shadow-account anonymizer is
+  used unchanged, configured with the Templar pool as its privacy contract.
+
+**Settlement (`apply_spend_with_invoke`)**, under the pool's lock:
+1. Recompute `intent`; check expiry (block number); the adapter is nonzero and not the pool; the
+   identity handle is present for `COMPUTE` and absent for `INVOKE`.
+2. Verify the spend: context, binding, fact verdict, known root, fresh nullifiers.
+3. Pay the budget to its recipient.
+4. Call the adapter. Deserialize `Span<OpenNoteDeposit>`; for `COMPUTE`, optionally followed by the
+   associated addresses. Nothing else may follow.
+5. Require exactly one deposit per destination, in order: same `note_id` and token, amount nonzero
+   and at least `minimum`.
+6. Pull each amount from the adapter with `transfer_from` and check the pool's balance increased by
+   exactly that amount.
+7. Compute each commitment on chain, `commitment(chain, pool, token, amount, inner)`, as `deposit`
+   does.
+8. Append all of the transaction's new notes (private outputs, then open notes) in `insert_two`
+   pairs. Emit `NotePublished` for each, and `OpenNoteFunded { note_id, index, token, amount }` for
+   each open note.
+
+Any failure reverts every effect. The pool grants no allowances.
+
+**Limits.** One adapter call and one input token per transaction; at most 2 destinations, 4 new
+notes in total and 64 calldata felts.
+
+**Recovery.** The destination ciphertext carries the owner's opening except the amount, which comes
+from `OpenNoteFunded` and `NotePublished`. A wallet trial-decrypts `NotePublished` exactly as for
+deposits.
+
+**Public.** The adapter, calldata, budget and its recipient, destination tokens and amounts, and
+(for `COMPUTE`) the shadow account are public, as upstream. A shadow account links its own actions
+by design, not the owner's other notes.
+
 
 ## Types and lifecycle
 
