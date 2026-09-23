@@ -38,7 +38,18 @@ prover (16 FRI columns).
 - **Other components.** `assert_eq_opcode_double_deref` and `memory_id_to_small` stay at 2²⁰
   in every run; the rest are ≤ 2¹⁹.
 
-## Next
+## Lever 3 (verifier size), scoped and dropped
+
+The statement account's executed functions hash 54,945 felts, and only 24,660 of them run
+(`results/account-function-coverage.json`). The rest is inline construction and
+error-propagation code: `CircuitAirNewImpl::new` runs 349 of its 4,122 felts, and our
+`verify_payment` runs 1,021 of 4,206. Starknet's libfunc list rejects `unsafe-panic`, which
+would remove the unwinding code, so a contract cannot use it. At 2⁴/18, bytecode hashing may
+use about 25.2k felts: even with every cold felt removed, we would be within 2% of the limit.
+**Dropped 2026-09-23.** Large-path batching (one PROOF2 over k client proofs, amortizing the
+log25 floor and bytecode hashing) is the better server lever if server cost matters again.
+
+## Next (superseded)
 
 Log20 needs the account's executed bytecode roughly halved: a verifier specialized to the
 fixed R0 circuit (lever 3). Combined with 2⁴/18 (client 0.79 GiB) and calldata packing, that

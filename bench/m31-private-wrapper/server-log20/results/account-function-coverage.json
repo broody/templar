@@ -1,0 +1,1802 @@
+[
+{
+"i": 0,
+"name": "templar_membership_account::PaymentVerifierAccount::__wrapper____validate__",
+"felts": 226,
+"executed": true,
+"visited_pcs": 60,
+"offset": 0,
+"covered_felts": 84
+},
+{
+"i": 1,
+"name": "templar_membership_account::PaymentVerifierAccount::__wrapper____execute__",
+"felts": 251,
+"executed": true,
+"visited_pcs": 59,
+"offset": 226,
+"covered_felts": 79
+},
+{
+"i": 3,
+"name": "templar_membership_account::PaymentVerifierAccount::__validate__[226-355]",
+"felts": 75,
+"executed": true,
+"visited_pcs": 20,
+"offset": 482,
+"covered_felts": 32
+},
+{
+"i": 6,
+"name": "templar_membership_account::PaymentVerifierAccount::__execute__",
+"felts": 382,
+"executed": true,
+"visited_pcs": 144,
+"offset": 567,
+"covered_felts": 188
+},
+{
+"i": 10,
+"name": "templar_membership_bridge::verify_payment",
+"felts": 4206,
+"executed": true,
+"visited_pcs": 729,
+"offset": 998,
+"covered_felts": 1021
+},
+{
+"i": 11,
+"name": "templar_membership_bridge::binding[432-559]",
+"felts": 76,
+"executed": true,
+"visited_pcs": 33,
+"offset": 5204,
+"covered_felts": 46
+},
+{
+"i": 12,
+"name": "templar_membership_bridge::binding[559-615]",
+"felts": 54,
+"executed": true,
+"visited_pcs": 24,
+"offset": 5280,
+"covered_felts": 35
+},
+{
+"i": 13,
+"name": "templar_membership_bridge::binding[633-689]",
+"felts": 54,
+"executed": true,
+"visited_pcs": 24,
+"offset": 5334,
+"covered_felts": 35
+},
+{
+"i": 14,
+"name": "core::poseidon::_poseidon_hash_span_inner",
+"felts": 96,
+"executed": true,
+"visited_pcs": 44,
+"offset": 5388,
+"covered_felts": 58
+},
+{
+"i": 18,
+"name": "stwo_circuit_air::CircuitProofSerde::deserialize",
+"felts": 1046,
+"executed": true,
+"visited_pcs": 165,
+"offset": 5554,
+"covered_felts": 190
+},
+{
+"i": 20,
+"name": "stwo_circuit_air::circuit_hash::compute_circuit_hash",
+"felts": 223,
+"executed": true,
+"visited_pcs": 66,
+"offset": 6611,
+"covered_felts": 97
+},
+{
+"i": 23,
+"name": "templar_membership_bridge::verify_payment[938-1169]",
+"felts": 60,
+"executed": true,
+"visited_pcs": 30,
+"offset": 6856,
+"covered_felts": 41
+},
+{
+"i": 25,
+"name": "core::array::SpanPartialEq::<core::integer::u32, core::integer::U32PartialEq>::eq[194-446]",
+"felts": 99,
+"executed": true,
+"visited_pcs": 20,
+"offset": 6927,
+"covered_felts": 31
+},
+{
+"i": 27,
+"name": "templar_membership_bridge::felt_from_limbs[248-425]",
+"felts": 201,
+"executed": true,
+"visited_pcs": 57,
+"offset": 7037,
+"covered_felts": 85
+},
+{
+"i": 28,
+"name": "templar_membership_bridge::amount_from_limbs[206-384]",
+"felts": 191,
+"executed": true,
+"visited_pcs": 68,
+"offset": 7238,
+"covered_felts": 98
+},
+{
+"i": 31,
+"name": "templar_membership_bridge::nonzero_digest[68-146]",
+"felts": 58,
+"executed": true,
+"visited_pcs": 24,
+"offset": 7451,
+"covered_felts": 37
+},
+{
+"i": 36,
+"name": "stwo_circuit_air::verify_circuit",
+"felts": 1780,
+"executed": true,
+"visited_pcs": 913,
+"offset": 7553,
+"covered_felts": 1111
+},
+{
+"i": 42,
+"name": "templar_membership_bridge::binding[483-553]",
+"felts": 54,
+"executed": true,
+"visited_pcs": 24,
+"offset": 9364,
+"covered_felts": 35
+},
+{
+"i": 43,
+"name": "core::array::deserialize_array_helper::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::QM31Serde, stwo_verifier_core::fields::qm31::naive::QM31Drop>",
+"felts": 79,
+"executed": true,
+"visited_pcs": 31,
+"offset": 9418,
+"covered_felts": 44
+},
+{
+"i": 44,
+"name": "stwo_circuit_air::claims::CircuitInteractionClaimSerde::deserialize",
+"felts": 151,
+"executed": true,
+"visited_pcs": 54,
+"offset": 9497,
+"covered_felts": 57
+},
+{
+"i": 45,
+"name": "stwo_verifier_core::verifier::StarkProofSerde::deserialize",
+"felts": 157,
+"executed": true,
+"visited_pcs": 38,
+"offset": 9648,
+"covered_felts": 43
+},
+{
+"i": 46,
+"name": "stwo_circuit_air::circuit_hash::config_words[837-1026]",
+"felts": 193,
+"executed": true,
+"visited_pcs": 56,
+"offset": 9805,
+"covered_felts": 83
+},
+{
+"i": 48,
+"name": "core::array::ArrayImpl::<core::integer::u32>::append_span::<core::clone::TCopyClone::<core::integer::u32, core::integer::u32Copy>, core::integer::u32Drop>",
+"felts": 48,
+"executed": true,
+"visited_pcs": 22,
+"offset": 10293,
+"covered_felts": 33
+},
+{
+"i": 49,
+"name": "stwo_verifier_utils::blake2s::hash_u32s",
+"felts": 235,
+"executed": true,
+"visited_pcs": 75,
+"offset": 10341,
+"covered_felts": 110
+},
+{
+"i": 52,
+"name": "core::integer::u256_overflowing_mul",
+"felts": 210,
+"executed": true,
+"visited_pcs": 115,
+"offset": 10592,
+"covered_felts": 165
+},
+{
+"i": 59,
+"name": "stwo_circuit_air::claims::accumulate_circuit_relation_uses{{ 12, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, NotSpecialized, }",
+"felts": 141,
+"executed": true,
+"visited_pcs": 56,
+"offset": 10882,
+"covered_felts": 85
+},
+{
+"i": 60,
+"name": "core::dict::Felt252DictImpl::<core::integer::u64, core::integer::U64Felt252DictValue>::squash",
+"felts": 190,
+"executed": true,
+"visited_pcs": 88,
+"offset": 11023,
+"covered_felts": 117
+},
+{
+"i": 61,
+"name": "stwo_circuit_air::verify_claim[985-1158]",
+"felts": 104,
+"executed": true,
+"visited_pcs": 25,
+"offset": 11213,
+"covered_felts": 40
+},
+{
+"i": 62,
+"name": "stwo_verifier_core::channel::blake2s::Blake2sChannelImpl::mix_felts[308-884]{NotSpecialized, { 1795745351: core::integer::u32, 3144134277: core::integer::u32, 1013904242: core::integer::u32, 2773480762: core::integer::u32, 1359893119: core::integer::u32, 2600822924: core::integer::u32, 528734635: core::integer::u32, 1541459225: core::integer::u32 }.into_box(), 32, NotSpecialized, }",
+"felts": 120,
+"executed": true,
+"visited_pcs": 42,
+"offset": 11317,
+"covered_felts": 59
+},
+{
+"i": 63,
+"name": "stwo_verifier_core::channel::blake2s::Blake2sChannelImpl::mix_felts[884-961]",
+"felts": 53,
+"executed": true,
+"visited_pcs": 23,
+"offset": 11437,
+"covered_felts": 34
+},
+{
+"i": 64,
+"name": "stwo_verifier_core::fri::FriConfigImpl::mix_into",
+"felts": 252,
+"executed": true,
+"visited_pcs": 85,
+"offset": 11490,
+"covered_felts": 118
+},
+{
+"i": 65,
+"name": "stwo_circuit_air::claims::column_log_sizes_per_tree[564-1162]",
+"felts": 348,
+"executed": true,
+"visited_pcs": 99,
+"offset": 11742,
+"covered_felts": 135
+},
+{
+"i": 66,
+"name": "stwo_verifier_core::utils::SpanImpl::<core::integer::u32>::max::<core::integer::U32PartialOrd, core::integer::u32Copy>[114-246]",
+"felts": 69,
+"executed": true,
+"visited_pcs": 35,
+"offset": 12090,
+"covered_felts": 52
+},
+{
+"i": 67,
+"name": "stwo_verifier_core::channel::blake2s::Blake2sChannelImpl::verify_pow_nonce",
+"felts": 177,
+"executed": true,
+"visited_pcs": 80,
+"offset": 12159,
+"covered_felts": 119
+},
+{
+"i": 69,
+"name": "stwo_constraint_framework::LookupElementsImpl::draw",
+"felts": 182,
+"executed": true,
+"visited_pcs": 68,
+"offset": 12385,
+"covered_felts": 88
+},
+{
+"i": 70,
+"name": "stwo_circuit_air::claims::absent_components_claim_zero[377-641]",
+"felts": 163,
+"executed": true,
+"visited_pcs": 50,
+"offset": 12567,
+"covered_felts": 76
+},
+{
+"i": 72,
+"name": "stwo_circuit_air::claims::lookup_sum",
+"felts": 210,
+"executed": true,
+"visited_pcs": 144,
+"offset": 12779,
+"covered_felts": 166
+},
+{
+"i": 73,
+"name": "stwo_circuit_air::claims::CircuitInteractionClaimImpl::mix_into",
+"felts": 153,
+"executed": true,
+"visited_pcs": 99,
+"offset": 12989,
+"covered_felts": 119
+},
+{
+"i": 74,
+"name": "stwo_circuit_air::circuit_air::CircuitAirNewImpl::new",
+"felts": 4122,
+"executed": true,
+"visited_pcs": 314,
+"offset": 13142,
+"covered_felts": 349
+},
+{
+"i": 75,
+"name": "stwo_verifier_core::verifier::verify::<stwo_circuit_air::circuit_air::CircuitAir, stwo_circuit_air::circuit_air::CircuitAirImpl, stwo_circuit_air::circuit_air::CircuitAirDrop>",
+"felts": 879,
+"executed": true,
+"visited_pcs": 405,
+"offset": 17264,
+"covered_felts": 458
+},
+{
+"i": 79,
+"name": "stwo_verifier_core::fields::qm31::QM31Serde::deserialize",
+"felts": 209,
+"executed": true,
+"visited_pcs": 44,
+"offset": 18170,
+"covered_felts": 63
+},
+{
+"i": 80,
+"name": "stwo_circuit_air::per_component::PerComponentSerde::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::QM31Serde, core::traits::DestructFromDrop::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::naive::QM31Drop>, stwo_verifier_core::fields::qm31::QM31Serde, core::traits::DestructFromDrop::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::naive::QM31Drop>, stwo_verifier_core::fields::qm31::QM31Serde, core::traits::DestructFromDrop::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::naive::QM31Drop>, stwo_verifier_core::fields::qm31::QM31Serde, core::traits::DestructFromDrop::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::naive::QM31Drop>, stwo_verifier_core::fields::qm31::QM31Serde, core::traits::DestructFromDrop::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::naive::QM31Drop>, stwo_verifier_core::fields::qm31::QM31Serde, core::traits::DestructFromDrop::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::naive::QM31Drop>, stwo_verifier_core::fields::qm31::QM31Serde, core::traits::DestructFromDrop::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::naive::QM31Drop>, stwo_verifier_core::fields::qm31::QM31Serde, core::traits::DestructFromDrop::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::naive::QM31Drop>, stwo_verifier_core::fields::qm31::QM31Serde, core::traits::DestructFromDrop::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::naive::QM31Drop>, stwo_verifier_core::fields::qm31::QM31Serde, core::traits::DestructFromDrop::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::naive::QM31Drop>, stwo_verifier_core::fields::qm31::QM31Serde, core::traits::DestructFromDrop::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::naive::QM31Drop>>::deserialize",
+"felts": 291,
+"executed": true,
+"visited_pcs": 104,
+"offset": 18379,
+"covered_felts": 127
+},
+{
+"i": 81,
+"name": "stwo_verifier_core::pcs::verifier::CommitmentSchemeProofSerde::deserialize",
+"felts": 715,
+"executed": true,
+"visited_pcs": 116,
+"offset": 18670,
+"covered_felts": 154
+},
+{
+"i": 86,
+"name": "stwo_verifier_utils::blake2s::hash_u32s[1036-1086]",
+"felts": 53,
+"executed": true,
+"visited_pcs": 23,
+"offset": 19883,
+"covered_felts": 34
+},
+{
+"i": 87,
+"name": "stwo_constraint_framework::accumulate_relation_uses[177-436]",
+"felts": 138,
+"executed": true,
+"visited_pcs": 37,
+"offset": 19936,
+"covered_felts": 53
+},
+{
+"i": 89,
+"name": "stwo_verifier_core::channel::blake2s::Blake2sChannelImpl::mix_felts[308-884]",
+"felts": 144,
+"executed": true,
+"visited_pcs": 69,
+"offset": 20123,
+"covered_felts": 96
+},
+{
+"i": 90,
+"name": "stwo_circuit_air::claims::column_log_sizes_per_tree[968-1056]",
+"felts": 52,
+"executed": true,
+"visited_pcs": 23,
+"offset": 20267,
+"covered_felts": 33
+},
+{
+"i": 91,
+"name": "stwo_circuit_air::claims::column_log_sizes_per_tree[1056-1156]",
+"felts": 52,
+"executed": true,
+"visited_pcs": 23,
+"offset": 20319,
+"covered_felts": 33
+},
+{
+"i": 92,
+"name": "stwo_verifier_core::utils::pow2_u64",
+"felts": 131,
+"executed": true,
+"visited_pcs": 23,
+"offset": 20371,
+"covered_felts": 37
+},
+{
+"i": 95,
+"name": "stwo_verifier_core::channel::blake2s::Blake2sChannelImpl::draw_secure_felts[128-489]{NotSpecialized, array![], 2, }",
+"felts": 78,
+"executed": true,
+"visited_pcs": 35,
+"offset": 20512,
+"covered_felts": 44
+},
+{
+"i": 96,
+"name": "stwo_constraint_framework::LookupElementsImpl::from_z_alpha[161-282]",
+"felts": 106,
+"executed": true,
+"visited_pcs": 48,
+"offset": 20590,
+"covered_felts": 60
+},
+{
+"i": 97,
+"name": "stwo_circuit_air::claims::lookup_sum[834-973]",
+"felts": 70,
+"executed": true,
+"visited_pcs": 36,
+"offset": 20696,
+"covered_felts": 47
+},
+{
+"i": 98,
+"name": "stwo_constraint_framework::LookupElementsImpl::combine",
+"felts": 205,
+"executed": true,
+"visited_pcs": 61,
+"offset": 20766,
+"covered_felts": 94
+},
+{
+"i": 99,
+"name": "stwo_verifier_core::fields::qm31::naive::QM31InvertibleImpl::inverse",
+"felts": 682,
+"executed": true,
+"visited_pcs": 290,
+"offset": 20971,
+"covered_felts": 417
+},
+{
+"i": 100,
+"name": "stwo_circuit_air::claims::lookup_sum[1592-1890]",
+"felts": 185,
+"executed": true,
+"visited_pcs": 92,
+"offset": 21653,
+"covered_felts": 116
+},
+{
+"i": 101,
+"name": "stwo_verifier_core::fields::qm31::naive::QM31Add::add",
+"felts": 86,
+"executed": true,
+"visited_pcs": 55,
+"offset": 21838,
+"covered_felts": 86
+},
+{
+"i": 102,
+"name": "core::array::ArrayTCloneImpl::<stwo_verifier_core::fields::qm31::naive::QM31, core::clone::TCopyClone::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::naive::QM31Copy>, stwo_verifier_core::fields::qm31::naive::QM31Drop>::clone[120-295]",
+"felts": 60,
+"executed": true,
+"visited_pcs": 30,
+"offset": 21924,
+"covered_felts": 41
+},
+{
+"i": 103,
+"name": "stwo_verifier_core::channel::blake2s::draw_base_felts[115-787]",
+"felts": 344,
+"executed": true,
+"visited_pcs": 169,
+"offset": 21984,
+"covered_felts": 240
+},
+{
+"i": 104,
+"name": "stwo_verifier_core::circle::ChannelGetRandomCirclePointImpl::get_random_point",
+"felts": 230,
+"executed": true,
+"visited_pcs": 96,
+"offset": 22328,
+"covered_felts": 115
+},
+{
+"i": 105,
+"name": "stwo_verifier_core::verifier::try_extract_composition_eval",
+"felts": 313,
+"executed": true,
+"visited_pcs": 142,
+"offset": 22558,
+"covered_felts": 181
+},
+{
+"i": 106,
+"name": "stwo_circuit_air::circuit_air::CircuitAirImpl::eval_composition_polynomial_at_point",
+"felts": 465,
+"executed": true,
+"visited_pcs": 338,
+"offset": 22871,
+"covered_felts": 361
+},
+{
+"i": 107,
+"name": "stwo_verifier_core::circle::CosetImpl::odds",
+"felts": 174,
+"executed": true,
+"visited_pcs": 27,
+"offset": 23336,
+"covered_felts": 41
+},
+{
+"i": 108,
+"name": "stwo_verifier_core::poly::circle::CanonicCosetImpl::eval_vanishing[166-337]",
+"felts": 106,
+"executed": true,
+"visited_pcs": 51,
+"offset": 23510,
+"covered_felts": 68
+},
+{
+"i": 109,
+"name": "stwo_verifier_core::fields::qm31::naive::QM31Mul::mul",
+"felts": 213,
+"executed": true,
+"visited_pcs": 83,
+"offset": 23616,
+"covered_felts": 101
+},
+{
+"i": 110,
+"name": "stwo_verifier_core::pcs::verifier::CommitmentSchemeVerifierImpl::verify_values",
+"felts": 613,
+"executed": true,
+"visited_pcs": 281,
+"offset": 23829,
+"covered_felts": 346
+},
+{
+"i": 115,
+"name": "stwo_verifier_core::fri::FriConfigSerde::deserialize",
+"felts": 260,
+"executed": true,
+"visited_pcs": 54,
+"offset": 24606,
+"covered_felts": 77
+},
+{
+"i": 116,
+"name": "core::array::deserialize_array_helper::<stwo_verifier_core::vcs::blake2s_hasher::Blake2sHash, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashSerde, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashDrop>",
+"felts": 91,
+"executed": true,
+"visited_pcs": 29,
+"offset": 24866,
+"covered_felts": 43
+},
+{
+"i": 117,
+"name": "core::array::deserialize_array_helper::<core::array::Span::<core::array::Span::<stwo_verifier_core::fields::qm31::naive::QM31>>, core::array::SpanSerde::<core::array::Span::<stwo_verifier_core::fields::qm31::naive::QM31>, core::array::SpanSerde::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::QM31Serde, stwo_verifier_core::fields::qm31::naive::QM31Drop, _>, core::array::SpanDrop::<stwo_verifier_core::fields::qm31::naive::QM31>, _>, core::array::SpanDrop::<core::array::Span::<stwo_verifier_core::fields::qm31::naive::QM31>>>",
+"felts": 116,
+"executed": true,
+"visited_pcs": 37,
+"offset": 24957,
+"covered_felts": 54
+},
+{
+"i": 118,
+"name": "core::array::deserialize_array_helper::<stwo_verifier_core::vcs::verifier::MerkleDecommitment::<stwo_verifier_core::vcs::blake2s_hasher::Blake2sMerkleHasher>, stwo_verifier_core::vcs::verifier::MerkleDecommitmentSerde::<stwo_verifier_core::vcs::blake2s_hasher::Blake2sMerkleHasher, core::array::SpanSerde::<stwo_verifier_core::vcs::blake2s_hasher::Blake2sHash, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashSerde, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashDrop, _>>, stwo_verifier_core::vcs::verifier::MerkleDecommitmentDrop::<stwo_verifier_core::vcs::blake2s_hasher::Blake2sMerkleHasher, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashDrop>>",
+"felts": 116,
+"executed": true,
+"visited_pcs": 37,
+"offset": 25073,
+"covered_felts": 54
+},
+{
+"i": 119,
+"name": "core::array::deserialize_array_helper::<core::array::Span::<stwo_verifier_core::fields::m31::M31>, core::array::SpanSerde::<stwo_verifier_core::fields::m31::M31, stwo_verifier_core::fields::m31::M31Serde, stwo_verifier_core::fields::m31::M31Drop, _>, core::array::SpanDrop::<stwo_verifier_core::fields::m31::M31>>",
+"felts": 116,
+"executed": true,
+"visited_pcs": 37,
+"offset": 25189,
+"covered_felts": 54
+},
+{
+"i": 120,
+"name": "stwo_verifier_core::fri::FriProofSerde::deserialize",
+"felts": 211,
+"executed": true,
+"visited_pcs": 52,
+"offset": 25305,
+"covered_felts": 68
+},
+{
+"i": 123,
+"name": "stwo_verifier_core::channel::blake2s::Blake2sChannelImpl::draw_secure_felts[128-489]",
+"felts": 139,
+"executed": true,
+"visited_pcs": 20,
+"offset": 25958,
+"covered_felts": 27
+},
+{
+"i": 124,
+"name": "stwo_constraint_framework::LookupElementsImpl::combine[404-556]",
+"felts": 176,
+"executed": true,
+"visited_pcs": 102,
+"offset": 26097,
+"covered_felts": 132
+},
+{
+"i": 126,
+"name": "stwo_verifier_core::fields::m31::naive::M31InvertibleImpl::inverse",
+"felts": 250,
+"executed": true,
+"visited_pcs": 122,
+"offset": 26322,
+"covered_felts": 163
+},
+{
+"i": 127,
+"name": "stwo_verifier_core::fields::qm31::naive::QM31Sub::sub",
+"felts": 86,
+"executed": true,
+"visited_pcs": 55,
+"offset": 26572,
+"covered_felts": 86
+},
+{
+"i": 128,
+"name": "stwo_verifier_core::fields::qm31::naive::QM31Impl::from_partial_evals",
+"felts": 201,
+"executed": true,
+"visited_pcs": 71,
+"offset": 26658,
+"covered_felts": 89
+},
+{
+"i": 129,
+"name": "stwo_verifier_core::verifier::repeated_circle_double_x[76-138]",
+"felts": 106,
+"executed": true,
+"visited_pcs": 51,
+"offset": 26859,
+"covered_felts": 68
+},
+{
+"i": 130,
+"name": "stwo_constraint_framework::PreprocessedMaskValuesImpl::new[201-736]",
+"felts": 168,
+"executed": true,
+"visited_pcs": 42,
+"offset": 26965,
+"covered_felts": 62
+},
+{
+"i": 131,
+"name": "stwo_circuit_air::components::eq::AirComponentImpl::evaluate_constraints_at_point",
+"felts": 541,
+"executed": true,
+"visited_pcs": 248,
+"offset": 27133,
+"covered_felts": 299
+},
+{
+"i": 132,
+"name": "stwo_circuit_air::components::qm31_ops::AirComponentImpl::evaluate_constraints_at_point",
+"felts": 2636,
+"executed": true,
+"visited_pcs": 1598,
+"offset": 27674,
+"covered_felts": 1884
+},
+{
+"i": 133,
+"name": "stwo_circuit_air::circuit_air::evaluate_lookup_components",
+"felts": 261,
+"executed": true,
+"visited_pcs": 24,
+"offset": 30310,
+"covered_felts": 36
+},
+{
+"i": 134,
+"name": "stwo_constraint_framework::validate_mask_usage",
+"felts": 145,
+"executed": true,
+"visited_pcs": 26,
+"offset": 30571,
+"covered_felts": 38
+},
+{
+"i": 135,
+"name": "stwo_verifier_core::circle::CosetImpl::new",
+"felts": 158,
+"executed": true,
+"visited_pcs": 25,
+"offset": 30716,
+"covered_felts": 37
+},
+{
+"i": 136,
+"name": "stwo_verifier_core::pcs::verifier::mix_sampled_values[156-410]",
+"felts": 76,
+"executed": true,
+"visited_pcs": 33,
+"offset": 30874,
+"covered_felts": 46
+},
+{
+"i": 137,
+"name": "stwo_verifier_core::fri::FriVerifierImpl::commit",
+"felts": 1359,
+"executed": true,
+"visited_pcs": 181,
+"offset": 30950,
+"covered_felts": 229
+},
+{
+"i": 139,
+"name": "stwo_verifier_core::queries::QueriesImpl::generate",
+"felts": 163,
+"executed": true,
+"visited_pcs": 60,
+"offset": 32358,
+"covered_felts": 79
+},
+{
+"i": 140,
+"name": "stwo_verifier_core::pcs::verifier::CommitmentSchemeVerifierImpl::verify_values[1551-2168]",
+"felts": 428,
+"executed": true,
+"visited_pcs": 109,
+"offset": 32521,
+"covered_felts": 145
+},
+{
+"i": 141,
+"name": "stwo_verifier_core::pcs::verifier::CommitmentSchemeVerifierImpl::column_indices_per_tree_by_degree_bound[295-476]",
+"felts": 126,
+"executed": true,
+"visited_pcs": 61,
+"offset": 32949,
+"covered_felts": 82
+},
+{
+"i": 142,
+"name": "stwo_verifier_core::utils::pad_and_transpose_columns_by_log_deg_bound_per_tree[671-1823]",
+"felts": 78,
+"executed": true,
+"visited_pcs": 35,
+"offset": 33075,
+"covered_felts": 48
+},
+{
+"i": 143,
+"name": "stwo_verifier_core::pcs::quotients::fri_answers",
+"felts": 663,
+"executed": true,
+"visited_pcs": 221,
+"offset": 33153,
+"covered_felts": 292
+},
+{
+"i": 144,
+"name": "stwo_verifier_core::fri::FriVerifierImpl::decommit",
+"felts": 257,
+"executed": true,
+"visited_pcs": 119,
+"offset": 33816,
+"covered_felts": 136
+},
+{
+"i": 147,
+"name": "stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashSerde::deserialize",
+"felts": 289,
+"executed": true,
+"visited_pcs": 62,
+"offset": 34306,
+"covered_felts": 86
+},
+{
+"i": 148,
+"name": "core::array::deserialize_array_helper::<core::array::Span::<stwo_verifier_core::fields::qm31::naive::QM31>, core::array::SpanSerde::<stwo_verifier_core::fields::qm31::naive::QM31, stwo_verifier_core::fields::qm31::QM31Serde, stwo_verifier_core::fields::qm31::naive::QM31Drop, _>, core::array::SpanDrop::<stwo_verifier_core::fields::qm31::naive::QM31>>",
+"felts": 116,
+"executed": true,
+"visited_pcs": 37,
+"offset": 34595,
+"covered_felts": 54
+},
+{
+"i": 149,
+"name": "core::array::deserialize_array_helper::<stwo_verifier_core::fields::m31::M31, stwo_verifier_core::fields::m31::M31Serde, stwo_verifier_core::fields::m31::M31Drop>",
+"felts": 112,
+"executed": true,
+"visited_pcs": 30,
+"offset": 34711,
+"covered_felts": 45
+},
+{
+"i": 150,
+"name": "stwo_verifier_core::fri::FriLayerProofSerde::deserialize",
+"felts": 207,
+"executed": true,
+"visited_pcs": 47,
+"offset": 34823,
+"covered_felts": 65
+},
+{
+"i": 151,
+"name": "core::array::deserialize_array_helper::<stwo_verifier_core::fri::FriLayerProof, stwo_verifier_core::fri::FriLayerProofSerde, stwo_verifier_core::fri::FriLayerProofDrop>",
+"felts": 96,
+"executed": true,
+"visited_pcs": 34,
+"offset": 35030,
+"covered_felts": 48
+},
+{
+"i": 152,
+"name": "stwo_verifier_core::poly::line::LinePolySerde::deserialize",
+"felts": 199,
+"executed": true,
+"visited_pcs": 46,
+"offset": 35126,
+"covered_felts": 68
+},
+{
+"i": 154,
+"name": "stwo_verifier_core::fields::m31::naive::repeated_square{NotSpecialized, 2, }",
+"felts": 40,
+"executed": true,
+"visited_pcs": 18,
+"offset": 35374,
+"covered_felts": 25
+},
+{
+"i": 155,
+"name": "stwo_verifier_core::fields::m31::naive::repeated_square{NotSpecialized, 3, }",
+"felts": 40,
+"executed": true,
+"visited_pcs": 18,
+"offset": 35414,
+"covered_felts": 25
+},
+{
+"i": 156,
+"name": "stwo_verifier_core::fields::m31::naive::repeated_square{NotSpecialized, 8, }",
+"felts": 40,
+"executed": true,
+"visited_pcs": 18,
+"offset": 35454,
+"covered_felts": 25
+},
+{
+"i": 157,
+"name": "stwo_verifier_core::fields::m31::naive::repeated_square{NotSpecialized, 7, }",
+"felts": 40,
+"executed": true,
+"visited_pcs": 18,
+"offset": 35494,
+"covered_felts": 25
+},
+{
+"i": 158,
+"name": "core::dict::Felt252DictImpl::<core::nullable::Nullable::<(stwo_verifier_core::fields::qm31::naive::QM31, core::bool)>, core::nullable::NullableFelt252DictValue::<(stwo_verifier_core::fields::qm31::naive::QM31, core::bool)>>::squash",
+"felts": 190,
+"executed": true,
+"visited_pcs": 102,
+"offset": 35534,
+"covered_felts": 137
+},
+{
+"i": 161,
+"name": "stwo_constraint_framework::LookupElementsImpl::combine_qm31",
+"felts": 145,
+"executed": true,
+"visited_pcs": 41,
+"offset": 35778,
+"covered_felts": 53
+},
+{
+"i": 162,
+"name": "stwo_circuit_air::components::eq::lookup_constraints",
+"felts": 449,
+"executed": true,
+"visited_pcs": 228,
+"offset": 35923,
+"covered_felts": 267
+},
+{
+"i": 163,
+"name": "stwo_circuit_air::components::qm31_ops::lookup_constraints",
+"felts": 666,
+"executed": true,
+"visited_pcs": 346,
+"offset": 36372,
+"covered_felts": 404
+},
+{
+"i": 165,
+"name": "stwo_constraint_framework::PreprocessedMaskValuesImpl::validate_usage[185-355]",
+"felts": 88,
+"executed": true,
+"visited_pcs": 22,
+"offset": 37049,
+"covered_felts": 35
+},
+{
+"i": 168,
+"name": "stwo_verifier_core::pcs::verifier::mix_sampled_values[200-402]",
+"felts": 76,
+"executed": true,
+"visited_pcs": 33,
+"offset": 37235,
+"covered_felts": 46
+},
+{
+"i": 169,
+"name": "stwo_verifier_core::poly::circle::CanonicCosetImpl::circle_domain",
+"felts": 132,
+"executed": true,
+"visited_pcs": 17,
+"offset": 37311,
+"covered_felts": 27
+},
+{
+"i": 170,
+"name": "stwo_verifier_core::circle::CosetImpl::half_odds",
+"felts": 183,
+"executed": true,
+"visited_pcs": 29,
+"offset": 37443,
+"covered_felts": 43
+},
+{
+"i": 171,
+"name": "stwo_verifier_core::fri::FriVerifierImpl::commit[1343-2680]",
+"felts": 459,
+"executed": true,
+"visited_pcs": 161,
+"offset": 37626,
+"covered_felts": 207
+},
+{
+"i": 174,
+"name": "core::dict::Felt252DictImpl::<core::felt252, core::Felt252Felt252DictValue>::squash",
+"felts": 190,
+"executed": true,
+"visited_pcs": 93,
+"offset": 38107,
+"covered_felts": 124
+},
+{
+"i": 175,
+"name": "stwo_verifier_core::queries::QueriesImpl::generate[455-881]",
+"felts": 179,
+"executed": true,
+"visited_pcs": 83,
+"offset": 38297,
+"covered_felts": 117
+},
+{
+"i": 176,
+"name": "stwo_verifier_core::queries::QueriesImpl::generate[1081-1206]",
+"felts": 90,
+"executed": true,
+"visited_pcs": 28,
+"offset": 38476,
+"covered_felts": 41
+},
+{
+"i": 177,
+"name": "stwo_verifier_core::pcs::verifier::prepare_preprocessed_query_positions[431-764]",
+"felts": 165,
+"executed": true,
+"visited_pcs": 55,
+"offset": 38566,
+"covered_felts": 80
+},
+{
+"i": 179,
+"name": "stwo_verifier_core::vcs::verifier::MerkleVerifierImpl::<stwo_verifier_core::vcs::blake2s_hasher::Blake2sMerkleHasher, core::clone::TCopyClone::<stwo_verifier_core::vcs::blake2s_hasher::Blake2sHash, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashCopy>, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashDrop, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashPartialEq>::verify",
+"felts": 392,
+"executed": true,
+"visited_pcs": 108,
+"offset": 38907,
+"covered_felts": 150
+},
+{
+"i": 180,
+"name": "stwo_verifier_core::utils::group_columns_by_degree_bound[605-1181]{NotSpecialized, NotSpecialized, 0, }",
+"felts": 90,
+"executed": true,
+"visited_pcs": 30,
+"offset": 39299,
+"covered_felts": 43
+},
+{
+"i": 181,
+"name": "core::dict::Felt252DictImpl::<core::nullable::Nullable::<core::array::Array::<core::integer::u32>>, core::nullable::NullableFelt252DictValue::<core::array::Array::<core::integer::u32>>>::squash",
+"felts": 190,
+"executed": true,
+"visited_pcs": 102,
+"offset": 39389,
+"covered_felts": 137
+},
+{
+"i": 182,
+"name": "stwo_verifier_core::utils::group_columns_by_degree_bound[1210-1530]",
+"felts": 96,
+"executed": true,
+"visited_pcs": 38,
+"offset": 39579,
+"covered_felts": 53
+},
+{
+"i": 183,
+"name": "stwo_verifier_core::utils::pad_and_transpose_columns_by_log_deg_bound_per_tree[1038-1602]",
+"felts": 113,
+"executed": true,
+"visited_pcs": 62,
+"offset": 39675,
+"covered_felts": 88
+},
+{
+"i": 184,
+"name": "stwo_verifier_core::pcs::quotients::build_samples_with_randomness[364-1900]",
+"felts": 117,
+"executed": true,
+"visited_pcs": 56,
+"offset": 39788,
+"covered_felts": 71
+},
+{
+"i": 185,
+"name": "stwo_verifier_core::circle::CirclePointIndexImpl::to_point",
+"felts": 651,
+"executed": true,
+"visited_pcs": 326,
+"offset": 39905,
+"covered_felts": 465
+},
+{
+"i": 186,
+"name": "stwo_verifier_core::circle::CirclePointQM31AddCirclePointM31Impl::add_circle_point_m31",
+"felts": 210,
+"executed": true,
+"visited_pcs": 174,
+"offset": 40556,
+"covered_felts": 210
+},
+{
+"i": 187,
+"name": "stwo_verifier_core::pcs::quotients::fri_answers[3264-3385]",
+"felts": 137,
+"executed": true,
+"visited_pcs": 85,
+"offset": 40766,
+"covered_felts": 118
+},
+{
+"i": 188,
+"name": "stwo_verifier_core::pcs::quotients::fri_answers[3385-4324]",
+"felts": 318,
+"executed": true,
+"visited_pcs": 188,
+"offset": 40903,
+"covered_felts": 242
+},
+{
+"i": 189,
+"name": "stwo_verifier_core::pcs::quotients::fri_answers[4524-5255]",
+"felts": 304,
+"executed": true,
+"visited_pcs": 80,
+"offset": 41221,
+"covered_felts": 105
+},
+{
+"i": 190,
+"name": "stwo_verifier_core::fields::cm31::naive::CM31BatchInvertibleImpl::batch_inverse",
+"felts": 195,
+"executed": true,
+"visited_pcs": 97,
+"offset": 41525,
+"covered_felts": 132
+},
+{
+"i": 191,
+"name": "stwo_verifier_core::pcs::quotients::fri_answers[5405-6312]",
+"felts": 119,
+"executed": true,
+"visited_pcs": 57,
+"offset": 41720,
+"covered_felts": 73
+},
+{
+"i": 193,
+"name": "stwo_verifier_core::pcs::quotients::fri_answers[6346-6448]",
+"felts": 99,
+"executed": true,
+"visited_pcs": 23,
+"offset": 41888,
+"covered_felts": 36
+},
+{
+"i": 195,
+"name": "stwo_verifier_core::fri::FriFirstLayerVerifierImpl::verify",
+"felts": 518,
+"executed": true,
+"visited_pcs": 154,
+"offset": 41998,
+"covered_felts": 218
+},
+{
+"i": 196,
+"name": "stwo_verifier_core::queries::QueriesImpl::fold",
+"felts": 130,
+"executed": true,
+"visited_pcs": 44,
+"offset": 42516,
+"covered_felts": 62
+},
+{
+"i": 197,
+"name": "stwo_verifier_core::fri::SparseEvaluationImpl::fold_circle",
+"felts": 504,
+"executed": true,
+"visited_pcs": 147,
+"offset": 42646,
+"covered_felts": 200
+},
+{
+"i": 198,
+"name": "stwo_verifier_core::fri::decommit_inner_layers[554-856]",
+"felts": 115,
+"executed": true,
+"visited_pcs": 58,
+"offset": 43150,
+"covered_felts": 71
+},
+{
+"i": 199,
+"name": "stwo_verifier_core::fri::decommit_last_layer[467-672]",
+"felts": 111,
+"executed": true,
+"visited_pcs": 34,
+"offset": 43265,
+"covered_felts": 49
+},
+{
+"i": 205,
+"name": "stwo_verifier_core::fields::m31::naive::repeated_square",
+"felts": 64,
+"executed": true,
+"visited_pcs": 26,
+"offset": 44002,
+"covered_felts": 39
+},
+{
+"i": 206,
+"name": "stwo_constraint_framework::LookupElementsImpl::combine_qm31[479-582]",
+"felts": 104,
+"executed": true,
+"visited_pcs": 52,
+"offset": 44066,
+"covered_felts": 66
+},
+{
+"i": 208,
+"name": "stwo_verifier_core::pcs::verifier::mix_sampled_values[255-391]",
+"felts": 60,
+"executed": true,
+"visited_pcs": 30,
+"offset": 44181,
+"covered_felts": 41
+},
+{
+"i": 209,
+"name": "stwo_verifier_core::circle::CosetImpl::repeated_double[89-161]",
+"felts": 79,
+"executed": true,
+"visited_pcs": 33,
+"offset": 44241,
+"covered_felts": 45
+},
+{
+"i": 210,
+"name": "stwo_verifier_core::queries::QueriesImpl::generate[555-871]",
+"felts": 127,
+"executed": true,
+"visited_pcs": 53,
+"offset": 44320,
+"covered_felts": 77
+},
+{
+"i": 211,
+"name": "stwo_verifier_core::vcs::verifier::MerkleVerifierImpl::<stwo_verifier_core::vcs::blake2s_hasher::Blake2sMerkleHasher, core::clone::TCopyClone::<stwo_verifier_core::vcs::blake2s_hasher::Blake2sHash, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashCopy>, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashDrop, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashPartialEq>::verify[569-1323]",
+"felts": 308,
+"executed": true,
+"visited_pcs": 60,
+"offset": 44447,
+"covered_felts": 79
+},
+{
+"i": 212,
+"name": "core::dict::Felt252DictImpl::<core::nullable::Nullable::<core::array::Span::<stwo_verifier_core::fields::m31::M31>>, core::nullable::NullableFelt252DictValue::<core::array::Span::<stwo_verifier_core::fields::m31::M31>>>::squash",
+"felts": 190,
+"executed": true,
+"visited_pcs": 93,
+"offset": 44755,
+"covered_felts": 124
+},
+{
+"i": 214,
+"name": "stwo_verifier_core::vcs::verifier::MerkleVerifierImpl::<stwo_verifier_core::vcs::blake2s_hasher::Blake2sMerkleHasher, core::clone::TCopyClone::<stwo_verifier_core::vcs::blake2s_hasher::Blake2sHash, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashCopy>, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashDrop, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashPartialEq>::verify[1840-2209]",
+"felts": 180,
+"executed": true,
+"visited_pcs": 60,
+"offset": 44994,
+"covered_felts": 85
+},
+{
+"i": 215,
+"name": "stwo_verifier_core::vcs::verifier::MerkleVerifierImpl::<stwo_verifier_core::vcs::blake2s_hasher::Blake2sMerkleHasher, core::clone::TCopyClone::<stwo_verifier_core::vcs::blake2s_hasher::Blake2sHash, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashCopy>, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashDrop, stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashPartialEq>::verify[2471-4455]",
+"felts": 314,
+"executed": true,
+"visited_pcs": 106,
+"offset": 45174,
+"covered_felts": 154
+},
+{
+"i": 218,
+"name": "stwo_verifier_core::utils::group_columns_by_degree_bound[605-1181]",
+"felts": 117,
+"executed": true,
+"visited_pcs": 46,
+"offset": 45586,
+"covered_felts": 67
+},
+{
+"i": 219,
+"name": "stwo_verifier_core::utils::group_columns_by_degree_bound[1311-1473]",
+"felts": 49,
+"executed": true,
+"visited_pcs": 23,
+"offset": 45703,
+"covered_felts": 34
+},
+{
+"i": 220,
+"name": "stwo_verifier_core::pcs::quotients::build_samples_with_randomness[484-1817]",
+"felts": 379,
+"executed": true,
+"visited_pcs": 176,
+"offset": 45752,
+"covered_felts": 207
+},
+{
+"i": 221,
+"name": "stwo_verifier_core::pcs::quotients::sample_batches_for_degree_bound",
+"felts": 176,
+"executed": true,
+"visited_pcs": 137,
+"offset": 46131,
+"covered_felts": 165
+},
+{
+"i": 222,
+"name": "stwo_verifier_core::pcs::quotients::fri_answers[3876-3960]{NotSpecialized, 0, }",
+"felts": 48,
+"executed": true,
+"visited_pcs": 12,
+"offset": 46307,
+"covered_felts": 18
+},
+{
+"i": 223,
+"name": "stwo_verifier_core::pcs::quotients::QuotientConstantsImpl::gen[128-3371]",
+"felts": 725,
+"executed": true,
+"visited_pcs": 283,
+"offset": 46355,
+"covered_felts": 397
+},
+{
+"i": 224,
+"name": "stwo_verifier_core::utils::bit_reverse_index[284-457]{NotSpecialized, 0, NotSpecialized, }",
+"felts": 55,
+"executed": true,
+"visited_pcs": 19,
+"offset": 47080,
+"covered_felts": 27
+},
+{
+"i": 225,
+"name": "stwo_verifier_core::poly::circle::CircleDomainImpl::index_at",
+"felts": 193,
+"executed": true,
+"visited_pcs": 78,
+"offset": 47135,
+"covered_felts": 114
+},
+{
+"i": 226,
+"name": "stwo_verifier_core::pcs::quotients::fri_answers[4732-5249]",
+"felts": 86,
+"executed": true,
+"visited_pcs": 43,
+"offset": 47328,
+"covered_felts": 56
+},
+{
+"i": 227,
+"name": "stwo_verifier_core::fields::cm31::naive::CM31BatchInvertibleImpl::batch_inverse[477-663]",
+"felts": 167,
+"executed": true,
+"visited_pcs": 58,
+"offset": 47414,
+"covered_felts": 77
+},
+{
+"i": 228,
+"name": "stwo_verifier_core::fields::cm31::naive::CM31BatchInvertibleImpl::batch_inverse[1061-1331]",
+"felts": 319,
+"executed": true,
+"visited_pcs": 115,
+"offset": 47581,
+"covered_felts": 154
+},
+{
+"i": 229,
+"name": "stwo_verifier_core::pcs::quotients::fri_answers[5507-6257]",
+"felts": 302,
+"executed": true,
+"visited_pcs": 116,
+"offset": 47900,
+"covered_felts": 147
+},
+{
+"i": 231,
+"name": "stwo_verifier_core::fri::compute_decommitment_positions_and_rebuild_evals",
+"felts": 443,
+"executed": true,
+"visited_pcs": 66,
+"offset": 48251,
+"covered_felts": 89
+},
+{
+"i": 232,
+"name": "stwo_verifier_core::fri::FriFirstLayerVerifierImpl::verify[1087-1544]",
+"felts": 76,
+"executed": true,
+"visited_pcs": 33,
+"offset": 48694,
+"covered_felts": 46
+},
+{
+"i": 234,
+"name": "stwo_verifier_core::fri::build_merkle_verification_inputs[598-837]",
+"felts": 117,
+"executed": true,
+"visited_pcs": 55,
+"offset": 48819,
+"covered_felts": 76
+},
+{
+"i": 235,
+"name": "stwo_verifier_core::utils::ArrayImpl::<core::integer::u32, core::integer::u32Drop>::new_repeated::<core::clone::TCopyClone::<core::integer::u32, core::integer::u32Copy>>[94-163]",
+"felts": 52,
+"executed": true,
+"visited_pcs": 23,
+"offset": 48936,
+"covered_felts": 33
+},
+{
+"i": 237,
+"name": "stwo_verifier_core::queries::get_folded_query_positions[407-680]",
+"felts": 101,
+"executed": true,
+"visited_pcs": 47,
+"offset": 48993,
+"covered_felts": 64
+},
+{
+"i": 238,
+"name": "stwo_verifier_core::fri::even_bit_reversed_order[209-318]",
+"felts": 224,
+"executed": true,
+"visited_pcs": 51,
+"offset": 49094,
+"covered_felts": 76
+},
+{
+"i": 239,
+"name": "stwo_verifier_core::fri::SparseEvaluationImpl::fold_circle[1240-2027]",
+"felts": 179,
+"executed": true,
+"visited_pcs": 80,
+"offset": 49318,
+"covered_felts": 105
+},
+{
+"i": 240,
+"name": "stwo_verifier_core::fields::m31::naive::M31BatchInvertibleImpl::batch_inverse[477-663]",
+"felts": 71,
+"executed": true,
+"visited_pcs": 36,
+"offset": 49497,
+"covered_felts": 50
+},
+{
+"i": 241,
+"name": "stwo_verifier_core::fields::m31::naive::M31BatchInvertibleImpl::batch_inverse[1061-1331]",
+"felts": 137,
+"executed": true,
+"visited_pcs": 71,
+"offset": 49568,
+"covered_felts": 99
+},
+{
+"i": 242,
+"name": "stwo_verifier_core::fri::SparseEvaluationImpl::fold_circle[2184-2906]",
+"felts": 259,
+"executed": true,
+"visited_pcs": 87,
+"offset": 49705,
+"covered_felts": 112
+},
+{
+"i": 244,
+"name": "stwo_verifier_core::fri::FriInnerLayerVerifierImpl::verify_and_fold",
+"felts": 596,
+"executed": true,
+"visited_pcs": 175,
+"offset": 50525,
+"covered_felts": 237
+},
+{
+"i": 248,
+"name": "stwo_verifier_core::circle::CosetImpl::double",
+"felts": 134,
+"executed": true,
+"visited_pcs": 30,
+"offset": 51142,
+"covered_felts": 47
+},
+{
+"i": 251,
+"name": "stwo_verifier_core::vcs::blake2s_hasher::Blake2sMerkleHasher::hash_node{Option::None({}), NotSpecialized, }",
+"felts": 437,
+"executed": true,
+"visited_pcs": 134,
+"offset": 51422,
+"covered_felts": 193
+},
+{
+"i": 252,
+"name": "stwo_verifier_core::vcs::blake2s_hasher::Blake2sMerkleHasher::hash_node{Option::Some(NotSpecialized), { @array![] }, }",
+"felts": 34,
+"executed": true,
+"visited_pcs": 27,
+"offset": 51859,
+"covered_felts": 34
+},
+{
+"i": 254,
+"name": "stwo_verifier_core::pcs::quotients::sample_batches_for_degree_bound[924-2474]",
+"felts": 209,
+"executed": true,
+"visited_pcs": 69,
+"offset": 51904,
+"covered_felts": 87
+},
+{
+"i": 255,
+"name": "stwo_verifier_core::pcs::quotients::fri_answers[3876-3960]",
+"felts": 72,
+"executed": true,
+"visited_pcs": 25,
+"offset": 52113,
+"covered_felts": 37
+},
+{
+"i": 258,
+"name": "stwo_verifier_core::pcs::quotients::QuotientConstantsImpl::gen[2116-2823]",
+"felts": 132,
+"executed": true,
+"visited_pcs": 71,
+"offset": 52460,
+"covered_felts": 86
+},
+{
+"i": 259,
+"name": "stwo_verifier_core::utils::bit_reverse_index[284-457]",
+"felts": 102,
+"executed": true,
+"visited_pcs": 34,
+"offset": 52592,
+"covered_felts": 50
+},
+{
+"i": 260,
+"name": "stwo_verifier_core::pcs::quotients::fri_answers[4814-5239]",
+"felts": 177,
+"executed": true,
+"visited_pcs": 76,
+"offset": 52694,
+"covered_felts": 95
+},
+{
+"i": 261,
+"name": "stwo_verifier_core::pcs::quotients::tree_take_n::<stwo_verifier_core::fields::m31::M31, core::clone::TCopyClone::<stwo_verifier_core::fields::m31::M31, stwo_verifier_core::fields::m31::M31Copy>, stwo_verifier_core::fields::m31::M31Drop>[268-434]",
+"felts": 254,
+"executed": true,
+"visited_pcs": 70,
+"offset": 52871,
+"covered_felts": 92
+},
+{
+"i": 262,
+"name": "stwo_verifier_core::pcs::quotients::accumulate_row_quotients_with_inverses[405-1150]",
+"felts": 493,
+"executed": true,
+"visited_pcs": 187,
+"offset": 53125,
+"covered_felts": 242
+},
+{
+"i": 263,
+"name": "stwo_verifier_core::fri::compute_decommitment_positions_and_rebuild_evals[757-1903]",
+"felts": 457,
+"executed": true,
+"visited_pcs": 106,
+"offset": 53618,
+"covered_felts": 135
+},
+{
+"i": 266,
+"name": "stwo_verifier_core::fri::FriFirstLayerVerifierImpl::verify[1155-1532]",
+"felts": 60,
+"executed": true,
+"visited_pcs": 30,
+"offset": 54173,
+"covered_felts": 41
+},
+{
+"i": 267,
+"name": "stwo_verifier_core::fri::coset_points[279-379]",
+"felts": 172,
+"executed": true,
+"visited_pcs": 99,
+"offset": 54233,
+"covered_felts": 136
+},
+{
+"i": 268,
+"name": "stwo_verifier_core::fri::SparseEvaluationImpl::fold_circle[1572-1946]",
+"felts": 132,
+"executed": true,
+"visited_pcs": 55,
+"offset": 54405,
+"covered_felts": 74
+},
+{
+"i": 269,
+"name": "stwo_verifier_core::fri::append_coset_fold_twiddles[213-624]",
+"felts": 106,
+"executed": true,
+"visited_pcs": 47,
+"offset": 54537,
+"covered_felts": 65
+},
+{
+"i": 271,
+"name": "stwo_verifier_core::fri::SparseEvaluationImpl::fold_circle[2400-2772]",
+"felts": 788,
+"executed": true,
+"visited_pcs": 345,
+"offset": 54692,
+"covered_felts": 455
+},
+{
+"i": 272,
+"name": "stwo_verifier_core::fri::fold_coset_with_inverses",
+"felts": 413,
+"executed": true,
+"visited_pcs": 172,
+"offset": 55480,
+"covered_felts": 228
+},
+{
+"i": 275,
+"name": "stwo_verifier_core::fri::FriInnerLayerVerifierImpl::verify_and_fold[906-1362]",
+"felts": 76,
+"executed": true,
+"visited_pcs": 33,
+"offset": 55947,
+"covered_felts": 46
+},
+{
+"i": 276,
+"name": "stwo_verifier_core::fri::SparseEvaluationImpl::fold_line",
+"felts": 426,
+"executed": true,
+"visited_pcs": 126,
+"offset": 56023,
+"covered_felts": 173
+},
+{
+"i": 278,
+"name": "stwo_verifier_core::vcs::blake2s_hasher::Blake2sMerkleHasher::hash_node[2329-2682]{NotSpecialized, NotSpecialized, 0, NotSpecialized, }",
+"felts": 102,
+"executed": true,
+"visited_pcs": 28,
+"offset": 56498,
+"covered_felts": 42
+},
+{
+"i": 279,
+"name": "core::array::ArrayFromIterator::<core::integer::u32, core::integer::u32Drop>::from_iter::<core::iter::adapters::map::Map::<core::array::SpanIter::<stwo_verifier_core::fields::m31::M31>, {closure@/home/broody/development/templar/target/bridge-r0w/vendor/verifier_core/src/vcs/blake2s_hasher.cairo:88:18: 88:21}>, core::iter::traits::collect::IteratorIntoIterator::<core::iter::adapters::map::Map::<core::array::SpanIter::<stwo_verifier_core::fields::m31::M31>, {closure@/home/broody/development/templar/target/bridge-r0w/vendor/verifier_core/src/vcs/blake2s_hasher.cairo:88:18: 88:21}>, core::iter::adapters::map::MapIterator::<core::array::SpanIter::<stwo_verifier_core::fields::m31::M31>, {closure@/home/broody/development/templar/target/bridge-r0w/vendor/verifier_core/src/vcs/blake2s_hasher.cairo:88:18: 88:21}, core::array::SpanIterator::<stwo_verifier_core::fields::m31::M31>, Generated core::ops::function::Fn::<{closure@/home/broody/development/templar/target/bridge-r0w/vendor/verifier_core/src/vcs/blake2s_hasher.cairo:88:18: 88:21}, (@stwo_verifier_core::fields::m31::M31,)>, core::traits::DestructFromDrop::<core::array::SpanIter::<stwo_verifier_core::fields::m31::M31>, core::array::SpanIterDrop::<stwo_verifier_core::fields::m31::M31>>, core::traits::DestructFromDrop::<{closure@/home/broody/development/templar/target/bridge-r0w/vendor/verifier_core/src/vcs/blake2s_hasher.cairo:88:18: 88:21}, Generated core::traits::Drop::<{closure@/home/broody/development/templar/target/bridge-r0w/vendor/verifier_core/src/vcs/blake2s_hasher.cairo:88:18: 88:21}>>>>, core::metaprogramming::TypeEqualImpl::<core::integer::u32>, core::traits::DestructFromDrop::<core::iter::adapters::map::Map::<core::array::SpanIter::<stwo_verifier_core::fields::m31::M31>, {closure@/home/broody/development/templar/target/bridge-r0w/vendor/verifier_core/src/vcs/blake2s_hasher.cairo:88:18: 88:21}>, core::iter::adapters::map::MapDrop::<core::array::SpanIter::<stwo_verifier_core::fields::m31::M31>, {closure@/home/broody/development/templar/target/bridge-r0w/vendor/verifier_core/src/vcs/blake2s_hasher.cairo:88:18: 88:21}, core::array::SpanIterDrop::<stwo_verifier_core::fields::m31::M31>, Generated core::traits::Drop::<{closure@/home/broody/development/templar/target/bridge-r0w/vendor/verifier_core/src/vcs/blake2s_hasher.cairo:88:18: 88:21}>>>, core::traits::DestructFromDrop::<core::iter::adapters::map::Map::<core::array::SpanIter::<stwo_verifier_core::fields::m31::M31>, {closure@/home/broody/development/templar/target/bridge-r0w/vendor/verifier_core/src/vcs/blake2s_hasher.cairo:88:18: 88:21}>, core::iter::adapters::map::MapDrop::<core::array::SpanIter::<stwo_verifier_core::fields::m31::M31>, {closure@/home/broody/development/templar/target/bridge-r0w/vendor/verifier_core/src/vcs/blake2s_hasher.cairo:88:18: 88:21}, core::array::SpanIterDrop::<stwo_verifier_core::fields::m31::M31>, Generated core::traits::Drop::<{closure@/home/broody/development/templar/target/bridge-r0w/vendor/verifier_core/src/vcs/blake2s_hasher.cairo:88:18: 88:21}>>>>[278-345]",
+"felts": 54,
+"executed": true,
+"visited_pcs": 24,
+"offset": 56600,
+"covered_felts": 35
+},
+{
+"i": 280,
+"name": "stwo_verifier_core::vcs::blake2s_hasher::Blake2sMerkleHasher::hash_node[3399-3504]",
+"felts": 53,
+"executed": true,
+"visited_pcs": 23,
+"offset": 56654,
+"covered_felts": 34
+},
+{
+"i": 281,
+"name": "stwo_verifier_core::pcs::quotients::sample_batches_for_degree_bound[1047-2410]",
+"felts": 320,
+"executed": true,
+"visited_pcs": 144,
+"offset": 56707,
+"covered_felts": 172
+},
+{
+"i": 283,
+"name": "core::array::ArrayImpl::<stwo_verifier_core::fields::m31::M31>::append_span::<core::clone::TCopyClone::<stwo_verifier_core::fields::m31::M31, stwo_verifier_core::fields::m31::M31Copy>, stwo_verifier_core::fields::m31::M31Drop>",
+"felts": 48,
+"executed": true,
+"visited_pcs": 22,
+"offset": 57249,
+"covered_felts": 33
+},
+{
+"i": 284,
+"name": "stwo_verifier_core::pcs::quotients::accumulate_row_quotients_with_inverses[761-998]",
+"felts": 85,
+"executed": true,
+"visited_pcs": 36,
+"offset": 57297,
+"covered_felts": 48
+},
+{
+"i": 285,
+"name": "stwo_verifier_core::fri::compute_decommitment_positions_and_rebuild_evals[1062-1738]",
+"felts": 193,
+"executed": true,
+"visited_pcs": 87,
+"offset": 57382,
+"covered_felts": 118
+},
+{
+"i": 286,
+"name": "stwo_verifier_core::fri::append_coset_fold_twiddles[224-289]",
+"felts": 54,
+"executed": true,
+"visited_pcs": 24,
+"offset": 57575,
+"covered_felts": 35
+},
+{
+"i": 287,
+"name": "stwo_verifier_core::fri::append_coset_fold_twiddles[415-587]",
+"felts": 116,
+"executed": true,
+"visited_pcs": 60,
+"offset": 57629,
+"covered_felts": 86
+},
+{
+"i": 288,
+"name": "stwo_verifier_core::fri::fold_coset_with_inverses[246-837]",
+"felts": 233,
+"executed": true,
+"visited_pcs": 65,
+"offset": 57745,
+"covered_felts": 85
+},
+{
+"i": 289,
+"name": "stwo_verifier_core::fri::FriInnerLayerVerifierImpl::verify_and_fold[973-1350]",
+"felts": 60,
+"executed": true,
+"visited_pcs": 30,
+"offset": 57978,
+"covered_felts": 41
+},
+{
+"i": 290,
+"name": "stwo_verifier_core::fri::SparseEvaluationImpl::fold_line[684-1159]",
+"felts": 197,
+"executed": true,
+"visited_pcs": 92,
+"offset": 58038,
+"covered_felts": 122
+},
+{
+"i": 291,
+"name": "stwo_verifier_core::fri::SparseEvaluationImpl::fold_line[1308-1552]",
+"felts": 222,
+"executed": true,
+"visited_pcs": 68,
+"offset": 58235,
+"covered_felts": 90
+},
+{
+"i": 294,
+"name": "stwo_verifier_core::fri::fold_coset_with_inverses[319-693]",
+"felts": 788,
+"executed": true,
+"visited_pcs": 345,
+"offset": 58805,
+"covered_felts": 455
+},
+{
+"i": 296,
+"name": "stwo_verifier_core::fri::SparseEvaluationImpl::fold_line[982-1078]",
+"felts": 85,
+"executed": true,
+"visited_pcs": 34,
+"offset": 59642,
+"covered_felts": 48
+},
+{
+"i": 298,
+"name": "<extra segment>",
+"felts": 754,
+"executed": true,
+"visited_pcs": 1,
+"offset": 59854,
+"covered_felts": 1
+}
+]
