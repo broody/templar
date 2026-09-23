@@ -39,5 +39,37 @@ t.append(f"pub const DEPOSIT_TOKEN: felt252 = {d['token']};")
 t.append(f"pub const DEPOSIT_AMOUNT: u128 = {d['amount']};")
 t.append(f"pub const DEPOSIT_INNER: [felt252; 9] = {arr(d['inner'])};")
 t.append(f"pub const DEPOSIT_CM: [felt252; 9] = {arr(d['commitment'])};")
+# Independent Python reference (gen_perm.py) on extreme and random inputs.
+import importlib.util, random
+src = (HERE / 'gen_perm.py').read_text().split("if __name__=='__main__':")[0]
+g = {}
+exec(compile(src, 'gen_perm.py', 'exec'), g)
+P = 2**31 - 1
+assert g['perm'](v['permutation']['input']) == v['permutation']['output'], 'python reference disagrees with Rust'
+random.seed(31)
+cases = {'max': [P - 1] * 24, 'alt': [P - 1 if i % 2 else 0 for i in range(24)], 'rand': [random.randrange(P) for _ in range(24)]}
+t += ['', '// Independent Python reference (gen_perm.py) on extreme and random inputs.']
+for n, st in cases.items():
+    t.append(f"pub const PERM_{n.upper()}_IN: [felt252; 24] = {arr(st)};")
+    t.append(f"pub const PERM_{n.upper()}_OUT: [felt252; 24] = {arr(g['perm'](st))};")
+# A real R0 V2 statement and its binding from the bridge's independent Python reference.
+import sys
+sys.path.insert(0, str(HERE.parents[0] / 'm31-private-wrapper/client-port'))
+import validate_bridge_r0
+pub = json.loads((HERE / 'binding-statement.json').read_text())
+t += ['', '// A real R0 V2 statement (partial withdrawal) and its binding from the independent Python',
+      '// reference (client-port validate_bridge_r0.binding): the pool must agree with the bridge.',
+      f"pub const BIND_CHAIN: felt252 = {pub['chain']};",
+      f"pub const BIND_POOL: felt252 = {pub['pool']};",
+      f"pub const BIND_TOKEN: felt252 = {pub['token']};",
+      f"pub const BIND_ROOT: [felt252; 9] = {arr(pub['root'])};",
+      f"pub const BIND_NF0: [felt252; 9] = {arr(pub['nullifiers'][0])};",
+      f"pub const BIND_NF1: [felt252; 9] = {arr(pub['nullifiers'][1])};",
+      f"pub const BIND_CM0: [felt252; 9] = {arr(pub['commitments'][0])};",
+      f"pub const BIND_CM1: [felt252; 9] = {arr(pub['commitments'][1])};",
+      f"pub const BIND_D0: felt252 = {pub['deliveries'][0]};",
+      f"pub const BIND_RECIPIENT: felt252 = {pub['withdrawal_recipient']};",
+      f"pub const BIND_AMOUNT: u128 = {pub['withdrawal_amount']};",
+      f"pub const BIND_EXPECTED: felt252 = {hex(validate_bridge_r0.binding(pub))};"]
 (HERE / 'cairo/src/tests/vectors.cairo').write_text('\n'.join(t) + '\n')
 print('generated')

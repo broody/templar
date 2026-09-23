@@ -84,6 +84,38 @@ fn check_roots(format: u8, store_nodes: bool) {
         i += 1;
     }
 }
+/// `insert_two` gives the client's roots: single and paired appends mixed, pairs starting at even
+/// and odd indices (index 7 = 0b111 meets at level 4).
+fn check_batched_roots(format: u8, store_nodes: bool) {
+    let mut state = m31_pool::pool::M31Pool::contract_state_for_testing();
+    state.tree.initializer(format, store_nodes);
+    let roots = if format == COMPRESS { roots_compress() } else { roots_sponge() };
+    let l = leaves();
+    // (first index, pair?) steps covering all 12 leaves.
+    let steps: Array<(u32, bool)> = array![(0, false), (1, true), (3, false), (4, true), (6, false), (7, true), (9, true), (11, false)];
+    for (i, pair) in steps {
+        if pair {
+            let idx = state.tree.insert_two(*l.at(i), *l.at(i + 1));
+            assert_eq!(idx, i.into());
+            let (lo, hi) = state.tree.tree_root.read();
+            assert!(m31_pool::hash::unpack(lo, hi).span() == roots.at(i + 1).span());
+        } else {
+            state.tree.insert_leaf(*l.at(i));
+            let (lo, hi) = state.tree.tree_root.read();
+            assert!(m31_pool::hash::unpack(lo, hi).span() == roots.at(i).span());
+        }
+    }
+    assert_eq!(state.tree.tree_count.read(), 12);
+}
+#[test]
+fn batched_roots_match_client_sponge_nodes() { check_batched_roots(SPONGE, true); }
+#[test]
+fn batched_roots_match_client_sponge_frontier() { check_batched_roots(SPONGE, false); }
+#[test]
+fn batched_roots_match_client_compress_nodes() { check_batched_roots(COMPRESS, true); }
+#[test]
+fn batched_roots_match_client_compress_frontier() { check_batched_roots(COMPRESS, false); }
+
 #[test]
 fn tree_roots_match_client_sponge_nodes() { check_roots(SPONGE, true); }
 #[test]
@@ -280,3 +312,47 @@ fn cost_full_compress_frontier() { measure_spend_shape(COMPRESS, false, true, 0,
 fn cost_partial_sponge_frontier() { measure_spend_shape(SPONGE, false, true, 1, 40); }
 #[test]
 fn cost_full_sponge_frontier() { measure_spend_shape(SPONGE, false, true, 0, 40); }
+
+// ---------------------------------------------------------------- batched transfer cost by start
+// A transfer's two outputs start at the leaf count. Pool: `n` deposits then a transfer, so the
+// measured transfer starts at n + 2: 5 (odd, +1 hash), 6 (even, 32 hashes), 7 (0b111, +3 hashes).
+
+fn measure_transfer_at(format: u8, store_nodes: bool, n: u32, measured: bool) {
+    let s = setup(format, store_nodes);
+    let mut i = 0;
+    while i < n {
+        deposit(@s, (i * 10 + 100).into());
+        i += 1;
+    }
+    s.pool.apply_spend(spend(@s, 1000, 2000), array![].span());
+    let sp = spend(@s, 3000, 4000);
+    if measured {
+        let start = s.tree.get_leaf_count();
+        let g = get_available_gas();
+        s.pool.apply_spend(sp, array![].span());
+        println!("GAS transfer_batched format={} store_nodes={} start={} warm={}", format, store_nodes, start, g - get_available_gas());
+    }
+}
+
+#[test]
+fn cost_tb_base_c_f_3() { measure_transfer_at(COMPRESS, false, 3, false); }
+#[test]
+fn cost_tb_base_c_f_4() { measure_transfer_at(COMPRESS, false, 4, false); }
+#[test]
+fn cost_tb_base_c_f_5() { measure_transfer_at(COMPRESS, false, 5, false); }
+#[test]
+fn cost_tb_c_f_3() { measure_transfer_at(COMPRESS, false, 3, true); }
+#[test]
+fn cost_tb_c_f_4() { measure_transfer_at(COMPRESS, false, 4, true); }
+#[test]
+fn cost_tb_c_f_5() { measure_transfer_at(COMPRESS, false, 5, true); }
+#[test]
+fn cost_tb_c_n_4() { measure_transfer_at(COMPRESS, true, 4, true); }
+#[test]
+fn cost_tb_base_c_n_4() { measure_transfer_at(COMPRESS, true, 4, false); }
+#[test]
+fn cost_tb_s_f_3() { measure_transfer_at(SPONGE, false, 3, true); }
+#[test]
+fn cost_tb_s_f_4() { measure_transfer_at(SPONGE, false, 4, true); }
+#[test]
+fn cost_tb_s_f_5() { measure_transfer_at(SPONGE, false, 5, true); }

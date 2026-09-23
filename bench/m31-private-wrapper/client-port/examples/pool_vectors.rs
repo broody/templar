@@ -54,7 +54,7 @@ fn main() {
     let perm = permute(input);
     let mut leaves: Vec<Digest> = vec![];
     let mut seed: u64 = 0x5eed;
-    for _ in 0..6 {
+    for _ in 0..12 {
         leaves.push(std::array::from_fn(|_| {
             seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
             ((seed >> 33) % payment::P as u64) as u32

@@ -227,10 +227,12 @@ in the upload.
   declaration.
 - **On-chain tree cost.** Measured
   ([bench/m31-pool](../../bench/m31-pool/README.md)): a pool appending to an on-chain M31 tree
-  costs 101.6M L2 gas per 2-in/2-out spend with single-permutation nodes (8.8× the felt252
-  reference pool's 11.5M), or 207.0M with sponge nodes (17.9×). A deposit costs 57.7M against
-  6.3M. Hashing is over 90% of it. Where appends run is an open design choice (on chain,
-  batched off chain and proven, or unchanged felt252).
+  costs 53.3M L2 gas per 2-in/2-out transfer on average with single-permutation nodes and both
+  outputs appended in one pass (4.6× the felt252 reference pool's 11.5M; 1.11 against 0.24 STRK
+  at mainnet median prices). A deposit costs 57.7M against 6.3M (1.20 against 0.13 STRK). A full
+  withdrawal costs about the same as today (0.039 against 0.029 STRK). Hashing is over 90% of
+  it. Where appends run is an open design choice (on chain, batched off chain and proven, or
+  unchanged felt252).
 - **Maintenance.** The stwo-circuits route needs our fork until upstream offers an
   arithmetic-only profile. The custom route needs its own protocol, prover, verifier
   and circuit A maintained and reviewed indefinitely.

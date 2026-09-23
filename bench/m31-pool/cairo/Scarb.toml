@@ -19,3 +19,7 @@ casm = true
 
 [scripts]
 test = "snforge test"
+
+[tool.snforge]
+# The sponge-node golden tests run 12 appends (768 permutations) in one test.
+max_n_steps = 100000000

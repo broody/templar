@@ -135,8 +135,99 @@ pub mod m31_tree_component {
                     self.nodes.write(node_key(level, index), pack(cur));
                 }
             }
+            self.record_root(cur, idx + 1);
+            idx
+        }
+
+        /// Appends `leaf0` and `leaf1` at indices `idx` and `idx + 1` in one pass: both paths are
+        /// hashed while they differ (two nodes per level), the node where they meet once, and the
+        /// shared path above it once. About 33.5 node hashes on average instead of 64. The final
+        /// root equals two `insert_leaf` calls; the intermediate root is never recorded.
+        fn insert_two(ref self: ComponentState<TContractState>, leaf0: Digest, leaf1: Digest) -> u64 {
+            assert(!is_zero(leaf0) && !is_zero(leaf1), 'ZERO_LEAF');
+            let format = self.format.read();
+            let store_nodes = self.store_nodes.read();
+            let idx = self.tree_count.read();
+            assert(idx + 1 < 0x100000000, 'TREE_FULL');
+            if store_nodes {
+                self.nodes.write(node_key(0, idx), pack(leaf0));
+                self.nodes.write(node_key(0, idx + 1), pack(leaf1));
+            }
+            // Two nodes at adjacent indices `a` and `a + 1` until their parents coincide.
+            let mut c0 = leaf0;
+            let mut c1 = leaf1;
+            let mut a = idx;
+            let mut level: u32 = 0;
+            let mut merged = false;
+            let mut cur = leaf0;
+            while level < TREE_DEPTH && !merged {
+                if a % 2 == 0 {
+                    // Siblings: their parent is where the paths meet.
+                    if !store_nodes {
+                        self.frontier.write(level, pack(c0));
+                    }
+                    cur = node(format, level.into(), c0, c1);
+                    merged = true;
+                } else {
+                    // `a` is a right child, `a + 1` a left child of the next pair.
+                    let left = if store_nodes {
+                        let (lo, hi) = self.nodes.read(node_key(level, a - 1));
+                        if lo == 0 && hi == 0 { zero(format, level) } else { unpack(lo, hi) }
+                    } else {
+                        let (lo, hi) = self.frontier.read(level);
+                        unpack(lo, hi)
+                    };
+                    if !store_nodes {
+                        self.frontier.write(level, pack(c1));
+                    }
+                    c0 = node(format, level.into(), left, c0);
+                    c1 = node(format, level.into(), c1, zero(format, level));
+                }
+                a = a / 2;
+                level += 1;
+                if store_nodes {
+                    if merged {
+                        self.nodes.write(node_key(level, a), pack(cur));
+                    } else {
+                        self.nodes.write(node_key(level, a), pack(c0));
+                        self.nodes.write(node_key(level, a + 1), pack(c1));
+                    }
+                }
+            }
+            // The shared path from the meeting node to the root, as `insert_leaf`.
+            let mut index = a;
+            while level < TREE_DEPTH {
+                let left_child = index % 2 == 0;
+                let sibling = if store_nodes {
+                    let sib_index = if left_child { index + 1 } else { index - 1 };
+                    let (lo, hi) = self.nodes.read(node_key(level, sib_index));
+                    if lo == 0 && hi == 0 { zero(format, level) } else { unpack(lo, hi) }
+                } else if left_child {
+                    self.frontier.write(level, pack(cur));
+                    zero(format, level)
+                } else {
+                    let (lo, hi) = self.frontier.read(level);
+                    unpack(lo, hi)
+                };
+                cur = if left_child {
+                    node(format, level.into(), cur, sibling)
+                } else {
+                    node(format, level.into(), sibling, cur)
+                };
+                index = index / 2;
+                level += 1;
+                if store_nodes {
+                    self.nodes.write(node_key(level, index), pack(cur));
+                }
+            }
+            self.record_root(cur, idx + 2);
+            idx
+        }
+
+        /// Records `root` as current, in the 256-root ring, and the new leaf count.
+        fn record_root(ref self: ComponentState<TContractState>, root: Digest, count: u64) {
             // Root history ring: evict the oldest root when saturated (as the reference).
-            let k = key(cur);
+            let k = key(root);
             let ring_index = self.root_ring_index.read();
             let slot = ring_index % ROOT_HISTORY_SIZE;
             if ring_index >= ROOT_HISTORY_SIZE {
@@ -146,9 +237,8 @@ pub mod m31_tree_component {
             self.ring_slots.write(slot, k);
             self.root_history.write(k, true);
             self.root_ring_index.write(ring_index + 1);
-            self.tree_root.write(pack(cur));
-            self.tree_count.write(idx + 1);
-            idx
+            self.tree_root.write(pack(root));
+            self.tree_count.write(count);
         }
     }
 }

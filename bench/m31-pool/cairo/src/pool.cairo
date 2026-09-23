@@ -118,12 +118,28 @@ pub mod M31Pool {
                 self.nullifiers.write(k, true);
                 self.emit(NullifierSpent { nullifier: nf.span() });
             }
+            // Inactive slots (zero commitment) create no note. Two new notes are appended in one
+            // pass (`insert_two`), sharing the upper path.
+            let o0 = spend.outputs.at(0);
+            let o1 = spend.outputs.at(1);
+            let (a0, a1) = (is_active(*o0.commitment), is_active(*o1.commitment));
             let mut created = 0_u32;
-            for output in spend.outputs {
-                // Inactive slots (zero commitment) create no note.
-                if is_active(*output.commitment) {
-                    self.publish(read_digest(*output.commitment), delivery_digest(*output.ciphertext), *output.ciphertext);
-                    created += 1;
+            if a0 && a1 {
+                let (d0, d1) = (delivery_digest(*o0.ciphertext), delivery_digest(*o1.ciphertext));
+                assert(d0 != 0 && d1 != 0, 'ZERO_DELIVERY');
+                let (cm0, cm1) = (read_digest(*o0.commitment), read_digest(*o1.commitment));
+                let index = self.tree.insert_two(cm0, cm1);
+                self.delivery_digests.write(index, d0);
+                self.delivery_digests.write(index + 1, d1);
+                self.emit(NotePublished { index, commitment: cm0.span(), digest: d0, ciphertext: *o0.ciphertext });
+                self.emit(NotePublished { index: index + 1, commitment: cm1.span(), digest: d1, ciphertext: *o1.ciphertext });
+                created = 2;
+            } else {
+                for output in spend.outputs {
+                    if is_active(*output.commitment) {
+                        self.publish(read_digest(*output.commitment), delivery_digest(*output.ciphertext), *output.ciphertext);
+                        created += 1;
+                    }
                 }
             }
             let w = spend.withdrawal;
