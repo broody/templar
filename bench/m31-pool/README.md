@@ -35,6 +35,26 @@ lazily initialized.
   indexer.
 - L1 data gas is small next to L2 gas in both pools.
 
+## In STRK, at Sepolia prices
+
+These use gas prices from Sepolia blocks 15,506,259–15,506,308, read through the local node:
+- L2 gas: 20.75 gwei-fri, flat across all 50 blocks;
+- L1 data gas: about 581 gwei-fri.
+
+The fee is `L2 gas × L2 price + L1 data gas × L1 data price` (`results/fees-sepolia.json`):
+
+| Pool | Deposit | 2-in/2-out spend |
+| --- | ---: | ---: |
+| **felt252 reference** | **0.130 STRK** | **0.240 STRK** |
+| M31, single-permutation nodes, frontier | 1.197 STRK | **2.108 STRK** |
+| M31, single-permutation nodes, every node | 1.241 STRK | 2.197 STRK |
+| M31, sponge nodes, frontier | 2.291 STRK | 4.296 STRK |
+| M31, sponge nodes, every node | 2.335 STRK | 4.386 STRK |
+
+These cover the pool call only. A real transaction adds account validation, calldata and the
+PROOF2 fact check, the same for both pools apart from R0's longer calldata. Mainnet prices will
+differ. The L2 price here appears to be Sepolia's floor.
+
 ## What was built (`cairo/`)
 
 - `perm.cairo`: the width-24 Poseidon2-M31 permutation (Plonky3 Mersenne31, 8 full + 22 partial
