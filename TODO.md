@@ -251,6 +251,16 @@ the accepted local proving architecture is unchanged.
   Not yet measured: the pool's on-chain `apply_spend` with an M31-tree
   append.
 
+  - **Open notes on the compact path (2026-09-24):** R0 V3 adds a public
+    execution intent and an optional identity handle; the M31 pool gains
+    `apply_spend_with_invoke` (INVOKE for Ekubo/Vesu-style adapters, COMPUTE
+    for shadow accounts). A local end-to-end run settles a real client proof
+    and real PROOF2 through the PROOF2 adapter
+    ([results](bench/m31-pool/results/open-note-e2e.json)). Spec:
+    [open-note-spec.md](docs/open-note-spec.md). **Pending:** the math review
+    and adversarial tests (deferred until after implementation, per the
+    user), a shadow-account end-to-end with upstream's unchanged anonymizer,
+    and Sepolia (still blocked on PROOF2 gateway acceptance).
   Open for this route:
   - review of the fork's profile;
   - the hiding question (broody/templar#2), under test per

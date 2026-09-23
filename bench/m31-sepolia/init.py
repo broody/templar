@@ -5,7 +5,10 @@ import json, os, secrets, tempfile
 
 HERE = Path(__file__).resolve().parent
 assert not (HERE / 'run-location.json').exists(), 'existing run: resume it, do not replace its pointer'
-run = Path(tempfile.mkdtemp(prefix='templar-m31-sepolia-'))
+# Persistent and private: /tmp does not survive a reboot (the 2026-09-23 run's runtime was lost).
+base = Path.home() / '.local/share/templar/runs'
+base.mkdir(parents=True, exist_ok=True)
+run = Path(tempfile.mkdtemp(prefix='m31-sepolia-', dir=base))
 os.chmod(run, 0o700)
 P = 2**31 - 1
 digest = lambda: [secrets.randbelow(P - 1) + 1 for _ in range(9)]
