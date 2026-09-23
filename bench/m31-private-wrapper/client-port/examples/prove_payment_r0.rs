@@ -1,6 +1,6 @@
 //! R0 payment (2-in/2-out, one token) as a blinded arithmetic-only stwo-circuits client proof.
 //! The relation is `src/payment.rs`; the 23 outputs carry the 92-limb public statement.
-//! `prove_payment_r0 OUT [MAX_FRI_COLUMNS] [--compress-nodes]`: bounded-memory mode when the
+//! `prove_payment_r0 OUT [MAX_FRI_COLUMNS] [--compress-nodes] [--shape transfer|partial|full]`: bounded-memory mode when the
 //! batch size is given; `--compress-nodes` selects the experimental single-permutation tree
 //! nodes (`Tree::Compress`) instead of the sponge nodes.
 use std::{fs, path::Path, time::Instant};
@@ -15,7 +15,7 @@ use circuits::context::{Context, FinalizedContext};
 use circuits::ivalue::{NoValue, qm31_from_u32s};
 use serde_json::json;
 use stwo::core::fields::qm31::QM31;
-use templar_client_verifier_circuit::payment::{self, N_OUTPUTS, Private, Public, Tree, statement_limbs};
+use templar_client_verifier_circuit::payment::{self, N_OUTPUTS, Private, Public, Shape, Tree, statement_limbs};
 
 
 fn circuit<V: templar_client_verifier_circuit::membership::Lanes>(tree: Tree, public: &Public, private: &Private, seed: [u8; 32], blinding: usize) -> FinalizedContext<V> {
@@ -36,6 +36,18 @@ fn main() {
     } else {
         false
     };
+    let shape = if let Some(k) = a.iter().position(|x| x == "--shape") {
+        let v = a.remove(k + 1);
+        a.remove(k);
+        match v.as_str() {
+            "transfer" => Shape::Transfer,
+            "partial" => Shape::Partial,
+            "full" => Shape::Full,
+            other => panic!("unknown shape {other}"),
+        }
+    } else {
+        Shape::Transfer
+    };
     let tree = if let Some(k) = a.iter().position(|x| x == "--compress-nodes") {
         a.remove(k);
         Tree::Compress
@@ -47,7 +59,7 @@ fn main() {
     let max_fri_columns: Option<usize> = a.get(2).map(|n| n.parse().unwrap());
     fs::create_dir_all(out).unwrap();
     let mut rng = rand::rngs::OsRng;
-    let (public, private) = payment::fresh(tree, &mut rng);
+    let (public, private) = payment::fresh_shape(tree, shape, &mut rng);
     let mut seed = [0u8; 32];
     rand::RngCore::fill_bytes(&mut rng, &mut seed);
     let started = Instant::now();
@@ -112,7 +124,7 @@ fn main() {
         json!({
             "stack": "broody/proving templar/arithmetic-profile (on starkware-libs/proving@5a7c5ed), arithmetic profile, bridge FRI",
             "statement_tag_u32": payment::statement_tag(tree),
-            "statement_layout": "92 limbs, 4 per output: tag 2, chain 9, pool 9, token 9 (28-bit LE), root 9, nf0 9, nf1 9, cm0 9, delivery0 9 (28-bit LE), cm1 9, delivery1 9 (28-bit LE)",
+            "statement_layout": "112 limbs, 4 per output: tag 2, chain 9, pool 9, token 9 (28-bit LE), root 9, nf0 9, nf1 9, cm0 9, delivery0 9 (28-bit LE), cm1 9, delivery1 9 (28-bit LE), withdrawal recipient 9 (28-bit LE), withdrawal amount 8 (16-bit LE), zero 3; inactive output slots publish a zero commitment and delivery",
             "blinding_rows": blinding,
             "tree_nodes": format!("{tree:?}"),
         }),
@@ -130,6 +142,7 @@ fn main() {
         "revealed_fri_values": revealed,
         "max_fri_columns": max_fri_columns,
         "tree_nodes": format!("{tree:?}"),
+        "shape": format!("{shape:?}"),
         "build_seconds": build_seconds,
         "proving_seconds": proving_seconds,
         "proof_felts": felts.len(),

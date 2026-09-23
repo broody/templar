@@ -6,54 +6,40 @@ work: the same guards, 256-root history, nullifier set, delivery digests and eve
 
 ## Result
 
-L2 gas per call on a warm pool (after 4 deposits and a spend). Measured in-test around the call,
-which agrees with snforge's `--gas-report` to within 0.1%. L1 data gas is per call, from test
-totals with and without the call.
+Per call on a warm pool (after 4 deposits and a transfer). L2 gas is measured in-test around the
+call, which agrees with snforge's `--gas-report` to within 0.1%. L1 data gas is per call, from test
+totals with and without the call. STRK uses Sepolia median prices (below).
 
-| Pool | Deposit L2 gas | 2-in/2-out spend L2 gas | Deposit L1 data gas | Spend L1 data gas |
-| --- | ---: | ---: | ---: | ---: |
-| **felt252 reference** (`controlled-push-e2e`) | **6.27M** | **11.53M** | 480 | 1,056 |
-| M31, single-permutation nodes, frontier storage | 57.69M (9.2×) | **101.58M (8.8×)** | 288 | 768 |
-| M31, single-permutation nodes, every node stored | 59.79M | 105.85M | 672 | 1,344 |
-| M31, sponge nodes, frontier storage | 110.42M (17.6×) | 207.02M (17.9×) | 288 | 768 |
-| M31, sponge nodes, every node stored | 112.52M | 211.30M | 672 | 1,344 |
+| Operation | felt252 reference | M31, single-permutation nodes | M31, sponge nodes |
+| --- | ---: | ---: | ---: |
+| **Deposit** (1 new note) | 6.27M · 0.130 STRK | 57.69M · **1.197 STRK** (9.2×) | 110.42M · 2.292 STRK |
+| **Transfer** (2 in, 2 out) | 11.53M · 0.240 STRK | 101.69M · **2.111 STRK** (8.8×) | 207.14M · 4.299 STRK |
+| **Partial withdrawal** (2 in, 1 out + withdrawal) | 6.75M · 0.140 STRK | 51.99M · **1.079 STRK** (7.7×) | 104.72M · 2.173 STRK |
+| **Full withdrawal** (2 in, withdrawal only) | 1.41M · 0.029 STRK | 1.84M · **0.038 STRK** (1.3×) | 1.84M · 0.038 STRK |
 
-`results/summary.json` has the exact values, and `results/*.log` the raw runs. Cold and warm calls
-cost the same within 0.3%, because the empty-subtree digests are compiled constants rather than
-lazily initialized.
+The M31 rows use frontier storage. Storing every node, as the reference does, adds about 4% L2
+gas and roughly doubles L1 data gas: transfer 105.97M, deposit 59.80M. Exact values are in
+`results/summary.json`, and raw runs in `results/*.log`.
 
 **Reading it:**
-- Hashing dominates. An append is 32 permutations with single-permutation nodes, or 64 with
-  sponge nodes. A deposit adds 4 for the note commitment, which the pool computes on chain.
-  At about 1.5M L2 gas per permutation with its digest handling, the permutations make up over
-  90% of every M31 call.
-- The M31 spend costs **8.8×** the reference with single-permutation nodes, and **17.9×** with
-  sponge nodes. Both fit well under the 1B-per-transaction limit.
-- Storing every node, as the reference does so wallets can read paths from storage, adds only
-  about 4% L2 gas, but roughly doubles L1 data gas: nine-word digests take two felts. Frontier
-  storage writes less than the reference, but wallets then need paths from events or an
-  indexer.
-- L1 data gas is small next to L2 gas in both pools.
+- **Cost follows appends.** Each new note costs 32 permutations with single-permutation nodes,
+  or 64 with sponge nodes. A deposit adds 4 more for the on-chain commitment. At about 1.5M L2
+  gas per permutation, hashing is over 90% of every call that appends.
+- **A full withdrawal appends nothing,** so it costs about the same as the reference (1.84M vs
+  1.41M; the difference is hashing nine-word nullifiers into map keys).
+- **Every operation fits** well under the 1B-per-transaction limit.
+- **L1 data gas is small** next to L2 gas in both pools.
 
 ## In STRK, at Sepolia prices
 
 These use gas prices from Sepolia blocks 15,506,259–15,506,308, read through the local node:
-- L2 gas: 20.75 gwei-fri, flat across all 50 blocks;
+- L2 gas: 20.75 gwei-fri, flat across all 50 blocks, apparently Sepolia's floor;
 - L1 data gas: about 581 gwei-fri.
 
-The fee is `L2 gas × L2 price + L1 data gas × L1 data price` (`results/fees-sepolia.json`):
-
-| Pool | Deposit | 2-in/2-out spend |
-| --- | ---: | ---: |
-| **felt252 reference** | **0.130 STRK** | **0.240 STRK** |
-| M31, single-permutation nodes, frontier | 1.197 STRK | **2.108 STRK** |
-| M31, single-permutation nodes, every node | 1.241 STRK | 2.197 STRK |
-| M31, sponge nodes, frontier | 2.291 STRK | 4.296 STRK |
-| M31, sponge nodes, every node | 2.335 STRK | 4.386 STRK |
-
-These cover the pool call only. A real transaction adds account validation, calldata and the
-PROOF2 fact check, the same for both pools apart from R0's longer calldata. Mainnet prices will
-differ. The L2 price here appears to be Sepolia's floor.
+The fee is `L2 gas × L2 price + L1 data gas × L1 data price` (`results/fees-sepolia.json`).
+It covers the pool call only. A real transaction adds account validation, calldata and the
+PROOF2 fact check, roughly the same for both pools apart from R0's longer calldata. Mainnet
+prices will differ.
 
 ## What was built (`cairo/`)
 
@@ -66,13 +52,14 @@ differ. The L2 price here appears to be Sepolia's floor.
   storage modes: every node (`get_node` serves paths) or frontier only. Empty subtrees are
   generated constants (`zeros.cairo`).
 - `pool.cairo`: `deposit` computes the commitment from `inner`, then transfers and publishes.
-  `apply_spend` checks chain, pool and token, recomputes the R0 binding (the bridge account's
-  `TMR0_BIND_V1`), asks the verifier for the verdict, checks the root is known and the nullifiers
-  unused, marks them, and publishes both outputs.
+  `apply_spend` checks chain, pool and token, recomputes the R0 V2 binding (the bridge account's
+  `TMR0_BIND_V2`), asks the verifier for the verdict, checks the root is known and the nullifiers
+  unused, and marks them. It then publishes the active outputs (a zero commitment marks an
+  inactive slot) and pays out the withdrawal, if any.
 - `baseline/`: an unmodified copy of the reference pool plus `tests/test_cost.cairo`, the same
   measurement for a 2-in/2-out ordinary spend.
 
-## Correctness (27/27 tests)
+## Correctness (36/36 tests)
 
 - **Golden vectors from the Rust client** (`client-port/examples/pool_vectors.rs` → `vectors.json`
   → `gen_cairo.py`):
@@ -82,12 +69,16 @@ differ. The L2 price here appears to be Sepolia's floor.
   - roots after six successive inserts, for both node formats and both storage modes. The Rust
     side checks its frontier roots against a full level-by-level tree;
   - a deposit commitment;
-  - lossless packing.
+  - lossless packing;
+  - the R0 V2 binding of a real partial-withdrawal statement, against the bridge's
+    independent Python reference (`binding-statement.json`).
 - **Pool behavior:**
   - a spend marks both nullifiers and publishes both outputs;
   - replay and duplicate nullifiers are rejected;
   - unknown roots, changed outputs (binding) and non-canonical digest words are rejected;
-  - a spend against a root that later deposits superseded is still accepted.
+  - a spend against a root that later deposits superseded is still accepted;
+  - withdrawals pay the recipient, and inactive slots append nothing;
+  - a withdrawal without a recipient, a redirected withdrawal and an empty spend are rejected.
 
 ## Limits
 

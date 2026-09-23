@@ -40,11 +40,11 @@ use crate::ro::guess_m31;
 pub const P: u32 = (1 << 31) - 1;
 /// Frame tag `TMR0`.
 pub const TAG: u32 = 0x544d_5230;
-/// Statement tag: `TMPZ`, `R0V1`.
-pub const STATEMENT_TAG: [u32; 2] = [0x544d_505a, 0x5230_5631];
-/// Statement tag for [`Tree::Compress`]: `TMPZ`, `R0C1`, so the two tree formats never share a
+/// Statement tag: `TMPZ`, `R0V2` (V2: optional outputs and a withdrawal slot).
+pub const STATEMENT_TAG: [u32; 2] = [0x544d_505a, 0x5230_5632];
+/// Statement tag for [`Tree::Compress`]: `TMPZ`, `R0C2`, so the two tree formats never share a
 /// statement encoding (binding review L1).
-pub const STATEMENT_TAG_COMPRESS: [u32; 2] = [0x544d_505a, 0x5230_4331];
+pub const STATEMENT_TAG_COMPRESS: [u32; 2] = [0x544d_505a, 0x5230_4332];
 
 /// The statement tag of a tree format.
 pub fn statement_tag(tree: Tree) -> [u32; 2] {
@@ -54,7 +54,7 @@ pub fn statement_tag(tree: Tree) -> [u32; 2] {
     }
 }
 pub const DEPTH: usize = 32;
-pub const N_OUTPUTS: usize = 23;
+pub const N_OUTPUTS: usize = 28;
 const LIMB_BITS: usize = 28;
 const AMOUNT_LIMBS: usize = 8;
 
@@ -91,8 +91,11 @@ pub struct Input {
     pub siblings: Vec<Digest>,
 }
 
+/// An output slot. An inactive slot creates no note: its public commitment and delivery digest
+/// are zero and its amount must be zero.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Output {
+    pub active: bool,
     pub receiver: Digest,
     pub rho: Digest,
     pub amount: u128,
@@ -111,8 +114,13 @@ pub struct Public {
     pub token: String,
     pub root: Digest,
     pub nullifiers: [Digest; 2],
+    /// Zero for an inactive output slot.
     pub commitments: [Digest; 2],
+    /// `0x0` for an inactive output slot.
     pub deliveries: [String; 2],
+    /// The public withdrawal: `0x0` and 0 when there is none; otherwise both nonzero.
+    pub withdrawal_recipient: String,
+    pub withdrawal_amount: u128,
 }
 
 // ---------------------------------------------------------------- encodings
@@ -134,7 +142,7 @@ fn context_limbs(p: &Public) -> Vec<u32> {
     [felt_limbs(&p.chain), felt_limbs(&p.pool), felt_limbs(&p.token)].concat()
 }
 
-/// The 92 public limbs in output order.
+/// The 109 public limbs (padded with zeros to 112) in output order.
 pub fn statement_limbs(tree: Tree, p: &Public) -> Vec<u32> {
     let mut x = statement_tag(tree).to_vec();
     x.extend(context_limbs(p));
@@ -144,7 +152,9 @@ pub fn statement_limbs(tree: Tree, p: &Public) -> Vec<u32> {
         x.extend(p.commitments[j]);
         x.extend(felt_limbs(&p.deliveries[j]));
     }
-    assert_eq!(x.len(), 4 * N_OUTPUTS);
+    x.extend(felt_limbs(&p.withdrawal_recipient));
+    x.extend(amount_limbs(p.withdrawal_amount));
+    x.resize(4 * N_OUTPUTS, 0);
     x
 }
 
@@ -230,7 +240,15 @@ pub fn nullifier(nk: &Digest, cm: &Digest, position: u32) -> Digest {
 }
 
 /// The public statement a valid witness proves, or an error naming the first broken rule.
-pub fn statement(tree: Tree, chain: &str, pool: &str, token: &str, deliveries: [String; 2], w: &Private) -> Result<Public, String> {
+pub fn statement(
+    tree: Tree,
+    chain: &str,
+    pool: &str,
+    token: &str,
+    deliveries: [String; 2],
+    withdrawal: (String, u128),
+    w: &Private,
+) -> Result<Public, String> {
     let context = [felt_limbs(chain), felt_limbs(pool), felt_limbs(token)].concat();
     let nonzero = |d: &Digest| d.iter().any(|v| *v != 0);
     let mut roots = vec![];
@@ -254,15 +272,33 @@ pub fn statement(tree: Tree, chain: &str, pool: &str, token: &str, deliveries: [
         return Err("duplicate input".into());
     }
     let mut commitments = vec![];
-    for o in &w.outputs {
-        if !nonzero(&o.receiver) || !nonzero(&o.rho) || o.amount == 0 {
-            return Err("zero output".into());
+    for (o, d) in w.outputs.iter().zip(&deliveries) {
+        if o.active {
+            if !nonzero(&o.receiver) || !nonzero(&o.rho) || o.amount == 0 {
+                return Err("zero output".into());
+            }
+            commitments.push(commitment(&context, o.amount, &o.receiver, &o.rho));
+        } else {
+            if o.amount != 0 || felt_limbs(d).iter().any(|l| *l != 0) {
+                return Err("inactive output carries value".into());
+            }
+            commitments.push([0; 9]);
         }
-        commitments.push(commitment(&context, o.amount, &o.receiver, &o.rho));
     }
-    // u128 amounts; the sums are compared as integers (up to 129 bits).
-    let sum = |a: u128, b: u128| (a as u128).overflowing_add(b);
-    if sum(w.inputs[0].amount, w.inputs[1].amount) != sum(w.outputs[0].amount, w.outputs[1].amount) {
+    let (recipient, w_amount) = &withdrawal;
+    let has_recipient = felt_limbs(recipient).iter().any(|l| *l != 0);
+    if has_recipient != (*w_amount != 0) {
+        return Err("withdrawal recipient and amount".into());
+    }
+    if !w.outputs.iter().any(|o| o.active) && *w_amount == 0 {
+        return Err("no output".into());
+    }
+    // u128 amounts; the sums are compared as integers (up to 130 bits).
+    let wide = |xs: &[u128]| xs.iter().fold((0u128, 0u128), |(hi, lo), x| {
+        let (l, carry) = lo.overflowing_add(*x);
+        (hi + carry as u128, l)
+    });
+    if wide(&[w.inputs[0].amount, w.inputs[1].amount]) != wide(&[w.outputs[0].amount, w.outputs[1].amount, *w_amount]) {
         return Err("conservation".into());
     }
     Ok(Public {
@@ -273,12 +309,31 @@ pub fn statement(tree: Tree, chain: &str, pool: &str, token: &str, deliveries: [
         nullifiers: [nullifiers[0], nullifiers[1]],
         commitments: [commitments[0], commitments[1]],
         deliveries,
+        withdrawal_recipient: withdrawal.0,
+        withdrawal_amount: withdrawal.1,
     })
 }
 
-/// A fresh random R0 payment: two notes at independent positions of one sparse depth-32 tree
-/// (the paths share nodes only where they meet), and two outputs splitting the total.
+/// Which output slots are active and whether there is a withdrawal.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Shape {
+    /// Two new notes, nothing leaves the pool.
+    Transfer,
+    /// One new note (change) and a withdrawal.
+    Partial,
+    /// No new note; everything is withdrawn.
+    Full,
+}
+
+/// A fresh random R0 transfer (see [`fresh_shape`]).
 pub fn fresh(tree: Tree, rng: &mut impl RngCore) -> (Public, Private) {
+    fresh_shape(tree, Shape::Transfer, rng)
+}
+
+/// A fresh random R0 payment: two notes at independent positions of one sparse depth-32 tree
+/// (the paths share nodes only where they meet), spent into the outputs and withdrawal of
+/// `shape`.
+pub fn fresh_shape(tree: Tree, shape: Shape, rng: &mut impl RngCore) -> (Public, Private) {
     let chain = "0x534e5f5345504f4c4941";
     let pool = format!("0x{:x}", rng.gen_range(1u64..u64::MAX));
     let token = format!("0x{:x}", rng.gen_range(1u64..u64::MAX));
@@ -327,7 +382,17 @@ pub fn fresh(tree: Tree, rng: &mut impl RngCore) -> (Public, Private) {
         index.iter_mut().for_each(|i| *i >>= 1);
     }
     let total = amounts[0] + amounts[1];
-    let out0 = rng.gen_range(1..total);
+    let (out, withdrawn) = match shape {
+        Shape::Transfer => {
+            let out0 = rng.gen_range(1..total);
+            ([out0, total - out0], 0)
+        }
+        Shape::Partial => {
+            let out0 = rng.gen_range(1..total);
+            ([out0, 0], total - out0)
+        }
+        Shape::Full => ([0, 0], total),
+    };
     let private = Private {
         inputs: std::array::from_fn(|i| Input {
             sk: sks[i],
@@ -336,13 +401,22 @@ pub fn fresh(tree: Tree, rng: &mut impl RngCore) -> (Public, Private) {
             position: positions[i],
             siblings: siblings[i].clone(),
         }),
-        outputs: [
-            Output { receiver: digest(rng), rho: digest(rng), amount: out0 },
-            Output { receiver: digest(rng), rho: digest(rng), amount: total - out0 },
-        ],
+        outputs: std::array::from_fn(|j| Output {
+            active: out[j] != 0,
+            receiver: digest(rng),
+            rho: digest(rng),
+            amount: out[j],
+        }),
     };
-    let deliveries = [format!("0x{:x}", rng.next_u64() | 1), format!("0x{:x}", rng.next_u64() | 1)];
-    let public = statement(tree, chain, &pool, &token, deliveries, &private).expect("fresh witness is valid");
+    let deliveries: [String; 2] = std::array::from_fn(|j| {
+        if out[j] != 0 { format!("0x{:x}", rng.next_u64() | 1) } else { "0x0".to_string() }
+    });
+    let withdrawal = if withdrawn != 0 {
+        (format!("0x{:x}", rng.gen_range(1u64..u64::MAX)), withdrawn)
+    } else {
+        ("0x0".to_string(), 0)
+    };
+    let public = statement(tree, chain, &pool, &token, deliveries, withdrawal, &private).expect("fresh witness is valid");
     (public, private)
 }
 
@@ -359,6 +433,29 @@ fn nonzero<V: IValue>(c: &mut Context<V>, v: Var, value: u32) {
     let one = c.one();
     let prod = eval!(c, (v) * (inv));
     eq(c, prod, one);
+}
+
+/// `v · inv = active`, with `active` boolean: `v ≠ 0` when active, no constraint on `v` otherwise.
+fn nonzero_if<V: IValue>(c: &mut Context<V>, v: Var, value: u32, active: (Var, bool)) {
+    let inv = if active.1 && value != 0 { M31::from(value).inverse().0 } else { 0 };
+    let inv = guess_m31(c, inv);
+    let prod = eval!(c, (v) * (inv));
+    eq(c, prod, active.0);
+}
+
+/// [`nonzero_vector`] when `active` (an output slot's flag); no constraint otherwise.
+fn nonzero_vector_if<V: IValue>(c: &mut Context<V>, words: &[Var], values: &[u32], active: (Var, bool)) {
+    let k = values.iter().position(|v| *v != 0).unwrap_or(0);
+    let bits: Vec<Var> = (0..words.len()).map(|i| guess_bits(c, (i == k) as usize, 1)[0]).collect();
+    let mut sum_bits = c.zero();
+    let mut picked = c.zero();
+    for (b, w) in bits.iter().zip(words) {
+        sum_bits = eval!(c, (sum_bits) + (*b));
+        picked = eval!(c, (picked) + ((*b) * (*w)));
+    }
+    let one = c.one();
+    eq(c, sum_bits, one);
+    nonzero_if(c, picked, values[k], active);
 }
 
 /// Asserts some word of `words` is nonzero: a one-hot selector picks it, then [`nonzero`].
@@ -378,6 +475,15 @@ fn nonzero_vector<V: IValue>(c: &mut Context<V>, words: &[Var], values: &[u32]) 
 
 /// A u128 amount as eight range-checked 16-bit limbs; asserts it is nonzero.
 fn amount<V: IValue>(c: &mut Context<V>, a: u128) -> Vec<Var> {
+    let (vars, sum) = amount_unchecked(c, a);
+    // Eight limbs below 2^16 sum below 2^19, so the sum is zero only if every limb is.
+    let s: u32 = amount_limbs(a).iter().sum();
+    nonzero(c, sum, s);
+    vars
+}
+
+/// A u128 amount as eight range-checked 16-bit limbs and their sum (zero iff the amount is).
+fn amount_unchecked<V: IValue>(c: &mut Context<V>, a: u128) -> (Vec<Var>, Var) {
     let limbs = amount_limbs(a);
     let mut vars = vec![];
     let mut sum = c.zero();
@@ -391,31 +497,39 @@ fn amount<V: IValue>(c: &mut Context<V>, a: u128) -> Vec<Var> {
         sum = eval!(c, (sum) + (v));
         vars.push(v);
     }
-    // Eight limbs below 2^16 sum below 2^19, so the sum is zero only if every limb is.
-    let s: u32 = limbs.iter().sum();
-    nonzero(c, sum, s);
-    vars
+    (vars, sum)
 }
 
-/// `a₀ + a₁ = b₀ + b₁` over the integers, limb by limb with signed carries in {-1, 0, 1}.
-fn conservation<V: IValue>(c: &mut Context<V>, ins: [&[Var]; 2], outs: [&[Var]; 2], values: ([u128; 2], [u128; 2])) {
+/// `Σ ins = Σ outs` over the integers (two inputs; outputs and withdrawal), limb by limb. Each
+/// limb difference lies in (-3·2^16, 2·2^16), so the signed carries lie in {-2, -1, 0, 1}.
+fn conservation<V: IValue>(c: &mut Context<V>, ins: &[&[Var]], outs: &[&[Var]], in_values: &[u128], out_values: &[u128]) {
     let shift = c.constant(M31::from(1u32 << 16).into());
-    let (ai, ao) = values;
-    let (li, lo) = (ai.map(amount_limbs), ao.map(amount_limbs));
+    let li: Vec<[u32; AMOUNT_LIMBS]> = in_values.iter().map(|a| amount_limbs(*a)).collect();
+    let lo: Vec<[u32; AMOUNT_LIMBS]> = out_values.iter().map(|a| amount_limbs(*a)).collect();
     let mut carry = c.zero();
     let mut carry_value: i64 = 0;
     for k in 0..AMOUNT_LIMBS {
-        let d = eval!(c, (((ins[0][k]) + (ins[1][k])) - (outs[0][k])) - (outs[1][k]));
-        let dv = li[0][k] as i64 + li[1][k] as i64 - lo[0][k] as i64 - lo[1][k] as i64 + carry_value;
+        let mut d = c.zero();
+        let mut dv = carry_value;
+        for (x, l) in ins.iter().zip(&li) {
+            let x = x[k];
+            d = eval!(c, (d) + (x));
+            dv += l[k] as i64;
+        }
+        for (x, l) in outs.iter().zip(&lo) {
+            let x = x[k];
+            d = eval!(c, (d) - (x));
+            dv -= l[k] as i64;
+        }
         // An invalid witness gets some carry anyway, and the constraint below fails.
-        let next_value = dv.div_euclid(1 << 16).clamp(-1, 1);
+        let next_value = dv.div_euclid(1 << 16).clamp(-2, 1);
         let next = if k + 1 == AMOUNT_LIMBS {
             c.zero()
         } else {
             let enc = if next_value < 0 { P - (-next_value) as u32 } else { next_value as u32 };
             let n = guess_m31(c, enc);
-            // n ∈ {-1, 0, 1}: n·(n - 1)·(n + 1) = 0.
-            let t = eval!(c, ((n) * ((n) - (1))) * ((n) + (1)));
+            // n ∈ {-2, -1, 0, 1}: n·(n - 1)·(n + 1)·(n + 2) = 0.
+            let t = eval!(c, (((n) * ((n) - (1))) * ((n) + (1))) * ((n) + (2)));
             let zero = c.zero();
             eq(c, t, zero);
             n
@@ -465,14 +579,24 @@ pub fn build<V: Lanes>(c: &mut Context<V>, tree: Tree, public: &Public, w: &Priv
     let mut recv_out = vec![];
     let mut rho_out = vec![];
     let mut amt_out = vec![];
+    let mut active = vec![];
     for o in &w.outputs {
+        // The slot flag: active outputs need nonzero receiver, rho and amount; inactive ones
+        // need zero amount (below) and publish zeros.
+        let a = guess_bits(c, o.active as usize, 1)[0];
         let r = guess_words(c, &o.receiver);
-        nonzero_vector(c, &r, &o.receiver);
+        nonzero_vector_if(c, &r, &o.receiver, (a, o.active));
         let q = guess_words(c, &o.rho);
-        nonzero_vector(c, &q, &o.rho);
+        nonzero_vector_if(c, &q, &o.rho, (a, o.active));
+        let (amt, sum) = amount_unchecked(c, o.amount);
+        nonzero_if(c, sum, amount_limbs(o.amount).iter().sum(), (a, o.active));
+        let idle = eval!(c, (sum) * ((1) - (a)));
+        let zero = c.zero();
+        eq(c, idle, zero);
         recv_out.push(r);
         rho_out.push(q);
-        amt_out.push(amount(c, o.amount));
+        amt_out.push(amt);
+        active.push(a);
     }
     // ak, nk for both inputs.
     let keys = hash_batch(c, vec![(AUTH, 0, sk[0].clone()), (NK, 0, sk[0].clone()), (AUTH, 0, sk[1].clone()), (NK, 0, sk[1].clone())]);
@@ -549,16 +673,32 @@ pub fn build<V: Lanes>(c: &mut Context<V>, tree: Tree, public: &Public, w: &Priv
     let nfs = hash_batch(c, nf_reqs).concat();
     let mut outs: Vec<Var> = vec![];
     for j in 0..2 {
-        outs.extend(cms[2 + j].clone());
-        outs.extend(guess_words(c, &felt_limbs(&public.deliveries[j])));
+        // An inactive slot publishes a zero commitment and a zero delivery digest.
+        let a = active[j];
+        for word in cms[2 + j].clone() {
+            outs.push(eval!(c, (word) * (a)));
+        }
+        for limb in guess_words(c, &felt_limbs(&public.deliveries[j])) {
+            let idle = eval!(c, (limb) * ((1) - (a)));
+            let zero = c.zero();
+            eq(c, idle, zero);
+            outs.push(limb);
+        }
     }
+    // The withdrawal: recipient limbs (range-checked by the bridge) and a range-checked amount.
+    let recipient = guess_words(c, &felt_limbs(&public.withdrawal_recipient));
+    let (withdrawn, withdrawn_sum) = amount_unchecked(c, public.withdrawal_amount);
+    // A zero withdrawal is allowed (the bridge ties it to a zero recipient): its sum is unused.
+    c.mark_as_maybe_unused(&withdrawn_sum);
     conservation(
         c,
-        [&amt_in[0], &amt_in[1]],
-        [&amt_out[0], &amt_out[1]],
-        ([w.inputs[0].amount, w.inputs[1].amount], [w.outputs[0].amount, w.outputs[1].amount]),
+        &[&amt_in[0], &amt_in[1]],
+        &[&amt_out[0], &amt_out[1], &withdrawn],
+        &[w.inputs[0].amount, w.inputs[1].amount],
+        &[w.outputs[0].amount, w.outputs[1].amount, public.withdrawal_amount],
     );
-    let limbs: Vec<Var> = [tag, context, cur[0].clone(), nfs, outs].concat();
-    assert_eq!(limbs.len(), 4 * N_OUTPUTS);
+    let zero = c.zero();
+    let mut limbs: Vec<Var> = [tag, context, cur[0].clone(), nfs, outs, recipient, withdrawn].concat();
+    limbs.resize(4 * N_OUTPUTS, zero);
     limbs.chunks_exact(4).map(|q| from_partial_evals(c, q.try_into().unwrap())).collect()
 }

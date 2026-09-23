@@ -34,7 +34,7 @@ def expected_payload(fixture, public):
     if TAG_VERSION == 'R0':
         # R0 payment bridge: the pool recomputes the binding from its spend data.
         import validate_bridge_r0
-        tag = int.from_bytes((TAG or 'TMPZR0_PAYMENT_V1').encode(), 'big')
+        tag = int.from_bytes((TAG or 'TMPZR0_PAYMENT_V2').encode(), 'big')
         return [int(fixture['authority']['statement_class'], 16), tag, chain, int(public['pool'], 16), validate_bridge_r0.binding(public)]
     if TAG_VERSION == 'SA':
         # Arithmetic-profile client route: the statement itself, no digest.

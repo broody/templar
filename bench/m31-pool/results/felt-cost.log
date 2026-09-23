@@ -2,7 +2,7 @@
     Blocking waiting for file lock on package cache
     Blocking waiting for file lock on package cache
     Blocking waiting for file lock on package cache
-    Finished `release` profile [optimized] target(s) in 0.10s
+    Finished `release` profile [optimized] target(s) in 0.11s
    Compiling test(pool_unittest) pool v0.1.0 (/home/broody/development/templar/bench/m31-pool/baseline/Scarb.toml)
 warn[E2100]: Unused import: `pool::tree::StorageMapReadAccess`
  --> /home/broody/development/templar/bench/m31-pool/baseline/src/tree.cairo:17:5
@@ -67,12 +67,16 @@ use starknet::{ContractAddress, contract_address_const, get_tx_info, SyscallResu
     Finished `dev` profile target(s) in 2 seconds
 
 
-Collected 3 test(s) from pool package
-Running 3 test(s) from src/
+Collected 5 test(s) from pool package
+Running 5 test(s) from src/
 [PASS] pool::tests::test_cost::cost_base_felt (l1_gas: ~0, l1_data_gas: ~10368, l2_gas: ~84105888)
 GAS deposit felt warm=6267956
+GAS apply_spend felt outputs=0 withdrawal=true warm=1409775
 [PASS] pool::tests::test_cost::cost_deposit_felt (l1_gas: ~0, l1_data_gas: ~10848, l2_gas: ~92572504)
+[PASS] pool::tests::test_cost::cost_full_felt (l1_gas: ~0, l1_data_gas: ~10656, l2_gas: ~87176178)
 GAS apply_spend felt warm=11534911
 [PASS] pool::tests::test_cost::cost_spend_felt (l1_gas: ~0, l1_data_gas: ~11424, l2_gas: ~100791618)
-Tests: 3 passed, 0 failed, 0 ignored, 68 filtered out
+GAS apply_spend felt outputs=1 withdrawal=true warm=6745443
+[PASS] pool::tests::test_cost::cost_partial_felt (l1_gas: ~0, l1_data_gas: ~11136, l2_gas: ~94683863)
+Tests: 5 passed, 0 failed, 0 ignored, 68 filtered out
 

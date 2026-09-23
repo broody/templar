@@ -22,7 +22,7 @@ pub mod M31Pool {
     use crate::hash::{Digest, commitment, is_zero, key, read_digest};
     use crate::spend::{
         IERC20Dispatcher, IERC20DispatcherTrait, IVerifierDispatcher, IVerifierDispatcherTrait,
-        Spend, compute_binding, delivery_digest,
+        Spend, compute_binding, delivery_digest, is_active,
     };
     use crate::tree::m31_tree_component;
     use crate::tree::m31_tree_component::M31TreeInternalTrait;
@@ -46,6 +46,13 @@ pub mod M31Pool {
         NotePublished: NotePublished,
         NullifierSpent: NullifierSpent,
         Deposited: Deposited,
+        Withdrawn: Withdrawn,
+    }
+    #[derive(Drop, starknet::Event)]
+    pub struct Withdrawn {
+        pub token: ContractAddress,
+        pub recipient: ContractAddress,
+        pub amount: u128,
     }
     #[derive(Drop, starknet::Event)]
     pub struct NotePublished {
@@ -111,8 +118,25 @@ pub mod M31Pool {
                 self.nullifiers.write(k, true);
                 self.emit(NullifierSpent { nullifier: nf.span() });
             }
+            let mut created = 0_u32;
             for output in spend.outputs {
-                self.publish(read_digest(*output.commitment), delivery_digest(*output.ciphertext), *output.ciphertext);
+                // Inactive slots (zero commitment) create no note.
+                if is_active(*output.commitment) {
+                    self.publish(read_digest(*output.commitment), delivery_digest(*output.ciphertext), *output.ciphertext);
+                    created += 1;
+                }
+            }
+            let w = spend.withdrawal;
+            if w.amount != 0 {
+                assert(w.recipient.into() != 0, 'BAD_WITHDRAWAL');
+                assert(
+                    IERC20Dispatcher { contract_address: spend.token }.transfer(w.recipient, w.amount.into()),
+                    'TRANSFER_FAILED',
+                );
+                self.emit(Withdrawn { token: spend.token, recipient: w.recipient, amount: w.amount });
+            } else {
+                assert(w.recipient.into() == 0, 'BAD_WITHDRAWAL');
+                assert(created > 0, 'EMPTY_OUTPUT');
             }
             self.locked.write(false);
         }

@@ -2,9 +2,12 @@
 //! `templar/arithmetic-profile`). Verifies one blinded client payment proof and decodes its
 //! public statement; pins the client circuit's hash (`pinned.cairo`).
 //!
-//! The 23 outputs carry 92 M31 limbs, four per QM31 in coordinate order: tag `TMPZ` `R0V1`,
-//! chain, pool, token (28-bit LE felt limbs), root, nullifier₀, nullifier₁, commitment₀,
-//! delivery₀ (felt limbs), commitment₁, delivery₁ (felt limbs); digests are nine M31 words.
+//! The 28 outputs carry 112 M31 limbs, four per QM31 in coordinate order: tag (`TMPZ` and the
+//! relation/format word), chain, pool, token (28-bit LE felt limbs), root, nullifier₀,
+//! nullifier₁, commitment₀, delivery₀ (felt limbs), commitment₁, delivery₁ (felt limbs),
+//! withdrawal recipient (felt limbs), withdrawal amount (eight 16-bit LE limbs), three zeros.
+//! Digests are nine M31 words. An inactive output slot has a zero commitment and delivery; a
+//! missing withdrawal has a zero recipient and amount.
 //! The account binds the decoded statement with `binding` (felt252 Poseidon), which the pool
 //! recomputes from its spend data, as the reference ordinary pool does.
 use core::poseidon::poseidon_hash_span;
@@ -14,7 +17,7 @@ use stwo_verifier_core::fields::qm31::QM31Trait;
 
 pub mod pinned;
 
-const N_OUTPUTS: u32 = 23;
+const N_OUTPUTS: u32 = 28;
 const N_WORDS: u32 = 9;
 /// Addresses (pool, token) are below 2^251, as the reference statement's `addr` check.
 const ADDRESS_BOUND: u256 = 0x800000000000000000000000000000000000000000000000000000000000000;
@@ -29,6 +32,8 @@ pub struct Statement {
     pub nullifiers: [Span<u32>; 2],
     pub commitments: [Span<u32>; 2],
     pub deliveries: [felt252; 2],
+    pub withdrawal_recipient: felt252,
+    pub withdrawal_amount: u128,
 }
 
 /// Nine 28-bit little-endian limbs as a canonical felt252 (value below the field prime).
@@ -43,6 +48,20 @@ fn felt_from_limbs(limbs: Span<u32>) -> felt252 {
         acc = acc * LIMB_SHIFT + limb;
     }
     acc.try_into().expect('non-canonical felt')
+}
+
+/// Eight 16-bit little-endian limbs as a u128.
+fn amount_from_limbs(limbs: Span<u32>) -> u128 {
+    assert!(limbs.len() == 8, "amount limb count");
+    let mut acc: u128 = 0;
+    let mut i = limbs.len();
+    while i > 0 {
+        i -= 1;
+        let limb: u128 = (*limbs.at(i)).into();
+        assert!(limb < 0x10000, "amount limb range");
+        acc = acc * 0x10000 + limb;
+    }
+    acc
 }
 
 /// Verifies exactly one encoded client proof and returns the payment statement it proves.
@@ -85,7 +104,10 @@ pub fn verify_payment(mut proof_data: Span<felt252>) -> Statement {
         nullifiers: [nf0, nf1],
         commitments: [x.slice(56, N_WORDS), x.slice(74, N_WORDS)],
         deliveries: [felt_from_limbs(x.slice(65, N_WORDS)), felt_from_limbs(x.slice(83, N_WORDS))],
+        withdrawal_recipient: felt_from_limbs(x.slice(92, N_WORDS)),
+        withdrawal_amount: amount_from_limbs(x.slice(101, 8)),
     };
+    assert!(*x.at(109) == 0 && *x.at(110) == 0 && *x.at(111) == 0, "statement padding");
     // The reference statement's liveness checks: nonzero context, addresses in range, nonzero
     // nullifiers, commitments and delivery digests.
     assert!(statement.chain != 0 && statement.pool != 0 && statement.token != 0, "zero context");
@@ -93,12 +115,19 @@ pub fn verify_payment(mut proof_data: Span<felt252>) -> Statement {
     let token_u: u256 = statement.token.into();
     assert!(pool_u < ADDRESS_BOUND && token_u < ADDRESS_BOUND, "address range");
     let [n0, n1] = statement.nullifiers;
+    assert!(nonzero_digest(n0) && nonzero_digest(n1), "zero digest");
+    // An output slot is active exactly when its commitment is nonzero; an active one needs a
+    // delivery digest, an inactive one (zero commitment, enforced by the circuit) has none.
     let [c0, c1] = statement.commitments;
-    for d in array![n0, n1, c0, c1].span() {
-        assert!(nonzero_digest(*d), "zero digest");
-    }
     let [d0, d1] = statement.deliveries;
-    assert!(d0 != 0 && d1 != 0, "zero delivery");
+    let active0 = nonzero_digest(c0);
+    let active1 = nonzero_digest(c1);
+    assert!((d0 != 0) == active0 && (d1 != 0) == active1, "delivery");
+    // A withdrawal has both a recipient (an address) and an amount, or neither.
+    let recipient: u256 = statement.withdrawal_recipient.into();
+    assert!((recipient != 0) == (statement.withdrawal_amount != 0), "withdrawal");
+    assert!(recipient < ADDRESS_BOUND, "address range");
+    assert!(active0 || active1 || statement.withdrawal_amount != 0, "no output");
     verify_circuit(:proof, :circuit_hash);
     statement
 }
@@ -113,10 +142,10 @@ fn nonzero_digest(d: Span<u32>) -> bool {
     any
 }
 
-/// `Poseidon('TMR0_BIND_V1', chain, pool, token, root₉, nf₀₉, nf₁₉, cm₀₉, delivery₀, cm₁₉,
-/// delivery₁)`: what the pool recomputes from its spend data.
+/// `Poseidon('TMR0_BIND_V2', chain, pool, token, root₉, nf₀₉, nf₁₉, cm₀₉, delivery₀, cm₁₉,
+/// delivery₁, recipient, amount)`: what the pool recomputes from its spend data.
 pub fn binding(s: @Statement) -> felt252 {
-    let mut b: Array<felt252> = array!['TMR0_BIND_V1', *s.chain, *s.pool, *s.token];
+    let mut b: Array<felt252> = array!['TMR0_BIND_V2', *s.chain, *s.pool, *s.token];
     let [nf0, nf1] = *s.nullifiers;
     let [cm0, cm1] = *s.commitments;
     let [d0, d1] = *s.deliveries;
@@ -133,6 +162,8 @@ pub fn binding(s: @Statement) -> felt252 {
         b.append((*w).into());
     }
     b.append(d1);
+    b.append(*s.withdrawal_recipient);
+    b.append((*s.withdrawal_amount).into());
     poseidon_hash_span(b.span())
 }
 
@@ -146,6 +177,8 @@ fn main(
     nullifiers: Span<u32>,
     commitments: Span<u32>,
     deliveries: Span<felt252>,
+    withdrawal_recipient: felt252,
+    withdrawal_amount: u128,
     proof_data: Span<felt252>,
 ) -> Array<felt252> {
     let s = verify_payment(proof_data);
@@ -158,6 +191,10 @@ fn main(
     assert!(cm0 == commitments.slice(0, N_WORDS) && cm1 == commitments.slice(N_WORDS, N_WORDS), "commitments");
     let [d0, d1] = s.deliveries;
     assert!(deliveries.len() == 2 && d0 == *deliveries.at(0) && d1 == *deliveries.at(1), "deliveries");
+    assert!(
+        s.withdrawal_recipient == withdrawal_recipient && s.withdrawal_amount == withdrawal_amount,
+        "withdrawal",
+    );
     array![chain, pool, token, binding(@s)]
 }
 

@@ -233,8 +233,16 @@ the accepted local proving architecture is unchanged.
     - deposit: 57.7M (9.2×) against 6.3M;
     - L1 data gas: similar to the reference.
 
-    Hashing is over 90% of it. Not yet measured: batched appends, the real fact
-    check, whole-transaction cost.
+    Hashing is over 90% of it. At Sepolia prices:
+    - transfer 2.11 STRK vs 0.24;
+    - deposit 1.20 vs 0.13;
+    - partial withdrawal 1.08 vs 0.14;
+    - full withdrawal 0.038 vs 0.029, since it appends nothing.
+
+    R0 V2 adds withdrawals (one circuit for all shapes), end to end through
+    PROOF2 ([results](bench/m31-private-wrapper/client-port/results/stwo-client-r0-withdraw/README.md)).
+    Not yet measured: batched appends, the real fact check, whole-transaction
+    cost.
   - **Next:** PROOF2 Poseidon tier (calldata packing).
   Not yet measured: the pool's on-chain `apply_spend` with an M31-tree
   append.

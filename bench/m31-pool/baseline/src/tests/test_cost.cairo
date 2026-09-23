@@ -4,7 +4,7 @@ use core::testing::get_available_gas;
 use starknet::{ContractAddress, contract_address_const, get_tx_info, SyscallResultTrait};
 use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, test_address};
 use pool::pool::{IPoolDispatcher, IPoolDispatcherTrait};
-use pool::spend::{Output, Spend, PROTOCOL_VERSION, compute_binding, IERC20Dispatcher, IERC20DispatcherTrait};
+use pool::spend::{Output, Spend, Withdrawal, PROTOCOL_VERSION, compute_binding, IERC20Dispatcher, IERC20DispatcherTrait};
 use pool::tree::{ITreeDispatcher, ITreeDispatcherTrait};
 
 fn deploy(name: ByteArray, data: Array<felt252>) -> ContractAddress {
@@ -65,3 +65,32 @@ fn cost_spend_felt() {
     p.apply_spend(s, array![].span());
     println!("GAS apply_spend felt warm={}", g - get_available_gas());
 }
+
+/// Ordinary spend with `n_out` outputs and one withdrawal of 40 (the reference shape limits).
+fn spend_shape(p: @IPoolDispatcher, t: @IERC20Dispatcher, nf: felt252, cm: felt252, n_out: u32) -> Spend {
+    let mut outputs = array![];
+    let mut j = 0;
+    while j < n_out { outputs.append(Output { commitment: cm + j.into(), ciphertext: payload() }); j += 1; }
+    let mut s = Spend {
+        version: PROTOCOL_VERSION, chain: get_tx_info().unbox().chain_id, pool: *p.contract_address,
+        root: ITreeDispatcher { contract_address: *p.contract_address }.get_root(),
+        token: *t.contract_address, binding: 0, controller: contract_address_const::<0>(), deadline: 0, nonce: 0,
+        transition: 0, sig_r: 0, sig_s: 0, nullifiers: array![nf, nf + 1].span(), outputs: outputs.span(),
+        withdrawals: array![Withdrawal { recipient: contract_address_const::<0xb0b>(), amount: 40 }].span(),
+    };
+    s.binding = compute_binding(@s);
+    s
+}
+
+fn measure_withdraw(n_out: u32) {
+    let (p, t) = warm_pool();
+    let s = spend_shape(@p, @t, 3000, 4000, n_out);
+    let g = get_available_gas();
+    p.apply_spend(s, array![].span());
+    println!("GAS apply_spend felt outputs={} withdrawal=true warm={}", n_out, g - get_available_gas());
+}
+
+#[test]
+fn cost_partial_felt() { measure_withdraw(1); }
+#[test]
+fn cost_full_felt() { measure_withdraw(0); }

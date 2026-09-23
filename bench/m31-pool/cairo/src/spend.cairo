@@ -1,7 +1,8 @@
 //! R0 spend data and its binding. The binding is the one the R0 bridge account emits
 //! (`client-port/cairo-r0/bridge/src/lib.cairo`, `binding`):
-//! `Poseidon('TMR0_BIND_V1', chain, pool, token, root₉, nf₀₉, nf₁₉, cm₀₉, d₀, cm₁₉, d₁)`, where
-//! `dᵢ` is the reference delivery digest of output `i`'s ciphertext.
+//! `Poseidon('TMR0_BIND_V2', chain, pool, token, root₉, nf₀₉, nf₁₉, cm₀₉, d₀, cm₁₉, d₁,
+//! recipient, amount)`, where `dᵢ` is the reference delivery digest of output `i`'s ciphertext,
+//! or 0 for an inactive output slot (zero commitment, empty ciphertext).
 use core::poseidon::poseidon_hash_span;
 use starknet::ContractAddress;
 
@@ -12,7 +13,15 @@ pub struct Output {
     pub ciphertext: Span<felt252>,
 }
 
-/// R0: two inputs, two outputs, one token, no withdrawals or controller.
+#[derive(Copy, Drop, Serde)]
+pub struct Withdrawal {
+    /// Zero, with a zero amount, when the spend withdraws nothing.
+    pub recipient: ContractAddress,
+    pub amount: u128,
+}
+
+/// R0 (V2): two inputs, up to two outputs (a zero commitment marks an inactive slot), at most
+/// one withdrawal, one token, no controller.
 #[derive(Drop, Serde)]
 pub struct Spend {
     pub chain: felt252,
@@ -23,7 +32,19 @@ pub struct Spend {
     /// Two nullifiers, nine words each.
     pub nullifiers: Span<felt252>,
     pub outputs: Span<Output>,
+    pub withdrawal: Withdrawal,
     pub binding: felt252,
+}
+
+/// Whether an output slot is active: its commitment is not all zero.
+pub fn is_active(commitment: Span<felt252>) -> bool {
+    let mut active = false;
+    for w in commitment {
+        if *w != 0 {
+            active = true;
+        }
+    }
+    active
 }
 
 /// Canonical 304 bytes = nine 31-byte big-endian words + one 25-byte word (the reference pool's
@@ -49,14 +70,40 @@ pub fn compute_binding(s: @Spend) -> felt252 {
     assert(s.root.len() == 9, 'ROOT_LENGTH');
     assert(s.nullifiers.len() == 18, 'INPUT_COUNT');
     assert(s.outputs.len() == 2, 'OUTPUT_COUNT');
-    let mut data = array!['TMR0_BIND_V1', *s.chain, (*s.pool).into(), (*s.token).into()];
-    data.append_span(*s.root);
-    data.append_span(*s.nullifiers);
+    let mut cms = array![];
+    let mut deliveries = array![];
     for output in *s.outputs {
         assert(output.commitment.len() == 9, 'COMMITMENT_LENGTH');
-        data.append_span(*output.commitment);
-        data.append(delivery_digest(*output.ciphertext));
+        cms.append_span(*output.commitment);
+        if is_active(*output.commitment) {
+            deliveries.append(delivery_digest(*output.ciphertext));
+        } else {
+            assert(output.ciphertext.len() == 0, 'INACTIVE_PAYLOAD');
+            deliveries.append(0);
+        }
     }
+    let w = *s.withdrawal;
+    binding_of(
+        *s.chain, (*s.pool).into(), (*s.token).into(), *s.root, *s.nullifiers, cms.span(),
+        deliveries.span(), w.recipient.into(), w.amount,
+    )
+}
+
+/// `Poseidon('TMR0_BIND_V2', chain, pool, token, root₉, nf₀₉, nf₁₉, cm₀₉, d₀, cm₁₉, d₁,
+/// recipient, amount)` over already-computed delivery digests.
+pub fn binding_of(
+    chain: felt252, pool: felt252, token: felt252, root: Span<felt252>, nullifiers: Span<felt252>,
+    commitments: Span<felt252>, deliveries: Span<felt252>, recipient: felt252, amount: u128,
+) -> felt252 {
+    let mut data = array!['TMR0_BIND_V2', chain, pool, token];
+    data.append_span(root);
+    data.append_span(nullifiers);
+    data.append_span(commitments.slice(0, 9));
+    data.append(*deliveries.at(0));
+    data.append_span(commitments.slice(9, 9));
+    data.append(*deliveries.at(1));
+    data.append(recipient);
+    data.append(amount.into());
     poseidon_hash_span(data.span())
 }
 

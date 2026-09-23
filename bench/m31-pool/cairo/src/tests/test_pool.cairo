@@ -3,7 +3,7 @@ use snforge_std::{ContractClassTrait, DeclareResultTrait, declare, test_address}
 use starknet::{ContractAddress, SyscallResultTrait, get_tx_info};
 use m31_pool::hash::{COMPRESS, SPONGE};
 use m31_pool::pool::{IM31PoolDispatcher, IM31PoolDispatcherTrait};
-use m31_pool::spend::{IERC20Dispatcher, IERC20DispatcherTrait, Output, Spend, compute_binding};
+use m31_pool::spend::{IERC20Dispatcher, IERC20DispatcherTrait, Output, Spend, Withdrawal, compute_binding};
 use m31_pool::tree::{IM31TreeDispatcher, IM31TreeDispatcherTrait};
 use m31_pool::tree::m31_tree_component::M31TreeInternalTrait;
 use super::vectors::*;
@@ -35,18 +35,35 @@ fn setup(format: u8, store_nodes: bool) -> Setup {
 fn deposit(s: @Setup, seed: felt252) {
     (*s.pool).deposit((*s.token).contract_address, 100, digest(seed), payload());
 }
-fn spend(s: @Setup, nf_seed: felt252, cm_seed: felt252) -> Spend {
+const RECIPIENT: felt252 = 0xb0b;
+#[starknet::interface]
+trait IBalance<T> {
+    fn balance_of(self: @T, account: ContractAddress) -> u256;
+}
+fn zero_digest() -> Span<felt252> {
+    array![0, 0, 0, 0, 0, 0, 0, 0, 0].span()
+}
+/// A spend with `n_out` active outputs (0..2) and a withdrawal of `withdrawn` (0 for none).
+fn spend_shape(s: @Setup, nf_seed: felt252, cm_seed: felt252, n_out: u32, withdrawn: u128) -> Spend {
     let mut nfs = array![];
     nfs.append_span(digest(nf_seed));
     nfs.append_span(digest(nf_seed + 100));
+    let out = |j: u32| if j < n_out {
+        Output { commitment: digest(cm_seed + (100 * j).into()), ciphertext: payload() }
+    } else {
+        Output { commitment: zero_digest(), ciphertext: array![].span() }
+    };
+    let recipient: ContractAddress = if withdrawn != 0 { RECIPIENT.try_into().unwrap() } else { 0.try_into().unwrap() };
     let mut sp = Spend {
         chain: get_tx_info().unbox().chain_id, pool: (*s.pool).contract_address, token: (*s.token).contract_address,
-        root: (*s.tree).get_root(), nullifiers: nfs.span(),
-        outputs: array![Output { commitment: digest(cm_seed), ciphertext: payload() }, Output { commitment: digest(cm_seed + 100), ciphertext: payload() }].span(),
-        binding: 0,
+        root: (*s.tree).get_root(), nullifiers: nfs.span(), outputs: array![out(0), out(1)].span(),
+        withdrawal: Withdrawal { recipient, amount: withdrawn }, binding: 0,
     };
     sp.binding = compute_binding(@sp);
     sp
+}
+fn spend(s: @Setup, nf_seed: felt252, cm_seed: felt252) -> Spend {
+    spend_shape(s, nf_seed, cm_seed, 2, 0)
 }
 
 // ---------------------------------------------------------------- correctness
@@ -137,6 +154,45 @@ fn non_canonical_commitment_rejected() {
     s.pool.apply_spend(sp, array![].span());
 }
 #[test]
+fn withdrawals_pay_out_and_skip_inactive_slots() {
+    let s = setup(COMPRESS, false);
+    deposit(@s, 7);
+    deposit(@s, 8);
+    s.pool.apply_spend(spend_shape(@s, 1000, 2000, 1, 40), array![].span());
+    assert_eq!(s.tree.get_leaf_count(), 3);
+    s.pool.apply_spend(spend_shape(@s, 3000, 4000, 0, 60), array![].span());
+    assert_eq!(s.tree.get_leaf_count(), 3);
+    let bal = IBalanceDispatcher { contract_address: s.token.contract_address };
+    assert_eq!(bal.balance_of(RECIPIENT.try_into().unwrap()), 100);
+}
+#[test]
+#[should_panic(expected: ('BAD_WITHDRAWAL',))]
+fn withdrawal_without_recipient_rejected() {
+    let s = setup(COMPRESS, false);
+    deposit(@s, 7);
+    let mut sp = spend_shape(@s, 1000, 2000, 1, 40);
+    sp.withdrawal = Withdrawal { recipient: 0.try_into().unwrap(), amount: 40 };
+    sp.binding = compute_binding(@sp);
+    s.pool.apply_spend(sp, array![].span());
+}
+#[test]
+#[should_panic(expected: ('EMPTY_OUTPUT',))]
+fn empty_spend_rejected() {
+    let s = setup(COMPRESS, false);
+    deposit(@s, 7);
+    s.pool.apply_spend(spend_shape(@s, 1000, 2000, 0, 0), array![].span());
+}
+#[test]
+#[should_panic(expected: ('BAD_BINDING',))]
+fn redirected_withdrawal_rejected() {
+    let s = setup(COMPRESS, false);
+    deposit(@s, 7);
+    let mut sp = spend_shape(@s, 1000, 2000, 1, 40);
+    sp.withdrawal = Withdrawal { recipient: 0xabc.try_into().unwrap(), amount: 40 };
+    s.pool.apply_spend(sp, array![].span());
+}
+
+#[test]
 fn old_root_still_accepted() {
     let s = setup(COMPRESS, true);
     deposit(@s, 7);
@@ -178,12 +234,16 @@ fn measure_deposit(format: u8, store_nodes: bool, measured: bool) {
 }
 
 fn measure_spend(format: u8, store_nodes: bool, measured: bool) {
+    measure_spend_shape(format, store_nodes, measured, 2, 0);
+}
+
+fn measure_spend_shape(format: u8, store_nodes: bool, measured: bool, n_out: u32, withdrawn: u128) {
     let s = warm_pool(format, store_nodes);
-    let sp = spend(@s, 3000, 4000);
+    let sp = spend_shape(@s, 3000, 4000, n_out, withdrawn);
     if measured {
         let g = get_available_gas();
         s.pool.apply_spend(sp, array![].span());
-        println!("GAS apply_spend format={} store_nodes={} warm={}", format, store_nodes, g - get_available_gas());
+        println!("GAS apply_spend format={} store_nodes={} outputs={} withdrawal={} warm={}", format, store_nodes, n_out, withdrawn != 0, g - get_available_gas());
     }
 }
 
@@ -211,3 +271,12 @@ fn cost_spend_compress_nodes() { measure_spend(COMPRESS, true, true); }
 fn cost_spend_sponge_frontier() { measure_spend(SPONGE, false, true); }
 #[test]
 fn cost_spend_sponge_nodes() { measure_spend(SPONGE, true, true); }
+
+#[test]
+fn cost_partial_compress_frontier() { measure_spend_shape(COMPRESS, false, true, 1, 40); }
+#[test]
+fn cost_full_compress_frontier() { measure_spend_shape(COMPRESS, false, true, 0, 40); }
+#[test]
+fn cost_partial_sponge_frontier() { measure_spend_shape(SPONGE, false, true, 1, 40); }
+#[test]
+fn cost_full_sponge_frontier() { measure_spend_shape(SPONGE, false, true, 0, 40); }
