@@ -42,3 +42,13 @@ pub const BIND_D0: felt252 = 0x33fa44bab40be36f;
 pub const BIND_RECIPIENT: felt252 = 0xc75615618748d307;
 pub const BIND_AMOUNT: u128 = 10447119047734771758634985628969778910;
 pub const BIND_EXPECTED: felt252 = 0x6d3f249bf1307b950644d359d79f88eaccad5477f9796bfd26cdca7fe12dcf0;
+
+// Facts of a real PROOF2 (R0 full withdrawal, synthetic fixture, client-port results/stwo-client-r0-withdraw)
+// and the statement account message it carries.
+pub const REAL_FACTS: [felt252; 9] = [0x50524f4f4632, 0x5649525455414c5f534e4f53, 0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1, 0x5649525455414c5f534e4f5330, 0x64, 0x499735b894ba8de9a4f825b4719201c82a2646de369f6711d05c55e2a41bc8e, 0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57, 0x1, 0x1d0204228980c482b6741a12fe46df7c9197cbb0976478882600ecff9b83b7d];
+pub const REAL_STATEMENT: felt252 = 0x13e4e019a81f96f9614b8a76382174382dc7ef4750692787d137fd6e8450af0;
+pub const REAL_STATEMENT_CLASS: felt252 = 0x64b7d6a2519f576de8bbe8f98a49bb9ef65a81f4b4c4ce2a2060d98c50d53bf;
+pub const REAL_CHAIN: felt252 = 0x534e5f5345504f4c4941;
+pub const REAL_POOL: felt252 = 0x862bdbe52280006b;
+pub const REAL_BINDING: felt252 = 0x79c8706de19eb31f46cfb9df9ef13cf95f2dad4c319ab18cc130ab8a1789c3a;
+pub const REAL_BASE_BLOCK: u64 = 100;

@@ -71,5 +71,16 @@ t += ['', '// A real R0 V2 statement (partial withdrawal) and its binding from t
       f"pub const BIND_RECIPIENT: felt252 = {pub['withdrawal_recipient']};",
       f"pub const BIND_AMOUNT: u128 = {pub['withdrawal_amount']};",
       f"pub const BIND_EXPECTED: felt252 = {hex(validate_bridge_r0.binding(pub))};"]
+rf = json.loads((HERE / 'real-proof2-facts.json').read_text())
+pl = [int(x, 16) for x in rf['message']['payload']]
+t += ['', '// Facts of a real PROOF2 (R0 full withdrawal, synthetic fixture, client-port results/stwo-client-r0-withdraw)',
+      '// and the statement account message it carries.',
+      f"pub const REAL_FACTS: [felt252; 9] = [{', '.join(rf['facts'])}];",
+      f"pub const REAL_STATEMENT: felt252 = {rf['message']['from']};",
+      f"pub const REAL_STATEMENT_CLASS: felt252 = {hex(pl[0])};",
+      f"pub const REAL_CHAIN: felt252 = {hex(pl[2])};",
+      f"pub const REAL_POOL: felt252 = {hex(pl[3])};",
+      f"pub const REAL_BINDING: felt252 = {hex(pl[4])};",
+      f"pub const REAL_BASE_BLOCK: u64 = {int(rf['facts'][4], 16)};"]
 (HERE / 'cairo/src/tests/vectors.cairo').write_text('\n'.join(t) + '\n')
 print('generated')

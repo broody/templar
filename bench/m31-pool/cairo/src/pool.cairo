@@ -10,6 +10,8 @@ pub trait IM31Pool<TState> {
     fn apply_spend(ref self: TState, spend: crate::spend::Spend, proof: Span<felt252>);
     fn get_nullifier_spent(self: @TState, nullifier: Span<felt252>) -> bool;
     fn get_delivery_digest(self: @TState, index: u64) -> felt252;
+    fn set_verifier(ref self: TState, verifier: ContractAddress);
+    fn get_verifier(self: @TState) -> ContractAddress;
 }
 
 #[starknet::contract]
@@ -164,6 +166,17 @@ pub mod M31Pool {
         fn get_delivery_digest(self: @ContractState, index: u64) -> felt252 {
             assert(index < self.tree.tree_count.read(), 'UNKNOWN_INDEX');
             self.delivery_digests.read(index)
+        }
+
+        /// Owner only: the adapter needs the pool's address, so it is attached after deployment.
+        fn set_verifier(ref self: ContractState, verifier: ContractAddress) {
+            assert(get_caller_address() == self.owner.read(), 'NOT_OWNER');
+            assert(verifier.into() != 0, 'ZERO_VERIFIER');
+            self.verifier.write(verifier);
+        }
+
+        fn get_verifier(self: @ContractState) -> ContractAddress {
+            self.verifier.read()
         }
     }
 
