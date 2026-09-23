@@ -37,6 +37,18 @@ by the gateway and sequencer, so here it was checked locally (`prove_large`).
 - The same signed transfer, re-simulated with a Sierra 1.7 account as sender
   (`results/transfer-simulation-modern-accounts.json`): `apply_spend` is 52.2M, against 51.8M in
   snforge. The whole transaction is 134.5M, about 3.09 STRK, of which ~75M is `gas_per_proof`.
+- **Relayer upgraded (2026-09-23).** `account-1` went from Argent 0.3.1 to Argent 0.5.0
+  (Sierra 1.7, class `0x0734…b2c2`) with `upgrade.py`, for 0.079 STRK, tx `0x1b00…c5fe`. The
+  script first simulated the upgrade together with a normally signed follow-up transaction; the
+  owner key is unchanged. From the upgraded relayer:
+
+  | Transaction | Before (Argent 0.3.1) | After (Argent 0.5.0) |
+  | --- | ---: | ---: |
+  | Deposit (dry run) | 188.1M L2 gas, 3.96 STRK | 70.4M L2 gas, **1.48 STRK** |
+  | PROOF2 transfer (`simulate_spend.py`) | 220.6M, 4.64 STRK | 134.9M, **3.12 STRK** |
+
+  The transfer is `apply_spend` 52.2M, validation 0.3M, and the rest transaction-level,
+  including ~75M `gas_per_proof`.
 - **Consequence: fees depend on the caller's account class.** Users and relayers on accounts
   older than Sierra 1.7 pay about 2.7× for the pool's hashing.
 
