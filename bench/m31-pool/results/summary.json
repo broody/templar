@@ -1,0 +1,35 @@
+{
+  "scope": "snforge 0.63.0 local VM, Scarb 2.18.0; one warm call after 4 deposits and one spend; L2 gas measured in-test around the call (matches --gas-report to <0.1%); L1 data gas as the difference of test totals with and without the call. Fact check is a mock verifier in both pools. Not a network fee quote.",
+  "per_call": {
+    "m31_compress_frontier": {
+      "deposit_l2": 57694152,
+      "apply_spend_l2": 101578829,
+      "deposit_l1_data": 288,
+      "apply_spend_l1_data": 768
+    },
+    "m31_compress_nodes": {
+      "deposit_l2": 59794852,
+      "apply_spend_l2": 105853169,
+      "deposit_l1_data": 672,
+      "apply_spend_l1_data": 1344
+    },
+    "m31_sponge_frontier": {
+      "deposit_l2": 110417032,
+      "apply_spend_l2": 207024589,
+      "deposit_l1_data": 288,
+      "apply_spend_l1_data": 768
+    },
+    "m31_sponge_nodes": {
+      "deposit_l2": 112517732,
+      "apply_spend_l2": 211298929,
+      "deposit_l1_data": 672,
+      "apply_spend_l1_data": 1344
+    },
+    "felt252_reference": {
+      "deposit_l2": 6267956,
+      "apply_spend_l2": 11534911,
+      "deposit_l1_data": 480,
+      "apply_spend_l1_data": 1056
+    }
+  }
+}

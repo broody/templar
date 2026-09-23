@@ -1,0 +1,78 @@
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.10s
+   Compiling test(pool_unittest) pool v0.1.0 (/home/broody/development/templar/bench/m31-pool/baseline/Scarb.toml)
+warn[E2100]: Unused import: `pool::tree::StorageMapReadAccess`
+ --> /home/broody/development/templar/bench/m31-pool/baseline/src/tree.cairo:17:5
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+    ^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StorageMapWriteAccess`
+ --> /home/broody/development/templar/bench/m31-pool/baseline/src/tree.cairo:17:27
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/m31-pool/baseline/src/tree.cairo:17:50
+    StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tree::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/m31-pool/baseline/src/tree.cairo:18:5
+    StoragePointerWriteAccess,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::test_token::E2EToken::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/m31-pool/baseline/src/test_token.cairo:9:59
+        Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `pool::test_token::E2EToken::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/m31-pool/baseline/src/test_token.cairo:10:9
+        StoragePointerWriteAccess,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"corelib-internal-use"` with no `#[feature("corelib-internal-use")]` attribute. Note: "Use `starknet` directly"
+ --> /home/broody/development/templar/bench/m31-pool/baseline/src/test_token.cairo:6:15
+    use core::starknet::{get_caller_address, ContractAddress};
+              ^^^^^^^^
+
+warn[E2100]: Unused import: `pool::tests::test_proof_adapter::ContractAddress`
+ --> /home/broody/development/templar/bench/m31-pool/baseline/src/tests/test_proof_adapter.cairo:4:40
+use starknet::{contract_address_const, ContractAddress, SyscallResultTrait};
+                                       ^^^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"deprecated-starknet-consts"` with no `#[feature("deprecated-starknet-consts")]` attribute. Note: "Use `TryInto::try_into` in const context instead."
+ --> /home/broody/development/templar/bench/m31-pool/baseline/src/tests/test_proof_adapter.cairo:4:16
+use starknet::{contract_address_const, ContractAddress, SyscallResultTrait};
+               ^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"deprecated-starknet-consts"` with no `#[feature("deprecated-starknet-consts")]` attribute. Note: "Use `TryInto::try_into` in const context instead."
+ --> /home/broody/development/templar/bench/m31-pool/baseline/src/tests/test_push.cairo:3:33
+use starknet::{ContractAddress, contract_address_const, get_tx_info, SyscallResultTrait};
+                                ^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"deprecated-starknet-consts"` with no `#[feature("deprecated-starknet-consts")]` attribute. Note: "Use `TryInto::try_into` in const context instead."
+ --> /home/broody/development/templar/bench/m31-pool/baseline/src/tests/test_controller.cairo:1:32
+use starknet::{ContractAddress,contract_address_const,get_tx_info,SyscallResultTrait};
+                               ^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"deprecated-starknet-consts"` with no `#[feature("deprecated-starknet-consts")]` attribute. Note: "Use `TryInto::try_into` in const context instead."
+ --> /home/broody/development/templar/bench/m31-pool/baseline/src/tests/test_cost.cairo:4:33
+use starknet::{ContractAddress, contract_address_const, get_tx_info, SyscallResultTrait};
+                                ^^^^^^^^^^^^^^^^^^^^^^
+
+    Finished `dev` profile target(s) in 2 seconds
+
+
+Collected 3 test(s) from pool package
+Running 3 test(s) from src/
+[PASS] pool::tests::test_cost::cost_base_felt (l1_gas: ~0, l1_data_gas: ~10368, l2_gas: ~84105888)
+GAS deposit felt warm=6267956
+[PASS] pool::tests::test_cost::cost_deposit_felt (l1_gas: ~0, l1_data_gas: ~10848, l2_gas: ~92572504)
+GAS apply_spend felt warm=11534911
+[PASS] pool::tests::test_cost::cost_spend_felt (l1_gas: ~0, l1_data_gas: ~11424, l2_gas: ~100791618)
+Tests: 3 passed, 0 failed, 0 ignored, 68 filtered out
+

@@ -225,9 +225,12 @@ in the upload.
   absent components, and the bridge build now enforces the limit. Earlier accounts (circuit A,
   stock and membership bridges) were measured by Sierra size, and must be rechecked before any
   declaration.
-- **On-chain tree cost.** Appending to an M31 tree costs about 92M L2 gas per spend with
-  single-permutation nodes, or 181M with sponge nodes, against about 0.9M for the felt252 pool
-  (Cairo performance review). Where appends run is an open design choice.
+- **On-chain tree cost.** Measured
+  ([bench/m31-pool](../../bench/m31-pool/README.md)): a pool appending to an on-chain M31 tree
+  costs 101.6M L2 gas per 2-in/2-out spend with single-permutation nodes (8.8× the felt252
+  reference pool's 11.5M), or 207.0M with sponge nodes (17.9×). A deposit costs 57.7M against
+  6.3M. Hashing is over 90% of it. Where appends run is an open design choice (on chain,
+  batched off chain and proven, or unchanged felt252).
 - **Maintenance.** The stwo-circuits route needs our fork until upstream offers an
   arithmetic-only profile. The custom route needs its own protocol, prover, verifier
   and circuit A maintained and reviewed indefinitely.

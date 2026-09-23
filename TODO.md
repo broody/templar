@@ -225,8 +225,17 @@ the accepted local proving architecture is unchanged.
     - compressed-node fixed words moved to capacity positions;
     - per-format statement tags and liveness checks;
     - negative OS captures.
-  - **Next:** the tree strategy (M31 appends ~92–181M gas per spend;
-    options A–D under discussion), then the PROOF2 Poseidon tier.
+  - **Tree strategy: option A measured** ([bench/m31-pool](bench/m31-pool/README.md)).
+    An on-chain Poseidon2-M31 tree against the felt252 reference pool, warm, same
+    harness (snforge local VM):
+    - 2-in/2-out spend: 101.6M L2 gas (8.8×) with single-permutation nodes, or
+      207.0M (17.9×) with sponge nodes, against 11.5M;
+    - deposit: 57.7M (9.2×) against 6.3M;
+    - L1 data gas: similar to the reference.
+
+    Hashing is over 90% of it. Not yet measured: batched appends, the real fact
+    check, whole-transaction cost.
+  - **Next:** PROOF2 Poseidon tier (calldata packing).
   Not yet measured: the pool's on-chain `apply_spend` with an M31-tree
   append.
 
