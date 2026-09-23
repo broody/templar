@@ -10,16 +10,17 @@ spec = importlib.util.spec_from_file_location('ref_poseidon', HERE.parents[1] / 
 ref = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(ref)
 P = 2**31 - 1
-N_LIMBS = 112
+N_LIMBS = 128
 CLAIMED_SUMS = 2 + N_LIMBS + 1
 
 
 def binding(pub):
     s = lambda b: int.from_bytes(b, 'big')
-    b = [s(b'TMR0_BIND_V2'), int(pub['chain'], 16), int(pub['pool'], 16), int(pub['token'], 16)]
+    b = [s(b'TMR0_BIND_V3'), int(pub['chain'], 16), int(pub['pool'], 16), int(pub['token'], 16)]
     b += pub['root'] + pub['nullifiers'][0] + pub['nullifiers'][1]
     b += pub['commitments'][0] + [int(pub['deliveries'][0], 16)] + pub['commitments'][1] + [int(pub['deliveries'][1], 16)]
     b += [int(pub['withdrawal_recipient'], 16), int(pub['withdrawal_amount'])]
+    b += [int(pub['intent'], 16)] + pub['identity']
     return ref.poseidon_hash_span(b)
 
 
@@ -29,7 +30,7 @@ def args(pub, data, chain=CHAIN, **over):
     return [chain, int(p['pool'], 16), int(p['token'], 16), *span(p['root']),
             *span(p['nullifiers'][0] + p['nullifiers'][1]), *span(p['commitments'][0] + p['commitments'][1]),
             *span([int(d, 16) for d in p['deliveries']]), int(p['withdrawal_recipient'], 16),
-            int(p['withdrawal_amount']), *data]
+            int(p['withdrawal_amount']), int(p['intent'], 16), *span(p['identity']), *data]
 
 
 def main():
@@ -38,7 +39,7 @@ def main():
     pub = json.loads((proof_dir / 'public.json').read_text())
     assert int(pub['chain'], 16) == CHAIN
     data = [int(x, 16) for x in json.loads((proof_dir / 'cairo-arguments.json').read_text())]
-    assert data[0] == len(data) - 1 and data[1] == 28, 'span length and 28 outputs'
+    assert data[0] == len(data) - 1 and data[1] == 32, 'span length and 32 outputs'
     eq, triple_xor = CLAIMED_SUMS, CLAIMED_SUMS + 2 * 4
     assert data[eq:eq + 4] != [0] * 4 and data[triple_xor:triple_xor + 4] == [0] * 4, 'claimed-sum layout'
     expected = [CHAIN, int(pub['pool'], 16), int(pub['token'], 16), binding(pub)]
@@ -65,6 +66,7 @@ def main():
     cases.append(('wrong-delivery', args(pub, data, deliveries=[pub['deliveries'][0], hex(int(pub['deliveries'][1], 16) + 1)]), False))
     cases.append(('wrong-withdrawal-recipient', args(pub, data, withdrawal_recipient=hex(int(pub['withdrawal_recipient'], 16) + 1)), False))
     cases.append(('wrong-withdrawal-amount', args(pub, data, withdrawal_amount=int(pub['withdrawal_amount']) + 1), False))
+    cases.append(('wrong-intent', args(pub, data, intent=hex(int(pub['intent'], 16) + 1)), False))
     # A forged proof (math review M2): valid STARK and LogUp sum for a forged statement, balanced on
     # the absent triple_xor claimed sum. Only the absent-component check can reject it.
     forged_dir = proof_dir / 'forged-absent-sum'

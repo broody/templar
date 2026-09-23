@@ -29,7 +29,7 @@ def main():
     # Membership (8 outputs) or R0 payment (23 outputs): template and message tag per purpose.
     template, tag, n_outputs = {
         'tmpzsa-client-membership': ('cairo-arith', 'TMPZSA01_MEMBERSHIP_V1', 8),
-        'tmpzr0-client-payment': ('cairo-r0', 'TMPZR0_PAYMENT_V2', 28),
+        'tmpzr0-client-payment': ('cairo-r0', 'TMPZR0_PAYMENT_V3', 32),
     }[m['purpose']]
     assert m['n_outputs'] == n_outputs
     logs = m['component_log_sizes']

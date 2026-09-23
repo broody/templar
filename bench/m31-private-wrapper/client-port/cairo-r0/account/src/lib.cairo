@@ -34,7 +34,7 @@ pub mod PaymentVerifierAccount {
         let binding = templar_membership_bridge::binding(@statement);
         let class_hash = get_class_hash_at_syscall(get_contract_address()).unwrap_syscall();
         let payload = array![
-            class_hash.into(), 'TMPZR0_PAYMENT_V2', statement.chain, statement.pool, binding,
+            class_hash.into(), 'TMPZR0_PAYMENT_V3', statement.chain, statement.pool, binding,
         ];
         send_message_to_l1_syscall(0, payload.span()).unwrap_syscall();
     }

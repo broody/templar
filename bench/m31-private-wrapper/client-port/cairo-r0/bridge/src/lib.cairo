@@ -2,12 +2,15 @@
 //! `templar/arithmetic-profile`). Verifies one blinded client payment proof and decodes its
 //! public statement; pins the client circuit's hash (`pinned.cairo`).
 //!
-//! The 28 outputs carry 112 M31 limbs, four per QM31 in coordinate order: tag (`TMPZ` and the
-//! relation/format word), chain, pool, token (28-bit LE felt limbs), root, nullifier₀,
+//! The 32 outputs (V3) carry 128 M31 limbs, four per QM31 in coordinate order: tag (`TMPZ` and
+//! the relation/format word), chain, pool, token (28-bit LE felt limbs), root, nullifier₀,
 //! nullifier₁, commitment₀, delivery₀ (felt limbs), commitment₁, delivery₁ (felt limbs),
-//! withdrawal recipient (felt limbs), withdrawal amount (eight 16-bit LE limbs), three zeros.
+//! withdrawal recipient (felt limbs), withdrawal amount (eight 16-bit LE limbs), execution
+//! intent (felt limbs), identity handle (nine words), one zero.
 //! Digests are nine M31 words. An inactive output slot has a zero commitment and delivery; a
-//! missing withdrawal has a zero recipient and amount.
+//! missing withdrawal has a zero recipient and amount. A nonzero intent authorizes one open-note
+//! execution (the pool recomputes it) and needs a withdrawal (the adapter budget); a nonzero
+//! identity handle needs an intent.
 //! The account binds the decoded statement with `binding` (felt252 Poseidon), which the pool
 //! recomputes from its spend data, as the reference ordinary pool does.
 use core::poseidon::poseidon_hash_span;
@@ -17,7 +20,7 @@ use stwo_verifier_core::fields::qm31::QM31Trait;
 
 pub mod pinned;
 
-const N_OUTPUTS: u32 = 28;
+const N_OUTPUTS: u32 = 32;
 const N_WORDS: u32 = 9;
 /// Addresses (pool, token) are below 2^251, as the reference statement's `addr` check.
 const ADDRESS_BOUND: u256 = 0x800000000000000000000000000000000000000000000000000000000000000;
@@ -34,6 +37,8 @@ pub struct Statement {
     pub deliveries: [felt252; 2],
     pub withdrawal_recipient: felt252,
     pub withdrawal_amount: u128,
+    pub intent: felt252,
+    pub identity: Span<u32>,
 }
 
 /// Nine 28-bit little-endian limbs as a canonical felt252 (value below the field prime).
@@ -106,8 +111,10 @@ pub fn verify_payment(mut proof_data: Span<felt252>) -> Statement {
         deliveries: [felt_from_limbs(x.slice(65, N_WORDS)), felt_from_limbs(x.slice(83, N_WORDS))],
         withdrawal_recipient: felt_from_limbs(x.slice(92, N_WORDS)),
         withdrawal_amount: amount_from_limbs(x.slice(101, 8)),
+        intent: felt_from_limbs(x.slice(109, N_WORDS)),
+        identity: x.slice(118, N_WORDS),
     };
-    assert!(*x.at(109) == 0 && *x.at(110) == 0 && *x.at(111) == 0, "statement padding");
+    assert!(*x.at(127) == 0, "statement padding");
     // The reference statement's liveness checks: nonzero context, addresses in range, nonzero
     // nullifiers, commitments and delivery digests.
     assert!(statement.chain != 0 && statement.pool != 0 && statement.token != 0, "zero context");
@@ -128,6 +135,10 @@ pub fn verify_payment(mut proof_data: Span<felt252>) -> Statement {
     assert!((recipient != 0) == (statement.withdrawal_amount != 0), "withdrawal");
     assert!(recipient < ADDRESS_BOUND, "address range");
     assert!(active0 || active1 || statement.withdrawal_amount != 0, "no output");
+    // V3: an execution intent spends through a withdrawal (the adapter budget); an identity
+    // handle only accompanies an intent.
+    assert!(statement.intent == 0 || statement.withdrawal_amount != 0, "intent budget");
+    assert!(!nonzero_digest(statement.identity) || statement.intent != 0, "identity intent");
     verify_circuit(:proof, :circuit_hash);
     statement
 }
@@ -142,10 +153,11 @@ fn nonzero_digest(d: Span<u32>) -> bool {
     any
 }
 
-/// `Poseidon('TMR0_BIND_V2', chain, pool, token, root₉, nf₀₉, nf₁₉, cm₀₉, delivery₀, cm₁₉,
-/// delivery₁, recipient, amount)`: what the pool recomputes from its spend data.
+/// `Poseidon('TMR0_BIND_V3', chain, pool, token, root₉, nf₀₉, nf₁₉, cm₀₉, delivery₀, cm₁₉,
+/// delivery₁, recipient, amount, intent, identity₉)`: what the pool recomputes from its spend
+/// data.
 pub fn binding(s: @Statement) -> felt252 {
-    let mut b: Array<felt252> = array!['TMR0_BIND_V2', *s.chain, *s.pool, *s.token];
+    let mut b: Array<felt252> = array!['TMR0_BIND_V3', *s.chain, *s.pool, *s.token];
     let [nf0, nf1] = *s.nullifiers;
     let [cm0, cm1] = *s.commitments;
     let [d0, d1] = *s.deliveries;
@@ -164,6 +176,10 @@ pub fn binding(s: @Statement) -> felt252 {
     b.append(d1);
     b.append(*s.withdrawal_recipient);
     b.append((*s.withdrawal_amount).into());
+    b.append(*s.intent);
+    for w in *s.identity {
+        b.append((*w).into());
+    }
     poseidon_hash_span(b.span())
 }
 
@@ -179,6 +195,8 @@ fn main(
     deliveries: Span<felt252>,
     withdrawal_recipient: felt252,
     withdrawal_amount: u128,
+    intent: felt252,
+    identity: Span<u32>,
     proof_data: Span<felt252>,
 ) -> Array<felt252> {
     let s = verify_payment(proof_data);
@@ -195,6 +213,7 @@ fn main(
         s.withdrawal_recipient == withdrawal_recipient && s.withdrawal_amount == withdrawal_amount,
         "withdrawal",
     );
+    assert!(s.intent == intent && s.identity == identity, "intent or identity");
     array![chain, pool, token, binding(@s)]
 }
 

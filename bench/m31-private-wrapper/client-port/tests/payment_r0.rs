@@ -9,7 +9,7 @@ use templar_client_verifier_circuit::payment::{
 };
 
 const TREES: [Tree; 2] = [Tree::Sponge, Tree::Compress];
-const SHAPES: [Shape; 3] = [Shape::Transfer, Shape::Partial, Shape::Full];
+const SHAPES: [Shape; 5] = [Shape::Transfer, Shape::Partial, Shape::Full, Shape::Invoke, Shape::Shadow];
 
 fn outputs(tree: Tree, public: &Public, private: &Private) -> (Vec<u32>, bool) {
     let mut c = Context::<QM31>::new(N_OUTPUTS);
@@ -26,6 +26,7 @@ fn redo(tree: Tree, public: &Public, p: &Private) -> Result<Public, String> {
         &public.token,
         public.deliveries.clone(),
         (public.withdrawal_recipient.clone(), public.withdrawal_amount),
+        &public.intent,
         p,
     )
 }
@@ -165,5 +166,34 @@ fn wallet_tree_paths_match_pool() {
                 assert_eq!(payment::climb(tree, &leaves[p], p as u32, path), root, "{name} path {p} of {n}");
             }
         }
+    }
+}
+
+/// V3: the identity handle is `H(IDENTITY, sk₀ ‖ scope)` exactly when the identity flag is set,
+/// and zero otherwise; an identity needs an intent, and an intent needs a budget.
+#[test]
+fn v3_intent_and_identity() {
+    for tree in TREES {
+        let (public, private) = fresh_shape(tree, Shape::Shadow, &mut StdRng::seed_from_u64(12));
+        assert_ne!(public.intent, "0x0");
+        assert_eq!(public.identity, payment::identity_handle(&private.inputs[0].sk, &private.identity.scope));
+        assert!(public.identity.iter().any(|w| *w != 0));
+        let (invoke, _) = fresh_shape(tree, Shape::Invoke, &mut StdRng::seed_from_u64(12));
+        assert_eq!(invoke.identity, [0; 9]);
+        let (transfer, _) = fresh_shape(tree, Shape::Transfer, &mut StdRng::seed_from_u64(12));
+        assert_eq!((transfer.intent.as_str(), transfer.identity), ("0x0", [0; 9]));
+        // Identity without an intent, and an intent without a budget, are invalid.
+        let mut pb = public.clone();
+        pb.intent = "0x0".into();
+        assert!(redo(tree, &pb, &private).is_err(), "identity without intent");
+        let (t_pub, t_priv) = fresh_shape(tree, Shape::Transfer, &mut StdRng::seed_from_u64(12));
+        let mut pb = t_pub.clone();
+        pb.intent = "0x1234".into();
+        assert!(redo(tree, &pb, &t_priv).is_err(), "intent without budget");
+        // A different scope gives a different handle (the circuit publishes the recomputed one).
+        let mut p2 = private.clone();
+        p2.identity.scope[0] ^= 1;
+        let (limbs, valid) = outputs(tree, &public, &p2);
+        assert!(!valid || limbs != statement_limbs(tree, &public), "scope change kept the statement");
     }
 }

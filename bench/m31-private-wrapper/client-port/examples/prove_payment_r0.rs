@@ -43,6 +43,8 @@ fn main() {
             "transfer" => Shape::Transfer,
             "partial" => Shape::Partial,
             "full" => Shape::Full,
+            "invoke" => Shape::Invoke,
+            "shadow" => Shape::Shadow,
             other => panic!("unknown shape {other}"),
         }
     } else {

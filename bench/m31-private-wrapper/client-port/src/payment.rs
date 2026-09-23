@@ -1,5 +1,6 @@
-//! Experimental R0 payment relation: two ordinary inputs, two ordinary outputs, one public
-//! token, depth-32 membership (`bench/m31-statement/privacy-contract.md` §2–3), over
+//! Experimental R0 payment relation (V3): two ordinary inputs, up to two ordinary outputs, one
+//! public token, one optional public withdrawal, an optional open-note execution intent and an
+//! optional shadow-account identity handle; depth-32 membership (`bench/m31-statement/privacy-contract.md` §2–3), over
 //! Poseidon2-M31 with 9-word digests. It mirrors the accepted ordinary statement
 //! (`controlled-push-e2e/cairo/src/statement.cairo`) with controller/policy fields zero. It is
 //! a **resource-measurement format**: domains, encodings and identifiers are not a reviewed
@@ -15,6 +16,9 @@
 //!   one truncated permutation per node, as Plonky3's Merkle compression; an **experimental
 //!   format variant** pending its own review)
 //! - `nf = H(NF, nk ‖ cm ‖ pos_lo ‖ pos_hi)`
+//! - `handle = H(IDENTITY, sk₀ ‖ scope)` (V3): a pseudonymous per-application identity handle
+//!   derived from the first input's spending key and a private scope; published only when the
+//!   private identity flag is set, otherwise zero
 //!
 //! Felts (chain, pool, token, delivery digests) are nine 28-bit little-endian limbs; amounts are
 //! eight 16-bit little-endian limbs, each range-checked by bits. Private checks: nonzero `sk`,
@@ -22,8 +26,13 @@
 //! `in₀ + in₁ = out₀ + out₁` as integers. Distinct nullifiers are checked publicly (as the pool
 //! does when it marks them spent).
 //!
-//! The public statement is 92 limbs, emitted as 23 QM31 outputs (four limbs each):
-//! tag (2), chain, pool, token, root, nf₀, nf₁, cm_out₀, delivery₀, cm_out₁, delivery₁ (9 each).
+//! The public statement is 127 limbs (padded to 128), emitted as 32 QM31 outputs (four limbs
+//! each): tag (2), chain, pool, token, root, nf₀, nf₁, cm_out₀, delivery₀, cm_out₁, delivery₁,
+//! withdrawal recipient (9 each), withdrawal amount (8), intent (9), identity handle (9).
+//!
+//! V3 adds `intent` and the identity handle. The circuit carries `intent` verbatim: it is a
+//! Poseidon felt the pool recomputes over the open-note execution (adapter, calldata, budget,
+//! expiry, destinations), so binding it here makes the spend authorize exactly that execution.
 use circuits::context::{Context, Var};
 use circuits::eval;
 use circuits::ivalue::IValue;
@@ -40,11 +49,12 @@ use crate::ro::guess_m31;
 pub const P: u32 = (1 << 31) - 1;
 /// Frame tag `TMR0`.
 pub const TAG: u32 = 0x544d_5230;
-/// Statement tag: `TMPZ`, `R0V2` (V2: optional outputs and a withdrawal slot).
-pub const STATEMENT_TAG: [u32; 2] = [0x544d_505a, 0x5230_5632];
-/// Statement tag for [`Tree::Compress`]: `TMPZ`, `R0C2`, so the two tree formats never share a
+/// Statement tag: `TMPZ`, `R0V3` (V3: V2's optional outputs and withdrawal slot, plus the
+/// execution intent and identity handle).
+pub const STATEMENT_TAG: [u32; 2] = [0x544d_505a, 0x5230_5633];
+/// Statement tag for [`Tree::Compress`]: `TMPZ`, `R0C3`, so the two tree formats never share a
 /// statement encoding (binding review L1).
-pub const STATEMENT_TAG_COMPRESS: [u32; 2] = [0x544d_505a, 0x5230_4332];
+pub const STATEMENT_TAG_COMPRESS: [u32; 2] = [0x544d_505a, 0x5230_4333];
 
 /// The statement tag of a tree format.
 pub fn statement_tag(tree: Tree) -> [u32; 2] {
@@ -54,7 +64,7 @@ pub fn statement_tag(tree: Tree) -> [u32; 2] {
     }
 }
 pub const DEPTH: usize = 32;
-pub const N_OUTPUTS: usize = 28;
+pub const N_OUTPUTS: usize = 32;
 const LIMB_BITS: usize = 28;
 const AMOUNT_LIMBS: usize = 8;
 
@@ -66,6 +76,8 @@ pub const NOTE: u32 = 5;
 pub const NODE: u32 = 6;
 /// Node kind for [`Tree::Compress`], distinct from every sponge-mode kind.
 pub const NODE1: u32 = 8;
+/// Identity-handle kind (V3).
+pub const IDENTITY: u32 = 9;
 
 /// How tree nodes are hashed.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -101,10 +113,20 @@ pub struct Output {
     pub amount: u128,
 }
 
+/// The optional shadow-account identity: when `active`, the statement publishes
+/// `H(IDENTITY, sk₀ ‖ scope)`; `scope` is private (a wallet derives it per application).
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+pub struct Identity {
+    pub active: bool,
+    pub scope: Digest,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Private {
     pub inputs: [Input; 2],
     pub outputs: [Output; 2],
+    #[serde(default)]
+    pub identity: Identity,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -121,6 +143,11 @@ pub struct Public {
     /// The public withdrawal: `0x0` and 0 when there is none; otherwise both nonzero.
     pub withdrawal_recipient: String,
     pub withdrawal_amount: u128,
+    /// The open-note execution intent (a felt), `0x0` when the spend invokes nothing. With an
+    /// intent, the withdrawal is the adapter's input budget.
+    pub intent: String,
+    /// The identity handle, zero when unused.
+    pub identity: Digest,
 }
 
 // ---------------------------------------------------------------- encodings
@@ -142,7 +169,7 @@ fn context_limbs(p: &Public) -> Vec<u32> {
     [felt_limbs(&p.chain), felt_limbs(&p.pool), felt_limbs(&p.token)].concat()
 }
 
-/// The 109 public limbs (padded with zeros to 112) in output order.
+/// The 127 public limbs (padded with zeros to 128) in output order.
 pub fn statement_limbs(tree: Tree, p: &Public) -> Vec<u32> {
     let mut x = statement_tag(tree).to_vec();
     x.extend(context_limbs(p));
@@ -154,6 +181,8 @@ pub fn statement_limbs(tree: Tree, p: &Public) -> Vec<u32> {
     }
     x.extend(felt_limbs(&p.withdrawal_recipient));
     x.extend(amount_limbs(p.withdrawal_amount));
+    x.extend(felt_limbs(&p.intent));
+    x.extend(p.identity);
     x.resize(4 * N_OUTPUTS, 0);
     x
 }
@@ -239,6 +268,11 @@ pub fn nullifier(nk: &Digest, cm: &Digest, position: u32) -> Digest {
     h(NF, 0, &cat(&[nk, cm, &[position & 0xffff, position >> 16]]))
 }
 
+/// The identity handle for a spending key and a private scope.
+pub fn identity_handle(sk: &Digest, scope: &Digest) -> Digest {
+    h(IDENTITY, 0, &cat(&[sk, scope]))
+}
+
 /// The public statement a valid witness proves, or an error naming the first broken rule.
 pub fn statement(
     tree: Tree,
@@ -247,6 +281,7 @@ pub fn statement(
     token: &str,
     deliveries: [String; 2],
     withdrawal: (String, u128),
+    intent: &str,
     w: &Private,
 ) -> Result<Public, String> {
     let context = [felt_limbs(chain), felt_limbs(pool), felt_limbs(token)].concat();
@@ -293,6 +328,17 @@ pub fn statement(
     if !w.outputs.iter().any(|o| o.active) && *w_amount == 0 {
         return Err("no output".into());
     }
+    let has_intent = felt_limbs(intent).iter().any(|l| *l != 0);
+    if has_intent && *w_amount == 0 {
+        return Err("intent without a budget".into());
+    }
+    if w.identity.active && !has_intent {
+        return Err("identity without an intent".into());
+    }
+    if w.identity.scope.iter().any(|v| *v >= P) {
+        return Err("identity encoding".into());
+    }
+    let identity = if w.identity.active { identity_handle(&w.inputs[0].sk, &w.identity.scope) } else { [0; 9] };
     // u128 amounts; the sums are compared as integers (up to 130 bits).
     let wide = |xs: &[u128]| xs.iter().fold((0u128, 0u128), |(hi, lo), x| {
         let (l, carry) = lo.overflowing_add(*x);
@@ -311,6 +357,8 @@ pub fn statement(
         deliveries,
         withdrawal_recipient: withdrawal.0,
         withdrawal_amount: withdrawal.1,
+        intent: intent.into(),
+        identity,
     })
 }
 
@@ -323,6 +371,10 @@ pub enum Shape {
     Partial,
     /// No new note; everything is withdrawn.
     Full,
+    /// Change and an adapter budget under an open-note execution intent (V3).
+    Invoke,
+    /// [`Shape::Invoke`] with a shadow-account identity handle (V3).
+    Shadow,
 }
 
 /// A fresh random R0 transfer (see [`fresh_shape`]).
@@ -392,6 +444,10 @@ pub fn fresh_shape(tree: Tree, shape: Shape, rng: &mut impl RngCore) -> (Public,
             ([out0, 0], total - out0)
         }
         Shape::Full => ([0, 0], total),
+        Shape::Invoke | Shape::Shadow => {
+            let out0 = rng.gen_range(1..total);
+            ([out0, 0], total - out0)
+        }
     };
     let private = Private {
         inputs: std::array::from_fn(|i| Input {
@@ -407,6 +463,7 @@ pub fn fresh_shape(tree: Tree, shape: Shape, rng: &mut impl RngCore) -> (Public,
             rho: digest(rng),
             amount: out[j],
         }),
+        identity: Identity { active: shape == Shape::Shadow, scope: if shape == Shape::Shadow { digest(rng) } else { [0; 9] } },
     };
     let deliveries: [String; 2] = std::array::from_fn(|j| {
         if out[j] != 0 { format!("0x{:x}", rng.next_u64() | 1) } else { "0x0".to_string() }
@@ -416,7 +473,11 @@ pub fn fresh_shape(tree: Tree, shape: Shape, rng: &mut impl RngCore) -> (Public,
     } else {
         ("0x0".to_string(), 0)
     };
-    let public = statement(tree, chain, &pool, &token, deliveries, withdrawal, &private).expect("fresh witness is valid");
+    let intent = match shape {
+        Shape::Invoke | Shape::Shadow => format!("0x{:x}", rng.gen_range(1u64..u64::MAX)),
+        _ => "0x0".to_string(),
+    };
+    let public = statement(tree, chain, &pool, &token, deliveries, withdrawal, &intent, &private).expect("fresh witness is valid");
     (public, private)
 }
 
@@ -556,7 +617,7 @@ fn hash_batch<V: Lanes>(c: &mut Context<V>, requests: Vec<(u32, u32, Vec<Var>)>)
     messages.chunks(4).flat_map(|group| sponge_lanes(c, group)).collect()
 }
 
-/// Builds R0 and returns the 23 output variables (the public statement). Hashes run four to a
+/// Builds R0 and returns the 32 output variables (the public statement). Hashes run four to a
 /// row where they are independent, two along the membership paths.
 pub fn build<V: Lanes>(c: &mut Context<V>, tree: Tree, public: &Public, w: &Private) -> Vec<Var> {
     let tag: Vec<Var> = statement_tag(tree).iter().map(|t| c.constant(M31::from(*t).into())).collect();
@@ -697,8 +758,15 @@ pub fn build<V: Lanes>(c: &mut Context<V>, tree: Tree, public: &Public, w: &Priv
         &[w.inputs[0].amount, w.inputs[1].amount],
         &[w.outputs[0].amount, w.outputs[1].amount, public.withdrawal_amount],
     );
+    // V3: the intent is carried verbatim (range-checked by the bridge); the identity handle is
+    // H(IDENTITY, sk₀ ‖ scope), published only under the private identity flag.
+    let intent = guess_words(c, &felt_limbs(&public.intent));
+    let id_active = guess_bits(c, w.identity.active as usize, 1)[0];
+    let scope = guess_words(c, &w.identity.scope);
+    let handle = hash_batch(c, vec![(IDENTITY, 0, [sk[0].clone(), scope].concat())]).concat();
+    let identity: Vec<Var> = handle.into_iter().map(|word| eval!(c, (word) * (id_active))).collect();
     let zero = c.zero();
-    let mut limbs: Vec<Var> = [tag, context, cur[0].clone(), nfs, outs, recipient, withdrawn].concat();
+    let mut limbs: Vec<Var> = [tag, context, cur[0].clone(), nfs, outs, recipient, withdrawn, intent, identity].concat();
     limbs.resize(4 * N_OUTPUTS, zero);
     limbs.chunks_exact(4).map(|q| from_partial_evals(c, q.try_into().unwrap())).collect()
 }

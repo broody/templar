@@ -24,7 +24,7 @@ use serde_json::json;
 use stwo::core::fields::qm31::QM31;
 use templar_client_verifier_circuit::membership::Lanes;
 use templar_client_verifier_circuit::payment::{
-    self, Digest, INNER, Input, N_OUTPUTS, NOTE, Output, Private, Public, Tree, amount_limbs, felt_limbs, h,
+    self, Digest, INNER, Identity, Input, N_OUTPUTS, NOTE, Output, Private, Public, Tree, amount_limbs, felt_limbs, h,
     receiver_of, statement_limbs, tree_paths,
 };
 
@@ -59,6 +59,16 @@ struct SpendJson {
     inputs: [SpendIn; 2],
     outputs: [SpendOut; 2],
     withdrawal: WithdrawalIn,
+    /// V3: the open-note execution intent (a felt; `0x0` for none).
+    #[serde(default = "no_intent")]
+    intent: String,
+    /// V3: the shadow-account identity scope, when the spend publishes an identity handle.
+    #[serde(default)]
+    identity_scope: Option<Digest>,
+}
+
+fn no_intent() -> String {
+    "0x0".into()
 }
 
 fn circuit<V: Lanes>(public: &Public, private: &Private, seed: [u8; 32], blinding: usize) -> FinalizedContext<V> {
@@ -90,11 +100,12 @@ fn prove(spec: SpendJson, out: &Path, max_fri_columns: Option<usize>) {
             rho: spec.outputs[j].rho,
             amount: u128_of(&spec.outputs[j].amount),
         }),
+        identity: Identity { active: spec.identity_scope.is_some(), scope: spec.identity_scope.unwrap_or([0; 9]) },
     };
     let deliveries = [spec.outputs[0].delivery.clone(), spec.outputs[1].delivery.clone()];
     let public = payment::statement(
         TREE, &spec.chain, &spec.pool, &spec.token, deliveries,
-        (spec.withdrawal.recipient.clone(), u128_of(&spec.withdrawal.amount)), &private,
+        (spec.withdrawal.recipient.clone(), u128_of(&spec.withdrawal.amount)), &spec.intent, &private,
     )
     .unwrap_or_else(|e| panic!("invalid spend: {e}"));
     assert_eq!(public.root, root);
