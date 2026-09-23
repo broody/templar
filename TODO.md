@@ -263,8 +263,11 @@ the accepted local proving architecture is unchanged.
     Done since: per-point rank test (openings exactly uniform), seed-invariant
     search over base and interaction trees, and a full-transcript search
     with pinned challenges (0 witness-dependent invariants at 35 queries;
-    the pre-fix control finds H2). Remaining: the written argument for the
-    nonlinear parts, and review;
+    the pre-fix control finds H2). Draft argument in
+    [hiding-argument.md](bench/m31-private-wrapper/client-port/reviews/hiding-argument.md),
+    which reduces to open items O1–O5: composition and deep-FRI values are the
+    missing piece (a FRI masking polynomial would close it). **H3:** blinding
+    limbs are u32 mod p (~2⁻¹⁶ statistical distance per proof), unfixed;
   - the payment relation written once for both routes;
   - a WASM measurement.
   **Remaining client gates:** R0 payment constraints and any required private

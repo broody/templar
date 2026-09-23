@@ -45,6 +45,8 @@ control finds exactly H2's 48.
 At 35 queries (6,449 coordinates): 813 invariants, all public structure, **0
 witness-dependent**. The pre-fix control finds 72 witness-dependent invariants.
 
+**Written argument (draft):** [hiding-argument.md](hiding-argument.md): the reduction, lemmas A–C from the tests, the open nonlinear parts, **H3** (mod-p bias in the blinding RNG), and design options.
+
 **What remains for hiding:** nonlinear relations and distributional properties (the
 interaction `1/(γ − ·)` values, unsalted Merkle hashes) belong to the written argument. The
 tests now pin down its linear part and rule out H2-type structural leaks.
