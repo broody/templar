@@ -55,7 +55,32 @@ out-of-domain samples: about 156 M31 values that are fixed linear functions of p
 - This supersedes "count is necessary, not sufficient" in ADR-0024. The count was satisfied;
   the structure was not.
 
-## Fix direction
+## Fix (fork `4de7408a6`)
+
+`qm31_zk_blinding` now adds a fourth gate per iteration: `x · y`, a mul over the two random
+operands. Add rows span `(a, b, a + b)`; the mul row breaks every linear relation between
+`op0`, `op1` and `dst`.
+
+| Check | Before | After |
+| --- | ---: | ---: |
+| `hiding_rank`, base `qm31_ops` rank (of 12) | 8 | **12** |
+| Unblinded combinations, all components and trees | 4 | **0** |
+| `hiding_leak`: proof A's `dst − op0 − op1` in seed B's extension | 35 / 35 | **0 / 35** |
+| `hiding_leak`: the same lookup in seed A's (sanity) | 35 / 35 | 35 / 35 |
+
+Tests after the fix:
+- client-port: all tests pass;
+- `prove_payment_r0` verifies natively and passes its 5 tamper negatives;
+- the fork's `circuit-prover` suite passes (29 tests).
+
+The topology gains 2,390 qm31 rows (still 2¹⁸), so the circuit hash changes. **Every client
+proof made before this fix has the H2 property.** That includes the frozen results and the
+Sepolia statement account's circuit. They are research artifacts, not deployed privacy.
+
+Reports: `results/hiding-rank/before-fix.json` and `after-fix.json`, and
+`results/hiding-leak/after-fix.json`.
+
+## Fix direction (original note)
 
 Blinding rows must leave no public linear combination of a component's columns constant. For
 `qm31_ops`, mixing gate types works: add rows span `(a, b, a + b)` and sub rows span

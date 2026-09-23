@@ -1,6 +1,12 @@
-# Hiding: a test plan (shelved)
+# Hiding: a test plan
 
-2026-09-23. Shelved in favour of the server log20 work; not started. This is the plan for
+2026-09-23. **In progress.** Layer 1, first two checks done:
+- `examples/hiding_leak.rs` found **H2**, an unblinded column combination
+  ([results](../results/hiding-leak/README.md)), fixed in the fork;
+- `examples/hiding_rank.rs` is the per-component rank check below: 0 unblinded
+  combinations after the fix.
+
+Originally shelved in favour of the server log20 work. This is the plan for
 answering as much of the stwo-circuits hiding question (ADR-0024 gate 4,
 broody/templar#2) as tests can. It would feed a written argument and review, not replace
 them: tests can falsify zero-knowledge and establish exact sub-claims, but cannot prove it.
@@ -14,6 +20,15 @@ them: tests can falsify zero-knowledge and establish exact sub-claims, but canno
   leaves, correlations across columns, and repeated proofs of the same witness.
 
 ## Layer 1: exact leakage audit (the core)
+
+**Done: structural rank check** (`hiding_rank`). Trace the same witness with two seeds, and
+take the rank of the difference matrix per component and tree. The kernel is exactly the set
+of public column combinations the blinding never reaches. After the H2 fix: base `eq` 4/4,
+base `qm31_ops` 12/12, interaction `eq` 4/4, interaction `qm31_ops` 8/8. This check is
+necessary for everything below it. It does not bound how many evaluations each blinded
+direction can absorb; the rank test below does.
+
+**Next: the per-point rank test.**
 
 For a real R0 transfer proof, with its challenges and query positions fixed, everything the
 verifier sees about a base-trace column is linear in that column's values:

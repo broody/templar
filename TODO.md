@@ -253,9 +253,14 @@ the accepted local proving architecture is unchanged.
 
   Open for this route:
   - review of the fork's profile;
-  - the hiding question (broody/templar#2); a test plan is shelved in
-    [hiding-test-plan.md](bench/m31-private-wrapper/client-port/reviews/hiding-test-plan.md)
-    (exact leakage-rank audit, attack tests, distinguishers);
+  - the hiding question (broody/templar#2), under test per
+    [hiding-test-plan.md](bench/m31-private-wrapper/client-port/reviews/hiding-test-plan.md).
+    **H2 found and fixed:** add-only qm31 blinding left `dst − op0 − op1`
+    unblinded (~156 witness-only values per proof). Fork `4de7408a6` adds a
+    mul blinding row; the rank audit finds 0 unblinded combinations
+    ([results](bench/m31-private-wrapper/client-port/results/hiding-leak/README.md)).
+    Upstream's blinding has the same structure; draft in broody/templar first.
+    Next: the per-point rank test, then attack tests;
   - the payment relation written once for both routes;
   - a WASM measurement.
   **Remaining client gates:** R0 payment constraints and any required private

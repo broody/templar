@@ -232,7 +232,12 @@ The two routes differ most here.
   2,390 iterations at a 2¹⁸ trace, and assert that each proof fits. This costs
   nothing measurable
   ([results](../../bench/m31-private-wrapper/client-port/results/stwo-client-r0-blinding/README.md)).
-  The count is necessary, not sufficient. The arithmetic-only profile removes
+  The count is necessary, not sufficient: **H2**, found by test, was that the add-only
+  blinding rows left `dst − op0 − op1` unblinded, so every proof revealed about 156
+  witness-only values. It is fixed in the fork with a mul blinding row, and a per-component
+  rank audit now finds no unblinded column combination
+  ([results](../../bench/m31-private-wrapper/client-port/results/hiding-leak/README.md)). All
+  earlier R0 proofs, including the Sepolia run's, predate the fix. The arithmetic-only profile removes
   the lookup tables whose multiplicities would leak. What remains is a
   simulation argument over the full transcript: interaction and composition
   openings, unsalted Merkle leaves, and correlations (broody/templar#2).
