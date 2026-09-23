@@ -34,6 +34,15 @@ direction can absorb; the rank test below does.
 shows a deficit of exactly 156, which is H2. Still to do in this layer: `eq`, and the FRI and
 interaction parts, which are nonlinear and are covered by layer 2 and the argument.
 
+**Done: seed-invariant search** (`hiding_invariants`,
+[results](../results/hiding-invariants/README.md)). No linear combination of 336 revealed
+values across all base and interaction columns is seed-independent (rank 336/336). The pre-fix
+control finds exactly H2's 48.
+
+**Next: the full-transcript version.** The prover would run with pinned challenges: a
+test-only channel whose draws ignore commitments, with PoW 0, on a small circuit. The search
+then covers every opened value in all trees, plus all FRI layers and OODS samples.
+
 **Original design of the per-point test:**
 
 For a real R0 transfer proof, with its challenges and query positions fixed, everything the

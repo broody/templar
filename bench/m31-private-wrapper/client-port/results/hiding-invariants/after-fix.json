@@ -1,0 +1,15 @@
+{
+  "columns": 28,
+  "functionals": 336,
+  "lde_points_per_column": 4,
+  "oods_points": [
+    "z",
+    "z - step"
+  ],
+  "pivotless_functionals": [],
+  "rank": 336,
+  "scope": "seed-invariant linear combinations of revealed values, base + interaction trees, qm31_ops + eq; R0 V2 transfer; fork 4de7408a6",
+  "seconds": 134.821093408,
+  "seed_invariant_combinations": 0,
+  "seeds": 336
+}
