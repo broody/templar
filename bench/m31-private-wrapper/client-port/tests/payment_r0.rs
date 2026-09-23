@@ -182,14 +182,14 @@ fn v3_intent_and_identity() {
         assert_eq!(invoke.identity, [0; 9]);
         let (transfer, _) = fresh_shape(tree, Shape::Transfer, &mut StdRng::seed_from_u64(12));
         assert_eq!((transfer.intent.as_str(), transfer.identity), ("0x0", [0; 9]));
-        // Identity without an intent, and an intent without a budget, are invalid.
+        // An identity needs an intent; an intent may carry a zero budget (a collect-only invoke).
         let mut pb = public.clone();
         pb.intent = "0x0".into();
         assert!(redo(tree, &pb, &private).is_err(), "identity without intent");
         let (t_pub, t_priv) = fresh_shape(tree, Shape::Transfer, &mut StdRng::seed_from_u64(12));
         let mut pb = t_pub.clone();
         pb.intent = "0x1234".into();
-        assert!(redo(tree, &pb, &t_priv).is_err(), "intent without budget");
+        assert_eq!(redo(tree, &pb, &t_priv).map(|p| p.intent), Ok("0x1234".to_string()), "zero-budget intent");
         // A different scope gives a different handle (the circuit publishes the recomputed one).
         let mut p2 = private.clone();
         p2.identity.scope[0] ^= 1;

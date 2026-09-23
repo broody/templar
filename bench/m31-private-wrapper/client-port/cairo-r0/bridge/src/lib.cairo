@@ -9,7 +9,7 @@
 //! intent (felt limbs), identity handle (nine words), one zero.
 //! Digests are nine M31 words. An inactive output slot has a zero commitment and delivery; a
 //! missing withdrawal has a zero recipient and amount. A nonzero intent authorizes one open-note
-//! execution (the pool recomputes it) and needs a withdrawal (the adapter budget); a nonzero
+//! execution (the pool recomputes it); its budget is the withdrawal, possibly zero. A nonzero
 //! identity handle needs an intent.
 //! The account binds the decoded statement with `binding` (felt252 Poseidon), which the pool
 //! recomputes from its spend data, as the reference ordinary pool does.
@@ -135,9 +135,8 @@ pub fn verify_payment(mut proof_data: Span<felt252>) -> Statement {
     assert!((recipient != 0) == (statement.withdrawal_amount != 0), "withdrawal");
     assert!(recipient < ADDRESS_BOUND, "address range");
     assert!(active0 || active1 || statement.withdrawal_amount != 0, "no output");
-    // V3: an execution intent spends through a withdrawal (the adapter budget); an identity
-    // handle only accompanies an intent.
-    assert!(statement.intent == 0 || statement.withdrawal_amount != 0, "intent budget");
+    // V3: an identity handle only accompanies an intent. An intent's budget is the withdrawal,
+    // possibly zero; the pool checks its recipient against the intent.
     assert!(!nonzero_digest(statement.identity) || statement.intent != 0, "identity intent");
     verify_circuit(:proof, :circuit_hash);
     statement

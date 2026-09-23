@@ -31,8 +31,9 @@
 //! withdrawal recipient (9 each), withdrawal amount (8), intent (9), identity handle (9).
 //!
 //! V3 adds `intent` and the identity handle. The circuit carries `intent` verbatim: it is a
-//! Poseidon felt the pool recomputes over the open-note execution (adapter, calldata, budget,
-//! expiry, destinations), so binding it here makes the spend authorize exactly that execution.
+//! Poseidon felt the pool recomputes over the open-note execution (adapter, calldata, budget
+//! and its recipient, expiry, destinations), so binding it here makes the spend authorize
+//! exactly that execution. The budget is the withdrawal and may be zero.
 use circuits::context::{Context, Var};
 use circuits::eval;
 use circuits::ivalue::IValue;
@@ -144,7 +145,7 @@ pub struct Public {
     pub withdrawal_recipient: String,
     pub withdrawal_amount: u128,
     /// The open-note execution intent (a felt), `0x0` when the spend invokes nothing. With an
-    /// intent, the withdrawal is the adapter's input budget.
+    /// intent, the withdrawal (possibly zero) is the execution's input budget.
     pub intent: String,
     /// The identity handle, zero when unused.
     pub identity: Digest,
@@ -328,10 +329,9 @@ pub fn statement(
     if !w.outputs.iter().any(|o| o.active) && *w_amount == 0 {
         return Err("no output".into());
     }
+    // An intent may carry a zero budget (a collect-only invoke); the pool checks the budget
+    // recipient against the intent.
     let has_intent = felt_limbs(intent).iter().any(|l| *l != 0);
-    if has_intent && *w_amount == 0 {
-        return Err("intent without a budget".into());
-    }
     if w.identity.active && !has_intent {
         return Err("identity without an intent".into());
     }
