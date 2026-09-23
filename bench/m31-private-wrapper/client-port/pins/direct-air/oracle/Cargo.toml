@@ -1,0 +1,17 @@
+[package]
+name = "templar-private-membership"
+version = "0.2.0"
+edition = "2024"
+
+# Unchanged reviewed TMPZK002 client source, rebuilt against the server's stwo pin as a native oracle.
+[lib]
+path = "../../../m31-private-blake/client/src/lib.rs"
+
+[dependencies]
+stwo = { path = "../../../../target/direct-air/stwo/crates/stwo", features = ["prover"] }
+num-traits = "0.2.19"
+rand = "=0.8.8"
+blake2 = "=0.10.6"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+anyhow = "1"

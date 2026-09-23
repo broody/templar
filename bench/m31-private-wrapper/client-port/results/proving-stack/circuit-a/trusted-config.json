@@ -1,0 +1,229 @@
+{
+  "channel": "Blake2sMerkleChannel",
+  "circuit_hash_u32_le": [
+    3249413348,
+    2954588814,
+    1022072598,
+    720028169,
+    1681982252,
+    2351325767,
+    958957808,
+    3608281147
+  ],
+  "component_log_sizes": [
+    20,
+    23,
+    20,
+    21,
+    23,
+    16,
+    20,
+    8,
+    14,
+    18,
+    16
+  ],
+  "fri_config": {
+    "fold_step": 4,
+    "log_blowup_factor": 2,
+    "log_last_layer_degree_bound": 0,
+    "n_queries": 35,
+    "pow_bits": 26
+  },
+  "n_outputs": 8,
+  "preprocessed_columns": [
+    {
+      "id": "bitwise_xor_4_0",
+      "log_size": 8
+    },
+    {
+      "id": "bitwise_xor_4_1",
+      "log_size": 8
+    },
+    {
+      "id": "bitwise_xor_4_2",
+      "log_size": 8
+    },
+    {
+      "id": "bitwise_xor_7_0",
+      "log_size": 14
+    },
+    {
+      "id": "bitwise_xor_7_1",
+      "log_size": 14
+    },
+    {
+      "id": "bitwise_xor_7_2",
+      "log_size": 14
+    },
+    {
+      "id": "seq_16",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_8_0",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_8_1",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_8_2",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_9_0",
+      "log_size": 18
+    },
+    {
+      "id": "bitwise_xor_9_1",
+      "log_size": 18
+    },
+    {
+      "id": "bitwise_xor_9_2",
+      "log_size": 18
+    },
+    {
+      "id": "eq_in0_address",
+      "log_size": 20
+    },
+    {
+      "id": "eq_in1_address",
+      "log_size": 20
+    },
+    {
+      "id": "triple_xor_input_addr_0",
+      "log_size": 20
+    },
+    {
+      "id": "triple_xor_input_addr_1",
+      "log_size": 20
+    },
+    {
+      "id": "triple_xor_input_addr_2",
+      "log_size": 20
+    },
+    {
+      "id": "triple_xor_output_addr",
+      "log_size": 20
+    },
+    {
+      "id": "triple_xor_multiplicity",
+      "log_size": 20
+    },
+    {
+      "id": "bitwise_xor_10_0",
+      "log_size": 20
+    },
+    {
+      "id": "bitwise_xor_10_1",
+      "log_size": 20
+    },
+    {
+      "id": "bitwise_xor_10_2",
+      "log_size": 20
+    },
+    {
+      "id": "m31_to_u32_input_addr",
+      "log_size": 21
+    },
+    {
+      "id": "m31_to_u32_output_addr",
+      "log_size": 21
+    },
+    {
+      "id": "m31_to_u32_multiplicity",
+      "log_size": 21
+    },
+    {
+      "id": "qm31_ops_add_flag",
+      "log_size": 23
+    },
+    {
+      "id": "qm31_ops_sub_flag",
+      "log_size": 23
+    },
+    {
+      "id": "qm31_ops_mul_flag",
+      "log_size": 23
+    },
+    {
+      "id": "qm31_ops_pointwise_mul_flag",
+      "log_size": 23
+    },
+    {
+      "id": "qm31_ops_in0_address",
+      "log_size": 23
+    },
+    {
+      "id": "qm31_ops_in1_address",
+      "log_size": 23
+    },
+    {
+      "id": "qm31_ops_out_address",
+      "log_size": 23
+    },
+    {
+      "id": "qm31_ops_mults",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_input_addr_a",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_input_addr_b",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_input_addr_c",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_input_addr_d",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_input_addr_f0",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_input_addr_f1",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_output_addr_a",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_output_addr_b",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_output_addr_c",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_output_addr_d",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_multiplicity",
+      "log_size": 23
+    }
+  ],
+  "preprocessed_root_u32_le": [
+    1529827748,
+    748517017,
+    3078592540,
+    384971347,
+    344696845,
+    2439404758,
+    3070112765,
+    3307798241
+  ],
+  "purpose": "tmpzk002-client-verifier-circuit",
+  "stack": "starkware-libs/proving@5a7c5ed, padded to the production multiverifier shape, bridge FRI (blowup 2, 35 queries)",
+  "trace_log_size": 23
+}

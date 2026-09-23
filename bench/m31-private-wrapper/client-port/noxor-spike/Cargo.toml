@@ -1,0 +1,29 @@
+[package]
+name = "templar-noxor-spike"
+version = "0.1.0"
+edition = "2024"
+
+# Measurement only: links the patched Eq+QM31-only prover copy. Not verifiable by any deployed verifier.
+[workspace]
+
+[dependencies]
+circuits = { path = "../../../../target/direct-air/stwo-circuits-noxor/crates/circuits" }
+circuit-common = { path = "../../../../target/direct-air/stwo-circuits-noxor/crates/circuit_common", features = ["prover"] }
+circuit-prover = { path = "../../../../target/direct-air/stwo-circuits-noxor/crates/circuit_prover" }
+circuit-verifier = { path = "../../../../target/direct-air/stwo-circuits-noxor/crates/circuit_verifier" }
+stwo = { path = "../../../../target/direct-air/stwo/crates/stwo", features = ["prover", "parallel"] }
+templar-private-membership = { path = "../oracle" }
+num-traits = "0.2.19"
+rand = "=0.8.8"
+
+[patch."https://github.com/starkware-libs/stwo"]
+stwo = { path = "../../../../target/direct-air/stwo/crates/stwo" }
+stwo-constraint-framework = { path = "../../../../target/direct-air/stwo/crates/constraint-framework" }
+stwo-air-utils = { path = "../../../../target/direct-air/stwo/crates/air-utils" }
+stwo-air-utils-derive = { path = "../../../../target/direct-air/stwo/crates/air-utils-derive" }
+
+[patch."https://github.com/starkware-libs/stwo-cairo"]
+cairo-air = { path = "../../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/cairo-air" }
+stwo-cairo-prover = { path = "../../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/prover" }
+stwo-cairo-common = { path = "../../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/common" }
+stwo-cairo-serialize = { path = "../../../../target/direct-air/stwo-cairo/stwo_cairo_prover/crates/cairo-serialize" }

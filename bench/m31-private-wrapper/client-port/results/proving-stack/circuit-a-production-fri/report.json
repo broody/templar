@@ -1,0 +1,79 @@
+{
+  "build_seconds": 6.069093842,
+  "component_log_sizes": [
+    20,
+    23,
+    20,
+    21,
+    23,
+    16,
+    20,
+    8,
+    14,
+    18,
+    16
+  ],
+  "native_negatives": [
+    "output",
+    "trace",
+    "topology",
+    "circuit-hash",
+    "config"
+  ],
+  "native_verify_seconds": 0.004143733,
+  "proof_felts": 94945,
+  "proving_seconds": 49.271855959,
+  "scope": "complete TMPZK002 private-membership verifier as one server circuit (proving@5a7c5ed)",
+  "statement_digest": [
+    [
+      43970,
+      6624,
+      0,
+      0
+    ],
+    [
+      6666,
+      25101,
+      0,
+      0
+    ],
+    [
+      23218,
+      21657,
+      0,
+      0
+    ],
+    [
+      45225,
+      39231,
+      0,
+      0
+    ],
+    [
+      20641,
+      40274,
+      0,
+      0
+    ],
+    [
+      62827,
+      17963,
+      0,
+      0
+    ],
+    [
+      17038,
+      9779,
+      0,
+      0
+    ],
+    [
+      22930,
+      8379,
+      0,
+      0
+    ]
+  ],
+  "total_seconds": 61.674416141,
+  "trace_log_size": 23
+}

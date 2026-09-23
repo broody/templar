@@ -1,0 +1,196 @@
+diff -ru stwo-circuits/crates/circuit_common/src/finalize.rs stwo-circuits-noxor/crates/circuit_common/src/finalize.rs
+--- stwo-circuits/crates/circuit_common/src/finalize.rs	2026-09-20 18:05:18.698989420 +0800
++++ stwo-circuits-noxor/crates/circuit_common/src/finalize.rs	2026-09-23 11:41:00.707338106 +0800
+@@ -63,9 +63,12 @@
+     let context = &mut context.context;
+     pad_eq(context);
+     pad_qm31_ops(context);
+-    pad_triple_xor(context);
+-    pad_m31_to_u32(context);
+-    pad_blake_g_gate(context);
++    // MEASUREMENT-ONLY PATCH (templar spike): no rows at all for the removed components.
++    if std::env::var("TEMPLAR_NOXOR").is_err() {
++        pad_triple_xor(context);
++        pad_m31_to_u32(context);
++        pad_blake_g_gate(context);
++    }
+ }
+ 
+ /// Adds random values to the qm31_ops component via trivial.
+diff -ru stwo-circuits/crates/circuit_common/src/preprocessed.rs stwo-circuits-noxor/crates/circuit_common/src/preprocessed.rs
+--- stwo-circuits/crates/circuit_common/src/preprocessed.rs	2026-09-20 18:05:18.699307511 +0800
++++ stwo-circuits-noxor/crates/circuit_common/src/preprocessed.rs	2026-09-23 11:38:13.259328406 +0800
+@@ -511,6 +511,12 @@
+             &multiplicities,
+             &mut pp_trace,
+         );
++        // MEASUREMENT-ONLY PATCH (templar spike): with TEMPLAR_NOXOR set, a circuit that uses no
++        // TripleXor/M31ToU32/BlakeG gates gets only Eq and QM31 columns. Not verifiable upstream.
++        let noxor = std::env::var("TEMPLAR_NOXOR").is_ok();
++        if noxor {
++            assert!(triple_xor.is_empty() && m31_to_u32.is_empty() && blake_g_gate.is_empty());
++        } else {
+         // Add TripleXor columns.
+         add_triple_xor_to_preprocessed_trace(triple_xor, &multiplicities, &mut pp_trace);
+         // Add M31ToU32 columns.
+@@ -519,6 +525,7 @@
+         add_blake_g_gate_to_preprocessed_trace(blake_g_gate, &multiplicities, &mut pp_trace);
+ 
+         PreProcessedTrace::add_fixed_preprocessed_columns(&mut pp_trace);
++        }
+         pp_trace.sort_by_size();
+ 
+         // The log trace size is The largest preprocessed column log size.
+diff -ru stwo-circuits/crates/circuit_prover/src/prover.rs stwo-circuits-noxor/crates/circuit_prover/src/prover.rs
+--- stwo-circuits/crates/circuit_prover/src/prover.rs	2026-09-21 11:12:58.496528728 +0800
++++ stwo-circuits-noxor/crates/circuit_prover/src/prover.rs	2026-09-23 11:38:48.369953319 +0800
+@@ -274,3 +274,98 @@
+     );
+     (proof, public_data)
+ }
++
++/// MEASUREMENT-ONLY PATCH (templar spike): proves and natively verifies an Eq + QM31-ops-only
++/// circuit (preprocessed with TEMPLAR_NOXOR). Not compatible with any deployed verifier.
++pub fn prove_and_verify_noxor<MC>(
++    preprocessed_circuit: &PreprocessedCircuit,
++    values: &[QM31],
++    pcs_config: PcsConfig,
++    max_fri_columns: Option<usize>,
++) -> Result<usize, ProvingError>
++where
++    MC: MerkleChannel,
++    SimdBackend: stwo::prover::backend::BackendForChannel<MC>,
++{
++    use crate::circuit_air::components::{eq, qm31_ops};
++    use crate::witness::trace::{write_interaction_trace_noxor, write_trace_noxor};
++    use stwo::core::air::Component;
++    use stwo_constraint_framework::TraceLocationAllocator;
++    let trace_log_size = preprocessed_circuit.trace_log_size;
++    let pcs_config = PcsConfig {
++        lifting_log_size: Some(trace_log_size + pcs_config.fri_config.log_blowup_factor),
++        ..pcs_config
++    };
++    let twiddles = SimdBackend::precompute_twiddles(
++        CanonicCoset::new(trace_log_size + std::cmp::max(pcs_config.fri_config.log_blowup_factor, COMPOSITION_POLYNOMIAL_LOG_DEGREE_BOUND))
++            .circle_domain()
++            .half_coset,
++    );
++    let pool = BaseColumnPool::<SimdBackend>::new();
++    let pp = &preprocessed_circuit.preprocessed_trace;
++    let pp_polys = SimdBackend::interpolate_columns(pp.get_trace::<SimdBackend>(), &twiddles);
++    let pp_tree = CommitmentTreeProver::<SimdBackend, MC>::new(
++        pp_polys, pcs_config.fri_config.log_blowup_factor, &twiddles, true, pcs_config.lifting_log_size, &pool,
++    );
++    let trace_generator = TraceGenerator {
++        qm31_ops_trace_generator: Qm31OpsTraceGenerator {
++            first_permutation_row: preprocessed_circuit.first_permutation_row,
++        },
++    };
++    let channel = &mut MC::C::default();
++    channel.mix_felts(&[0_u32.into()]);
++    pcs_config.mix_into(channel);
++    let mut scheme = CommitmentSchemeProver::<SimdBackend, MC>::with_memory_pool(pcs_config, &twiddles, &pool);
++    if let Some(k) = max_fri_columns {
++        scheme.set_bounded_memory_mode(k);
++    }
++    scheme.set_store_polynomials_coefficients();
++    scheme.commit_tree(MaybeOwned::Owned(pp_tree), channel);
++    let mut tb = scheme.tree_builder();
++    let (claim, log_sizes, lookup) =
++        write_trace_noxor(values, pp.clone(), preprocessed_circuit.n_outputs, &mut tb, &trace_generator, &twiddles);
++    claim.mix_into(channel);
++    tb.commit(channel);
++    let nonce = SimdBackend::grind(channel, INTERACTION_POW_BITS);
++    channel.mix_u64(nonce);
++    let elements = CircuitInteractionElements::draw(channel);
++    let mut tb = scheme.tree_builder();
++    let sums = write_interaction_trace_noxor(log_sizes, lookup, &mut tb, &elements, &twiddles);
++    let mut all = [QM31::zero(); circuit_verifier::circuit_components::N_COMPONENTS];
++    all[0] = sums[0];
++    all[1] = sums[1];
++    let interaction_claim = circuit_verifier::circuit_claim::CircuitInteractionClaim { claimed_sums: all };
++    assert_eq!(lookup_sum(&claim, &interaction_claim, &elements), QM31::zero());
++    interaction_claim.mix_into(channel);
++    tb.commit(channel);
++    let make = || {
++        let alloc = &mut TraceLocationAllocator::new_with_preprocessed_columns(&pp.ids());
++        let e = eq::Component::new(alloc, eq::Eval { log_size: log_sizes[0], common_lookup_elements: elements.common_lookup_elements.clone() }, sums[0]);
++        let q = qm31_ops::Component::new(alloc, qm31_ops::Eval { log_size: log_sizes[1], common_lookup_elements: elements.common_lookup_elements.clone() }, sums[1]);
++        (e, q)
++    };
++    let (e, q) = make();
++    let provers: Vec<&dyn ComponentProver<SimdBackend>> = vec![&e, &q];
++    let proof = prove_ex::<SimdBackend, _>(&provers, channel, scheme, true)?;
++    let proof_bytes = 0;
++
++    // Native verification of the same two-component statement.
++    let v = &mut MC::C::default();
++    v.mix_felts(&[0_u32.into()]);
++    pcs_config.mix_into(v);
++    let mut vs = stwo::core::pcs::CommitmentSchemeVerifier::<MC>::new(pcs_config);
++    let (e, q) = make();
++    let comps: Vec<&dyn Component> = vec![&e, &q];
++    let sizes = stwo::core::pcs::TreeVec::concat_cols(comps.iter().map(|c| c.trace_log_degree_bounds()));
++    let pp_sizes: Vec<u32> = pp.log_sizes().values().copied().collect();
++    vs.commit(proof.proof.commitments[0], &pp_sizes, v);
++    claim.mix_into(v);
++    vs.commit(proof.proof.commitments[1], &sizes[1], v);
++    v.mix_u64(nonce);
++    let _ = CircuitInteractionElements::draw(v);
++    interaction_claim.mix_into(v);
++    vs.commit(proof.proof.commitments[2], &sizes[2], v);
++    stwo::core::verifier::verify_ex(&comps, v, &mut vs, proof.proof, true).expect("noxor proof verifies");
++    Ok(proof_bytes)
++}
++
+diff -ru stwo-circuits/crates/circuit_prover/src/witness/trace.rs stwo-circuits-noxor/crates/circuit_prover/src/witness/trace.rs
+--- stwo-circuits/crates/circuit_prover/src/witness/trace.rs	2026-09-20 18:05:18.704016227 +0800
++++ stwo-circuits-noxor/crates/circuit_prover/src/witness/trace.rs	2026-09-23 11:38:13.259488450 +0800
+@@ -451,3 +451,47 @@
+ 
+     CircuitInteractionClaim { claimed_sums }
+ }
++
++/// MEASUREMENT-ONLY PATCH (templar spike): Eq and QM31 ops only.
++pub fn write_trace_noxor<MC: MerkleChannel>(
++    context_values: &[QM31],
++    preprocessed_trace: Arc<PreProcessedTrace>,
++    n_outputs: usize,
++    tree_builder: &mut TreeBuilder<'_, '_, SimdBackend, MC>,
++    trace_generator: &TraceGenerator,
++    twiddles: &TwiddleTree<SimdBackend>,
++) -> (CircuitClaim, [u32; 2], (eq::LookupData, qm31_ops::LookupData))
++where
++    SimdBackend: BackendForChannel<MC>,
++{
++    let pp = preprocessed_trace.as_ref();
++    let (eq_trace, eq_log_size, eq_lookup) = eq::write_trace(context_values, pp);
++    let eq_polys = SimdBackend::interpolate_columns(eq_trace.to_evals(), twiddles);
++    let (qm_trace, qm_log_size, qm_lookup) =
++        qm31_ops::write_trace(context_values, pp, &trace_generator.qm31_ops_trace_generator);
++    let qm_polys = SimdBackend::interpolate_columns(qm_trace.to_evals(), twiddles);
++    tree_builder.extend_polys(eq_polys);
++    tree_builder.extend_polys(qm_polys);
++    let output_values = ((U_VAR_IDX + 1)..(U_VAR_IDX + 1 + n_outputs))
++        .map(|addr| context_values[addr])
++        .collect_vec();
++    (CircuitClaim { output_values }, [eq_log_size, qm_log_size], (eq_lookup, qm_lookup))
++}
++
++/// MEASUREMENT-ONLY PATCH (templar spike): interaction trace for Eq and QM31 ops only.
++pub fn write_interaction_trace_noxor<MC: MerkleChannel>(
++    log_sizes: [u32; 2],
++    lookup: (eq::LookupData, qm31_ops::LookupData),
++    tree_builder: &mut TreeBuilder<'_, '_, SimdBackend, MC>,
++    interaction_elements: &CircuitInteractionElements,
++    twiddles: &TwiddleTree<SimdBackend>,
++) -> [QM31; 2]
++where
++    SimdBackend: BackendForChannel<MC>,
++{
++    let (t, eq_sum) = eq::write_interaction_trace(log_sizes[0], lookup.0, &interaction_elements.common_lookup_elements);
++    tree_builder.extend_polys(SimdBackend::interpolate_columns(t, twiddles));
++    let (t, qm_sum) = qm31_ops::write_interaction_trace(log_sizes[1], lookup.1, &interaction_elements.common_lookup_elements);
++    tree_builder.extend_polys(SimdBackend::interpolate_columns(t, twiddles));
++    [eq_sum, qm_sum]
++}

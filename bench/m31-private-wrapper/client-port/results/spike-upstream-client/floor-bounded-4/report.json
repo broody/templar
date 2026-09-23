@@ -1,0 +1,27 @@
+{
+  "blinding_rows": 45,
+  "build_seconds": 0.001599982,
+  "component_log_sizes": [
+    6,
+    10,
+    6,
+    6,
+    6,
+    16,
+    20,
+    8,
+    14,
+    18,
+    16
+  ],
+  "mode": "floor",
+  "native_negatives": [
+    "output",
+    "trace",
+    "topology",
+    "config"
+  ],
+  "proof_felts": 45328,
+  "proving_seconds": 23.547643161,
+  "trace_log_size": 20
+}

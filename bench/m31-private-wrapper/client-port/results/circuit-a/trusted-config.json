@@ -1,0 +1,219 @@
+{
+  "component_log_sizes": [
+    19,
+    23,
+    20,
+    21,
+    23,
+    16,
+    20,
+    8,
+    14,
+    18,
+    16
+  ],
+  "n_outputs": 17,
+  "pcs_config": {
+    "fri_config": {
+      "fold_step": 4,
+      "log_blowup_factor": 2,
+      "log_last_layer_degree_bound": 0,
+      "n_queries": 35
+    },
+    "lifting_log_size": 25,
+    "pow_bits": 26
+  },
+  "preprocessed_columns": [
+    {
+      "id": "bitwise_xor_4_0",
+      "log_size": 8
+    },
+    {
+      "id": "bitwise_xor_4_1",
+      "log_size": 8
+    },
+    {
+      "id": "bitwise_xor_4_2",
+      "log_size": 8
+    },
+    {
+      "id": "bitwise_xor_7_0",
+      "log_size": 14
+    },
+    {
+      "id": "bitwise_xor_7_1",
+      "log_size": 14
+    },
+    {
+      "id": "bitwise_xor_7_2",
+      "log_size": 14
+    },
+    {
+      "id": "seq_16",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_8_0",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_8_1",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_8_2",
+      "log_size": 16
+    },
+    {
+      "id": "bitwise_xor_9_0",
+      "log_size": 18
+    },
+    {
+      "id": "bitwise_xor_9_1",
+      "log_size": 18
+    },
+    {
+      "id": "bitwise_xor_9_2",
+      "log_size": 18
+    },
+    {
+      "id": "eq_in0_address",
+      "log_size": 19
+    },
+    {
+      "id": "eq_in1_address",
+      "log_size": 19
+    },
+    {
+      "id": "triple_xor_input_addr_0",
+      "log_size": 20
+    },
+    {
+      "id": "triple_xor_input_addr_1",
+      "log_size": 20
+    },
+    {
+      "id": "triple_xor_input_addr_2",
+      "log_size": 20
+    },
+    {
+      "id": "triple_xor_output_addr",
+      "log_size": 20
+    },
+    {
+      "id": "triple_xor_multiplicity",
+      "log_size": 20
+    },
+    {
+      "id": "bitwise_xor_10_0",
+      "log_size": 20
+    },
+    {
+      "id": "bitwise_xor_10_1",
+      "log_size": 20
+    },
+    {
+      "id": "bitwise_xor_10_2",
+      "log_size": 20
+    },
+    {
+      "id": "m31_to_u32_input_addr",
+      "log_size": 21
+    },
+    {
+      "id": "m31_to_u32_output_addr",
+      "log_size": 21
+    },
+    {
+      "id": "m31_to_u32_multiplicity",
+      "log_size": 21
+    },
+    {
+      "id": "qm31_ops_add_flag",
+      "log_size": 23
+    },
+    {
+      "id": "qm31_ops_sub_flag",
+      "log_size": 23
+    },
+    {
+      "id": "qm31_ops_mul_flag",
+      "log_size": 23
+    },
+    {
+      "id": "qm31_ops_pointwise_mul_flag",
+      "log_size": 23
+    },
+    {
+      "id": "qm31_ops_in0_address",
+      "log_size": 23
+    },
+    {
+      "id": "qm31_ops_in1_address",
+      "log_size": 23
+    },
+    {
+      "id": "qm31_ops_out_address",
+      "log_size": 23
+    },
+    {
+      "id": "qm31_ops_mults",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_input_addr_a",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_input_addr_b",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_input_addr_c",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_input_addr_d",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_input_addr_f0",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_input_addr_f1",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_output_addr_a",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_output_addr_b",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_output_addr_c",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_output_addr_d",
+      "log_size": 23
+    },
+    {
+      "id": "blake_g_gate_multiplicity",
+      "log_size": 23
+    }
+  ],
+  "preprocessed_root_u32_le": [
+    2906196971,
+    3742674682,
+    600261832,
+    458750068,
+    4212246988,
+    1446505883,
+    2039923276,
+    2582210445
+  ],
+  "purpose": "tmpzk002-client-verifier-circuit"
+}
