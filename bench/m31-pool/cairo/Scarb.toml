@@ -13,6 +13,10 @@ stwo_verifier_core = { path = "../../../target/proving-arith/stwo_cairo_verifier
 snforge_std = "0.63.0"
 assert_macros = "2.18.0"
 
+[features]
+# Shared round code for the permutation (src/perm_compact.cairo): smaller class, more gas per call.
+compact_perm = []
+
 [[target.starknet-contract]]
 sierra = true
 casm = true

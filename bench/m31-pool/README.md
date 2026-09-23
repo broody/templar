@@ -31,6 +31,27 @@ values are in `results/summary.json`, and raw runs in `results/*.log`.
 - **Every operation fits** well under the 1B-per-transaction limit.
 - **L1 data gas is small** next to L2 gas in both pools.
 
+## Caller account class and declaration size (measured on Sepolia)
+
+- **The caller's account must be Sierra 1.7 or later.** Otherwise the whole call tree is billed
+  in Cairo steps, and the pool costs about 2.7× the figures above: a deposit's pool call is
+  155.5M L2 gas on Sepolia from a Sierra 1.4 account. From a Sierra 1.7 account, a transfer's
+  `apply_spend` simulates at 52.2M, matching this table. Details in
+  [`bench/m31-sepolia`](../m31-sepolia/README.md).
+- **Declaring a class costs 40,960 L2 gas per Sierra + CASM felt.** The default pool class is
+  3.47B, about 73 STRK on Sepolia. Feature `compact_perm` (`src/perm_compact.cairo`) has one
+  full-round function over a constant table and a four-partial-round group. The unrolled form
+  has 30 round functions. Both pass all 64 tests.
+
+  | Permutation | Sierra + CASM | Declaration | Deposit | Transfer (index 6) |
+  | --- | ---: | ---: | ---: | ---: |
+  | Unrolled (default) | 84,613 | 3.47B | 57.70M | 51.81M |
+  | `compact_perm` | 43,621 | 1.79B (−48%) | 60.30M (+4.5%) | 54.13M (+4.5%) |
+
+  At 20.8 gwei-fri the compact class saves about 35 STRK once and costs about 0.05 STRK more
+  per append. It breaks even at about 700 appending transactions. Rolling every partial round
+  separately gave 1.72B, but at +20% gas.
+
 ## Batched two-output append
 
 A transfer's two outputs land at adjacent indices `i` and `i + 1`, so their paths to the root

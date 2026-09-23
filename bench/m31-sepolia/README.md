@@ -25,13 +25,20 @@ In the simulation, the adapter checked the real facts (OS program, base-block ag
 hash) and the pool applied the spend against the live root. The proof itself is only verified
 by the gateway and sequencer, so here it was checked locally (`prove_large`).
 
-**Gas finding: on-chain execution is about 2.7× the snforge measurement.**
-- Deposit, pool call: 155.5M on Sepolia against 57.7M in snforge. The whole transaction is
-  188M, about 3.4-4.0 STRK.
-- Transfer at an even index, `apply_spend`: 138.1M simulated against 51.8M.
-- Transfer transaction: 220.6M, which includes about 75M for `gas_per_proof`.
-- Builtin and step gas costs are the same in 0.14.1 through 0.14.4, so the cause is still open.
-- The fee tables in `bench/m31-pool` understate on-chain cost by about this factor.
+**Gas finding: our relayer account made Sepolia bill 2.7× the snforge figure.**
+- `account-1` is a Sierra 1.4 class. Sierra-gas accounting needs Sierra 1.7 or later
+  (`min_sierra_version_for_sierra_gas`). Once a call runs in Cairo-steps mode, every call beneath
+  it does too (blockifier `contract_class.rs`: "Once we ran with CairoSteps, we will continue to
+  run using it for all nested calls").
+- So the pool, itself Sierra 1.8, was billed by Cairo steps: 155.5M per deposit, against 57.7M
+  in snforge.
+- snforge's `--tracked-resource cairo-steps` reproduces the on-chain numbers. Each test minus
+  the base test: a deposit is 157.8M, a transfer's spend 141.9M.
+- The same signed transfer, re-simulated with a Sierra 1.7 account as sender
+  (`results/transfer-simulation-modern-accounts.json`): `apply_spend` is 52.2M, against 51.8M in
+  snforge. The whole transaction is 134.5M, about 3.09 STRK, of which ~75M is `gas_per_proof`.
+- **Consequence: fees depend on the caller's account class.** Users and relayers on accounts
+  older than Sierra 1.7 pay about 2.7× for the pool's hashing.
 
 Total spent: 176.0 test STRK. That includes one deposit reverted on a 150M gas bound (3.16
 STRK). Evidence: `results/` (`outcome.json`, receipts, gateway response, facts, benchmarks).

@@ -1,0 +1,17 @@
+{
+ "0x7b61ba86519b0492f61a620d87b0c07011a07d556a548ae16ceddb8e84e6d50": {
+  "total_l2": 134536160,
+  "apply_spend_l2": 52157670,
+  "account_execute_l2": 52362880,
+  "fee": {
+   "l1_data_gas_consumed": "0x1380",
+   "l1_data_gas_price": "0x86a006e8a5",
+   "l1_gas_consumed": "0x0",
+   "l1_gas_price": "0x782e4162fb1d",
+   "l2_gas_consumed": "0x8d22510",
+   "l2_gas_price": "0x4db961cb9",
+   "overall_fee": "0x2ae3c7444a031a10",
+   "unit": "FRI"
+  }
+ }
+}

@@ -4,7 +4,18 @@
 //! history, nullifier set, delivery digests and events, with the R0 statement and binding.
 pub mod adapter;
 pub mod hash;
-pub mod perm;
+/// Default: the fully unrolled permutation (cheapest to run). Feature `compact_perm`: shared round
+/// code, half the pool's declaration cost for about 4.5% more gas per call.
+pub mod perm {
+    #[cfg(feature: 'compact_perm')]
+    pub use super::perm_compact::*;
+    #[cfg(not(feature: 'compact_perm'))]
+    pub use super::perm_unrolled::*;
+}
+#[cfg(feature: 'compact_perm')]
+mod perm_compact;
+#[cfg(not(feature: 'compact_perm'))]
+mod perm_unrolled;
 pub mod pool;
 pub mod spend;
 pub mod test_token;
