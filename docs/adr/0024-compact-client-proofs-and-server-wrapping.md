@@ -119,6 +119,7 @@ network.**
 | stwo-circuits, arithmetic-only, R0 payment | 3.77M steps | 5.42M steps | 139 s / 64.2 GiB |
 | **Same, lane-packed hashing (log19)** | 3.53M steps | 5.13M steps | **117.5 s / 55.0 GiB** |
 | Same, single-permutation tree nodes (experimental format, log18) | 3.39M steps | 4.96M steps | 120.3 s / 54.4 GiB |
+| Same, after the review fixes (optimized, pruned verifier) | 1.99M steps | 3.32M steps | 113.1 s / 52.4 GiB |
 
 - Every PROOF2 is accepted by the V2 verifier. Each run rejects a changed output, a
   flipped proof byte and a truncated proof.
@@ -219,6 +220,14 @@ in the upload.
   or self-operated wrappers, so that no single service holds pool authority.
 - **PROOF2 dependency.** The route depends on PROOF2 availability: gateway
   acceptance on Sepolia, and mainnet 0.14.4.
+- **Account class size.** The sequencer rejects classes whose compiled CASM exceeds 81,920
+  felts; a local OS run never checks this. The R0 account is 59,152 CASM felts after pruning
+  absent components, and the bridge build now enforces the limit. Earlier accounts (circuit A,
+  stock and membership bridges) were measured by Sierra size, and must be rechecked before any
+  declaration.
+- **On-chain tree cost.** Appending to an M31 tree costs about 92M L2 gas per spend with
+  single-permutation nodes, or 181M with sponge nodes, against about 0.9M for the felt252 pool
+  (Cairo performance review). Where appends run is an open design choice.
 - **Maintenance.** The stwo-circuits route needs our fork until upstream offers an
   arithmetic-only profile. The custom route needs its own protocol, prover, verifier
   and circuit A maintained and reviewed indefinitely.

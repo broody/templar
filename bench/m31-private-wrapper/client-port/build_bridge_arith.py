@@ -54,6 +54,12 @@ def main():
         'use core::box::BoxImpl;\nuse stwo_verifier_core::Hash;\n'
         'use stwo_verifier_core::vcs::blake2s_hasher::Blake2sHash;\n'
         'pub fn circuit_hash() -> Hash {\n    Blake2sHash { hash: BoxImpl::new([' + ', '.join(map(str, h)) + ']) }\n}\n')
+    if template == 'cairo-r0':
+        # The statement tag (relation and tree format), from the trusted manifest (binding review L1).
+        statement_tag = m['statement_tag_u32']
+        assert len(statement_tag) == 2 and all(0 < t < 2**31 - 1 for t in statement_tag)
+        with (work / 'bridge/src/pinned.cairo').open('a') as f:
+            f.write('pub fn statement_tag() -> [u32; 2] {\n    [' + ', '.join(map(str, statement_tag)) + ']\n}\n')
     record = {
         'trusted_manifest_sha256': sha(manifest_path),
         'circuit_hash_u32_le': h,
@@ -72,6 +78,15 @@ def main():
     for args in (['build', '-p', 'templar_membership_bridge'], ['test', '-p', 'templar_membership_bridge'], ['test', '-p', 'stwo_circuit_air', '--filter', 'hardcoded_component_log_sizes_match_derived']):
         subprocess.run([SCARB, '--manifest-path', str(work / 'Scarb.toml'), *args], check=True)
     subprocess.run([SCARB, '--profile', 'contract', '--manifest-path', str(work / 'Scarb.toml'), 'build', '-p', 'templar_membership_account'], check=True)
+    # The sequencer compiles Sierra to CASM with an 80 * 1024-felt bytecode limit; a local OS
+    # capture never runs that check (Cairo performance review, Q5).
+    casm = next((work / 'target/contract').glob('*.compiled_contract_class.json'))
+    sierra = next((work / 'target/contract').glob('*.contract_class.json'))
+    n_casm = len(json.loads(casm.read_text())['bytecode'])
+    n_sierra = len(json.loads(sierra.read_text())['sierra_program'])
+    assert n_casm <= 80 * 1024, f'account CASM {n_casm} felts exceeds the sequencer limit 81920'
+    record['account_felts'] = {'sierra': n_sierra, 'casm': n_casm, 'casm_limit': 80 * 1024}
+    (work / 'build-record.json').write_text(json.dumps(record, indent=2) + '\n')
     print(json.dumps({'work': str(work), 'circuit_hash_u32_le': h}))
 
 

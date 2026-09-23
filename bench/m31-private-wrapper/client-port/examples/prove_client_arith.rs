@@ -120,9 +120,13 @@ fn main() {
     // blinding rows each committed column received.
     let revealed = support::revealed_fri_values(&proof);
     assert!(revealed + support::NON_QUERY_INFO_LEAK <= blinding, "blinding {blinding} < revealed {revealed}");
-    drop(context);
     support::native_verify(&proof, &pp, root, &wanted);
-    let negatives = support::negatives(&mut proof, &pp, root, &wanted);
+    let mut negatives = support::negatives(&mut proof, &pp, root, &wanted);
+    // Opt-in: the forgery runs a second (unbounded) prover.
+    if std::env::var("TEMPLAR_FORGE_NEGATIVE").is_ok() {
+        negatives.push(support::forgery_negative(context.values(), &pp, root));
+    }
+    drop(context);
     let log_sizes = circuit_component_log_sizes(&all_circuit_components::<NoValue>(), &pp.preprocessed_trace.log_sizes());
     let felts = prepare_circuit_proof_for_cairo_verifier(proof, &log_sizes);
     support::write(&out.join("trusted-config.json"), &support::manifest(

@@ -11,7 +11,7 @@
 //! - `inner = H(INNER, receiver ‖ rho)`
 //! - `cm = H(NOTE, chain₉ ‖ pool₉ ‖ token₉ ‖ amount₈ ‖ inner)`
 //! - `node = H(NODE, level, left ‖ right)` ([`Tree::Sponge`], two permutations per node), or
-//!   `node = P([TAG, 1, NODE1, level] ++ left ++ right ++ [0, 0])[..9]` ([`Tree::Compress`]:
+//!   `node = P(left ++ right ++ [TAG, 1, NODE1, level, 0, 0])[..9]` ([`Tree::Compress`]:
 //!   one truncated permutation per node, as Plonky3's Merkle compression; an **experimental
 //!   format variant** pending its own review)
 //! - `nf = H(NF, nk ‖ cm ‖ pos_lo ‖ pos_hi)`
@@ -42,6 +42,17 @@ pub const P: u32 = (1 << 31) - 1;
 pub const TAG: u32 = 0x544d_5230;
 /// Statement tag: `TMPZ`, `R0V1`.
 pub const STATEMENT_TAG: [u32; 2] = [0x544d_505a, 0x5230_5631];
+/// Statement tag for [`Tree::Compress`]: `TMPZ`, `R0C1`, so the two tree formats never share a
+/// statement encoding (binding review L1).
+pub const STATEMENT_TAG_COMPRESS: [u32; 2] = [0x544d_505a, 0x5230_4331];
+
+/// The statement tag of a tree format.
+pub fn statement_tag(tree: Tree) -> [u32; 2] {
+    match tree {
+        Tree::Sponge => STATEMENT_TAG,
+        Tree::Compress => STATEMENT_TAG_COMPRESS,
+    }
+}
 pub const DEPTH: usize = 32;
 pub const N_OUTPUTS: usize = 23;
 const LIMB_BITS: usize = 28;
@@ -61,8 +72,10 @@ pub const NODE1: u32 = 8;
 pub enum Tree {
     /// `H(NODE, level, left ‖ right)`: the framed rate-15 sponge, two permutations.
     Sponge,
-    /// One width-24 permutation over `[TAG, 1, NODE1, level, left, right, 0, 0]`, truncated to
-    /// nine words.
+    /// One width-24 permutation over `[left, right, TAG, 1, NODE1, level, 0, 0]`, truncated to
+    /// nine words. The six fixed words sit in the sponge's capacity positions (18..24), so a
+    /// node input can equal a later sponge block only if six capacity words match (math review
+    /// M1); first sponge blocks have zero capacity and `TAG ≠ 0`.
     Compress,
 }
 pub const NF: u32 = 7;
@@ -122,8 +135,8 @@ fn context_limbs(p: &Public) -> Vec<u32> {
 }
 
 /// The 92 public limbs in output order.
-pub fn statement_limbs(p: &Public) -> Vec<u32> {
-    let mut x = STATEMENT_TAG.to_vec();
+pub fn statement_limbs(tree: Tree, p: &Public) -> Vec<u32> {
+    let mut x = statement_tag(tree).to_vec();
     x.extend(context_limbs(p));
     x.extend(p.root);
     x.extend(p.nullifiers.concat());
@@ -194,7 +207,7 @@ pub fn node(tree: Tree, level: u32, l: &Digest, r: &Digest) -> Digest {
         Tree::Sponge => h(NODE, level, &cat(&[l, r])),
         Tree::Compress => {
             let mut state = [M31::from(0); WIDTH];
-            for (i, v) in [TAG, 1, NODE1, level].iter().chain(l).chain(r).enumerate() {
+            for (i, v) in l.iter().chain(r).chain(&[TAG, 1, NODE1, level]).enumerate() {
                 state[i] = M31::from(*v);
             }
             let out = permute(state);
@@ -432,7 +445,7 @@ fn hash_batch<V: Lanes>(c: &mut Context<V>, requests: Vec<(u32, u32, Vec<Var>)>)
 /// Builds R0 and returns the 23 output variables (the public statement). Hashes run four to a
 /// row where they are independent, two along the membership paths.
 pub fn build<V: Lanes>(c: &mut Context<V>, tree: Tree, public: &Public, w: &Private) -> Vec<Var> {
-    let tag: Vec<Var> = STATEMENT_TAG.iter().map(|t| c.constant(M31::from(*t).into())).collect();
+    let tag: Vec<Var> = statement_tag(tree).iter().map(|t| c.constant(M31::from(*t).into())).collect();
     let context = guess_words(c, &context_limbs(public));
     // Private inputs, with their nonzero and range checks.
     let mut sk = vec![];
@@ -506,8 +519,8 @@ pub fn build<V: Lanes>(c: &mut Context<V>, tree: Tree, public: &Public, w: &Priv
                 let states = reqs
                     .into_iter()
                     .map(|(l, x)| {
-                        let mut st: Vec<Var> = [TAG, 1, NODE1, l].iter().map(|v| c.constant(M31::from(*v).into())).collect();
-                        st.extend(x);
+                        let mut st = x;
+                        st.extend([TAG, 1, NODE1, l].iter().map(|v| c.constant(M31::from(*v).into())));
                         st
                     })
                     .collect::<Vec<_>>();

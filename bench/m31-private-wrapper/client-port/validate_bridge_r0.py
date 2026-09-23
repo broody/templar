@@ -59,6 +59,13 @@ def main():
     cases.append(('wrong-nullifier', args(pub, data, nullifiers=[pub['nullifiers'][0], bump(pub['nullifiers'][1], 0)]), False))
     cases.append(('swapped-outputs', args(pub, data, commitments=pub['commitments'][::-1]), False))
     cases.append(('wrong-delivery', args(pub, data, deliveries=[pub['deliveries'][0], hex(int(pub['deliveries'][1], 16) + 1)]), False))
+    # A forged proof (math review M2): valid STARK and LogUp sum for a forged statement, balanced on
+    # the absent triple_xor claimed sum. Only the absent-component check can reject it.
+    forged_dir = proof_dir / 'forged-absent-sum'
+    if forged_dir.exists():
+        fpub = json.loads((forged_dir / 'public.json').read_text())
+        fdata = [int(x, 16) for x in json.loads((forged_dir / 'cairo-arguments.json').read_text())]
+        cases.append(('absent-sum-forgery', args(fpub, fdata), False))
     good = args(pub, data)
     n = len(good) - len(data)
     cases.append(('trailing', good[:n] + [data[0] + 1, *data[1:], 0], False))
@@ -70,6 +77,8 @@ def main():
         code, output, usage = run(work, out, name, a)
         ok = (code == 0 and output is not None and [v % ref.P for v in output[-4:]] == expected) if accept else code != 0
         reason = None if accept else next((l.strip() for l in (out / f'{name}.log').read_text().splitlines() if 'panicked' in l.lower()), None)
+        if name == 'absent-sum-forgery':
+            ok = ok and reason is not None and 'absent component claims a nonzero sum' in reason
         row = {'name': name, 'expected_accept': accept, 'passed': ok, 'exit_code': code, 'output': output, 'usage': usage, 'reason': reason}
         report['cases'].append(row)
         steps = json.loads(usage)['resources']['n_steps'] if usage else None

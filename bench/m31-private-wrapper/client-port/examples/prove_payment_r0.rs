@@ -15,7 +15,7 @@ use circuits::context::{Context, FinalizedContext};
 use circuits::ivalue::{NoValue, qm31_from_u32s};
 use serde_json::json;
 use stwo::core::fields::qm31::QM31;
-use templar_client_verifier_circuit::payment::{self, N_OUTPUTS, Private, Public, STATEMENT_TAG, Tree, statement_limbs};
+use templar_client_verifier_circuit::payment::{self, N_OUTPUTS, Private, Public, Tree, statement_limbs};
 
 
 fn circuit<V: templar_client_verifier_circuit::membership::Lanes>(tree: Tree, public: &Public, private: &Private, seed: [u8; 32], blinding: usize) -> FinalizedContext<V> {
@@ -30,13 +30,19 @@ fn circuit<V: templar_client_verifier_circuit::membership::Lanes>(tree: Tree, pu
 
 fn main() {
     let mut a: Vec<String> = std::env::args().collect();
+    let forge = if let Some(k) = a.iter().position(|x| x == "--forge-absent-sum") {
+        a.remove(k);
+        true
+    } else {
+        false
+    };
     let tree = if let Some(k) = a.iter().position(|x| x == "--compress-nodes") {
         a.remove(k);
         Tree::Compress
     } else {
         Tree::Sponge
     };
-    assert!(a.len() == 2 || a.len() == 3, "prove_payment_r0 OUT [MAX_FRI_COLUMNS] [--compress-nodes]");
+    assert!(a.len() == 2 || a.len() == 3, "prove_payment_r0 OUT [MAX_FRI_COLUMNS] [--compress-nodes] [--forge-absent-sum]");
     let out = Path::new(&a[1]);
     let max_fri_columns: Option<usize> = a.get(2).map(|n| n.parse().unwrap());
     fs::create_dir_all(out).unwrap();
@@ -67,7 +73,7 @@ fn main() {
     let root = pp.preprocessed_root(cfg.fri_config.log_blowup_factor);
     let circuit_hash = support::circuit_hash_of(&pp, &cfg, root);
     let wanted: Vec<QM31> =
-        statement_limbs(&public).chunks_exact(4).map(|q| qm31_from_u32s(q[0], q[1], q[2], q[3])).collect();
+        statement_limbs(tree, &public).chunks_exact(4).map(|q| qm31_from_u32s(q[0], q[1], q[2], q[3])).collect();
     let build_seconds = started.elapsed().as_secs_f64();
     let t = Instant::now();
     let mut proof = prove_circuit_assignment_bounded::<support::MC>(
@@ -79,16 +85,33 @@ fn main() {
     // blinding rows each committed column received.
     let revealed = support::revealed_fri_values(&proof);
     assert!(revealed + support::NON_QUERY_INFO_LEAK <= blinding, "blinding {blinding} < revealed {revealed}");
-    drop(context);
     support::native_verify(&proof, &pp, root, &wanted);
-    let negatives = support::negatives(&mut proof, &pp, root, &wanted);
+    let mut negatives = support::negatives(&mut proof, &pp, root, &wanted);
+    // The forgery runs a second (unbounded) prover, so it is opt-in: memory runs measure only the
+    // real proof.
+    if forge {
+        negatives.push(support::forgery_negative(context.values(), &pp, root));
+        // A forged proof for the Cairo negative: output 8 (limbs 32..36, root words 3..7) shifted
+        // by one in its first coordinate, i.e. root[3] + 1, balanced on the absent claimed sum.
+        let forged = support::forge_absent_sum(context.values(), &pp, 8);
+        let mut forged_public = public.clone();
+        forged_public.root[3] = (forged_public.root[3] + 1) % payment::P;
+        let dir = out.join("forged-absent-sum");
+        fs::create_dir_all(&dir).unwrap();
+        let felts = prepare_circuit_proof_for_cairo_verifier(forged, &circuit_component_log_sizes(&all_circuit_components::<NoValue>(), &pp.preprocessed_trace.log_sizes()));
+        let mut arguments = vec![format!("0x{:x}", felts.len())];
+        arguments.extend(felts.iter().map(|f| format!("{f:#x}")));
+        fs::write(dir.join("cairo-arguments.json"), serde_json::to_vec(&arguments).unwrap()).unwrap();
+        fs::write(dir.join("public.json"), serde_json::to_vec_pretty(&forged_public).unwrap()).unwrap();
+    }
+    drop(context);
     let log_sizes = circuit_component_log_sizes(&all_circuit_components::<NoValue>(), &pp.preprocessed_trace.log_sizes());
     let felts = prepare_circuit_proof_for_cairo_verifier(proof, &log_sizes);
     support::write(&out.join("trusted-config.json"), &support::manifest(
         "tmpzr0-client-payment", &pp, &cfg, root, circuit_hash,
         json!({
             "stack": "broody/proving templar/arithmetic-profile (on starkware-libs/proving@5a7c5ed), arithmetic profile, bridge FRI",
-            "statement_tag_u32": STATEMENT_TAG,
+            "statement_tag_u32": payment::statement_tag(tree),
             "statement_layout": "92 limbs, 4 per output: tag 2, chain 9, pool 9, token 9 (28-bit LE), root 9, nf0 9, nf1 9, cm0 9, delivery0 9 (28-bit LE), cm1 9, delivery1 9 (28-bit LE)",
             "blinding_rows": blinding,
             "tree_nodes": format!("{tree:?}"),

@@ -9,7 +9,7 @@ description = "Verifies an arithmetic-profile R0 payment client proof and decode
 [[target.executable]]
 
 [dependencies]
-stwo_circuit_air = { path = "../vendor/circuit_air" }
+stwo_circuit_air = { path = "../vendor/circuit_air", features = ["arithmetic_profile"] }
 stwo_verifier_core = { path = "../vendor/verifier_core" }
 cairo_execute = "2.18.0"
 

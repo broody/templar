@@ -7,15 +7,16 @@ use circuit_common::preprocessed::PreprocessedCircuit;
 use circuit_prover::circuit_air::circuit_components::CircuitComponents;
 use circuit_prover::circuit_hash::compute_circuit_hash;
 use circuit_prover::prover::CircuitProof;
-use circuit_verifier::circuit_claim::{CircuitInteractionElements, column_log_sizes_per_tree, lookup_sum};
+use circuit_prover::verify::verify_circuit_proof;
+use circuit_verifier::circuit_claim::{CircuitInteractionElements, lookup_sum};
 use circuit_verifier::statement::{INTERACTION_POW_BITS, all_circuit_components, circuit_component_log_sizes};
 use circuits::ivalue::NoValue;
-use num_traits::{One, Zero};
+use num_traits::One;
 use serde_json::json;
 use stwo::core::channel::{Channel, MerkleChannel};
 use stwo::core::fields::qm31::QM31;
 use stwo::core::fri::FriConfig;
-use stwo::core::pcs::{CommitmentSchemeVerifier, PcsConfig};
+use stwo::core::pcs::PcsConfig;
 use stwo::core::vcs::blake2_hash::Blake2sHash;
 use stwo::core::vcs_lifted::blake2_merkle::{Blake2sMerkleChannel, Blake2sMerkleHasher};
 
@@ -58,31 +59,74 @@ pub fn native_verify(proof: &CircuitProof<Blake2sMerkleHasher>, pp: &Preprocesse
     assert_eq!(proof.stark_proof.proof.commitments[0], trusted_root, "preprocessed root");
     assert_eq!(proof.pcs_config, config(pp.trace_log_size()), "pcs config");
     assert_eq!(proof.claim.output_values, expected, "statement digest");
-    let log_sizes = circuit_component_log_sizes(&all_circuit_components::<NoValue>(), &pp.preprocessed_trace.log_sizes());
-    let circuit_hash = compute_circuit_hash::<Blake2sMerkleHasher>(&log_sizes, proof.pcs_config.fri_config.log_blowup_factor, trusted_root);
-    assert_eq!(proof.circuit_hash, circuit_hash, "circuit hash");
-    let channel = &mut <MC as MerkleChannel>::C::default();
-    channel.mix_felts(&[proof.channel_salt.into()]);
-    proof.pcs_config.fri_config.mix_into(channel);
-    let scheme = &mut CommitmentSchemeVerifier::<MC>::new(proof.pcs_config);
-    let [trace_sizes, interaction_sizes] = column_log_sizes_per_tree(&log_sizes);
-    let pp_sizes: Vec<u32> = pp.preprocessed_trace.log_sizes().values().copied().collect();
-    let stark = proof.stark_proof.proof.clone();
-    scheme.commit(stark.commitments[0], &pp_sizes, channel);
-    MC::mix_hash(channel, circuit_hash);
-    proof.claim.mix_into(channel);
-    scheme.commit(stark.commitments[1], &trace_sizes, channel);
-    assert!(channel.verify_pow_nonce(INTERACTION_POW_BITS, proof.interaction_pow_nonce), "interaction pow");
-    channel.mix_u64(proof.interaction_pow_nonce);
-    let elements = CircuitInteractionElements::draw(channel);
-    proof.interaction_claim.mix_into(channel);
-    scheme.commit(stark.commitments[2], &interaction_sizes, channel);
-    let components = CircuitComponents::new(&elements, &proof.interaction_claim, &log_sizes, &pp.preprocessed_trace.ids());
-    stwo::core::verifier::verify_ex(&components.components(), channel, scheme, stark, true).expect("stark verification");
-    assert_eq!(lookup_sum(&proof.claim, &proof.interaction_claim, &elements), QM31::zero(), "lookup sum");
-    assert!(proof.interaction_claim.absent_components_claim_zero(&log_sizes), "absent component claimed sum");
+    // Circuit hash, transcript, STARK, LogUp sum and absent-component sums (fork `verify_circuit_proof`).
+    if let Err(e) = verify_circuit_proof::<MC>(proof, pp) {
+        panic!("{e}");
+    }
 }
 
+/// A proof of `values` whose output `output` is shifted by one and whose LogUp imbalance is put
+/// on the absent `triple_xor` claimed sum (math review M2). It passes everything but the
+/// absent-component check. Returns the forged proof; its outputs are the forged statement.
+pub fn forge_absent_sum(values: &[QM31], pp: &PreprocessedCircuit, output: usize) -> CircuitProof<Blake2sMerkleHasher> {
+    use circuit_common::Qm31OpsTraceGenerator;
+    use circuit_prover::witness::trace::{TraceGenerator, write_interaction_trace, write_trace};
+    use stwo::core::poly::circle::CanonicCoset;
+    use stwo::core::proof_of_work::GrindOps;
+    use stwo::core::utils::MaybeOwned;
+    use stwo::prover::backend::simd::SimdBackend;
+    use stwo::prover::mempool::BaseColumnPool;
+    use stwo::prover::poly::circle::PolyOps;
+    use stwo::prover::{CommitmentSchemeProver, CommitmentTreeProver, prove_ex};
+    let pcs = config(pp.trace_log_size());
+    let pool = BaseColumnPool::<SimdBackend>::new();
+    let twiddles = SimdBackend::precompute_twiddles(
+        CanonicCoset::new(pp.trace_log_size() + pcs.fri_config.log_blowup_factor.max(1)).circle_domain().half_coset,
+    );
+    let polys = SimdBackend::interpolate_columns(pp.preprocessed_trace.get_trace::<SimdBackend>(), &twiddles);
+    let pp_tree = CommitmentTreeProver::<SimdBackend, MC>::new(
+        polys, pcs.fri_config.log_blowup_factor, &twiddles, true, pcs.preprocessed_lifting_log_size, &pool,
+    );
+    let generator = TraceGenerator { qm31_ops_trace_generator: Qm31OpsTraceGenerator { first_permutation_row: pp.first_permutation_row } };
+    let channel = &mut <MC as MerkleChannel>::C::default();
+    channel.mix_felts(&[0_u32.into()]);
+    pcs.fri_config.mix_into(channel);
+    let mut scheme = CommitmentSchemeProver::<SimdBackend, MC>::with_memory_pool(pcs, &twiddles, &pool);
+    scheme.set_store_polynomials_coefficients();
+    let root = pp_tree.commitment.root();
+    scheme.commit_tree(MaybeOwned::Owned(pp_tree), channel);
+    let mut builder = scheme.tree_builder();
+    let (mut claim, log_sizes, igen) = write_trace(values, pp.preprocessed_trace.clone(), pp.n_outputs, &mut builder, &generator, &twiddles);
+    claim.output_values[output] += QM31::one();
+    let circuit_hash = compute_circuit_hash::<Blake2sMerkleHasher>(&log_sizes, pcs.fri_config.log_blowup_factor, root);
+    MC::mix_hash(channel, circuit_hash);
+    claim.mix_into(channel);
+    builder.commit(channel);
+    let nonce = SimdBackend::grind(channel, INTERACTION_POW_BITS);
+    channel.mix_u64(nonce);
+    let elements = CircuitInteractionElements::draw(channel);
+    let mut builder = scheme.tree_builder();
+    let mut ic = write_interaction_trace(&log_sizes, igen, &mut builder, &elements, &twiddles);
+    let imbalance = lookup_sum(&claim, &ic, &elements);
+    ic.claimed_sums.triple_xor -= imbalance;
+    ic.mix_into(channel);
+    builder.commit(channel);
+    let components = CircuitComponents::new(&elements, &ic, &log_sizes, &pp.preprocessed_trace.ids());
+    let stark_proof = prove_ex::<SimdBackend, _>(&components.component_provers(), channel, scheme, true).unwrap();
+    CircuitProof { pcs_config: pcs, claim, interaction_pow_nonce: nonce, interaction_claim: ic, stark_proof, channel_salt: 0, circuit_hash }
+}
+
+/// The forgery negative: a forged proof checked against its own (forged) statement must be
+/// rejected, and only by the absent-component check.
+pub fn forgery_negative(values: &[QM31], pp: &PreprocessedCircuit, root: Blake2sHash) -> String {
+    let forged = forge_absent_sum(values, pp, 0);
+    let statement = forged.claim.output_values.clone();
+    let err = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| native_verify(&forged, pp, root, &statement)))
+        .expect_err("absent-sum forgery accepted");
+    let msg = err.downcast_ref::<String>().cloned().unwrap_or_default();
+    assert_eq!(msg, "absent component claimed sum", "forgery rejected for another reason");
+    "absent-sum-forgery".to_string()
+}
 
 /// Runs the five tamper controls in place (each field restored), then the honest check.
 pub fn negatives(proof: &mut CircuitProof<Blake2sMerkleHasher>, pp: &PreprocessedCircuit, root: Blake2sHash, wanted: &[QM31]) -> Vec<String> {
@@ -107,13 +151,6 @@ pub fn negatives(proof: &mut CircuitProof<Blake2sMerkleHasher>, pp: &Preprocesse
     proof.circuit_hash = Default::default();
     reject("circuit-hash", proof);
     proof.circuit_hash = saved;
-    // Move part of eq's claimed sum onto triple_xor: the LogUp total is unchanged. Under the
-    // arithmetic profile triple_xor is absent, so only the absent-sum check catches this.
-    proof.interaction_claim.claimed_sums.eq -= QM31::one();
-    proof.interaction_claim.claimed_sums.triple_xor += QM31::one();
-    reject("claimed-sum-shift", proof);
-    proof.interaction_claim.claimed_sums.eq += QM31::one();
-    proof.interaction_claim.claimed_sums.triple_xor -= QM31::one();
     let saved = proof.pcs_config.fri_config.pow_bits;
     proof.pcs_config.fri_config.pow_bits = 0;
     reject("config", proof);

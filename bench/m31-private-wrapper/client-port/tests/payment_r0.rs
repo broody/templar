@@ -22,7 +22,7 @@ fn circuit_statement_matches_native_and_topology_is_fixed() {
         let (public, private) = payment::fresh(tree, &mut rng);
         let (limbs, valid) = outputs(tree, &public, &private);
         assert!(valid);
-        assert_eq!(limbs, statement_limbs(&public));
+        assert_eq!(limbs, statement_limbs(tree, &public));
         let mut real = Context::<QM31>::new(N_OUTPUTS);
         build(&mut real, tree, &public, &private);
         let (public2, private2) = payment::fresh(tree, &mut rng);
@@ -48,7 +48,7 @@ fn tree_formats_differ() {
 fn broken_witnesses_are_rejected() {
     for tree in TREES {
         let (public, private) = payment::fresh(tree, &mut StdRng::seed_from_u64(8));
-        let want = statement_limbs(&public);
+        let want = statement_limbs(tree, &public);
         let check = |name: &str, p: Private| {
             let (limbs, valid) = outputs(tree, &public, &p);
             assert!(!valid || limbs != want, "{tree:?}: {name} accepted with the same statement");

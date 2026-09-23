@@ -16,8 +16,8 @@ pub mod pinned;
 
 const N_OUTPUTS: u32 = 23;
 const N_WORDS: u32 = 9;
-const TAG_0: u32 = 0x544d505a;
-const TAG_1: u32 = 0x52305631;
+/// Addresses (pool, token) are below 2^251, as the reference statement's `addr` check.
+const ADDRESS_BOUND: u256 = 0x800000000000000000000000000000000000000000000000000000000000000;
 const LIMB_SHIFT: u256 = 0x10000000;
 
 #[derive(Drop, Serde, PartialEq, Debug)]
@@ -71,7 +71,9 @@ pub fn verify_payment(mut proof_data: Span<felt252>) -> Statement {
         limbs.append(c3.into());
     }
     let x = limbs.span();
-    assert!(*x.at(0) == TAG_0 && *x.at(1) == TAG_1, "statement tag");
+    // The tag names the relation and tree format; the pinned circuit hash already fixes both.
+    let [tag_0, tag_1] = pinned::statement_tag();
+    assert!(*x.at(0) == tag_0 && *x.at(1) == tag_1, "statement tag");
     let nf0 = x.slice(38, N_WORDS);
     let nf1 = x.slice(47, N_WORDS);
     assert!(nf0 != nf1, "duplicate nullifier");
@@ -84,8 +86,31 @@ pub fn verify_payment(mut proof_data: Span<felt252>) -> Statement {
         commitments: [x.slice(56, N_WORDS), x.slice(74, N_WORDS)],
         deliveries: [felt_from_limbs(x.slice(65, N_WORDS)), felt_from_limbs(x.slice(83, N_WORDS))],
     };
+    // The reference statement's liveness checks: nonzero context, addresses in range, nonzero
+    // nullifiers, commitments and delivery digests.
+    assert!(statement.chain != 0 && statement.pool != 0 && statement.token != 0, "zero context");
+    let pool_u: u256 = statement.pool.into();
+    let token_u: u256 = statement.token.into();
+    assert!(pool_u < ADDRESS_BOUND && token_u < ADDRESS_BOUND, "address range");
+    let [n0, n1] = statement.nullifiers;
+    let [c0, c1] = statement.commitments;
+    for d in array![n0, n1, c0, c1].span() {
+        assert!(nonzero_digest(*d), "zero digest");
+    }
+    let [d0, d1] = statement.deliveries;
+    assert!(d0 != 0 && d1 != 0, "zero delivery");
     verify_circuit(:proof, :circuit_hash);
     statement
+}
+
+fn nonzero_digest(d: Span<u32>) -> bool {
+    let mut any = false;
+    for w in d {
+        if *w != 0 {
+            any = true;
+        }
+    }
+    any
 }
 
 /// `Poseidon('TMR0_BIND_V1', chain, pool, token, root₉, nf₀₉, nf₁₉, cm₀₉, delivery₀, cm₁₉,

@@ -63,6 +63,8 @@ def main():
     ap.add_argument('--tag-version', default='V1', choices=['V1', 'V2', 'SA', 'R0'])
     ap.add_argument('--prefix-hex')
     ap.add_argument('--tag')
+    ap.add_argument('--expect-reject', action='store_true',
+                    help='negative capture: pass only if the account run fails or emits no message')
     a = ap.parse_args()
     global TAG_VERSION, PREFIX, TAG
     TAG_VERSION, PREFIX, TAG = a.tag_version, a.prefix_hex, a.tag
@@ -98,6 +100,17 @@ def main():
                       'capture_binary_sha256': sha(CAPTURE), 'exit_code': r.returncode,
                       'elapsed_seconds': time.monotonic() - start}
             (out / 'execution.json').write_text(json.dumps(result, indent=2) + '\n')
+            if a.expect_reject:
+                log = (out / 'capture.log').read_text()
+                produced = json.loads((out / 'capture.json').read_text()) if (out / 'capture.json').exists() else {}
+                messages = produced.get('l2_to_l1_messages', [])
+                reasons = [l.strip() for l in log.splitlines() if 'panic' in l.lower() or 'revert' in l.lower() or 'error' in l.lower()]
+                result.update(expect_reject=True, rejected=r.returncode != 0 or not messages,
+                              n_messages=len(messages), reason=reasons[:5])
+                (out / 'execution.json').write_text(json.dumps(result, indent=2) + '\n')
+                print(json.dumps({k: result[k] for k in ('rejected', 'exit_code', 'n_messages', 'reason')}))
+                assert result['rejected'], 'negative capture was accepted'
+                return
             assert r.returncode == 0, (out / 'capture.log').read_text()[-3000:]
             produced = json.loads((out / 'capture.json').read_text())
             messages = produced['l2_to_l1_messages']

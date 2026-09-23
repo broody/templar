@@ -21,8 +21,13 @@ For comparison, the original client-proves-everything pipeline measured 6.12 GiB
 ## The node format
 
 ```
-node(level, left, right) = P([TAG, 1, NODE1, level, left₀..₈, right₀..₈, 0, 0])[0..9]
+node(level, left, right) = P([left₀..₈, right₀..₈, TAG, 1, NODE1, level, 0, 0])[0..9]
 ```
+
+> Updated after the math review (M1): the measurements below used the first layout,
+> `[TAG, 1, NODE1, level, left, right, 0, 0]`, which put the fixed words in rate positions, only
+> ~62 bits from later sponge blocks. The fixed words now sit in capacity positions, as shown
+> above; the cost is unchanged ([`../stwo-client-r0-fixes/`](../stwo-client-r0-fixes/README.md)).
 
 `P` is the client's width-24 Poseidon2-M31 permutation. `TAG = 'TMR0'` and `NODE1 = 8`, a kind
 used by no sponge-mode hash; every sponge frame carries its own kind in the same position.
