@@ -243,13 +243,19 @@ the accepted local proving architecture is unchanged.
     R0 V2 adds withdrawals (one circuit for all shapes), end to end through
     PROOF2 ([results](bench/m31-private-wrapper/client-port/results/stwo-client-r0-withdraw/README.md)).
     Not yet measured: the real fact check and whole-transaction cost.
-  - **Next:** PROOF2 Poseidon tier (calldata packing).
+  - **Next: server on the log20 small path.** The live transfer's PIE has
+    three components at 2²¹ (`blake_g` from 13,616 Blake compressions;
+    `cube_252` and `range_check_252_width_27` from the OS Poseidon hash of the
+    29,866-felt calldata). Everything else is ≤ 2²⁰. Levers: client FRI
+    queries/blowup/PoW, calldata packing.
   Not yet measured: the pool's on-chain `apply_spend` with an M31-tree
   append.
 
   Open for this route:
   - review of the fork's profile;
-  - the hiding question (broody/templar#2);
+  - the hiding question (broody/templar#2); a test plan is shelved in
+    [hiding-test-plan.md](bench/m31-private-wrapper/client-port/reviews/hiding-test-plan.md)
+    (exact leakage-rank audit, attack tests, distinguishers);
   - the payment relation written once for both routes;
   - a WASM measurement.
   **Remaining client gates:** R0 payment constraints and any required private
