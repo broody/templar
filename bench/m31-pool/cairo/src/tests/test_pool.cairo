@@ -57,7 +57,7 @@ fn spend_shape(s: @Setup, nf_seed: felt252, cm_seed: felt252, n_out: u32, withdr
     let mut sp = Spend {
         chain: get_tx_info().unbox().chain_id, pool: (*s.pool).contract_address, token: (*s.token).contract_address,
         root: (*s.tree).get_root(), nullifiers: nfs.span(), outputs: array![out(0), out(1)].span(),
-        withdrawal: Withdrawal { recipient, amount: withdrawn }, binding: 0,
+        withdrawal: Withdrawal { recipient, amount: withdrawn }, intent: 0, identity: zero_digest(), binding: 0,
     };
     sp.binding = compute_binding(@sp);
     sp

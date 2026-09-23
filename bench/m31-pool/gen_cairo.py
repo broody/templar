@@ -52,12 +52,12 @@ t += ['', '// Independent Python reference (gen_perm.py) on extreme and random i
 for n, st in cases.items():
     t.append(f"pub const PERM_{n.upper()}_IN: [felt252; 24] = {arr(st)};")
     t.append(f"pub const PERM_{n.upper()}_OUT: [felt252; 24] = {arr(g['perm'](st))};")
-# A real R0 V2 statement and its binding from the bridge's independent Python reference.
+# A real R0 V3 statement and its binding from the bridge's independent Python reference.
 import sys
 sys.path.insert(0, str(HERE.parents[0] / 'm31-private-wrapper/client-port'))
 import validate_bridge_r0
 pub = json.loads((HERE / 'binding-statement.json').read_text())
-t += ['', '// A real R0 V2 statement (partial withdrawal) and its binding from the independent Python',
+t += ['', '// A real R0 V3 statement (change, budget, intent and identity handle) and its binding from the independent Python',
       '// reference (client-port validate_bridge_r0.binding): the pool must agree with the bridge.',
       f"pub const BIND_CHAIN: felt252 = {pub['chain']};",
       f"pub const BIND_POOL: felt252 = {pub['pool']};",
@@ -70,6 +70,8 @@ t += ['', '// A real R0 V2 statement (partial withdrawal) and its binding from t
       f"pub const BIND_D0: felt252 = {pub['deliveries'][0]};",
       f"pub const BIND_RECIPIENT: felt252 = {pub['withdrawal_recipient']};",
       f"pub const BIND_AMOUNT: u128 = {pub['withdrawal_amount']};",
+      f"pub const BIND_INTENT: felt252 = {pub['intent']};",
+      f"pub const BIND_IDENTITY: [felt252; 9] = {arr(pub['identity'])};",
       f"pub const BIND_EXPECTED: felt252 = {hex(validate_bridge_r0.binding(pub))};"]
 rf = json.loads((HERE / 'real-proof2-facts.json').read_text())
 pl = [int(x, 16) for x in rf['message']['payload']]

@@ -5,7 +5,7 @@
 //!
 //! - facts = `['PROOF2', 'VIRTUAL_SNOS', os_program, 'VIRTUAL_SNOS0', base_block, base_hash, _,
 //!   n_messages, message_hash]` (the sequencer's `ProofFactsVariant::Snos` layout);
-//! - `message_hash = Poseidon(statement, 0, 5, statement_class, 'TMPZR0_PAYMENT_V2', chain, pool,
+//! - `message_hash = Poseidon(statement, 0, 5, statement_class, 'TMPZR0_PAYMENT_V3', chain, pool,
 //!   binding)`: the R0 statement account's L2→L1 message (`client-port/cairo-r0/account`).
 //!
 //! The sequencer checks the base block's hash; this adapter bounds its age.
@@ -63,7 +63,7 @@ pub mod Proof2Adapter {
             assert(current - base <= self.max_proof_age.read(), 'PROOF_AGE');
             assert(*facts.at(7) == 1, 'MESSAGE_COUNT');
             let message = array![
-                self.statement.read().into(), 0, 5, self.statement_class.read(), 'TMPZR0_PAYMENT_V2', chain,
+                self.statement.read().into(), 0, 5, self.statement_class.read(), 'TMPZR0_PAYMENT_V3', chain,
                 *public_inputs.at(1), *public_inputs.at(2),
             ];
             assert(*facts.at(8) == poseidon_hash_span(message.span()), 'PROOF_BINDING');

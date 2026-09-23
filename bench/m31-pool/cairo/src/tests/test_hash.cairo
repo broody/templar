@@ -41,7 +41,7 @@ fn pack_is_lossless() {
     assert!(unpack(lo, hi).span() == max.span());
 }
 
-/// The pool's binding of a real V2 statement equals the bridge's (independent Python reference).
+/// The pool's binding of a real V3 statement equals the bridge's (independent Python reference).
 #[test]
 fn binding_matches_bridge() {
     let mut nfs = array![];
@@ -52,7 +52,7 @@ fn binding_matches_bridge() {
     cms.append_span(BIND_CM1.span());
     let b = m31_pool::spend::binding_of(
         BIND_CHAIN, BIND_POOL, BIND_TOKEN, BIND_ROOT.span(), nfs.span(), cms.span(),
-        array![BIND_D0, 0].span(), BIND_RECIPIENT, BIND_AMOUNT,
+        array![BIND_D0, 0].span(), BIND_RECIPIENT, BIND_AMOUNT, BIND_INTENT, BIND_IDENTITY.span(),
     );
     assert_eq!(b, BIND_EXPECTED);
 }

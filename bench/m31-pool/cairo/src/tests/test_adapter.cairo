@@ -23,7 +23,7 @@ fn setup(mutation: u32) -> (IVerifierDispatcher, Array<felt252>) {
     start_cheat_chain_id(addr, 'SN_SEPOLIA');
     start_cheat_block_number(addr, 200);
     let public = array!['SN_SEPOLIA', pool.into(), 0xb1d];
-    let mut message = array![statement, 0, 5, statement_class, 'TMPZR0_PAYMENT_V2'];
+    let mut message = array![statement, 0, 5, statement_class, 'TMPZR0_PAYMENT_V3'];
     message.append_span(public.span());
     let digest = poseidon_hash_span(message.span());
     let facts = array![

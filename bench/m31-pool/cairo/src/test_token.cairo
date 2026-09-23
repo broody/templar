@@ -53,6 +53,10 @@ pub mod E2EToken {
             self.balances.write(recipient, self.balances.read(recipient) + amount);
             true
         }
+
+        fn balance_of(self: @ContractState, account: ContractAddress) -> u256 {
+            self.balances.read(account)
+        }
     }
 
     #[external(v0)]
@@ -60,8 +64,4 @@ pub mod E2EToken {
         self.balances.write(to, self.balances.read(to) + amount);
     }
 
-    #[external(v0)]
-    fn balance_of(self: @ContractState, account: ContractAddress) -> u256 {
-        self.balances.read(account)
-    }
 }
