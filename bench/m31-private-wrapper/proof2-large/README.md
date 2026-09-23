@@ -53,10 +53,10 @@ while already on 0.14.4, so gateway acceptance is a separate rollout switch
 optimized replay by issuing code segment: bootloader hashing the virtual OS
 program 1,914; virtual OS 10,340, dominated by the compiled-class hash of the
 account's executed bytecode segments (193 of 273 segments, 73,898 of 79,033
-felts); the bridge verifier itself 5,303. This corrects
-`results/bridge-capacity/os-attribution/README.md`, which attributed the
-dominant share to `compute_program_hash_chain` over the account. Those
-numbers matter only for fitting the cheaper log20 path.
+felts); the bridge verifier itself 5,303. So the dominant Blake cost is the OS
+hashing the account's executed bytecode, not the bootloader's
+`compute_program_hash_chain`, which hashes only the OS program. Those numbers
+matter only for fitting the cheaper log20 path.
 
 ## Open
 

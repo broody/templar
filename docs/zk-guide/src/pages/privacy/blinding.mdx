@@ -1,7 +1,7 @@
 ---
 showAskAi: false
 title: Blinding in practice
-description: What exists today (row padding), why it falls short, and the honest design menu.
+description: How polynomial masking and private commitments hide the compact client proof.
 ---
 
 <div className="guide-eyebrow">Part 5 · Privacy</div>
@@ -21,8 +21,8 @@ v = (honest rows' contribution) + (random rows' contribution)
 
 If the random contribution has enough independent entropy, `v` is
 simulatable. The questions are *how much*, *where*, and *provable how* —
-and the honest answer today is: the ecosystem has a partial, unproven
-mechanism, and this repo's research mapped its gaps.
+and the ecosystem's stock answer remains incomplete. The compact client
+experiment therefore uses a separate, purpose-built construction.
 
 ## What exists: upstream's row-padding helper
 
@@ -69,11 +69,34 @@ prover-random. Consequences:
   meet their entropy budget *per column*, not per proof.
 
 The catch is mechanical: `V` has degree equal to the domain size, so the
-masked polynomial needs one extra bit of degree room — the **degree slack**
-— which means committing on a doubled domain: real memory cost, and
-protocol-level changes in the prover's column layout. Sound theory, real
-price. This is the construction the repo's design docs treat as the
-gold-standard fallback.
+masked polynomial needs extra degree room — the **degree slack**. That means
+larger polynomial spaces and protocol-level changes in the prover's column
+layout. Sound theory, real price.
+
+## What the compact client now implements
+
+The private membership experiment applies that idea to every one of its 1,191
+base columns. Each honest polynomial `f` is replaced by
+`f̂ = f + Z_H · r`, where `r` is sampled independently from the reviewed mask
+space. Since `Z_H` vanishes on the 128-row AIR domain, `f̂` satisfies the same
+membership constraints. Outside that domain, the openings contain fresh mask
+entropy instead of readable witness values.
+
+The construction also protects the rest of the transcript:
+
+- quotient observations are derived from the already-masked columns;
+- an independent random polynomial masks the combined DEEP/FRI batch;
+- every Merkle leaf receives a fresh 1,536-bit salt;
+- all roots and direct messages enter a domain-separated Fiat–Shamir state
+  before 120 query positions are drawn;
+- fresh masks, salts and batching randomness are required for every proof.
+
+An independent protocol and source review established the fixed relation's
+simulator argument and a 96-bit classical random-oracle work target under its
+stated assumptions. Native and browser proofs are randomized, mutually
+compatible and accepted by a separate verifier that receives only public input
+and proof bytes. This is a research qualification for private membership, not
+a production audit or a completed private payment.
 
 ## Recursion is not hiding
 
@@ -90,15 +113,17 @@ own padding is sound. It is a transport tool, not a hiding tool.
 | Route | Hiding status | Client cost | The catch |
 | --- | --- | --- | --- |
 | Transparent STARK (today's default) | none | lowest | leaks the witness |
-| + row padding (upstream helper) | unproven, partial | low | under-padded; no theorem |
-| + polynomial masking (H-A-K-style) | provable | ~2× memory | prover changes, mapping work |
+| + row padding (upstream helper) | unproven, partial | 2.75 GiB measured for membership (fixed lookup tables) | under-padded; no theorem |
+| + polynomial masking + private commitments | reviewed for fixed membership relation | 64 MiB native / 80 MiB WASM measured | custom protocol; payment incomplete; membership wrapper works |
 | ZK-native SNARK for the statement | native | lowest measured | trusted setup, on-chain cost, format break |
 | Trust an operator (no hiding needed) | n/a | none | the trust hole this project exists to remove |
 
-The repo's active program is the second and third rows for a *compact client
-statement* — with the explicit discipline that a measured "we tried to
-recover the secret and failed" is evidence, never a qualification; only a
-reviewed simulator argument qualifies.
+The active path is the third row for a *compact client statement*. The next
+privacy step is to extend the exact observation inventory and simulator proof
+to the complete payment relation, especially amount/range machinery and any
+private lookup arguments. The server wrapper already verifies the membership
+proof and emits a verified PROOF2; the next architecture step is review of that
+wrapper and its extension to the payment relation.
 
 > **Check.** Revisit Part 5.1's entropy accounting with the row-padding
 > mechanism: `n_padding` random rows × their free parameters per component.
@@ -109,10 +134,9 @@ reviewed simulator argument qualifies.
 
 ## What to carry forward
 
-1. Free rows are real entropy — but the amount, placement, and proof all
-   matter, and today's helper delivers only a fraction.
-2. Polynomial masking is the principled version, priced in memory and
-   protocol work.
-3. No measured attack failure qualifies a construction; only a simulator
-   argument does. That distinction is the repo's quality bar, and it is the
-   right one.
+1. Free rows are real entropy, but stock row padding does not cover this
+   statement or establish a simulator.
+2. Polynomial masking plus private commitments now works for the fixed
+   membership relation at browser-friendly cost.
+3. Each extension to the statement changes the observation inventory and must
+   preserve the simulator argument. Measurements alone do not qualify it.

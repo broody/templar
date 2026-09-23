@@ -36,9 +36,10 @@ nine-bit limbs**. This one fact explains most of the stack's shape:
   SNARK (the abandoned path) was ~47k constraints; in S-two it is the
   purpose-built circuitry the machine was made for.
 
-The practical consequence measured in this repo: a payment statement with
-~128 felt252 Poseidon permutations proves in ~14 s at ~2 GB RSS — while the
-fixed range tables, not the permutations, set the memory floor.
+The practical consequence measured in this repo: a public payment-shaped
+statement with ~128 felt252 Poseidon permutations proves in ~14 s at ~2 GB
+RSS — while the fixed range tables, not the permutations, set the memory
+floor. That benchmark did not provide witness privacy.
 
 ## The component zoo
 
@@ -68,14 +69,35 @@ And the observation inventory (~40–50k functionals for a payment statement:
 claimed sums) is a *counted* object, not a metaphor — Part 5's privacy
 arguments live and die by this count.
 
+## A second way to use S-two
+
+S-two's primitives can also support a **purpose-built AIR** without proving a
+generic Cairo VM execution. That is the basis of the compact-client path:
+
+- express note membership, ownership, nullifiers, conservation and outputs
+  directly as M31 constraints;
+- use an M31-friendly hash inside the experimental private statement;
+- add polynomial masking and private commitments before any proof crosses the
+  client boundary;
+- let a server handle the generic Cairo/PROOF2 work after verifying that
+  already-private proof.
+
+The first complete experiment covers private depth-32 membership: 65 active
+Poseidon2-M31 permutations, 128 AIR rows, 1,191 columns and 1,273 constraints.
+It proves in 1.17–1.20 seconds at 63–64 MiB native peak RSS, and in 1.89–2.12
+seconds with about 80 MiB WASM linear memory in Chrome. This is strong evidence
+that the generic Cairo footprint is avoidable on the client. It is not yet a
+full payment: amounts, nullifiers, outputs, delivery binding, controllers and
+ReturnNotes remain to be constrained.
+
 ## Where zero-knowledge lives — and doesn't
 
-Nothing above hides anything: S-two's core has **no hiding mechanism at
-all** (no feature, no flag, no API). The one zk-like helper in the wider
-stack lives in the *circuit* layer (`stwo-circuits`): a function that pads
-five specific gate components with random valid rows — Part 5.2 dissects
-it. Everything else about hiding in this ecosystem is, today, an open
-engineering problem — which is precisely why this course ends where it does.
+S-two's stock core still has **no hiding switch**. The compact experiment adds
+its own reviewed protocol around S-two's fields, circle FFTs and CPU FRI folds:
+full polynomial masks, an independent random batching polynomial, salted
+private Merkle commitments and a transcript covering every oracle message.
+That custom layer is where witness privacy lives. Calling S-two alone does not
+provide it, and the wrapper cannot add it after the inner proof is disclosed.
 
 > **Check.** Using Part 3.3's counting: a statement with 1,228 committed
 > columns, 1-point OOD for most columns, 23 queries, and 1,725 FRI witness
@@ -86,5 +108,5 @@ engineering problem — which is precisely why this course ends where it does.
 1. felt252 = 28 nine-bit limbs inside S-two; limb range-checks set the
    memory floor.
 2. Components are the unit of AIR design; payments need 12, the OS needs 69.
-3. The observation inventory is countable — and counting it is the first
-   step of any hiding design.
+3. A purpose-built M31 AIR can avoid that generic client footprint, but it
+   assumes responsibility for every payment rule and every privacy proof.

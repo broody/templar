@@ -1,0 +1,193 @@
+---
+showAskAi: false
+title: Client proofs and server wrapping
+description: Keep private validity on the user's device; move Starknet compatibility to a public server wrapper.
+---
+
+<div className="guide-eyebrow">Part 4 · Starknet</div>
+
+# Client proofs and server wrapping
+
+## Why split the proof in two?
+
+The accepted baseline asks the user's computer to prove a Cairo statement,
+execute the virtual OS and produce a Starknet-compatible native proof (PROOF1).
+That path works, including an ordinary payment lifecycle on Sepolia. Its cost
+comes from proving a general machine: Cairo instructions, felt252 arithmetic,
+range tables, OS state and recursion all live on the client.
+
+The proposed architecture divides responsibilities at the privacy boundary:
+
+```text
+wallet / browser                  wrapping server                 Starknet
+----------------                 ---------------                 --------
+notes, keys, paths
+amounts, randomness
+        │
+        ▼
+purpose-built M31 AIR
+        │
+        ▼
+private client proof ───────────► circuit A: verify client proof
+public statement ───────────────► Cairo account: verify circuit A,
+                                    pin its circuit hash, emit digest
+                                  run virtual OS
+                                  produce PROOF2 (large path) ───► native verify
+                                                                    pool: rebuild statement,
+                                                                    compare digest, transition
+```
+
+The client proves every rule whose incorrect enforcement could steal funds,
+create value or reveal the witness. The server handles compatibility with the
+network's generic proving pipeline. This moves the largest memory burden away
+from ordinary devices without trusting the server with private validity.
+
+## The client statement
+
+For a complete ordinary payment, the private proof must bind one coherent
+state transition:
+
+- input ownership and depth-32 membership under the public root;
+- input commitment openings and correctly derived nullifiers;
+- nonzero, range-constrained amounts and exact conservation;
+- output commitments and encrypted-delivery digests;
+- the pool, chain, token, relation version and transaction intent;
+- later extensions such as controller conditions and ReturnNotes.
+
+The public output is a compact statement: root, nullifiers, new commitments,
+delivery bindings, withdrawals/fees and an execution-intent digest. Notes,
+keys, Merkle paths, output randomness and private amounts remain local.
+
+The boundary is strict: **all privacy-sensitive validity rules live in the
+client proof**. A malicious wrapper may refuse service, delay submission or
+quote an excessive fee. It must not be able to make an invalid transition
+valid, swap the public intent, or learn the witness.
+
+## The wrapper statement
+
+The wrapper receives `(public statement, client proof)` and works in three
+layers:
+
+1. **Circuit A** is the client's complete verifier written as a stwo-circuits
+   circuit: transcript, every Merkle opening, the out-of-domain constraint
+   check, the DEEP batch and all FRI folds. Its only public output is a digest
+   of the statement.
+2. A **Cairo account** verifies circuit A's proof with StarkWare's own Cairo
+   circuit verifier. It checks that the proof's *circuit hash* equals circuit
+   A's, so a proof of any other circuit is rejected. It then emits the
+   statement digest as an L2→L1 message.
+3. The server runs that account in the **virtual OS** and proves the execution
+   as a **PROOF2** artifact through Starknet's large-proof path.
+
+The pool rebuilds the statement from its own chain, its own address and the
+membership root, hashes it, and compares with the digest in the verified
+facts before executing the transition.
+
+Why PROOF2 rather than PROOF1? PROOF1 verifies Cairo traces up to 2^20 rows.
+Verifying even a representative slice of the client proof in Cairo needs
+2^22. Starknet v0.14.4 added PROOF2, whose large-proof path accepts traces
+from 2^25 to 2^29 rows. That removes the size ceiling instead of forcing the
+verifier under it.
+
+This is different from sending a transparent inner STARK to a server and asking
+it to hide that proof recursively. If the inner proof leaks, the server has
+already observed the leak. The client artifact must be zero-knowledge before
+upload. Recursion or Cairo wrapping is only transport and compatibility.
+
+The server does not need to be decentralized for privacy, because it sees no
+private witness. Availability is still a product concern: clients can switch
+servers, run one themselves, or eventually use a proving market. The measured
+wrapper needs roughly 40–66 GiB of RAM per stage, which makes a self-hosted
+server a real machine rather than a laptop. Public request
+metadata, IP addresses, timing and transaction correlation remain observable
+and require separate network-privacy work.
+
+## What has been demonstrated
+
+The first end-to-end client experiment proves a deliberately smaller relation:
+knowledge of a nine-word secret leaf preimage and a valid depth-32 Merkle path.
+The verifier receives only a fixed relation/version, chain, pool and root.
+
+| Result | Measurement |
+| --- | ---: |
+| Native client proof | 1.17–1.20 s, 63–64 MiB peak RSS |
+| Chrome WASM client proof | 1.89–2.12 s, ~80 MiB linear memory |
+| Native verification | 0.16–0.18 s |
+| Proof size | 3.39–3.46 MiB |
+
+Three native and three browser proofs used fresh randomness and were accepted
+by separate native verifier processes containing only public input and proof.
+The browser also verified a native artifact. Final tests cover hash vectors,
+AIR wiring, degree bounds, quotient identities, batching, real FRI folds,
+malformed artifacts and an invalid trace deliberately sent past the honest
+prover checks.
+
+The proof is a custom reviewed protocol built from S-two's M31/QM31 fields,
+circle FFTs and CPU FRI folds. It uses polynomial masking, an independent
+random batching polynomial, salted private Merkle commitments and a transcript
+covering every oracle message. Its review supports a 96-bit classical
+random-oracle work target under explicit ideal-ROM and CSPRNG assumptions.
+
+## The wrapper, end to end
+
+The retained membership proof has been carried through every layer on
+StarkWare's current proving stack (`starkware-libs/proving`):
+
+| Stage | Where | Time | Peak memory |
+| --- | --- | ---: | ---: |
+| Client proof (Blake2s-authenticated variant) | device | ~1 s | ~53 MiB native / 63 MiB WASM |
+| Circuit A: verify the client proof | server | 67 s | 39.9 GiB |
+| Cairo account in the virtual OS | server | ~13 s | < 16 GiB |
+| PROOF2 large path | server | 142 s | 66.0 GiB |
+
+The PROOF2 artifact is about 253 KB, below the 480 KB gateway limit, and the
+native PROOF2 verifier accepts it while rejecting altered outputs, bytes and
+truncations. Every layer also rejects a tampered statement: wrong pool, chain
+or root, altered digest, altered proof body, trailing or missing data. The
+chain state was a synthetic local fixture; nothing has been submitted to
+Sepolia yet.
+
+## What remains pathfinding
+
+The membership result establishes the privacy construction, the browser-scale
+client cost and a working wrapper for one real private relation. It does
+**not** yet establish the full architecture:
+
+1. Add the complete 2-input/2-output payment rules: ownership, nullifiers,
+   amount ranges and conservation, outputs and delivery binding.
+2. Re-evaluate the privacy proof for any range tables or lookup arguments the
+   enlarged relation introduces.
+3. Obtain independent review of circuit A and of the statement binding between
+   client proof, wrapper, PROOF2 facts and pool.
+4. Implement the pool-side statement check and complete the ordinary Sepolia
+   lifecycle once the gateway accepts PROOF2.
+5. Reduce server cost; PROOF2's large path alone has a ~42 GiB floor.
+6. Extend the proven relation to controlled notes and ReturnNotes.
+
+One alternative is still open: make the client proof a *standard* blinded
+stwo-circuits proof instead of the custom protocol, so no circuit A is needed.
+It works mechanically, but costs 2.75 GiB on the client, almost all of it
+fixed lookup tables the relation never uses. Without those tables it
+measured about 260 MiB. That route depends on an upstream question: whether
+the standard blinding hides the witness for such circuits.
+
+## The decision rule
+
+Treat the split architecture as the leading path, not the deployed design.
+Promote it only after an ordinary payment is privately proved on the client,
+the server emits a valid PROOF2 artifact that the Sepolia gateway accepts, the
+pool accepts it end to end, and independent review covers the final relation
+and wrapper binding.
+
+> **Check.** Suppose the wrapper server skips conservation but the client
+> proof enforces it. Can money be created? Now reverse the responsibilities:
+> the client proves only membership and the server enforces conservation.
+> Which design still protects users from a malicious wrapper, and why?
+
+## What to carry forward
+
+1. The client proves private validity; the server proves public compatibility.
+2. The wrapper sees only an already-private proof and public transaction data.
+3. Private membership is proved on the client and wrapped to a verified PROOF2
+   on the server; the full payment relation, review and a live Sepolia run
+   are the remaining gates.

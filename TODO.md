@@ -136,14 +136,37 @@ the accepted local proving architecture is unchanged.
   lowers bridge steps by **15.37%** and OS steps by **15.01%**, with all seven
   rejection controls passing. Actual padded Blake work still needs log22.
   The enlarged configuration builds, but proving is **OOM-killed at96GiB**;
-  no new outer proof. Next measure proof-calldata/OS overhead reductions or
-  prover allocation changes before another enlarged attempt.
-  **Next architecture gate:** implement and measure an actual server verifier
-  route to unchanged PROOF1. The existing recursive adapter is
-  [not directly compatible](bench/m31-private-e2e/wrapper-compatibility.md)
-  with this proof format. Its wider salted hash and different transcript,
-  samples and composition need new verifier code; native acceptance does not
-  close that gate.
+  no new outer proof. The log20 PROOF1 ceiling is superseded by PROOF2 below.
+  **PROOF2 large path 2026-09-23:** Starknet v0.14.4's
+  [large-proof path](bench/m31-private-wrapper/proof2-large/README.md)
+  (`privacy_recursive_prove_large`, Cairo traces log25–29) proves the same
+  optimized bridge workload in **138 s / 61.4 GiB**. The V2 verifier accepts it,
+  and 3 rejections pass. StarkWare's own sample transaction costs 87 s /
+  42.1 GiB, which is the path's floor. Sepolia runs 0.14.4, but its gateway
+  rejected PROOF2 on 2026-09-20; mainnet's 0.14.4 upgrade is scheduled for
+  2026-10-05, pending governance.
+  **Client verifier port (circuit A) 2026-09-23:** the
+  [complete TMPZK002 verifier](bench/m31-private-wrapper/client-port/README.md)
+  now runs as one stwo-circuits circuit (transcript, all openings, OOD from the
+  client's own `air::constraints`, DEEP, FRI) and accepts all 6 retained proofs
+  with one topology. A retained client proof goes **end to end** on
+  `starkware-libs/proving@5a7c5ed`:
+  - circuit A proves in **67 s / 39.9 GiB** (log23);
+  - the unmodified upstream Cairo `circuit_air` verifier (FRI changed to
+    blowup 2, 35 queries) checks it in 5.80M steps and pins circuit A's
+    circuit hash;
+  - the virtual OS emits the exact statement digest;
+  - PROOF2 takes **142 s / 66.0 GiB** and is verified.
+
+  Checks: 19 circuit tests, 8/8 bridge checks (pool, chain, root, digest, body,
+  trailing, truncated) ([results](bench/m31-private-wrapper/client-port/results/proving-stack/README.md)).
+  Synthetic fixture only.
+  **Next architecture gate:** independent math review of circuit A (items in
+  its PLAN.md), the pool-side `statement_digest` check, then a real Sepolia run
+  through the user's node once the gateway accepts PROOF2. A blinded upstream
+  stwo-circuits client (no circuit A) measured 2.75 GiB, or ~0.26 GiB without
+  the fixed XOR tables (measurement only). It awaits the StarkWare questions in
+  broody/templar#2.
   **Remaining client gates:** R0 payment constraints and any required private
   range/lookup machinery, then complete ordinary 2-in/2-out native and WASM
   client measurements.

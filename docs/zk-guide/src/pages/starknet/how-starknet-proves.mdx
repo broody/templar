@@ -56,29 +56,44 @@ accepted it), and facts/bindings must be checked contract-side with care —
 the proof proves *a* statement; the contract must check it proves *the
 intended* one.
 
+The two versions differ in size. PROOF1 verifies Cairo executions whose
+largest trace component fits 2^20 rows. PROOF2, added in Starknet v0.14.4,
+keeps a small path and adds a **large path** for traces from 2^25 to 2^29
+rows (`privacy_recursive_prove_large`). A large proof takes minutes and tens
+of GiB to generate, but lifts the size ceiling for server-side work.
+Acceptance is again a rollout property: Sepolia runs v0.14.4, whose protocol
+constants allow PROOF2, yet the official gateway still rejected a PROOF2
+submission on 2026-09-20.
+
 ## Where user-held secrets fit — and where they don't
 
 A payment protocol wants the *user* to prove statements over **secrets the
 sequencer never receives**: note ownership, membership, nullifier
-derivation. Two architectures:
+derivation. Three architectures matter here:
 
 1. **Centralized prover (upstream's deployment)**: the user sends
    everything — per this repo's inspection of upstream's SDK, the proving
    service receives the user's address, private key, and every action in
    plaintext — and the operator's proof wraps the public outputs. The
    posted artifact hides nothing the operator didn't already know.
-2. **Client-side proving (this repo's architecture)**: the user generates
-   the proof locally, submits it directly. No privileged party. The cost:
-   the proving hardware moves to the user (Part 4.2 has the numbers), and
-   the artifact's privacy becomes *the user's own* engineering problem —
-   Part 5.
+2. **Full Cairo proving on the client (the accepted baseline)**: the user
+   generates the Cairo/virtual-OS privacy proof locally and submits PROOF1.
+   This has a demonstrated Sepolia payment path, but the generic VM, OS and
+   felt252 machinery make it expensive for ordinary desktops and browsers.
+3. **Compact private client proof + server wrapper (the new path)**: the
+   user's device proves only the private payment transition in a purpose-built
+   M31 AIR. A server verifies that inner proof and proves the public wrapper
+   computation as a PROOF2 large proof. The server
+   may learn the public transaction intent, but must never receive notes,
+   keys, Merkle paths or private amounts.
 
-Both run on the same STARK machinery; they differ in *who is trusted with
-secrets* and *who bears the memory bill*.
+All three use STARK machinery; they differ in *who is trusted with secrets*,
+*where generic Cairo execution happens*, and *who bears the memory bill*.
+The third route is explained on the [next page](/starknet/client-proof-wrapping).
 
-> **Check.** In architecture 1, list what each party knows: user, operator,
-> chain observers. Do the same for architecture 2 — one row of the table is
-> empty. Which empty row forced this repo to build client-side proving?
+> **Check.** List what the user, wrapper server, sequencer and chain observer
+> know in architecture 3. Why is “the server verifies an inner proof” safe
+> only if that inner artifact is already zero-knowledge?
 
 ## What to carry forward
 

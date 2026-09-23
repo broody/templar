@@ -3,7 +3,8 @@
 A standalone Vocs site teaching zero-knowledge and STARK concepts from first
 principles, grounded in Starknet's actual stack (M31 circle STARKs, S-two,
 felt252 limbs, PROOF1) and ending on proof privacy — what a proof artifact
-leaks and how hiding is built.
+leaks, how hiding is built, and how a compact private client proof can be
+wrapped by a server for Starknet compatibility.
 
 Parallel to the product-oriented guide in `../guide` (architecture of the
 payment system); this site is conceptual and self-contained.
