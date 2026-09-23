@@ -17,7 +17,21 @@ submission was made. Circuit A has not had independent math review. See
 > with the unmodified upstream Cairo verifier. See [results/proving-stack/](results/proving-stack/README.md).
 > The numbers below are from the earlier pre-monorepo pins.
 
-## Pipeline
+## stwo-circuits client route
+
+The same membership relation also runs without TMPZK002 or circuit A, as a blinded
+stwo-circuits proof that the bridge verifies directly:
+
+| Route | Client | Bridge | OS | PROOF2 | Evidence |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Stock components | 2.75 GiB | 5.06M steps | 7.22M steps | 140 s / 63.1 GiB | [results/stwo-client-stock/](results/stwo-client-stock/README.md) |
+| Arithmetic-only profile (fork) | 0.56 GiB | 3.38M steps | 4.93M steps | 116 s / 52.2 GiB | [results/stwo-client-arith/](results/stwo-client-arith/README.md) |
+
+The arithmetic-only profile needs our fork of `proving` (`target/proving-arith`, branch
+`templar/arithmetic-profile`), which this crate now builds against. The full-profile paths
+are unchanged by the fork.
+
+## Pipeline (TMPZK002 route)
 
 | Stage | Where | Time | Peak memory | Evidence |
 | --- | --- | ---: | ---: | --- |

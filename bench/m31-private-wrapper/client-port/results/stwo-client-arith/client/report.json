@@ -1,0 +1,30 @@
+{
+  "blinding_rows": 45,
+  "build_seconds": 0.436978327,
+  "component_log_sizes": [
+    7,
+    18,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "native_negatives": [
+    "output",
+    "trace",
+    "topology",
+    "circuit-hash",
+    "claimed-sum-shift",
+    "config"
+  ],
+  "preprocessed_columns": 10,
+  "proof_felts": 30270,
+  "proving_seconds": 17.479676527,
+  "scope": "blinded arithmetic-only stwo-circuits client membership proof (fork templar/arithmetic-profile)",
+  "trace_log_size": 18
+}

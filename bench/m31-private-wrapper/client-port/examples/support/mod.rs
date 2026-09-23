@@ -21,7 +21,7 @@ use stwo::core::vcs_lifted::blake2_merkle::{Blake2sMerkleChannel, Blake2sMerkleH
 
 pub type MC = Blake2sMerkleChannel;
 
-const PROVING: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../../../target/proving-main");
+const PROVING: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../../../target/proving-arith");
 
 /// Bridge FRI config: PoW 26, blowup 2, 35 queries, fold 4 (26 + 2*35 = 96 bits, as upstream's
 /// production 26 + 1*70). Production's 70 queries exceed one virtual block's 1.1B L2 gas when
@@ -80,6 +80,7 @@ pub fn native_verify(proof: &CircuitProof<Blake2sMerkleHasher>, pp: &Preprocesse
     let components = CircuitComponents::new(&elements, &proof.interaction_claim, &log_sizes, &pp.preprocessed_trace.ids());
     stwo::core::verifier::verify_ex(&components.components(), channel, scheme, stark, true).expect("stark verification");
     assert_eq!(lookup_sum(&proof.claim, &proof.interaction_claim, &elements), QM31::zero(), "lookup sum");
+    assert!(proof.interaction_claim.absent_components_claim_zero(&log_sizes), "absent component claimed sum");
 }
 
 
@@ -106,6 +107,13 @@ pub fn negatives(proof: &mut CircuitProof<Blake2sMerkleHasher>, pp: &Preprocesse
     proof.circuit_hash = Default::default();
     reject("circuit-hash", proof);
     proof.circuit_hash = saved;
+    // Move part of eq's claimed sum onto triple_xor: the LogUp total is unchanged. Under the
+    // arithmetic profile triple_xor is absent, so only the absent-sum check catches this.
+    proof.interaction_claim.claimed_sums.eq -= QM31::one();
+    proof.interaction_claim.claimed_sums.triple_xor += QM31::one();
+    reject("claimed-sum-shift", proof);
+    proof.interaction_claim.claimed_sums.eq += QM31::one();
+    proof.interaction_claim.claimed_sums.triple_xor -= QM31::one();
     let saved = proof.pcs_config.fri_config.pow_bits;
     proof.pcs_config.fri_config.pow_bits = 0;
     reject("config", proof);

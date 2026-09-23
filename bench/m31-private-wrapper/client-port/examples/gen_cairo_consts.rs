@@ -56,9 +56,16 @@ fn idx_const_name(id: &str) -> String {
     format!("{}_IDX", renamed.to_uppercase())
 }
 
+/// Every column id of the full component set, in full-layout order (sizes are irrelevant).
+fn all_ids() -> Vec<String> {
+    let n = 1 << 4;
+    layout(&ComponentSizes { eq: n, qm31_ops: n, triple_xor: n, m31_to_u32: n, blake_g_gate: n }).into_iter().map(|(id, _)| id).collect()
+}
+
 fn render_multiverifier_consts(fri: FriConfig, target: &ComponentSizes) -> String {
     let layout = layout(target);
-    let log_of = |id: &str| layout.iter().find(|(c, _)| c == id).unwrap_or_else(|| panic!("missing {id}")).1;
+    // A component absent from the profile (arithmetic-only) has no columns and log size 0.
+    let log_of = |id: &str| layout.iter().find(|(c, _)| c == id).map(|(_, l)| *l).unwrap_or(0);
     let FriConfig { pow_bits, log_blowup_factor, log_last_layer_degree_bound, n_queries, fold_step } = fri;
     let mut w = String::new();
     writeln!(w, "{BEGIN_MARKER}\n").unwrap();
@@ -105,6 +112,14 @@ fn render_preprocessed_columns(target: &ComponentSizes) -> String {
             idx += 1;
         }
     }
+    // Columns of absent components: the component code still names them, never reads them.
+    let absent: Vec<String> = all_ids().into_iter().filter(|id| !layout.iter().any(|(c, _)| c == id)).collect();
+    if !absent.is_empty() {
+        writeln!(w, "\n// Absent from this circuit's profile (log size 0): never evaluated.").unwrap();
+        for id in absent {
+            writeln!(w, "pub const {}: PreprocessedColumnIdx = INVALID_COLUMN_IDX;", idx_const_name(&id)).unwrap();
+        }
+    }
     writeln!(w, "\n{END_MARKER}").unwrap();
     w
 }
@@ -123,8 +138,10 @@ fn main() {
     let fri: FriConfig = serde_json::from_value(m["fri_config"].clone()).unwrap();
     let logs: Vec<u32> = serde_json::from_value(m["component_log_sizes"].clone()).unwrap();
     // PerComponent order: eq, qm31_ops, triple_xor, m31_to_u32, blake_g_gate, then fixed tables.
+    // Log size 0 marks a component absent from the profile (size 0, no columns).
+    let size = |l: u32| if l == 0 { 0 } else { 1 << l };
     let target = ComponentSizes {
-        eq: 1 << logs[0], qm31_ops: 1 << logs[1], triple_xor: 1 << logs[2], m31_to_u32: 1 << logs[3], blake_g_gate: 1 << logs[4],
+        eq: size(logs[0]), qm31_ops: size(logs[1]), triple_xor: size(logs[2]), m31_to_u32: size(logs[3]), blake_g_gate: size(logs[4]),
     };
     let src = Path::new(&a[2]);
     replace_section(&src.join("multiverifier_consts.cairo"), &render_multiverifier_consts(fri, &target));
@@ -134,5 +151,8 @@ fn main() {
     let manifest: Vec<(String, u32)> = m["preprocessed_columns"].as_array().unwrap().iter()
         .map(|c| (c["id"].as_str().unwrap().to_string(), c["log_size"].as_u64().unwrap() as u32)).collect();
     assert_eq!(rendered, manifest, "layout differs from the trusted manifest");
+    // The fixed tables are present exactly when the gate components are.
+    let absent_tables = logs[5..].iter().all(|l| *l == 0);
+    assert!(absent_tables == (logs[2] == 0) && (absent_tables || logs[5..].iter().all(|l| *l != 0)), "mixed profile");
     println!("generated {} columns", rendered.len());
 }

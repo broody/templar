@@ -1,0 +1,109 @@
+{
+  "scope": "standalone Cairo execution of the arithmetic-profile client bridge (fork circuit_air); no OS, no PROOF2",
+  "executable_sha256": "cf0b3704ec197a2ed35aa8743f19a7fab3485b24801353572486d172eea09a21",
+  "cases": [
+    {
+      "name": "valid",
+      "expected_accept": true,
+      "passed": true,
+      "exit_code": 0,
+      "output": [
+        11,
+        393402133025997798000961,
+        291,
+        239408638,
+        970969432,
+        717074711,
+        2140237238,
+        1438716366,
+        455147151,
+        1523631992,
+        579892899,
+        663369905
+      ],
+      "usage": "{\"program_output\":\"11\\n393402133025997798000961\\n291\\n239408638\\n970969432\\n717074711\\n2140237238\\n1438716366\\n455147151\\n1523631992\\n579892899\\n663369905\",\"resources\":{\"n_steps\":3383956,\"n_memory_holes\":252764,\"builtin_instance_counter\":[[\"range_check_builtin\",481820],[\"output_builtin\",12]],\"syscalls\":[],\"memory_segment_sizes\":[[\"execution\",2883442],[\"range_check\",481820],[\"output\",12]],\"max_memory_address\":3476171}}",
+      "reason": null
+    },
+    {
+      "name": "tag",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"statement tag\\\".\"}"
+    },
+    {
+      "name": "root-output",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+    },
+    {
+      "name": "absent-claimed-sum",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"absent component claims a nonzero sum\\\".\"}"
+    },
+    {
+      "name": "proof-body",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Merkle Verification Error: Root Mismatch\\\".\"}"
+    },
+    {
+      "name": "wrong-pool",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"pool\\\".\"}"
+    },
+    {
+      "name": "wrong-chain",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"chain\\\".\"}"
+    },
+    {
+      "name": "wrong-root",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"root\\\".\"}"
+    },
+    {
+      "name": "trailing",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"trailing proof data\\\".\"}"
+    },
+    {
+      "name": "truncated",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with 0x494e56414c49445f50524f4f465f454e434f44494e47 ('INVALID_PROOF_ENCODING').\"}"
+    }
+  ]
+}

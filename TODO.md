@@ -163,10 +163,27 @@ the accepted local proving architecture is unchanged.
   Synthetic fixture only.
   **Next architecture gate:** independent math review of circuit A (items in
   its PLAN.md), the pool-side `statement_digest` check, then a real Sepolia run
-  through the user's node once the gateway accepts PROOF2. A blinded upstream
-  stwo-circuits client (no circuit A) measured 2.75 GiB, or ~0.26 GiB without
-  the fixed XOR tables (measurement only). It awaits the StarkWare questions in
-  broody/templar#2.
+  through the user's node once the gateway accepts PROOF2.
+  **stwo-circuits client route (parallel track) 2026-09-23:** the membership
+  relation as a blinded stwo-circuits client proof reaches a verified PROOF2
+  with no circuit A, both with the stock components
+  ([2.75 GiB client, PROOF2 140 s / 63.1 GiB](bench/m31-private-wrapper/client-port/results/stwo-client-stock/README.md))
+  and with our **arithmetic-only profile** (eq + qm31_ops, fork
+  `broody/proving` branch `templar/arithmetic-profile`):
+  - client **0.56 GiB**, 1 thread; timing is PoW-dominated, 2.5–5.5 s
+    typical;
+  - the statement is output directly as limbs, with no hash;
+  - the bridge takes 3.38M steps, 10/10 checks, including a claimed sum moved
+    onto an absent component;
+  - the OS takes 4.93M steps, exact message; the account is 49,851 felts;
+  - PROOF2 takes **116 s / 52.2 GiB**, verified
+    ([results](bench/m31-private-wrapper/client-port/results/stwo-client-arith/README.md)).
+
+  Open for this route:
+  - review of the fork's profile;
+  - the hiding question (broody/templar#2);
+  - the payment relation written once for both routes;
+  - a WASM measurement.
   **Remaining client gates:** R0 payment constraints and any required private
   range/lookup machinery, then complete ordinary 2-in/2-out native and WASM
   client measurements.

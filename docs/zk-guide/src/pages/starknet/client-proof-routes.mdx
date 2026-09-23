@@ -92,9 +92,13 @@ Measured for the membership relation (65 Poseidon2-M31 permutations, about
 | Trivial circuit, stock component set (the floor) | 2.60 GiB | 14 s | log20 |
 | `eq` + `qm31_ops` only | 0.53 GiB | 8 s | log18 |
 | `eq` + `qm31_ops` only, bounded FRI memory | **0.26 GiB** | 8.5 s | log18 |
+| Arithmetic-only profile, blinded, verified end to end | **0.56 GiB** | 2.5–5.5 s | log18 |
 
 The relation itself costs about 0.15 GiB. The rest is lookup machinery it
-never touches.
+never touches. The first three rows were measurements only. The last row is the
+working profile described below; its time is mostly the proof-of-work grind,
+which varies from run to run. The bounded-memory row used a local prover patch
+that the working profile does not include yet.
 
 ## Removing the tables, soundly
 
@@ -118,6 +122,17 @@ unchanged. What *must* change is everything that fixes the component set:
    lookups ignored, its rows would go unchecked.
 3. **The circuit hash** must commit to the reduced component set, so a proof
    can never be checked under the wrong profile.
+4. **An absent component's claimed sum must be zero.** Each component reports
+   its LogUp contribution as a *claimed sum*, and the verifier checks that
+   the claimed sums add up to zero. A present component's claimed sum is tied
+   to its committed interaction trace by constraints. An absent component has
+   no trace, so nothing ties its claimed sum to anything. If the verifier
+   accepted a nonzero one, a cheating prover could put whatever imbalance its
+   forged wires create there and still pass the zero-sum check.
+
+Our implementation marks an absent component with log size 0. A present
+component is never smaller than 2⁴ rows, so 0 is unambiguous. The circuit hash
+already hashes every component's log size, so point 3 comes for free.
 
 Who controls those pieces? The prover ships in our app. The verifier of the
 client proof is a Cairo library copied into our own account class; Starknet
@@ -128,7 +143,36 @@ would mean StarkWare maintains it too, but the protocol does not require it.
 > **Check.** Why is it safe to delete a table whose multiplicity column is all
 > zeros, but not one with nonzero multiplicities? Now suppose a buggy verifier
 > deletes the XOR tables *and* skips the lookup terms of `triple_xor` while
-> still accepting its rows. What can a malicious prover now claim?
+> still accepting its rows. What can a malicious prover now claim? Finally,
+> suppose it drops `triple_xor` correctly but forgets point 4. Which LogUp
+> terms can the prover then leave unbalanced, and how does it hide them?
+
+## Public outputs without a hash
+
+The stock client ended with a Blake2s digest of its statement. That was the
+only reason a membership proof needed Blake gates at all. In stwo-circuits,
+public outputs are simply wires whose values the verifier puts into the LogUp
+sum itself. Change one, and the sum no longer balances.
+
+The eight output wires are QM31 values, each holding four M31 coordinates.
+That is 32 base-field limbs, enough to carry the statement itself:
+
+- a tag;
+- the chain id and pool address, each as nine 28-bit limbs;
+- the nine root words;
+- zero padding.
+
+The verifier decodes the limbs, checks their ranges and compares them with the
+chain, pool and root it expects. No hash is needed on either side.
+
+This needs every limb to be a base-field value. Otherwise one QM31 output
+could decode to more than one limb tuple. The circuit pins its guessed limbs to
+M31 with a pointwise multiplication by `(1, 0, 0, 0)`, which is arithmetic too.
+The root words are sums and products of M31 values, so they stay in M31.
+
+> **Check.** A circuit packs limbs `(a, b, c, d)` into one output as
+> `a + b·i + c·u + d·iu`. Show that if `b` could be any QM31 value instead of an
+> M31 value, two different limb tuples could produce the same output.
 
 ## Hiding with padding rows
 
@@ -181,20 +225,21 @@ no lookup table to leak through.
 
 | | Custom protocol (TMPZK002) | Blinded stwo-circuits |
 | --- | --- | --- |
-| Client memory, membership | ~53 MiB native, 63 MiB WASM | ~0.26 GiB (arithmetic-only, bounded) |
-| Client time, membership | ~1 s | ~8.5 s (host, 1 thread) |
+| Client memory, membership | ~53 MiB native, 63 MiB WASM | 0.56 GiB (arithmetic-only; ~0.26 GiB with bounded FRI memory) |
+| Client time, membership | ~1 s | 2.5–5.5 s (host, 1 thread, PoW-dominated) |
 | Hiding construction | polynomial masking + salted commitments (ours) | row padding (StarkWare's) |
 | Hiding evidence | research review of a fixed relation | intuition; the question above |
 | Server layers | circuit A (verifies our protocol) → Cairo → PROOF2 | Cairo → PROOF2 |
-| Server peak | ~66 GiB (PROOF2); circuit A adds a 40 GiB, 67 s stage | ~66 GiB (PROOF2) |
+| Server peak | ~66 GiB (PROOF2); circuit A adds a 40 GiB, 67 s stage | 52 GiB (PROOF2, 116 s) |
 | Code we must review forever | protocol, prover, verifier, circuit A | the arithmetic-only profile |
-| Status | end to end to a verified PROOF2 | client proof verified in Cairo; arithmetic-only profile not yet verifiable |
+| Status | end to end to a verified PROOF2 | end to end to a verified PROOF2 (arithmetic-only profile, unreviewed fork) |
 
-The custom route is lighter on the phone and already proven end to end. The
+The custom route is lighter on the phone. Both routes now run end to end. The
 stwo-circuits route moves the hardest cryptography onto StarkWare's
 maintained code, removes circuit A from the server, and puts client, bridge
-and PROOF2 on one code line. The price is roughly 5× the client memory and a
-fork of the component set until upstream offers one.
+and PROOF2 on one code line. It also costs the server less: the account verifies a smaller proof, so the
+OS trace and the PROOF2 are smaller. The price is roughly 10× the client memory
+and a fork of the component set until upstream offers one.
 
 ## How the choice gets made
 
@@ -206,7 +251,8 @@ Both routes are developed in parallel until one question is settled:
    field-generic relation, is measured on the arithmetic-only profile, in
    WASM as well as native.
 3. **End to end.** The arithmetic-only client proof reaches a verified PROOF2
-   through a reviewed Rust and Cairo profile.
+   through a reviewed Rust and Cairo profile. The first half is done:
+   2026-09-23, on our fork. The review is still open.
 
 If all three hold, stwo-circuits becomes the client proof and TMPZK002 retires.
 If hiding fails, the custom route stays, and the work is not wasted, because
@@ -223,3 +269,7 @@ the payment relation is written to compile to both.
    the prover, the verifier and the circuit hash all agree on the reduced set.
 4. Padding-row hiding is an entropy budget of 45 rows per component. Lookup
    multiplicities escape it, so range checks should use bits, not tables.
+5. A verifier for a reduced profile must reject a nonzero claimed sum from any
+   absent component. Otherwise that sum is a free term in the LogUp check.
+6. Public outputs are LogUp terms the verifier adds itself, so they can carry
+   the statement directly, as base-field limbs, with no hash.

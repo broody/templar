@@ -1,0 +1,8 @@
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:17.96
+	Maximum resident set size (kbytes): 587400
+	Exit status: 0
+# Repeats (same binary, 1 thread, fresh witness each; proving_seconds / wall / peak RSS):
+#   5.5 s / 5.97 s / 587,816 kB
+#   2.5 s / 2.92 s / 587,980 kB
+#   3.2 s / 3.65 s / 588,100 kB
+# The recorded run's 17.5 s is PoW grinding variance (26 bits, one thread).

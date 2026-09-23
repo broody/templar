@@ -1,0 +1,95 @@
+{
+  "blinding_rows": 45,
+  "channel": "Blake2sMerkleChannel",
+  "circuit_hash_u32_le": [
+    2329399940,
+    727807642,
+    3192679216,
+    3603631466,
+    2484535341,
+    3378790697,
+    2236727222,
+    3405442218
+  ],
+  "component_log_sizes": [
+    7,
+    18,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "fri_config": {
+    "fold_step": 4,
+    "log_blowup_factor": 2,
+    "log_last_layer_degree_bound": 0,
+    "n_queries": 35,
+    "pow_bits": 26
+  },
+  "n_outputs": 8,
+  "preprocessed_columns": [
+    {
+      "id": "eq_in0_address",
+      "log_size": 7
+    },
+    {
+      "id": "eq_in1_address",
+      "log_size": 7
+    },
+    {
+      "id": "qm31_ops_add_flag",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_sub_flag",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_mul_flag",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_pointwise_mul_flag",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_in0_address",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_in1_address",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_out_address",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_mults",
+      "log_size": 18
+    }
+  ],
+  "preprocessed_root_u32_le": [
+    444873944,
+    4057149740,
+    1255812368,
+    1000216378,
+    2328834798,
+    2901415351,
+    1075744984,
+    3562120467
+  ],
+  "purpose": "tmpzsa-client-membership",
+  "stack": "broody/proving templar/arithmetic-profile (on starkware-libs/proving@5a7c5ed), arithmetic profile, bridge FRI",
+  "statement_layout": "limbs 0..2 tag, 2..11 chain (28-bit LE), 11..20 pool (28-bit LE), 20..29 root, 29..32 zero; 4 limbs per output",
+  "statement_tag_u32": [
+    1414352986,
+    1396781105
+  ],
+  "trace_log_size": 18
+}
