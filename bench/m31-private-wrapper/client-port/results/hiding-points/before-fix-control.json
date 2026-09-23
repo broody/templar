@@ -1,0 +1,25 @@
+{
+  "blinding_iterations": 2390,
+  "classes": {
+    "eq_yield": 2390,
+    "m31_variables": 28680,
+    "mul": 0,
+    "rows_changed": 9560,
+    "x_plus_zero": 0,
+    "y_vars": 2390,
+    "z_plus_zero": 4780,
+    "zero_plus_y": 2390
+  },
+  "results": [
+    {
+      "full_rank": false,
+      "functionals": 468,
+      "lde_points": 35,
+      "oods_points": 1,
+      "rank": 312,
+      "seconds": 1.469244422
+    }
+  ],
+  "scope": "per-point rank test, qm31_ops base columns, R0 V2 transfer, fork 4de7408a6 blinding; conditioned on x and eq yields",
+  "trace_log_size": 18
+}

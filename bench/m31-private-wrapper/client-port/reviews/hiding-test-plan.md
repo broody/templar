@@ -28,7 +28,13 @@ base `qm31_ops` 12/12, interaction `eq` 4/4, interaction `qm31_ops` 8/8. This ch
 necessary for everything below it. It does not bound how many evaluations each blinded
 direction can absorb; the rank test below does.
 
-**Next: the per-point rank test.**
+**Done: per-point rank test for `qm31_ops`** (`hiding_points`,
+[results](../results/hiding-points/README.md)). The 35 query points plus OODS give full rank
+(468/468), and 560 points per column also give full rank (6,768/6,768). The pre-fix control
+shows a deficit of exactly 156, which is H2. Still to do in this layer: `eq`, and the FRI and
+interaction parts, which are nonlinear and are covered by layer 2 and the argument.
+
+**Original design of the per-point test:**
 
 For a real R0 transfer proof, with its challenges and query positions fixed, everything the
 verifier sees about a base-trace column is linear in that column's values:
