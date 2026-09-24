@@ -228,6 +228,7 @@ export class Wallet {
     };
     // Exactly `state.leaves` entries: a chunk may hold leaves written by a sync that never
     // committed its state (SDK-IP10).
+    this.tree?.free();
     this.tree = new wasm.Tree();
     for (let c = 0; c * CHUNK < this.state.leaves; c++) {
       const chunk = await this.chunk(c);
@@ -931,6 +932,8 @@ export class Spend {
   ): Promise<{ transactionHash: string; linkable: true; prepared: Prepared; warnings: string[] }> {
     const { t } = this.w.context;
     const rec = await this.record();
+    // A closed record makes no spend-specific reads at all.
+    if (!LIVE(rec)) fail('record_closed', `record ${this.id} is ${rec.stage}${rec.closed ? ` (${rec.closed})` : ''}`);
     this.version ??= rec.version;
     const { result, window, proved } = rec;
     if (!result || !window || !proved) fail('record', 'wrap first');

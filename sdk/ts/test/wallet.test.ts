@@ -454,6 +454,27 @@ describe('deposits, withdrawals and keys', () => {
 });
 
 describe('stores', () => {
+  test('FileKV: a stale lock is taken over by at most one contender (SDK-IP20)', async () => {
+    for (let run = 0; run < 10; run++) {
+      const dir = await mkdtemp(`${tmpdir()}/templar-race-`);
+      await writeFile(`${dir}/.lock-x`, '999999999 dead');
+      let holders = 0;
+      let most = 0;
+      const tries = Array.from({ length: 20 }, () =>
+        new FileKV(dir)
+          .lock('x', async () => {
+            holders += 1;
+            most = Math.max(most, holders);
+            await new Promise((r) => setTimeout(r, 5));
+            holders -= 1;
+          })
+          .catch(() => undefined),
+      );
+      await Promise.all(tries);
+      expect(most).toBeLessThanOrEqual(1);
+    }
+  });
+
   test('FileKV round trip and stale-lock recovery; IndexedDB round trip', async () => {
     const dir = await mkdtemp(`${tmpdir()}/templar-kv-`);
     const kv = new FileKV(dir);

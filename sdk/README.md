@@ -56,7 +56,8 @@ wallets are not supported as submitters in v1.
 | Sepolia S1 known answers | Binding, all 90 calldata felts, message hash and facts reproduce the real S1 spend (`vectors/sepolia-s1.json`) |
 | Independent reference | `vectors/check_keys.py` recomputes every key, address, viewing key, fingerprint, store key and sealed box (libsodium) |
 | Sepolia, read-only | Pins verified on chain; full sync of pool V2 complete (local root equals the pool's), one bulk `getEvents` |
-| Tests | 16 core tests (unit, S1, determinism, spend flow, key vectors); 8 TypeScript tests against a mock pool (receive, hidden transfer in a worker, network trace, reorgs, conflicts, record locking and eviction) |
+| Tests | 20 core tests (unit, rejection sweeps, every scan rule, spend rules, S1, determinism, key vectors) and a WASM serialization test; 17 TypeScript tests against a mock pool, prover and account (receive, hidden transfer proved in a worker, wrap and re-wrap, re-plan, submit sequence, settlement by an earlier attempt, network trace, reorgs, dropped and tampered leaves, record locking, eviction and resume, deposits and recipients, OHTTP, gap recovery, stores, a malformed-input sweep of every WASM export) |
+| Reviews | Design: math GO, protocol GO (three rounds). Implementation: math GO, protocol GO ([`docs/reviews/sdk-impl-*`](../docs/reviews/)) |
 
 Not yet done: a funded end-to-end run on Sepolia with the SDK alone (needs a live deposit, and the
 gateway still rejects large proofs, so the spend is simulated); a mobile-browser measurement;

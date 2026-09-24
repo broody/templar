@@ -336,3 +336,51 @@ limit. The pool of bodies is small and the harm is bounded.
   re-plan.
 - **Overwritten history:** a re-wrap at a different URL, or a second `submit`, overwrites `server`/`tx` without
   adding it to `attempts`. Keep them there for the sent history.
+
+## Re-review (IP16–IP19)
+
+- **Date:** 2026-09-25. **Commit:** `a4607a6 Client SDK: protocol re-review items (SDK-IP16 to IP19, IP14 tests)`.
+- **Diff reviewed:** `git diff 4939729 HEAD -- sdk server`.
+- **Runs:**
+  - `npx tsc && npx vitest run`: 16/16 pass (70 s).
+  - `cargo test --release` in `server/prover`: 8/8.
+  - My SDK-IP16 and SDK-IP17 reproductions against `dist/` now behave correctly.
+  - A new scratch race test for `FileKV`, with separate `FileKV` instances standing in for processes.
+
+### Verdict: **GO** for the protocol and engineering scope
+
+Release still depends on the unchanged gates: the H2 release gate, the Math Reviewer's sign-off, and the live
+Sepolia end-to-end run, which must confirm that the F3 estimate passes a real account's validation.
+
+| Finding | Status | Evidence |
+| --- | --- | --- |
+| IP16 | Resolved | `sync()` reloads the saved state when `syncLocked` throws, and first reloads if another instance saved since (`rev`). `address()` saves under the lock, on the stored state. My reproduction (one leaf dropped and one `get_leaf_count` failure in the same sync) now completes on the next sync and after a reload. |
+| IP17 | Resolved | `plan()` refreshes the list of notes held by in-flight records inside the lock. In my two-tab reproduction, tab B is now refused (`insufficient_notes`) while tab A's sent record holds the note. |
+| IP18 | Resolved for fresh contention; residual Low | The lock file is written under a unique name and `link()`ed into place, and is released only if it is ours; 500 contended fresh acquisitions never had two holders. **Residual (SDK-IP20, below):** taking over a stale lock can still give two holders. |
+| IP19 | Resolved | A `by_body` index (removed on sweep; checked against `dedup` so a failed or released job is not returned), and the latest block cached for 10 s. |
+| IP14 | Resolved | The OHTTP test covers a pinned-key mismatch, relay-only traffic and no fallback on a decapsulation error. The restart test covers 409 reported without retry, the stored body resent as is, window expiry refused at `submit`, re-wrap, restart and `resume`, and root eviction ending the record before it is sent. Re-wraps and re-submits now add the earlier job or transaction to `attempts`. A 429 case is not tested; it takes the same path as 409 and is acceptable. |
+
+### SDK-IP20 — Low (residual of IP18) — two processes can both take over a stale lock
+`store.ts:133–146`.
+
+**How two holders arise:**
+1. Process A renames the dead lock aside and links its own lock into place.
+2. Process B, which read the same dead content, renames A's fresh lock aside and finds it differs.
+3. In the gap before B links it back, process C's `take()` succeeds.
+4. B's restore fails (the path exists) and B deletes A's lock. A and C now both hold the lock.
+
+**Reproduced:** 20 instances raced for a lock left by a dead pid; one run in seven had two holders at once.
+Contention on a fresh lock is fine. This needs several processes restarting at the same moment after a crash,
+so it is rare.
+
+**Required before a Node multi-process release:** serialize takeover through a second lock-file
+(`.lock-x.takeover`, taken with `link()`, whose owner may remove the stale lock). Alternatively, retry with a
+short random delay instead of restoring. Also treat `EPERM` from `process.kill(pid, 0)` as alive.
+
+### Notes (no action required)
+
+- **Closed records:** `submit` and `wrap` check for a closed record only at their first write step. A dead
+  record's `submit` therefore still runs the estimate and simulation (spend-specific RPC reads) before
+  `record_closed`. Nothing is sent. Checking `LIVE` at the start would avoid the reads.
+- **Tree handle:** `load()` on the error path replaces the WASM `Tree` handle without `free()`, which leaks
+  one tree per failed sync.

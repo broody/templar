@@ -121,29 +121,30 @@ export class FileKV implements KV {
     const take = () => fs.link(mine, path).then(() => true, () => false);
     try {
       if (!(await take())) {
-        const held = (await fs.readFile(path, 'utf8').catch(() => '')).trim();
-        const pid = Number(held.split(' ')[0]);
-        const alive = (() => {
-          try {
-            return pid > 0 && (process.kill(pid, 0), true);
-          } catch {
-            return false;
+        // Taking over a dead owner's lock goes through a second lock, so at most one process
+        // takes over at a time (SDK-IP20). A takeover lock older than a minute is from a crash.
+        const guard = `${path}.takeover`;
+        const guardMine = `${guard}.${nonce}`;
+        await fs.writeFile(guardMine, nonce, { mode: 0o600 });
+        let guarded = await fs.link(guardMine, guard).then(() => true, () => false);
+        if (!guarded) {
+          const age = await fs.stat(guard).then((st) => Date.now() - st.mtimeMs, () => 0);
+          if (age > 60_000) {
+            await fs.rm(guard, { force: true });
+            guarded = await fs.link(guardMine, guard).then(() => true, () => false);
           }
-        })();
-        if (alive || !held) fail('locked', `process ${pid || '?'} holds ${path}`);
-        // Take over a dead owner's lock: move it aside atomically, and check it was the one judged
-        // stale; if another process got there first, put back what was moved and give up.
-        const aside = `${path}.stale.${nonce}`;
-        if (await fs.rename(path, aside).then(() => true, () => false)) {
-          const moved = (await fs.readFile(aside, 'utf8').catch(() => '')).trim();
-          if (moved !== held) {
-            await fs.link(aside, path).catch(() => undefined);
-            await fs.rm(aside, { force: true });
-            fail('locked', `another process took ${path}`);
-          }
-          await fs.rm(aside, { force: true });
         }
-        if (!(await take())) fail('locked', `another process took ${path}`);
+        await fs.rm(guardMine, { force: true });
+        if (!guarded) fail('locked', `another process is taking over ${path}`);
+        try {
+          const held = (await fs.readFile(path, 'utf8').catch(() => '')).trim();
+          const pid = Number(held.split(' ')[0]);
+          if (held && pid > 0 && alive(pid)) fail('locked', `process ${pid} holds ${path}`);
+          if (held) await fs.rm(path, { force: true });
+          if (!(await take())) fail('locked', `another process took ${path}`);
+        } finally {
+          await fs.rm(guard, { force: true });
+        }
       }
     } finally {
       await fs.rm(mine, { force: true });
@@ -155,6 +156,16 @@ export class FileKV implements KV {
       const held = (await fs.readFile(path, 'utf8').catch(() => '')).trim();
       if (held.endsWith(nonce)) await fs.rm(path, { force: true });
     }
+  }
+}
+
+/** Whether a process exists; `EPERM` (another user's process) counts as alive (SDK-IP20). */
+function alive(pid: number): boolean {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (e) {
+    return (e as { code?: string }).code === 'EPERM';
   }
 }
 
