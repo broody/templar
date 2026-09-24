@@ -1,0 +1,23 @@
+{
+ "pie": "policy-e2e release note (A) virtual-OS PIE, 3.41M OS steps",
+ "cap": "22G",
+ "cairo_fri_columns": 16,
+ "circuit_fri_columns": 16,
+ "exit_code": 1,
+ "elapsed_seconds": 69.11409115791321,
+ "oom_killed": true,
+ "max_rss_gib": null,
+ "cgroup_peak_gib": 21.526779174804688,
+ "stage_peaks_gib": {
+  "before program execution": 0.39,
+  "after Program execution done": 0.81,
+  "after Write Preprocessed trace": 14.5,
+  "after Write Base trace": 20.56,
+  "after Compute preprocessed trace commitment": 20.33,
+  "after Compute base trace commitment": 17.18,
+  "after Write interaction trace": 15.42,
+  "after Compute interaction trace commitment": 21.53
+ },
+ "proof_identical_to_default": false,
+ "run": "streamed-cap22G"
+}

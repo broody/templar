@@ -1,7 +1,7 @@
 From 3d8ce3e5bcab8bda080c57c4a23f6c1a1ecf9982 Mon Sep 17 00:00:00 2001
 From: broody <broody@gmail.com>
 Date: Thu, 24 Sep 2026 11:12:40 +0800
-Subject: [PATCH 3/3] Bounded-memory storage for the PROOF2 large path (Cairo
+Subject: [PATCH 3/4] Bounded-memory storage for the PROOF2 large path (Cairo
  leaf and verifier circuit)
 
 prove_cairo_bounded, prove_leaf_bounded and privacy_recursive_prove_large_bounded

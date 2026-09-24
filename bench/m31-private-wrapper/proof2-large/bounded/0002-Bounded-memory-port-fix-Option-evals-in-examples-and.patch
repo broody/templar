@@ -1,7 +1,7 @@
 From 12954330d044b9254e188f46d4ca7095e2559f32 Mon Sep 17 00:00:00 2001
 From: broody <broody@gmail.com>
 Date: Wed, 23 Sep 2026 14:58:15 +0800
-Subject: [PATCH 2/3] Bounded-memory port: fix Option evals in examples and
+Subject: [PATCH 2/4] Bounded-memory port: fix Option evals in examples and
  relation tracker; test aux equality
 
 Addresses the bounded-PCS review: stwo-examples and stwo-cairo-prover

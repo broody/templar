@@ -1,0 +1,925 @@
+From 592480825fdbb9557cfa0be2ff5fba743ba86eee Mon Sep 17 00:00:00 2001
+From: broody <broody@gmail.com>
+Date: Thu, 24 Sep 2026 12:40:43 +0800
+Subject: [PATCH 4/4] Bounded mode: streamed commitments (16 columns at a
+ time), switchable
+
+A column-provider leaf builder (MerkleOpsLifted::build_leaves_with_column_provider:
+a materializing default, and a streamed SIMD Blake2s override that holds one packed
+state per 16 rows and one 16-column block at a time), MerkleProverLifted::
+commit_with_column_provider and decommit_with_queried_values. In bounded mode the PCS
+builds trees with CommitmentTreeProver::new_streamed and rebuilds them for openings the
+same way, capturing queried values per block; the Cairo and circuit preprocessed trees
+too. CommitmentSchemeProver::set_streamed_commitments(false) keeps whole-tree builds.
+
+Streamed leaves, layers, roots and openings equal the ordinary ones (CPU and SIMD)
+across sizes, lifts and block/lane boundaries; bounded circuit proofs equal unbounded
+ones in both settings. On the policy-note PIE: 51.7 GiB default, 27.8 GiB bounded
+(whole trees), 22.0 GiB streamed; every proof byte-identical and verified.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>
+---
+ crates/circuit_prover/src/prover.rs           |  55 ++++-
+ crates/circuit_prover/src/prover_test.rs      |  12 +-
+ crates/leaf_prover/src/prove_leaf.rs          |  12 +-
+ crates/privacy_prove/examples/prove_large.rs  |   5 +-
+ crates/prover/src/prover.rs                   |  41 ++--
+ .../stwo/src/prover/air/component_prover.rs   |   6 +
+ .../src/prover/backend/simd/blake2s_lifted.rs | 202 ++++++++++++++++++
+ crates/stwo/src/prover/pcs/mod.rs             | 141 ++++++++++--
+ crates/stwo/src/prover/vcs_lifted/ops.rs      |  19 +-
+ crates/stwo/src/prover/vcs_lifted/prover.rs   |  68 ++++--
+ 10 files changed, 495 insertions(+), 66 deletions(-)
+
+diff --git a/crates/circuit_prover/src/prover.rs b/crates/circuit_prover/src/prover.rs
+index 03a1d47f7..578c984bd 100644
+--- a/crates/circuit_prover/src/prover.rs
++++ b/crates/circuit_prover/src/prover.rs
+@@ -78,6 +78,31 @@ pub fn prove_circuit_assignment_bounded<MC>(
+     pcs_config: PcsConfig,
+     max_fri_columns: Option<usize>,
+ ) -> Result<CircuitProof<MC::H>, ProvingError>
++where
++    MC: MerkleChannel,
++    SimdBackend: stwo::prover::backend::BackendForChannel<MC>,
++    <MC::H as MerkleHasherLifted>::Hash: Into<Blake2sHash>,
++{
++    prove_circuit_assignment_bounded_with::<MC>(
++        values,
++        preprocessed_circuit,
++        base_column_pool,
++        pcs_config,
++        max_fri_columns,
++        true,
++    )
++}
++
++/// [`prove_circuit_assignment_bounded`], choosing whether bounded mode streams its commitments
++/// (`stream_commitments`, see `CommitmentSchemeProver::set_streamed_commitments`).
++pub fn prove_circuit_assignment_bounded_with<MC>(
++    values: &[QM31],
++    preprocessed_circuit: &PreprocessedCircuit,
++    base_column_pool: &BaseColumnPool<SimdBackend>,
++    pcs_config: PcsConfig,
++    max_fri_columns: Option<usize>,
++    stream_commitments: bool,
++) -> Result<CircuitProof<MC::H>, ProvingError>
+ where
+     MC: MerkleChannel,
+     SimdBackend: stwo::prover::backend::BackendForChannel<MC>,
+@@ -102,14 +127,24 @@ where
+     let preprocessed_trace_polys = SimdBackend::interpolate_columns(preprocessed_trace, &twiddles);
+ 
+     let store_polynomials_coefficients = true;
+-    let preprocessed_tree = CommitmentTreeProver::<SimdBackend, MC>::new(
+-        preprocessed_trace_polys,
+-        pcs_config.fri_config.log_blowup_factor,
+-        &twiddles,
+-        store_polynomials_coefficients,
+-        pcs_config.preprocessed_lifting_log_size,
+-        base_column_pool,
+-    );
++    // Bounded: build the preprocessed tree without holding its whole expansion.
++    let preprocessed_tree = if max_fri_columns.is_some() && stream_commitments {
++        CommitmentTreeProver::<SimdBackend, MC>::new_streamed(
++            preprocessed_trace_polys,
++            pcs_config.fri_config.log_blowup_factor,
++            &twiddles,
++            pcs_config.preprocessed_lifting_log_size,
++        )
++    } else {
++        CommitmentTreeProver::<SimdBackend, MC>::new(
++            preprocessed_trace_polys,
++            pcs_config.fri_config.log_blowup_factor,
++            &twiddles,
++            store_polynomials_coefficients,
++            pcs_config.preprocessed_lifting_log_size,
++            base_column_pool,
++        )
++    };
+ 
+     prove_circuit_with_precompute_bounded::<MC>(
+         base_column_pool,
+@@ -119,6 +154,7 @@ where
+         values,
+         pcs_config,
+         max_fri_columns,
++        stream_commitments,
+     )
+ }
+ 
+@@ -143,6 +179,7 @@ where
+         values,
+         pcs_config,
+         None,
++        true,
+     )
+ }
+ 
+@@ -157,6 +194,7 @@ pub fn prove_circuit_with_precompute_bounded<'a, MC>(
+     values: &[QM31],
+     pcs_config: PcsConfig,
+     max_fri_columns: Option<usize>,
++    stream_commitments: bool,
+ ) -> Result<CircuitProof<MC::H>, ProvingError>
+ where
+     MC: MerkleChannel,
+@@ -190,6 +228,7 @@ where
+ 
+     if let Some(max_fri_columns) = max_fri_columns {
+         commitment_scheme.set_bounded_memory_mode(max_fri_columns);
++        commitment_scheme.set_streamed_commitments(stream_commitments);
+     }
+     commitment_scheme.set_store_polynomials_coefficients();
+ 
+diff --git a/crates/circuit_prover/src/prover_test.rs b/crates/circuit_prover/src/prover_test.rs
+index 1d4d56fa4..65f813023 100644
+--- a/crates/circuit_prover/src/prover_test.rs
++++ b/crates/circuit_prover/src/prover_test.rs
+@@ -476,19 +476,21 @@ fn test_pad_context() {
+ fn test_bounded_memory_proof_is_identical() {
+     let mut context = build_fibonacci_context().finalize(false);
+     let preprocessed_circuit = PreprocessedCircuit::preprocess_circuit(&mut context);
+-    let prove = |max_fri_columns| {
+-        crate::prover::prove_circuit_assignment_bounded::<Blake2sM31MerkleChannel>(
++    let prove = |max_fri_columns, stream| {
++        crate::prover::prove_circuit_assignment_bounded_with::<Blake2sM31MerkleChannel>(
+             context.values(),
+             &preprocessed_circuit,
+             &BaseColumnPool::<SimdBackend>::new(),
+             default_circuit_pcs_config(preprocessed_circuit.trace_log_size),
+             max_fri_columns,
++            stream,
+         )
+         .unwrap()
+     };
+-    let unbounded = prove(None);
+-    for max_fri_columns in [1, 16] {
+-        let bounded = prove(Some(max_fri_columns));
++    let unbounded = prove(None, false);
++    // Bounded with whole-tree commitments and with streamed (16-column) commitments.
++    for (max_fri_columns, stream) in [(1, false), (16, false), (1, true), (16, true)] {
++        let bounded = prove(Some(max_fri_columns), stream);
+         assert_eq!(
+             format!("{:?}", bounded.stark_proof.proof),
+             format!("{:?}", unbounded.stark_proof.proof)
+diff --git a/crates/leaf_prover/src/prove_leaf.rs b/crates/leaf_prover/src/prove_leaf.rs
+index a024848ce..8718f0241 100644
+--- a/crates/leaf_prover/src/prove_leaf.rs
++++ b/crates/leaf_prover/src/prove_leaf.rs
+@@ -17,7 +17,7 @@ use circuit_cairo_verifier::verify::{
+ use circuit_common::finalize::pad_to_targets;
+ use circuit_common::preprocessed::PreprocessedCircuit;
+ use circuit_prover::prover::{
+-    BaseColumnPool, prepare_circuit_proof_for_circuit_verifier, prove_circuit_assignment_bounded,
++    BaseColumnPool, prepare_circuit_proof_for_circuit_verifier, prove_circuit_assignment_bounded_with,
+ };
+ use circuit_registry::CircuitRegistry;
+ use circuit_serialize::serialize::CircuitSerialize;
+@@ -58,12 +58,14 @@ pub fn prove_leaf_from_files(
+ }
+ 
+ /// Bounded-memory storage for the two proving stages of a leaf: `Some(n)` keeps owned commitment
+-/// trees as coefficients and accumulates FRI quotients `n` columns at a time. Proofs are
+-/// unchanged; `None` keeps the default storage.
++/// trees as coefficients and accumulates FRI quotients `n` columns at a time; with
++/// `stream_commitments`, trees are also built and rebuilt 16 columns at a time (less memory, more
++/// time). Proofs are unchanged; `None` keeps the default storage.
+ #[derive(Clone, Copy, Debug, Default)]
+ pub struct BoundedMemory {
+     pub cairo_fri_columns: Option<usize>,
+     pub circuit_fri_columns: Option<usize>,
++    pub stream_commitments: bool,
+ }
+ 
+ /// Proves `program`'s run, verifies that proof with the cairo-verifier circuit, and proves that
+@@ -152,6 +154,7 @@ pub fn prove_leaf_bounded(
+         prover_input,
+         cairo_prover_parameters,
+         bounded.cairo_fri_columns,
++        bounded.stream_commitments,
+     )
+     .unwrap();
+     info!("Cairo proving done");
+@@ -238,12 +241,13 @@ pub fn prove_leaf_bounded(
+     );
+     let base_column_pool = BaseColumnPool::new();
+     // The Cairo stage's buffers are gone by now; this stage's peak is its own.
+-    let circuit_proof = prove_circuit_assignment_bounded::<Blake2sM31MerkleChannel>(
++    let circuit_proof = prove_circuit_assignment_bounded_with::<Blake2sM31MerkleChannel>(
+         context.values(),
+         &preprocessed_circuit,
+         &base_column_pool,
+         circuit_prover_pcs_config,
+         bounded.circuit_fri_columns,
++        bounded.stream_commitments,
+     )
+     .unwrap();
+     info!("Circuit proving done");
+diff --git a/crates/privacy_prove/examples/prove_large.rs b/crates/privacy_prove/examples/prove_large.rs
+index 165a35ee9..0f5b68b9e 100644
+--- a/crates/privacy_prove/examples/prove_large.rs
++++ b/crates/privacy_prove/examples/prove_large.rs
+@@ -4,7 +4,8 @@
+ //!
+ //! Bounded-memory storage per stage, from the environment (unset or 0 keeps the default):
+ //! `TEMPLAR_BOUNDED_CAIRO_COLUMNS` (the Cairo proof) and `TEMPLAR_BOUNDED_CIRCUIT_COLUMNS` (the
+-//! cairo-verifier circuit proof), each the FRI column batch size.
++//! cairo-verifier circuit proof), each the FRI column batch size; `TEMPLAR_BOUNDED_STREAM`
++//! (default 1) builds bounded trees 16 columns at a time, 0 one whole tree at a time.
+ use std::path::PathBuf;
+ use std::time::Instant;
+ use std::{env, fs};
+@@ -31,6 +32,7 @@ fn main() {
+     let bounded = BoundedMemory {
+         cairo_fri_columns: columns("TEMPLAR_BOUNDED_CAIRO_COLUMNS"),
+         circuit_fri_columns: columns("TEMPLAR_BOUNDED_CIRCUIT_COLUMNS"),
++        stream_commitments: env::var("TEMPLAR_BOUNDED_STREAM").as_deref() != Ok("0"),
+     };
+     tracing::info!("bounded memory: {bounded:?}");
+     let args: Vec<String> = env::args().collect();
+@@ -71,6 +73,7 @@ fn main() {
+         "prove_seconds": prove_seconds,
+         "bounded_cairo_fri_columns": bounded.cairo_fri_columns,
+         "bounded_circuit_fri_columns": bounded.circuit_fri_columns,
++        "bounded_stream_commitments": bounded.stream_commitments,
+         "verify_seconds": verify_seconds,
+         "verified": verified,
+         "proof_bytes": output.proof.len(),
+diff --git a/crates/prover/src/prover.rs b/crates/prover/src/prover.rs
+index c00ae049a..843a0f456 100644
+--- a/crates/prover/src/prover.rs
++++ b/crates/prover/src/prover.rs
+@@ -101,17 +101,19 @@ pub fn prove_cairo<MC: MerkleChannel>(
+ where
+     SimdBackend: BackendForChannel<MC>,
+ {
+-    prove_cairo_bounded::<MC>(input, prover_params, None)
++    prove_cairo_bounded::<MC>(input, prover_params, None, true)
+ }
+ 
+ /// [`prove_cairo`] with an optional bounded-memory storage policy: owned trees keep coefficients
+ /// instead of expanded evaluations and are rebuilt one at a time for opening, and FRI quotients
+-/// are accumulated `max_fri_columns` columns at a time. The proof is unchanged; `None` is
+-/// [`prove_cairo`] exactly.
++/// are accumulated `max_fri_columns` columns at a time. With `stream_commitments`, trees are also
++/// built and rebuilt 16 columns at a time, so no whole expanded tree is ever held (less memory,
++/// more time). The proof is unchanged; `None` is [`prove_cairo`] exactly.
+ pub fn prove_cairo_bounded<MC: MerkleChannel>(
+     input: ProverInput,
+     prover_params: ProverParameters,
+     max_fri_columns: Option<usize>,
++    stream_commitments: bool,
+ ) -> Result<CairoProof<MC::H>, ProvingError>
+ where
+     SimdBackend: BackendForChannel<MC>,
+@@ -191,15 +193,26 @@ where
+         SimdBackend::interpolate_columns(gen_trace(preprocessed_trace.clone()), &twiddles);
+ 
+     let base_column_pool = BaseColumnPool::new();
+-    // Bounded mode evicts the owned preprocessed tree's evaluations, so it keeps coefficients.
+-    let preprocessed_tree = MaybeOwned::Owned(CommitmentTreeProver::<SimdBackend, MC>::new(
+-        preprocessed_trace_polys,
+-        fri_config.log_blowup_factor,
+-        &twiddles,
+-        store_polynomials_coefficients || max_fri_columns.is_some(),
+-        preprocessed_lifting_log_size,
+-        &base_column_pool,
+-    ));
++    // Bounded mode keeps the owned preprocessed tree as coefficients and builds it without
++    // holding its whole expansion.
++    let preprocessed_tree = MaybeOwned::Owned(if max_fri_columns.is_some() && stream_commitments {
++        CommitmentTreeProver::<SimdBackend, MC>::new_streamed(
++            preprocessed_trace_polys,
++            fri_config.log_blowup_factor,
++            &twiddles,
++            preprocessed_lifting_log_size,
++        )
++    } else {
++        CommitmentTreeProver::<SimdBackend, MC>::new(
++            preprocessed_trace_polys,
++            fri_config.log_blowup_factor,
++            &twiddles,
++            // Bounded mode evicts this tree's evaluations, so it keeps coefficients.
++            store_polynomials_coefficients || max_fri_columns.is_some(),
++            preprocessed_lifting_log_size,
++            &base_column_pool,
++        )
++    });
+     span.exit();
+ 
+     prove_cairo_common::<MC>(
+@@ -213,6 +226,7 @@ where
+         prover_params,
+         pcs_config,
+         max_fri_columns,
++        stream_commitments,
+     )
+ }
+ 
+@@ -257,6 +271,7 @@ where
+         prover_params,
+         pcs_config,
+         None,
++        true,
+     )
+ }
+ 
+@@ -272,6 +287,7 @@ fn prove_cairo_common<'a, MC: MerkleChannel>(
+     prover_params: ProverParameters,
+     pcs_config: PcsConfig,
+     max_fri_columns: Option<usize>,
++    stream_commitments: bool,
+ ) -> Result<CairoProof<MC::H>, ProvingError>
+ where
+     SimdBackend: BackendForChannel<MC>,
+@@ -301,6 +317,7 @@ where
+     );
+     if let Some(max_columns) = max_fri_columns {
+         commitment_scheme.set_bounded_memory_mode(max_columns);
++        commitment_scheme.set_streamed_commitments(stream_commitments);
+     } else if store_polynomials_coefficients {
+         commitment_scheme.set_store_polynomials_coefficients();
+     }
+diff --git a/crates/stwo/src/prover/air/component_prover.rs b/crates/stwo/src/prover/air/component_prover.rs
+index bf6eff2d9..89e26f6ab 100644
+--- a/crates/stwo/src/prover/air/component_prover.rs
++++ b/crates/stwo/src/prover/air/component_prover.rs
+@@ -52,6 +52,12 @@ impl<B: Backend> Poly<B> {
+         Self { committed_domain: evals.domain, coeffs, evals: Some(evals) }
+     }
+ 
++    /// A polynomial kept as coefficients only, committed on `committed_domain` (bounded-memory
++    /// storage: evaluations are regenerated when needed).
++    pub const fn from_coefficients(coeffs: CircleCoefficients<B>, committed_domain: CircleDomain) -> Self {
++        Self { committed_domain, coeffs: Some(coeffs), evals: None }
++    }
++
+     /// Releases expanded evaluations while preserving the polynomial and committed domain.
+     pub fn evict_evaluations(&mut self) {
+         assert!(self.coeffs.is_some(), "Eviction requires polynomial coefficients");
+diff --git a/crates/stwo/src/prover/backend/simd/blake2s_lifted.rs b/crates/stwo/src/prover/backend/simd/blake2s_lifted.rs
+index 835b2f1f3..1a3ec7a98 100644
+--- a/crates/stwo/src/prover/backend/simd/blake2s_lifted.rs
++++ b/crates/stwo/src/prover/backend/simd/blake2s_lifted.rs
+@@ -34,6 +34,88 @@ const N_BYTES_IN_BLAKE_MESSAGE: u64 = N_FELTS_IN_BLAKE_MESSAGE as u64 * N_BYTES_
+ const LOG_N_HASHES_PER_SIMD_STATE: u32 = 4;
+ 
+ impl MerkleOpsLifted<Blake2sMerkleHasher> for SimdBackend {
++    /// Streams columns 16 at a time (one Blake2s message block per leaf) in increasing size
++    /// order, holding one packed hash state per 16 rows instead of every column. Each block's
++    /// columns are dropped before the next block is requested. Leaves equal [`Self::build_leaves`]
++    /// over the size-sorted columns.
++    fn build_leaves_with_column_provider(
++        column_log_sizes: &[u32],
++        lifting_log_size: u32,
++        get_columns: &mut dyn FnMut(&[usize]) -> Vec<BaseColumn>,
++    ) -> Vec<Blake2sHash> {
++        if column_log_sizes.is_empty() {
++            return vec![Blake2sMerkleHasher::default().finalize()];
++        }
++        assert!(
++            column_log_sizes.iter().all(|&log_size| log_size > 0 && log_size <= lifting_log_size),
++            "column sizes must lie in 1..=lifting_log_size"
++        );
++        let mut indices: Vec<usize> = (0..column_log_sizes.len()).collect();
++        indices.sort_by_key(|&index| column_log_sizes[index]);
++
++        // A packed state holds 16 leaf hash states. It grows only when the next block needs more
++        // rows. Below 16 rows the extra lanes repeat the logical domain and are discarded.
++        let mut state_log_size = lifting_log_size.min(LOG_N_LANES);
++        let mut states = vec![INITIAL_STATE];
++        let mut byte_count = 0_u64;
++        for (block_index, block_indices) in indices.chunks(N_FELTS_IN_BLAKE_MESSAGE).enumerate() {
++            let columns = get_columns(block_indices);
++            assert_eq!(columns.len(), block_indices.len());
++            for (column, &index) in columns.iter().zip(block_indices) {
++                assert_eq!(column.len(), 1 << column_log_sizes[index]);
++            }
++            let next_log_size = state_log_size.max(column_log_sizes[*block_indices.last().unwrap()]);
++            if next_log_size > state_log_size {
++                let log_ratio = next_log_size - state_log_size;
++                states = (0..1 << (next_log_size - LOG_N_LANES))
++                    .map(|i| array::from_fn(|j| to_lifted_simd(states[i >> log_ratio][j], log_ratio, i)))
++                    .collect();
++                state_log_size = next_log_size;
++            }
++            byte_count += (columns.len() * N_BYTES_FELT) as u64;
++            let final_block = (block_index + 1) * N_FELTS_IN_BLAKE_MESSAGE >= indices.len();
++            #[cfg(not(feature = "parallel"))]
++            let iter = states.iter_mut();
++            #[cfg(feature = "parallel")]
++            let iter = states.par_iter_mut();
++            iter.enumerate().for_each(|(i, state)| {
++                let msgs = array::from_fn(|j| {
++                    if j < columns.len() {
++                        streamed_column_message(&columns[j], column_log_sizes[block_indices[j]], state_log_size, i)
++                    } else {
++                        u32x16::splat(0)
++                    }
++                });
++                *state = if final_block {
++                    compress_finalize(*state, msgs, byte_count)
++                } else {
++                    compress_unfinalized(*state, msgs, byte_count)
++                };
++            });
++            // This block's columns are dropped here, before the next block is requested.
++        }
++
++        // Lift straight into the output hashes, without a second full-height state buffer.
++        let log_ratio = lifting_log_size - state_log_size;
++        let mut result = vec![Blake2sHash::default(); 1 << lifting_log_size];
++        #[cfg(not(feature = "parallel"))]
++        let iter = result.chunks_mut(N_LANES);
++        #[cfg(feature = "parallel")]
++        let iter = result.par_chunks_mut(N_LANES);
++        iter.enumerate().for_each(|(i, dst)| {
++            let state: [u32x16; N_FELTS_IN_BLAKE_STATE] =
++                array::from_fn(|j| to_lifted_simd(states[i >> log_ratio][j], log_ratio, i));
++            let words = untranspose_states(state).map(|word| word.to_array());
++            for (hash_index, hash) in dst.iter_mut().enumerate() {
++                hash.0 = array::from_fn(|byte_index| {
++                    let word_index = hash_index * N_FELTS_IN_BLAKE_STATE + byte_index / 4;
++                    words[word_index / N_LANES][word_index % N_LANES].to_le_bytes()[byte_index % 4]
++                });
++            }
++        });
++        result
++    }
++
+     /// See the docs of [`crate::prover::backend::cpu::blake2s_lifted`].
+     ///
+     /// This function assumes that `columns` is sorted increasingly by column length.
+@@ -260,6 +342,26 @@ impl MerkleOpsLifted<Blake2sMerkleHasher> for SimdBackend {
+     }
+ }
+ 
++
++/// One packed message word for leaf rows `16·packed_row ..`: the column's values lifted to the
++/// state height with the same pair-preserving lift as the ordinary commitment.
++fn streamed_column_message(
++    column: &BaseColumn,
++    column_log_size: u32,
++    logical_log_size: u32,
++    packed_row: usize,
++) -> u32x16 {
++    let log_ratio = logical_log_size - column_log_size;
++    if column_log_size >= LOG_N_LANES {
++        to_lifted_simd(column.data[packed_row >> log_ratio].into_simd(), log_ratio, packed_row)
++    } else {
++        u32x16::from_array(array::from_fn(|lane| {
++            let row = (packed_row * N_LANES + lane) % (1 << logical_log_size);
++            // The raw representation, as the ordinary CPU fallback reads it.
++            column.as_slice()[(row >> (log_ratio + 1) << 1) + (row & 1)].0
++        }))
++    }
++}
+ impl PackLeavesOps for SimdBackend {
+     fn pack_leaves_input(
+         values: &[&Col<SimdBackend, BaseField>; SECURE_EXTENSION_DEGREE],
+@@ -361,6 +463,106 @@ mod tests {
+     use crate::prover::vcs_lifted::ops::MerkleOpsLifted;
+     use crate::prover::vcs_lifted::prover::MerkleProverLifted;
+ 
++    /// Streamed leaves, layers, root and openings equal the ordinary ones (CPU and SIMD), and the
++    /// provider is asked for at most 16 columns at a time, in increasing size order.
++    fn check_streamed_merkle(log_sizes: &[u32], lifting_log_size: u32) {
++        let columns: Vec<Vec<BaseField>> = log_sizes
++            .iter()
++            .enumerate()
++            .map(|(c, &log_size)| {
++                (0..1u32 << log_size)
++                    .map(|i| {
++                        // Some raw zeros (2^31 - 1 is also zero) exercise the raw representation.
++                        let v = (i.wrapping_mul(2654435761).wrapping_add(c as u32 * 40503)) % (1 << 31);
++                        M31::from_u32_unchecked(if i % 29 == 3 { 0 } else { v })
++                    })
++                    .collect()
++            })
++            .collect();
++        let simd_columns: Vec<BaseColumn> =
++            columns.iter().map(|c| c.iter().copied().collect()).collect();
++        let sorted_cpu = columns.iter().sorted_by_key(|c| c.len()).collect_vec();
++        let sorted_simd = simd_columns.iter().sorted_by_key(|c| c.len()).collect_vec();
++        let cpu_leaves = <CpuBackend as MerkleOpsLifted<Blake2sMerkleHasher>>::build_leaves(
++            &sorted_cpu,
++            lifting_log_size,
++        );
++        let simd_leaves = <SimdBackend as MerkleOpsLifted<Blake2sMerkleHasher>>::build_leaves(
++            &sorted_simd,
++            lifting_log_size,
++        );
++        let mut last_max = 0;
++        let mut provider = |indices: &[usize]| -> Vec<BaseColumn> {
++            assert!(!indices.is_empty() && indices.len() <= 16, "at most one block at a time");
++            for &i in indices {
++                assert!(log_sizes[i] >= last_max, "blocks in increasing size order");
++                last_max = log_sizes[i];
++            }
++            indices.iter().map(|&i| simd_columns[i].clone()).collect()
++        };
++        let streamed_leaves =
++            <SimdBackend as MerkleOpsLifted<Blake2sMerkleHasher>>::build_leaves_with_column_provider(
++                log_sizes,
++                lifting_log_size,
++                &mut provider,
++            );
++        assert_eq!(cpu_leaves, simd_leaves, "{log_sizes:?} lifted to {lifting_log_size}");
++        assert_eq!(simd_leaves, streamed_leaves, "{log_sizes:?} lifted to {lifting_log_size}");
++
++        let ordinary = MerkleProverLifted::<SimdBackend, Blake2sMerkleHasher>::commit(
++            simd_columns.iter().collect(),
++            lifting_log_size,
++            0,
++        );
++        let streamed = MerkleProverLifted::<SimdBackend, Blake2sMerkleHasher>::commit_with_column_provider(
++            log_sizes,
++            lifting_log_size,
++            &mut |indices: &[usize]| indices.iter().map(|&i| simd_columns[i].clone()).collect(),
++        );
++        assert_eq!(ordinary.layers, streamed.layers);
++        assert_eq!(ordinary.root(), streamed.root());
++        let queries: Vec<usize> =
++            (0..7).map(|k| (k * 2654435761usize + 11) % (1 << lifting_log_size)).collect();
++        let (values, decommitment) = ordinary.decommit(&queries, simd_columns.iter().collect());
++        let captured = simd_columns
++            .iter()
++            .map(|c| {
++                MerkleProverLifted::<SimdBackend, Blake2sMerkleHasher>::queried_values(
++                    c,
++                    &queries,
++                    lifting_log_size as usize,
++                )
++            })
++            .collect();
++        let (values2, decommitment2) = streamed.decommit_with_queried_values(&queries, captured);
++        assert_eq!(values, values2);
++        assert_eq!(decommitment.decommitment.hash_witness, decommitment2.decommitment.hash_witness);
++    }
++
++    #[test]
++    fn test_streamed_merkle_matches_ordinary() {
++        for lifting in 1..=9 {
++            // One column, all sizes up to the lifting size.
++            for log_size in 1..=lifting {
++                check_streamed_merkle(&[log_size], lifting);
++            }
++        }
++        // Mixed sizes, unsorted, around block (16-column) and lane (16-row) boundaries.
++        for n in [1, 15, 16, 17, 31, 32, 33, 50] {
++            let mixed: Vec<u32> = (0..n).map(|i| 1 + (i * 7 % 9) as u32).collect();
++            let max = *mixed.iter().max().unwrap();
++            check_streamed_merkle(&mixed, max);
++            check_streamed_merkle(&mixed, max + 2);
++            let big: Vec<u32> = (0..n).map(|i| 4 + (i * 5 % 6) as u32).collect();
++            let max = *big.iter().max().unwrap();
++            check_streamed_merkle(&big, max);
++            check_streamed_merkle(&big, max + 3);
++            let small: Vec<u32> = (0..n).map(|i| 1 + (i % 3) as u32).collect();
++            check_streamed_merkle(&small, 3);
++            check_streamed_merkle(&small, 5);
++        }
++    }
++
+     #[test]
+     fn test_build_next_layer() {
+         const LOG_SIZE: u32 = 6;
+diff --git a/crates/stwo/src/prover/pcs/mod.rs b/crates/stwo/src/prover/pcs/mod.rs
+index 9811681f5..5c5efd68d 100644
+--- a/crates/stwo/src/prover/pcs/mod.rs
++++ b/crates/stwo/src/prover/pcs/mod.rs
+@@ -43,6 +43,8 @@ pub struct CommitmentSchemeProver<'a, B: BackendForChannel<MC>, MC: MerkleChanne
+     pub base_column_pool: MaybeOwned<'a, BaseColumnPool<B>>,
+     low_memory_mode: bool,
+     max_fri_columns: Option<usize>,
++    /// In bounded mode, build and rebuild trees 16 columns at a time (less memory, more time).
++    stream_commitments: bool,
+ }
+ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a, B, MC> {
+     /// Creates a new empty commitment scheme prover with the given configuration and twiddles. The
+@@ -56,6 +58,7 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+             base_column_pool: MaybeOwned::Owned(BaseColumnPool::new()),
+             low_memory_mode: false,
+             max_fri_columns: None,
++            stream_commitments: true,
+         }
+     }
+ 
+@@ -72,6 +75,7 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+             base_column_pool: MaybeOwned::Borrowed(base_column_pool),
+             low_memory_mode: false,
+             max_fri_columns: None,
++            stream_commitments: true,
+         }
+     }
+ 
+@@ -101,6 +105,14 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+         self.max_fri_columns = Some(max_fri_columns);
+     }
+ 
++    /// In bounded mode, whether trees are built (and rebuilt for opening) by extending and hashing
++    /// 16 columns at a time (`true`, the default: the whole expanded tree never exists at once) or
++    /// one whole tree at a time (`false`: faster, more memory). Proofs are identical either way.
++    pub fn set_streamed_commitments(&mut self, stream: bool) {
++        assert!(self.trees.is_empty(), "Select memory mode before committing trees");
++        self.stream_commitments = stream;
++    }
++
+     /// Evaluates the given polynomials, commits them into a Merkle tree, mixes the root into
+     /// the channel, and appends the resulting tree to the scheme.
+     ///
+@@ -109,14 +121,24 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+     fn commit(&mut self, polynomials: ColumnVec<CircleCoefficients<B>>, channel: &mut MC::C) {
+         let _span = span!(Level::INFO, "Commitment").entered();
+         let lifting_log_size = self.config.lifting_log_size(self.trees.len());
+-        let mut tree = CommitmentTreeProver::new(
+-            polynomials,
+-            self.config.fri_config.log_blowup_factor,
+-            self.twiddles,
+-            self.store_polynomials_coefficients,
+-            lifting_log_size,
+-            &self.base_column_pool,
+-        );
++        let mut tree = if self.max_fri_columns.is_some() && self.stream_commitments {
++            // Bounded: never hold the whole expanded tree; extend and hash 16 columns at a time.
++            CommitmentTreeProver::new_streamed(
++                polynomials,
++                self.config.fri_config.log_blowup_factor,
++                self.twiddles,
++                lifting_log_size,
++            )
++        } else {
++            CommitmentTreeProver::new(
++                polynomials,
++                self.config.fri_config.log_blowup_factor,
++                self.twiddles,
++                self.store_polynomials_coefficients,
++                lifting_log_size,
++                &self.base_column_pool,
++            )
++        };
+         if self.low_memory_mode {
+             tree.retain_merkle_root();
+         }
+@@ -443,6 +465,8 @@ pub struct CommitmentTreeProver<B: BackendForChannel<MC>, MC: MerkleChannel> {
+     /// logical tree height. The owning PCS reconstructs these layers before opening the tree.
+     pub commitment: MerkleProverLifted<B, MC::H>,
+     recompute_merkle_decommitment: bool,
++    /// Rebuild this tree for opening 16 columns at a time (set by [`Self::new_streamed`]).
++    streamed: bool,
+ }
+ 
+ impl<B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentTreeProver<B, MC> {
+@@ -471,7 +495,39 @@ impl<B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentTreeProver<B, MC> {
+             0,
+         );
+ 
+-        CommitmentTreeProver { polynomials, commitment: tree, recompute_merkle_decommitment: false }
++        CommitmentTreeProver {
++            polynomials,
++            commitment: tree,
++            recompute_merkle_decommitment: false,
++            streamed: false,
++        }
++    }
++
++    /// [`Self::new`] for bounded-memory storage: the polynomials are kept as coefficients only,
++    /// and the Merkle tree is built by extending and hashing at most 16 columns at a time (one
++    /// Blake2s message block per leaf, on backends that stream), so the whole expanded tree never
++    /// exists at once. The tree and root equal [`Self::new`]'s.
++    pub fn new_streamed(
++        polynomials: ColumnVec<CircleCoefficients<B>>,
++        log_blowup_factor: u32,
++        twiddles: &TwiddleTree<B>,
++        lifting_log_size: u32,
++    ) -> Self {
++        let polynomials: ColumnVec<Poly<B>> = polynomials
++            .into_iter()
++            .map(|coeffs| {
++                let domain = CanonicCoset::new(coeffs.log_size() + log_blowup_factor).circle_domain();
++                Poly::from_coefficients(coeffs, domain)
++            })
++            .collect();
++        let _span = span!(Level::INFO, "Streamed extension and Merkle").entered();
++        let log_sizes = polynomials.iter().map(|p| p.committed_domain.log_size()).collect_vec();
++        let commitment = MerkleProverLifted::commit_with_column_provider(
++            &log_sizes,
++            lifting_log_size,
++            &mut |indices: &[usize]| evaluate_columns(&polynomials, indices, twiddles),
++        );
++        CommitmentTreeProver { polynomials, commitment, recompute_merkle_decommitment: false, streamed: true }
+     }
+ 
+     /// Keep the root and logical tree height while releasing all other hash buffers. This is
+@@ -502,20 +558,45 @@ impl<B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentTreeProver<B, MC> {
+             return self.decommit(queries);
+         }
+         let _span = span!(Level::INFO, "Regenerate tree evaluations and opening").entered();
+-        // Only this tree is expanded. Drop all buffers when its opening has been produced.
+-        let evaluations = self
+-            .polynomials
+-            .iter()
+-            .map(|poly| poly.get_evaluation_on_domain(poly.committed_domain, twiddles))
+-            .collect_vec();
+-        let columns = evaluations.iter().map(|eval| &eval.values).collect_vec();
+-        let rebuilt = MerkleProverLifted::<B, MC::H>::commit(
+-            columns.clone(),
+-            self.commitment.layers.len() as u32 - 1,
+-            0,
++        if !self.streamed {
++            // Only this tree is expanded. Drop all buffers when its opening has been produced.
++            let evaluations = self
++                .polynomials
++                .iter()
++                .map(|poly| poly.get_evaluation_on_domain(poly.committed_domain, twiddles))
++                .collect_vec();
++            let columns = evaluations.iter().map(|eval| &eval.values).collect_vec();
++            let rebuilt = MerkleProverLifted::<B, MC::H>::commit(
++                columns.clone(),
++                self.commitment.layers.len() as u32 - 1,
++                0,
++            );
++            assert_eq!(rebuilt.root(), self.commitment.root());
++            return rebuilt.decommit(queries, columns);
++        }
++        // The tree is rebuilt from coefficients 16 columns at a time; each column's queried
++        // values are captured while its evaluations exist, then the evaluations are dropped.
++        let max_log_size = self.commitment.layers.len() - 1;
++        let log_sizes = self.polynomials.iter().map(|p| p.committed_domain.log_size()).collect_vec();
++        let mut queried: Vec<Option<Vec<BaseField>>> = vec![None; self.polynomials.len()];
++        let rebuilt = MerkleProverLifted::<B, MC::H>::commit_with_column_provider(
++            &log_sizes,
++            max_log_size as u32,
++            &mut |indices: &[usize]| {
++                let columns = evaluate_columns(&self.polynomials, indices, twiddles);
++                for (column, &i) in columns.iter().zip(indices) {
++                    queried[i] = Some(MerkleProverLifted::<B, MC::H>::queried_values(
++                        column,
++                        queries,
++                        max_log_size,
++                    ));
++                }
++                columns
++            },
+         );
+         assert_eq!(rebuilt.root(), self.commitment.root());
+-        rebuilt.decommit(queries, columns)
++        let queried = queried.into_iter().map(|v| v.expect("every column was streamed")).collect();
++        rebuilt.decommit_with_queried_values(queries, queried)
+     }
+ 
+     /// Decommits the merkle tree on the given query positions.
+@@ -552,6 +633,24 @@ impl<B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentTreeProver<B, MC> {
+     }
+ }
+ 
++/// The committed evaluations of `polynomials[indices]`, in that order, regenerated from
++/// coefficients (in parallel across the requested columns).
++fn evaluate_columns<B: crate::prover::backend::Backend>(
++    polynomials: &[Poly<B>],
++    indices: &[usize],
++    twiddles: &TwiddleTree<B>,
++) -> Vec<Col<B, BaseField>> {
++    #[cfg(feature = "parallel")]
++    let iter = indices.par_iter();
++    #[cfg(not(feature = "parallel"))]
++    let iter = indices.iter();
++    iter.map(|&i| {
++        let poly = &polynomials[i];
++        poly.get_evaluation_on_domain(poly.committed_domain, twiddles).values
++    })
++    .collect()
++}
++
+ fn print_column_size_histogram<B: BackendForChannel<MC>, MC: MerkleChannel>(
+     columns_per_tree: &TreeVec<ColumnVec<&CircleEvaluation<B, BaseField, BitReversedOrder>>>,
+ ) {
+diff --git a/crates/stwo/src/prover/vcs_lifted/ops.rs b/crates/stwo/src/prover/vcs_lifted/ops.rs
+index 626926461..a24a3bb66 100644
+--- a/crates/stwo/src/prover/vcs_lifted/ops.rs
++++ b/crates/stwo/src/prover/vcs_lifted/ops.rs
+@@ -4,7 +4,7 @@ use crate::core::fields::m31::BaseField;
+ use crate::core::fields::qm31::SECURE_EXTENSION_DEGREE;
+ use crate::core::vcs_lifted::merkle_hasher::MerkleHasherLifted;
+ use crate::core::vcs_lifted::verifier::PACKED_LEAF_SIZE;
+-use crate::prover::backend::{Col, ColumnOps};
++use crate::prover::backend::{Col, Column, ColumnOps};
+ 
+ /// Trait for performing Merkle operations on a commitment scheme.
+ pub trait MerkleOpsLifted<H: MerkleHasherLifted>:
+@@ -17,6 +17,23 @@ pub trait MerkleOpsLifted<H: MerkleHasherLifted>:
+     /// Given a layer of hashes as input, computes a new layer by hashing pairs
+     /// of adjacent elements of the input, as in a standard Merkle tree.
+     fn build_next_layer(prev_layer: &Col<Self, H::Hash>) -> Col<Self, H::Hash>;
++
++    /// [`Self::build_leaves`] with the columns supplied on demand: `get_columns(indices)` returns
++    /// the columns at those indices (of `column_log_sizes`), in that order. The leaves equal
++    /// [`Self::build_leaves`] over all columns sorted (stably) by size. Backends may request the
++    /// columns in bounded batches and drop each batch once hashed; this default requests them
++    /// all at once.
++    fn build_leaves_with_column_provider(
++        column_log_sizes: &[u32],
++        lifting_log_size: u32,
++        get_columns: &mut dyn FnMut(&[usize]) -> Vec<Col<Self, BaseField>>,
++    ) -> Col<Self, H::Hash> {
++        let indices: Vec<usize> = (0..column_log_sizes.len()).collect();
++        let columns = get_columns(&indices);
++        let mut sorted: Vec<&Col<Self, BaseField>> = columns.iter().collect();
++        sorted.sort_by_key(|c| c.len());
++        Self::build_leaves(&sorted, lifting_log_size)
++    }
+ }
+ 
+ pub trait PackLeavesOps: ColumnOps<BaseField> {
+diff --git a/crates/stwo/src/prover/vcs_lifted/prover.rs b/crates/stwo/src/prover/vcs_lifted/prover.rs
+index f6ed054f9..12b470f72 100644
+--- a/crates/stwo/src/prover/vcs_lifted/prover.rs
++++ b/crates/stwo/src/prover/vcs_lifted/prover.rs
+@@ -78,6 +78,44 @@ impl<B: MerkleOpsLifted<H>, H: MerkleHasherLifted> MerkleProverLifted<B, H> {
+         Self { layers }
+     }
+ 
++    /// [`Self::commit`] (with `log_rows_per_leaf = 0`) with the columns supplied on demand by
++    /// `get_columns(indices)`; see [`MerkleOpsLifted::build_leaves_with_column_provider`]. The
++    /// tree equals [`Self::commit`] over the same columns.
++    pub fn commit_with_column_provider(
++        column_log_sizes: &[u32],
++        lifting_log_size: u32,
++        get_columns: &mut dyn FnMut(&[usize]) -> Vec<Col<B, BaseField>>,
++    ) -> Self {
++        let _span = span!(Level::TRACE, "Merkle", class = "MerkleCommitment").entered();
++        if column_log_sizes.is_empty() {
++            assert!(
++                lifting_log_size == 0,
++                "lifting_log_size must be 0 when no columns are committed"
++            );
++            return Self { layers: vec![B::build_leaves(&[], lifting_log_size)] };
++        }
++        let max_log_size = *column_log_sizes.iter().max().unwrap();
++        assert!(lifting_log_size >= max_log_size, "{lifting_log_size} < {max_log_size}");
++        let mut layers: Vec<Col<B, H::Hash>> =
++            vec![B::build_leaves_with_column_provider(column_log_sizes, lifting_log_size, get_columns)];
++        (0..lifting_log_size).for_each(|_| {
++            layers.push(B::build_next_layer(layers.last().unwrap()));
++        });
++        layers.reverse();
++        Self { layers }
++    }
++
++    /// The values of `column` at `query_positions` (indices into the largest, lifted column), as
++    /// [`Self::decommit`] reports them. `max_log_size` is the tree's height.
++    pub fn queried_values(
++        column: &Col<B, BaseField>,
++        query_positions: &[usize],
++        max_log_size: usize,
++    ) -> Vec<BaseField> {
++        let shift = max_log_size - column.len().ilog2() as usize;
++        query_positions.iter().map(|pos| column.at((pos >> (shift + 1) << 1) + (pos & 1))).collect()
++    }
++
+     /// Decommits to columns on the given queries.
+     /// Queries are given as indices to the largest column.
+     ///
+@@ -98,22 +136,24 @@ impl<B: MerkleOpsLifted<H>, H: MerkleHasherLifted> MerkleProverLifted<B, H> {
+         query_positions: &[usize],
+         columns: Vec<&Col<B, BaseField>>,
+     ) -> (ColumnVec<Vec<BaseField>>, ExtendedMerkleDecommitmentLifted<H>) {
+-        // Prepare output buffers.
+-        let mut queried_values: ColumnVec<Vec<BaseField>> = vec![];
+-        let mut decommitment = MerkleDecommitmentLifted::<H>::default();
+-        let mut all_node_values: Vec<HashMap<usize, <H as MerkleHasherLifted>::Hash>> = vec![];
+-
+         // Compute the queried values.
+         let max_log_size = self.layers.len() - 1;
+-        for col in columns.iter() {
+-            let log_size = col.len().ilog2() as usize;
+-            let shift = max_log_size - log_size;
+-            let res: Vec<_> = query_positions
+-                .iter()
+-                .map(|pos| col.at((pos >> (shift + 1) << 1) + (pos & 1)))
+-                .collect();
+-            queried_values.push(res);
+-        }
++        let queried_values: ColumnVec<Vec<BaseField>> = columns
++            .iter()
++            .map(|col| Self::queried_values(col, query_positions, max_log_size))
++            .collect();
++        self.decommit_with_queried_values(query_positions, queried_values)
++    }
++
++    /// [`Self::decommit`] with the queried values already extracted (e.g. while the columns were
++    /// streamed): only the hash witness comes from the tree's layers.
++    pub fn decommit_with_queried_values(
++        &self,
++        query_positions: &[usize],
++        queried_values: ColumnVec<Vec<BaseField>>,
++    ) -> (ColumnVec<Vec<BaseField>>, ExtendedMerkleDecommitmentLifted<H>) {
++        let mut decommitment = MerkleDecommitmentLifted::<H>::default();
++        let mut all_node_values: Vec<HashMap<usize, <H as MerkleHasherLifted>::Hash>> = vec![];
+ 
+         let mut prev_layer_queries: Vec<usize> =
+             query_positions.iter().copied().sorted().dedup().collect();
+-- 
+2.43.0
+

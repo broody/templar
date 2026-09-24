@@ -101,11 +101,25 @@ commitments, each of which still expands its whole tree before hashing, and to t
 own commitments on top of about 16–20 GiB of retained state. The FRI batch size therefore barely
 matters.
 
-**Next lever:** stream each commitment. Extend 16 columns at a time, in the leaf hasher's
-size-sorted order, and feed them to the Blake2s leaf builder, which already absorbs columns
-16 at a time with one state per row. Rebuild openings the same way. `bench/bounded-memory` has a
-tested column-provider Merkle API for this. We estimate it would remove roughly 6–10 GiB per
-commitment, giving a floor near the retained ~20 GiB; this is not measured.
+**Streamed commitments (same day):** in bounded mode, trees are now built and rebuilt for
+opening 16 columns at a time (patch `0004`). A streamed Blake2s leaf builder keeps one packed hash
+state per 16 rows and requests one 16-column block at a time, and queried values are captured
+while each block exists. Streamed leaves, layers, roots and openings equal the ordinary ones
+across sizes, lifts and block/lane boundaries (stwo unit test). This is the default; set
+`TEMPLAR_BOUNDED_STREAM=0` to build whole trees.
+
+| Storage (same PIE, back to back) | Peak RSS | Prove time | Hard cap |
+|---|---:|---:|---|
+| Default | 51.7 GiB | 118.0 s | — |
+| Bounded, whole trees | 27.8 GiB | 127.8 s | passes 30G, killed at 28G |
+| Bounded, streamed (default) | **22.0 GiB** | 147.9 s | passes 24G, killed at 22G |
+
+All three proofs are byte-identical and verify. Streaming costs time because each 16-column block
+passes over every per-row hash state (about 2 GiB for the largest tree) once, where the whole-tree
+builder hashes all of a row's columns in one pass; the arithmetic is unchanged. Another agent's
+swap-file test shared the host during these runs, so times are indicative (the default ran at
+111.6 s earlier the same day). Remaining peaks: Cairo STARK proving and the circuit stage at about
+22 GiB, mostly retained trace coefficients and the verifier circuit's state.
 
 **Build note:** see [Build](#build): without `-C target-cpu=native` the same source proves in
 about 193 s instead of 112 s, with identical per-stage memory.
