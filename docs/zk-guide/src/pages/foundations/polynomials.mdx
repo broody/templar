@@ -23,6 +23,82 @@ the key fact — a nonzero polynomial of degree `d` has **at most `d` roots**
 > **Check.** Plot `f(x) = (x−1)(x−2)(x−3) mod 7` over `x = 0…6`. It is zero
 > exactly at 1, 2, 3 — degree 3, exactly 3 roots, never more.
 
+<figure className="guide-diagram guide-plot">
+  <svg viewBox="0 0 700 360" role="img" aria-labelledby="polynomial-plot-title polynomial-plot-description">
+    <title id="polynomial-plot-title">Values of f(x) = (x−1)(x−2)(x−3) modulo 7</title>
+    <desc id="polynomial-plot-description">
+      A discrete stem plot with values 1, 0, 0, 0, 6, 3, and 4 at x equals 0 through 6. The roots at x equals 1, 2, and 3 are highlighted.
+    </desc>
+
+    <g className="guide-plot-grid" aria-hidden="true">
+      <line x1="76" y1="294" x2="660" y2="294" />
+      <line x1="76" y1="250" x2="660" y2="250" />
+      <line x1="76" y1="206" x2="660" y2="206" />
+      <line x1="76" y1="162" x2="660" y2="162" />
+      <line x1="76" y1="118" x2="660" y2="118" />
+      <line x1="76" y1="74" x2="660" y2="74" />
+      <line x1="76" y1="30" x2="660" y2="30" />
+    </g>
+
+    <g className="guide-plot-axis" aria-hidden="true">
+      <line x1="76" y1="30" x2="76" y2="294" />
+      <line x1="76" y1="294" x2="660" y2="294" />
+    </g>
+
+    <g className="guide-plot-ticks" aria-hidden="true">
+      <text x="58" y="299">0</text>
+      <text x="58" y="255">1</text>
+      <text x="58" y="211">2</text>
+      <text x="58" y="167">3</text>
+      <text x="58" y="123">4</text>
+      <text x="58" y="79">5</text>
+      <text x="58" y="35">6</text>
+
+      <text x="76" y="319">0</text>
+      <text x="173" y="319">1</text>
+      <text x="271" y="319">2</text>
+      <text x="368" y="319">3</text>
+      <text x="465" y="319">4</text>
+      <text x="563" y="319">5</text>
+      <text x="660" y="319">6</text>
+    </g>
+
+    <g className="guide-plot-stems" aria-hidden="true">
+      <line x1="76" y1="294" x2="76" y2="250" />
+      <line x1="465" y1="294" x2="465" y2="30" />
+      <line x1="563" y1="294" x2="563" y2="162" />
+      <line x1="660" y1="294" x2="660" y2="118" />
+    </g>
+
+    <g className="guide-plot-points">
+      <circle cx="76" cy="250" r="7" />
+      <circle className="guide-plot-root" cx="173" cy="294" r="8" />
+      <circle className="guide-plot-root" cx="271" cy="294" r="8" />
+      <circle className="guide-plot-root" cx="368" cy="294" r="8" />
+      <circle cx="465" cy="30" r="7" />
+      <circle cx="563" cy="162" r="7" />
+      <circle cx="660" cy="118" r="7" />
+    </g>
+
+    <g className="guide-plot-values" aria-hidden="true">
+      <text x="76" y="232">1</text>
+      <text className="guide-plot-root-label" x="173" y="276">root</text>
+      <text className="guide-plot-root-label" x="271" y="276">root</text>
+      <text className="guide-plot-root-label" x="368" y="276">root</text>
+      <text x="465" y="18">6</text>
+      <text x="563" y="144">3</text>
+      <text x="660" y="100">4</text>
+    </g>
+
+    <text className="guide-plot-axis-label" x="368" y="350">x in F₇</text>
+    <text className="guide-plot-axis-label" x="18" y="162" transform="rotate(-90 18 162)">f(x) in F₇</text>
+  </svg>
+  <figcaption className="guide-caption">
+    The outputs are `(1, 0, 0, 0, 6, 3, 4)`. The three highlighted points on the
+    x-axis are all the roots a nonzero cubic can have.
+  </figcaption>
+</figure>
+
 ## Interpolation: values determine the polynomial
 
 Given `n` values at `n` distinct points, there is **exactly one** polynomial
