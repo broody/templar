@@ -166,7 +166,7 @@ def main():
                  ('ARBITER', ARBITER), ('NFT_RECIPIENT', NFT_RECIPIENT), ('NFT_ASSET', nft_asset), ('MULTI_ASSET', multi_asset),
                  ('R4_STATEMENT', accounts['R4'][0]), ('R4_STATEMENT_CLASS', accounts['R4'][1]),
                  ('P1_STATEMENT', accounts['P1'][0]), ('P1_STATEMENT_CLASS', accounts['P1'][1]), ('OS_PROGRAM', osp),
-                 ('POLICY_ID', pn.ref.poseidon_hash_span(pub3['policy_id']))))),
+                 ('POLICY_ID', pn.ref.poseidon_hash_span(pub3['policy_id'])))),
              f'pub const NFT_ID: u256 = {NFT_ID};', f'pub const MULTI_ID: u256 = {MULTI_ID};',
              f'pub const ERC20_AMOUNT: u128 = {ERC20_AMOUNT};', f'pub const MULTI_AMOUNT: u128 = {MULTI_AMOUNT};',
              f'pub const BASE_BLOCK: u64 = {max(f[4] for f in facts.values())};',

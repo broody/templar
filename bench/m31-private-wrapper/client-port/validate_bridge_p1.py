@@ -58,7 +58,9 @@ def main():
     altered = {
         'chain': hex(int.from_bytes(b'SN_MAIN', 'big')), 'pool': bump_hex(pub['pool']), 'token': bump_hex(pub['token']),
         'root': bump(pub['root'], 4), 'nullifier': bump(pub['nullifier'], 0),
-        'commitments': [pub['commitments'][1], pub['commitments'][0]],
+        # Swapped, or (a withdrawal-only outcome has two zero commitments) one word altered.
+        'commitments': ([pub['commitments'][1], pub['commitments'][0]] if pub['commitments'][0] != pub['commitments'][1]
+                        else [bump(pub['commitments'][0], 0), pub['commitments'][1]]),
         'deliveries': [pub['deliveries'][0], bump_hex(pub['deliveries'][1])],
         'withdrawal_recipient': bump_hex(pub['withdrawal_recipient']), 'withdrawal_amount': int(pub['withdrawal_amount']) + 1,
         'controller': bump_hex(pub['controller']), 'controller_class': bump_hex(pub['controller_class']),

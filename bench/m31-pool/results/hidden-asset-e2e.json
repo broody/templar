@@ -1,0 +1,97 @@
+{
+ "s1": {
+  "client": {
+   "trace_log_size": 18,
+   "proving_seconds": 0.580943355,
+   "proof_felts": 30274
+  },
+  "bridge": {
+   "cases": 2,
+   "passed": 2,
+   "steps": 2027796
+  },
+  "os": {
+   "steps": 3394182,
+   "exact_message": true
+  },
+  "proof2": {
+   "prove_seconds": 127.42204085,
+   "proof_bytes": 250802,
+   "verified": true,
+   "max_rss_gib": 28.3
+  }
+ },
+ "s2": {
+  "client": {
+   "trace_log_size": 18,
+   "proving_seconds": 0.741760977,
+   "proof_felts": 30314
+  },
+  "bridge": {
+   "cases": 2,
+   "passed": 2,
+   "steps": 2028355
+  },
+  "os": {
+   "steps": 3395022,
+   "exact_message": true
+  },
+  "proof2": {
+   "prove_seconds": 126.102213265,
+   "proof_bytes": 252068,
+   "verified": true,
+   "max_rss_gib": 28.3
+  }
+ },
+ "s3": {
+  "client": {
+   "trace_log_size": 18,
+   "proving_seconds": 0.553732483,
+   "proof_felts": 30162
+  },
+  "bridge": {
+   "cases": 31,
+   "passed": 31,
+   "steps": 2035754
+  },
+  "os": {
+   "steps": 3423304,
+   "exact_message": true
+  },
+  "proof2": {
+   "prove_seconds": 126.074656352,
+   "proof_bytes": 249668,
+   "verified": true,
+   "max_rss_gib": 28.2
+  }
+ },
+ "s4": {
+  "client": {
+   "trace_log_size": 18,
+   "proving_seconds": 0.918680738,
+   "proof_felts": 30142
+  },
+  "bridge": {
+   "cases": 2,
+   "passed": 2,
+   "steps": 2017904
+  },
+  "os": {
+   "steps": 3382267,
+   "exact_message": true
+  },
+  "proof2": {
+   "prove_seconds": 126.360100268,
+   "proof_bytes": 254028,
+   "verified": true,
+   "max_rss_gib": 27.8
+  }
+ },
+ "settlement_gas": {
+  "apply_spend v4 erc20_transfer one_input": 55192085,
+  "apply_spend v4 nft_transfer one_input_dummy_output": 53659625,
+  "apply_policy_spend erc1155_release withdrawal": 3525253,
+  "apply_spend v4 nft_withdrawal two_dummy_outputs": 57967905
+ },
+ "leaves": 9
+}

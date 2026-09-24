@@ -160,11 +160,15 @@ fn hidden_asset_real_redirected_withdrawal_rejected() {
     pool.apply_spend(s4, array![].span());
 }
 
-/// The escrow release needs the arbiter.
+/// The escrow release needs the arbiter (its proof is against the tree after S1 and S2).
 #[test]
 #[should_panic(expected: 'ESCROW_NOT_APPROVED')]
 fn hidden_asset_real_release_needs_the_arbiter() {
     let pool = setup();
+    start_cheat_proof_facts(addr(R4_ADAPTER), facts_s1().span());
+    pool.apply_spend(spend(spend_s1()), array![].span());
+    start_cheat_proof_facts(addr(R4_ADAPTER), facts_s2().span());
+    pool.apply_spend(spend(spend_s2()), array![].span());
     start_cheat_proof_facts(addr(P1_ADAPTER), facts_s3().span());
     pool.apply_policy_spend(policy_spend(spend_s3()), array![].span(), array![array![].span(), array![].span()].span(), array![].span());
 }
