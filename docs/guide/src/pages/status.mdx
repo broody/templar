@@ -8,22 +8,22 @@ description: What Templar has demonstrated, measured resources, and the remainin
 
 <div className="guide-eyebrow">Snapshot / 24 September 2026</div>
 
-Templar [proves](/architecture/proving) each spend as a compact client proof that a wrapping server turns into a PROOF2. This runs end to end locally with real proofs for ordinary spends, open notes and policy notes, and reaches Sepolia up to the gateway, which does not accept PROOF2 transactions yet.
+Templar [proves](/architecture/proving) each spend as a compact client proof that a wrapping server turns into a Starknet large proof. This runs end to end locally with real proofs for ordinary spends, open notes and policy notes, and reaches Sepolia up to the gateway, which does not accept large-proof transactions yet.
 
 Everything here is an unaudited, experimental construction with synthetic tokens. Key derivation, address and backup formats, viewing exports and delivery representations require independent review before production formats are frozen. The primary packages and a production wallet are not yet integrated.
 
 ## Ordinary spends (R0)
 
-The wallet proves an R0 spend from the pool's own events; a wrapping server verifies it in the bridge, captures the statement account's exact message in the virtual OS on live Sepolia state, and proves PROOF2.
+The wallet proves an R0 spend from the pool's own events; a wrapping server verifies it in the bridge, captures the statement account's exact message in the virtual OS on live Sepolia state, and proves the large proof.
 
 | Stage (Sepolia, 23 September 2026) | Result |
 | --- | --- |
 | Deployment and four deposits | On chain; commitments equal the wallet's |
 | Client proof, from on-chain events | 4.7 s, 0.30 GiB peak RSS |
 | Virtual OS on live state | 11.8 s, exact message |
-| PROOF2 | 118.8 s, 250,814 bytes, verified |
+| Large proof | 118.8 s, 250,814 bytes, verified |
 | Signed relayer transfer, simulated with validation | Succeeds: the adapter checks the real facts and the pool applies the spend against the live root |
-| Gateway | Rejects PROOF2 (`PROOF_VERSION_NOT_ALLOWED`); stateless, no fee |
+| Gateway | Rejects the large proof's proof version (`PROOF_VERSION_NOT_ALLOWED`); stateless, no fee |
 
 From a relayer account with a Sierra 1.7 class, the simulated transfer costs about 135M L2 gas (3.1 test STRK), of which `apply_spend` is 52.2M and about 75M is the per-proof charge. Older account classes (below Sierra 1.7) make Starknet bill the pool's hashing by Cairo steps, about 2.7× more. Evidence is in `bench/m31-sepolia/`.
 
@@ -38,7 +38,7 @@ The R0 client proof binds a public execution intent and an optional identity han
 | Client proof | 2.0 s, 0.31 GiB |
 | Bridge | 19/19 cases, 1.99M steps |
 | Virtual OS | 3.34M steps, exact message |
-| PROOF2 | 119.6 s, 253,430 bytes, 52.1 GiB |
+| Large proof | 119.6 s, 253,430 bytes, 52.1 GiB |
 | Settlement | passes in snforge with the real proof facts |
 
 One output plus one funded open note costs 62.3M L2 gas in the pool call.
@@ -48,7 +48,7 @@ One output plus one funded open note costs 62.3M L2 gas in the pool call.
 **Sepolia (2026-09-24):**
 - The deposits are on chain.
 - The proof-carrying swap of 300 A through upstream's unchanged Ekubo anonymizer and the live Ekubo router, into an open note of 299 B, succeeds when the exact signed transaction is simulated against live state: 150.3M L2 gas, 3.80 STRK.
-- The gateway still rejects PROOF2 (`PROOF_VERSION_NOT_ALLOWED`).
+- The gateway still rejects the large proof (`PROOF_VERSION_NOT_ALLOWED`).
 - Evidence is in `bench/m31-sepolia/results/v3-open-note/`.
 
 A shadow-account end to end with upstream's anonymizer has not been run.
@@ -66,7 +66,7 @@ The design (`docs/policy-note-spec.md`) was reviewed independently before implem
 1. A depositor creates two escrow notes by deposit.
 2. An executor holding only one note's opening proves the arbiter-approved release.
 3. The depositor recovers the other note from the seed alone and proves its refund after the deadline.
-4. Both settle through the P1 PROOF2 adapter, and the pool's tree ends at the root the beneficiary's wallet computed.
+4. Both settle through the P1 verifier adapter, and the pool's tree ends at the root the beneficiary's wallet computed.
 5. The beneficiary finds its notes by trial decryption and proves an ordinary spend of them.
 
 | | Release | Refund |
@@ -74,7 +74,7 @@ The design (`docs/policy-note-spec.md`) was reviewed independently before implem
 | Client proof | 5.3 s, 0.31 GiB | 1.9 s, 0.30 GiB |
 | Bridge | 2.02M steps | 1.96M steps |
 | Virtual OS | 3.41M steps | 3.33M steps |
-| PROOF2 | 111.0 s, 50.9 GiB | 110.8 s, 51.7 GiB |
+| Large proof | 111.0 s, 50.9 GiB | 110.8 s, 51.7 GiB |
 | `apply_policy_spend` | 52.4M L2 gas | 51.5M L2 gas |
 
 The implementation review found no blocking issue in the relation or the contracts; its wallet and defense-in-depth findings are addressed, and both reviewers' tests (33 contract and 11 malicious-witness) are in the repository. The wallet's derivations and encodings are pinned by known-answer vectors.
@@ -82,12 +82,12 @@ The implementation review found no blocking issue in the relation or the contrac
 **Still open:**
 - a real-proof settlement of a split outcome;
 - private creation through an ordinary output, end to end;
-- Sepolia, which is blocked on PROOF2 acceptance at the gateway;
+- Sepolia, which is blocked on large-proof acceptance at the gateway;
 - a production wallet key scheme: the end to end uses fixture spending and incoming keys.
 
-## Wrapping server (PROOF2)
+## Wrapping server
 
-PROOF2's smallest large-path leaf is a Cairo trace of 2²⁵ rows, so each wrap costs about two minutes of server time. Bounded-memory storage keeps commitment trees as coefficients, rebuilds them for openings and runs FRI in batches. Proofs stay byte-identical and verify.
+The large-proof flow's smallest leaf is a Cairo trace of 2²⁵ rows, so each wrap costs about two minutes of server time. Bounded-memory storage keeps commitment trees as coefficients, rebuilds them for openings and runs FRI in batches. Proofs stay byte-identical and verify.
 
 | Server storage (policy-note PIE, four cores, zero swap) | Peak RSS | Prove time | Hard cap |
 | --- | ---: | ---: | --- |
@@ -105,9 +105,9 @@ The client proofs are blinded stwo-circuits proofs in an arithmetic-only compone
 
 - **Custom compact proof.** A purpose-built M31 membership proof ran natively in 1.17–1.20 s at 63–64 MiB, and in a Chrome WASM worker in 1.89–2.12 s at about 80 MiB of linear memory (`bench/m31-private-e2e/`).
 - **Public-path experiments.** felt252 Poseidon membership and M31 trees, natively and in WASM, showed that felt252 lookup tables dominate client memory and that M31-native arithmetic is the lever (`bench/poseidon-membership/`, `bench/wasm-membership/`, `bench/m31-tree/`).
-- **Wrapping into PROOF1** hit PROOF1's 2²⁰-row ceiling and exhausted a 96 GiB server. PROOF2's large path removed the ceiling: the first wrapped bridge proved in 138 s at 61 GiB (`bench/m31-private-wrapper/`).
-- **Standard blinded proofs.** Rewriting the relation for stwo-circuits in an arithmetic-only profile removed the custom verifier circuit and the unused lookup tables, putting client, bridge and PROOF2 on one code line.
-- **Full client-side proving came first.** An earlier pool with a felt252 note format proved whole Cairo spends on the device as PROOF1. It ran complete lifecycles on Sepolia (offline push payments, viewing, seed recovery, recovered-note spends, withdrawals and an Ekubo swap into a private note) at about 19–20 s and 14 GiB per proof, or 23 s within 8 GiB with bounded memory. That is too heavy for phones and browsers, so it is no longer maintained; a device-side path on the M31 pool is [future work](/architecture/proving#future-a-faster-device-side-path). Its records are in `bench/push-e2e/`, `bench/controlled-push-e2e/`, `bench/return-note-e2e/` and `bench/bounded-memory/`.
+- **Wrapping into a small proof** hit the small-proof flow's 2²⁰-row limit per component and exhausted a 96 GiB server. Starknet v0.14.4's large-proof flow removed the ceiling: the first wrapped bridge proved in 138 s at 61 GiB (`bench/m31-private-wrapper/`).
+- **Standard blinded proofs.** Rewriting the relation for stwo-circuits in an arithmetic-only profile removed the custom verifier circuit and the unused lookup tables, putting client, bridge and large-proof wrapping on one code line.
+- **Full client-side proving came first.** An earlier pool with a felt252 note format proved whole Cairo spends on the device as small proofs. It ran complete lifecycles on Sepolia (offline push payments, viewing, seed recovery, recovered-note spends, withdrawals and an Ekubo swap into a private note) at about 19–20 s and 14 GiB per proof, or 23 s within 8 GiB with bounded memory. That is too heavy for phones and browsers, so it is no longer maintained; a device-side path on the M31 pool is [future work](/architecture/proving#future-a-faster-device-side-path). Its records are in `bench/push-e2e/`, `bench/controlled-push-e2e/`, `bench/return-note-e2e/` and `bench/bounded-memory/`.
 
 ## Recovery and synchronization
 
@@ -121,7 +121,7 @@ Missing payloads produce incomplete results rather than complete zero balances. 
 
 ## Current configuration boundary
 
-Each relation has its own adapter, pinned to PROOF2, the virtual OS program, its statement account and class, and its account tag. The experimental maximum proof age is **4,096 blocks**, separate from the **256-root** pool history. The owner can change the R0 and P1 verifiers and the shadow-anonymizer allowlist. No pool fee is charged.
+Each relation has its own adapter, pinned to the large-proof format, the virtual OS program, its statement account and class, and its account tag. The experimental maximum proof age is **4,096 blocks**, separate from the **256-root** pool history. The owner can change the R0 and P1 verifiers and the shadow-anonymizer allowlist. No pool fee is charged.
 
 Submission uses sncast signing and the official Sepolia gateway for proof-bearing transactions, with explicit fee bounds. Proof-aware estimation and proof preservation through the intended wallet/RPC path remain unqualified.
 
@@ -130,7 +130,7 @@ Submission uses sncast signing and the official Sepolia gateway for proof-bearin
 | Area | Remaining qualification |
 | --- | --- |
 | Client privacy | Complete and independently confirm the compact client proof's zero-knowledge argument |
-| Network support | Public acceptance of PROOF2 transactions on Starknet (Sepolia gateway, then mainnet) |
+| Network support | Public acceptance of large-proof transactions on Starknet (Sepolia gateway, then mainnet) |
 | Relations | Single-note spends on R0, larger shapes, private creation of policy notes end to end, a real-proof split-outcome settlement |
 | Production integration | Bring the relations, bridges, pool ABI, delivery, recovery and adapters into the maintained packages |
 | Cryptography and formats | Independent review; finalize addresses, derivation, backups, exports and version handling |
@@ -140,4 +140,4 @@ Submission uses sncast signing and the official Sepolia gateway for proof-bearin
 | Wallet experience | Secure key storage, address authentication, recovery UX, optional viewing exports, rotation and unsolicited-note handling |
 | Contract readiness | Production token behavior, application controllers, governance and independent security review |
 | Deployment | Safe format boundaries, mainnet qualification and an explicit deployment policy |
-| Device-side fast path (future) | Native M31 arithmetic in Starknet contracts, then a device-side PROOF1 over the same pool |
+| Device-side fast path (future) | Native M31 arithmetic in Starknet contracts, then a device-side small proof over the same pool |

@@ -28,7 +28,7 @@ The deposit caller and eventual note owner can differ. The caller supplies funds
 
 The holder selects an accepted root and prepares input membership paths. For each output, their wallet uses the recipient's address, chooses fresh randomness, and encrypts the note. Change uses their own receiving address.
 
-The holder's device proves the spend as a compact client proof, which a wrapping server turns into a PROOF2 (see [proving](/architecture/proving)). The transaction carries the final proof and the public bundle: token, nullifiers, output commitments and ciphertexts, and withdrawal destinations and amounts.
+The holder's device proves the spend as a compact client proof, which a wrapping server turns into a Starknet large proof (see [proving](/architecture/proving)). The transaction carries the final proof and the public bundle: token, nullifiers, output commitments and ciphertexts, and withdrawal destinations and amounts.
 
 Starknet verifies the proof. The adapter checks that the verified facts match the approved statement and intended spend. The pool recomputes the binding from actual transaction data, checks the root and nullifiers, and applies the changes atomically.
 

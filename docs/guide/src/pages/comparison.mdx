@@ -16,7 +16,7 @@ This comparison describes upstream source at [commit `b40bf10`](https://github.c
 
 Both are token pools on Starknet with private note ownership, nullifiers to prevent reuse, off-chain computation, and public settlement. Both use Cairo, Poseidon-based derivations, and native proof verification with proof facts connecting a proven virtual execution to contract actions. Upstream describes this division in its [architecture overview](https://github.com/starkware-libs/starknet-privacy/blob/b40bf109c8e5b97d9d6e8ec6db48b16b9d10a106/README.md#architecture).
 
-Templar proves on the user's device: a compact client proof that a server wraps into PROOF2 without seeing the witness ([proving](/architecture/proving)). The key privacy distinction here is **who receives the private inputs before proving**. A zero-knowledge proof can hide a witness from public observers while the service generating that proof still sees it.
+Templar proves on the user's device: a compact client proof that a server wraps into a Starknet large proof without seeing the witness ([proving](/architecture/proving)). The key privacy distinction here is **who receives the private inputs before proving**. A zero-knowledge proof can hide a witness from public observers while the service generating that proof still sees it.
 
 ## Trust and data access
 
@@ -52,7 +52,7 @@ The upstream service flow is described in the [repository overview](https://gith
 
 <Flow steps={[
   { title: 'Note client', detail: 'Prove the payment rules in a compact, blinded client proof.' },
-  { title: 'Wrapping server', detail: 'Verify that proof in Cairo and wrap the execution into PROOF2. No witness.' },
+  { title: 'Wrapping server', detail: 'Verify that proof in Cairo and wrap the execution into a large proof. No witness.' },
   { title: 'Starknet pool', detail: 'Verify natively, rebuild the bound statement, and apply exact actions.' },
 ]} caption="The witness stays on the device; the server sees a zero-knowledge proof and public data, as the chain does." />
 
@@ -79,7 +79,7 @@ For Templar's side of the comparison, see [notes and ownership](/architecture/no
 
 ## What the trade-offs mean for developers
 
-**More work moves to the client.** Local proving removes the need to entrust a proving service with the witness, but the user's device must supply the compute and memory. The client proof takes about 2–5 seconds and 0.3 GiB, with the heavy PROOF2 wrapping (about 2 minutes, 28 GiB) moved to a server that never sees private data. Physical device and browser qualification of complete payments remain open. There is no matched upstream benchmark, so these figures do not establish a speed or cost advantage. [Measurement scope](/status).
+**More work moves to the client.** Local proving removes the need to entrust a proving service with the witness, but the user's device must supply the compute and memory. The client proof takes about 2–5 seconds and 0.3 GiB, with the heavy large-proof wrapping (about 2 minutes, 28 GiB) moved to a server that never sees private data. Physical device and browser qualification of complete payments remain open. There is no matched upstream benchmark, so these figures do not establish a speed or cost advantage. [Measurement scope](/status).
 
 **Receiving uses public encrypted history.** Templar publishes encrypted openings with funded commitments. Recipients can receive offline and recover from seed plus history. The wallet must authenticate and synchronize that history efficiently; the current small-pool scanner is not a scalable private discovery service. Upstream supplies channel-based discovery infrastructure, and its SDK can open channels automatically as part of preparing a payment. Channels therefore do not inherently require a separate user-visible handshake.
 

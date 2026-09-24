@@ -26,7 +26,7 @@ packages under `packages/` have not yet adopted these formats.
 | `bench/m31-private-wrapper/client-port/cairo-r0/`, `cairo-p1/` | Bridges (verify a client proof against the pinned circuit, decode and range-check the statement, compute the binding) and statement accounts (emit the message) for R0 and P1 |
 | `bench/m31-private-wrapper/client-port/build_bridge_arith.py`, `validate_bridge_r0.py`, `validate_bridge_p1.py` | Build a bridge from a trusted circuit manifest; validate it on a real proof against altered statements |
 | `bench/m31-private-wrapper/client-port/capture_os.py` | Run a statement account in the virtual OS and check its exact message |
-| `bench/m31-private-wrapper/proof2-large/` | PROOF2 wrapping on the large path, the bounded-memory server build (`bounded/`) and a per-stage memory profiler |
+| `bench/m31-private-wrapper/proof2-large/` | Large-proof wrapping, the bounded-memory server build (`bounded/`) and a per-stage memory profiler |
 
 ## Pool and wallet
 
@@ -34,17 +34,17 @@ packages under `packages/` have not yet adopted these formats.
 | --- | --- |
 | `bench/m31-pool/cairo/src/pool.cairo` | Deposits, `apply_spend`, `apply_spend_with_invoke` (open notes), `apply_policy_spend` (policy notes), nullifiers, root history, owner configuration |
 | `bench/m31-pool/cairo/src/tree.cairo`, `hash.cairo`, `perm_*.cairo` | Depth-32 Poseidon2-M31 tree, the client's sponge and note hashing, the permutation |
-| `bench/m31-pool/cairo/src/spend.cairo`, `adapter.cairo` | Spend encoding and binding; the PROOF2 verifier adapter |
+| `bench/m31-pool/cairo/src/spend.cairo`, `adapter.cairo` | Spend encoding and binding; the large-proof verifier adapter |
 | `bench/m31-pool/cairo/src/open_note.cairo` | Execution intents, destinations and the identity commitment |
 | `bench/m31-pool/cairo/src/policy.cairo`, `policy_escrow.cairo` | Policy settlement statement, controller authorization and call; the reference escrow |
 | `bench/m31-pool/open_note.py`, `policy_note.py`, `policy_wallet.py` | Wallet helpers: intents, policies, spend encodings, seed derivations, plaintexts, sealed boxes, seed-only recovery |
-| `bench/m31-pool/open_note_e2e.py`, `policy_e2e.py` | Local end to end: wallet → client proof → bridge → virtual OS → PROOF2 → settlement |
-| `bench/m31-pool/cairo/src/tests/` | Pool tests, including adversarial suites and settlements with real PROOF2 facts |
+| `bench/m31-pool/open_note_e2e.py`, `policy_e2e.py` | Local end to end: wallet → client proof → bridge → virtual OS → large proof → settlement |
+| `bench/m31-pool/cairo/src/tests/` | Pool tests, including adversarial suites and settlements with real large-proof facts |
 | `bench/m31-sepolia/` | Sepolia deployment and flows, with archived evidence |
 
 ## Earlier references
 
-The first, full client-side reference (a felt252 note format proved on the device as PROOF1) is
+The first, full client-side reference (a felt252 note format proved on the device as a small proof) is
 archived with its Sepolia evidence in `bench/push-e2e/`, `bench/controlled-push-e2e/`,
 `bench/return-note-e2e/` and `bench/bounded-memory/`. It is no longer maintained; a device-side
 path is [future work](/architecture/proving#future-a-faster-device-side-path). The

@@ -1,7 +1,7 @@
 ---
 showAskAi: false
 title: Proving
-description: How a spend is proved. A compact client proof on the device, wrapped by a server into a Starknet-native PROOF2, and a future device-side path.
+description: How a spend is proved. A compact client proof on the device, wrapped by a server into a native Starknet large proof, and a future device-side path.
 ---
 
 import { Flow } from '../../components/Flow'
@@ -11,12 +11,12 @@ import { Flow } from '../../components/Flow'
 Every spend needs a zero-knowledge proof that Starknet can verify natively, and the private
 witness (keys, notes, amounts, membership paths) must never leave the user's device. Templar
 meets both requirements by splitting the work. The device proves the payment rules in a compact
-circuit, and a wrapping server that never sees private data turns that proof into a PROOF2.
+circuit, and a wrapping server that never sees private data turns that proof into a Starknet large proof.
 
 | | Device | Wrapping server |
 | --- | --- | --- |
 | Proves | A purpose-built arithmetic relation for the payment rules (R0 or P1) | The Cairo execution that verifies the client proof |
-| Output | A blinded client proof and its public statement | PROOF2, on Starknet's large-proof path |
+| Output | A blinded client proof and its public statement | A Starknet large proof |
 | Cost | About 2–5 s and 0.3 GiB natively; browser-class | About 2 minutes and 28 GiB per proof |
 | Sees | Everything | Only the client proof and public data |
 
@@ -24,7 +24,7 @@ circuit, and a wrapping server that never sees private data turns that proof int
 
 <Flow steps={[
   { title: 'Device', detail: 'Witness → compact relation (R0 or P1) → blinded client proof + public statement.' },
-  { title: 'Wrapping server', detail: 'Bridge verifies the client proof in Cairo → statement account → virtual OS → PROOF2.' },
+  { title: 'Wrapping server', detail: 'Bridge verifies the client proof in Cairo → statement account → virtual OS → large proof.' },
   { title: 'Starknet', detail: 'Native verification → adapter checks the account message → pool rebuilds the statement and applies it.' },
 ]} caption="The privacy boundary is the client proof: it is zero-knowledge before it leaves the device." />
 
@@ -36,9 +36,10 @@ uploaded.
 The server receives the client proof and the public statement, never the witness. Inside a Cairo
 **statement account**, a **bridge** verifies the client proof, checks it is a proof of the pinned
 circuit, decodes the statement and emits a binding digest as a message. The server runs that
-account in the virtual OS and proves the execution as **PROOF2** through Starknet's large-proof
-path. On chain, the adapter checks the proof facts carry that message, and the pool recomputes the
-binding from the transaction's own data.
+account in the virtual OS and proves the execution as a **large proof** through Starknet's
+large-proof flow (v0.14.4), which proves block-sized transactions. On chain, the adapter checks the
+proof facts carry that message, and the pool recomputes the binding from the transaction's own
+data.
 
 | Relation | What it proves |
 | --- | --- |
@@ -51,7 +52,7 @@ rules live in the client proof, and the pool checks the binding itself. Anyone c
 server; availability is an operational concern, not a privacy one. Network metadata (IP address,
 timing) still needs separate protection.
 
-**Server cost.** PROOF2's smallest large-path leaf is a Cairo trace of 2²⁵ rows, so each wrap
+**Server cost.** The large-proof flow's smallest leaf is a Cairo trace of 2²⁵ rows, so each wrap
 costs about 2 minutes. Bounded-memory storage (commitment trees kept as coefficients, rebuilt for
 openings, FRI in batches) brings the peak from about 51 GiB to about 28 GiB with byte-identical
 proofs; an optional streamed mode reaches 22 GiB for about 20% more time.
@@ -63,22 +64,22 @@ proofs; an optional streamed mode reaches 22 GiB for about 20% more time.
   private data.
 - **No trusted prover.** Unlike a hosted proving service that receives the witness, the server
   wraps an already-private proof.
-- **One code line.** Client proof, bridge and PROOF2 wrapping build on StarkWare's current proving
+- **One code line.** Client proof, bridge and large-proof wrapping build on StarkWare's current proving
   stack.
 
 What still gates production: the hiding argument for the compact client proof (one issue was
 found and fixed; the argument is still being qualified), independent review of the relations and
-bridges, public PROOF2 acceptance on Starknet (the Sepolia gateway does not accept PROOF2
+bridges, public large-proof acceptance on Starknet (the Sepolia gateway does not accept large-proof
 transactions yet), and final formats. See the [status page](/status).
 
 ## Future: a faster device-side path
 
-Wrapping takes about 2 minutes. A wallet could skip the server by proving the whole Cairo
-pipeline itself and submitting a Starknet-native PROOF1. Templar's earliest reference did this
-with a felt252 note format, but it needs gigabytes of memory, too much for phones and browsers,
-and a separate felt252 pool would split the anonymity set.
+Wrapping takes about 2 minutes. A wallet could skip the server by proving the whole Cairo pipeline
+itself and submitting a native Starknet small proof. Templar's earliest reference did this with a
+felt252 note format, but it needs gigabytes of memory, too much for phones and browsers, and a
+separate felt252 pool would split the anonymity set.
 
-The likeliest route is a device-side PROOF1 over the same M31 pool, once Starknet allows native
-M31 arithmetic (the `qm31` libfuncs) in contracts. An experiment in
+The likeliest route is a device-side small proof over the same M31 pool, once Starknet allows
+native M31 arithmetic (the `qm31` libfuncs) in contracts. An experiment in
 `bench/m31-private-wrapper/qm31-opcode/` estimates an M31 spend at about 0.5M Cairo steps with
 native M31 arithmetic. This path is not implemented.

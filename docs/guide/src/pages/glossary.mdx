@@ -18,9 +18,10 @@ description: The cryptographic and system terms used in the Templar architecture
 | Controller | The contract a policy note names; it approves a settlement before the note's deadline. |
 | Delivery digest | A hash of canonical ciphertext bytes, bound to the spend and recorded with the output position. |
 | felt252 | A value in Starknet's prime field, used by Cairo and by statement bindings. |
-| Full client-side proving | Proving the whole Cairo spend on the device as a native PROOF1. An earlier reference did this; a device-side path on the M31 pool is future work. |
+| Full client-side proving | Proving the whole Cairo spend on the device as a native small proof. An earlier reference did this; a device-side path on the M31 pool is future work. |
 | Full viewing key | A sensitive read-only capability that decrypts receipts and derives their nullifiers to determine spent status. |
 | Incoming viewing key | A capability that decrypts receipts but cannot by itself determine which are spent. |
+| Large proof | A native Starknet proof of a block-sized virtual execution (up to 1.1B L2 gas), from the large-proof flow added in Starknet v0.14.4. It takes 1–2 minutes to generate; the wrapping server produces one per spend. |
 | M31 | The prime field 2³¹ − 1 used by S-two; Templar's notes and tree hash over it. |
 | Merkle path | Sibling hashes and a position used to recompute a tree root from one leaf. |
 | Note | A private claim on an amount of one token held by the pool. |
@@ -28,8 +29,6 @@ description: The cryptographic and system terms used in the Templar architecture
 | Opening | Data that reconstructs a commitment. An output's payer knows its opening but lacks the recipient's spending authority. |
 | P1 | The policy-note settlement relation. |
 | Poseidon | The hash family behind receiving identities, commitments, nullifiers and the tree: Poseidon2 over M31. Bindings use felt252 Poseidon. |
-| PROOF1 | A Starknet native proof format for traces up to 2²⁰ rows; a future device-side path would produce it. |
-| PROOF2 | Starknet's newer native proof format, whose large-proof path accepts big Cairo traces; produced by the wrapping server. |
 | Proof facts | Public results exposed by native verification; the adapter must interpret and bind them. |
 | Public inputs | Values visible to verification and settlement, in contrast to the private witness. |
 | Push payment | A sender-created payment to a reusable receiving address that does not require a per-payment recipient response. |
@@ -43,15 +42,16 @@ description: The cryptographic and system terms used in the Templar architecture
 | OpenNoteDeposit | The upstream-compatible adapter response containing a destination identifier, token and actual amount. |
 | Execution intent | The proof-bound adapter, exact call, input budget, expiry and open-note destinations. |
 | Spending secret | The private authority the statement requires to prove ownership and consume a note. |
-| S-two / STWO | StarkWare's circle-STARK prover over M31, behind the client proof and PROOF2. |
+| S-two / STWO | StarkWare's circle-STARK prover over M31, behind the client proof and Starknet's native proofs. |
+| Small proof | A native Starknet proof from the small-proof flow, for small virtual executions (each trace component up to 2²⁰ rows); seconds to generate. A future device-side path would produce one. |
 | Soundness | The property that a false claim cannot feasibly pass verification. |
-| Split architecture | Templar's proving design: the device produces a compact client proof and a wrapping server turns it into a PROOF2. |
+| Split architecture | Templar's proving design: the device produces a compact client proof and a wrapping server turns it into a Starknet large proof. |
 | Statement | The program and public claim whose correctness is established by a proof. |
 | Statement account | The account contract whose virtual execution the final proof covers; it emits the public result as a message. |
 | Statement binding | The hash connecting the public proof result to the exact bundle, including ciphertexts and withdrawals. |
 | Virtual execution | Local execution against a chain context whose result is proven rather than directly applied to public state. |
 | Witness | Private input supplied to the statement, including spending secrets, note data, and membership paths. |
-| Wrapping server | The service that verifies a client proof inside a statement account and proves that execution as PROOF2; it never receives the witness. |
+| Wrapping server | The service that verifies a client proof inside a statement account and proves that execution as a large proof; it never receives the witness. |
 | Zero knowledge | The property that a proof reveals no additional private witness information beyond its public claim. |
 
 For the relationships between these terms, see [notes and ownership](/architecture/notes), [receiving and recovery](/architecture/receiving), [proving](/architecture/proving), and [proofs and verification](/architecture/proofs).

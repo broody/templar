@@ -61,7 +61,7 @@ An outcome is **fixed**: up to two outputs, each with a committed receiver, rand
 
 ## Settlement
 
-A separate client relation, **P1**, proves: the note is in the tree, the capability opens it, and the published outputs, withdrawal and fields equal the selected committed outcome. The server wraps it like any client proof, through its own bridge, statement account and PROOF2 adapter. The pool's entry point is:
+A separate client relation, **P1**, proves: the note is in the tree, the capability opens it, and the published outputs, withdrawal and fields equal the selected committed outcome. The server wraps it like any client proof, through its own bridge, statement account and verifier adapter. The pool's entry point is:
 
 ```cairo
 fn apply_policy_spend(
@@ -78,7 +78,7 @@ Under its lock, the pool:
 4. **Refund window** (`block > deadline`): only outcome 0 settles, and the controller is not called. A broken, paused or upgraded controller cannot freeze funds past the deadline. An application that wants indefinite authority sets a far deadline, which is public at settlement.
 5. Appends the outputs, pays the withdrawal (never to the pool) and emits `PolicySettled { nullifier, controller, handle, policy_id, outcome, x, first_index, by_controller }`.
 
-Settlement must land by the deadline block. Proving and PROOF2 wrapping take minutes, so an approval settled too late is lost and the note can then be refunded.
+Settlement must land by the deadline block. Proving and wrapping take minutes, so an approval settled too late is lost and the note can then be refunded.
 
 ## Writing a controller
 

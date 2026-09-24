@@ -77,7 +77,7 @@ controller is included. [Guide: policy notes](docs/guide/src/pages/architecture/
 
 Every spend needs a zero-knowledge proof that Starknet can verify natively. Templar splits the
 work: the wallet proves the payment privately in a compact circuit, and a server with no private
-data wraps that proof into a Starknet-native PROOF2.
+data wraps that proof into a native Starknet large proof.
 
 ```text
 wallet (browser-class)                   wrapping server (no private data)          Starknet
@@ -87,7 +87,7 @@ notes, keys, paths
 purpose-built M31 relation
 (stwo-circuits, blinded) ──client proof──► bridge: verify it in Cairo,
 public statement ─────────────────────────►  check the pinned circuit, emit a digest
-                                           virtual OS ─► PROOF2 (large path) ───────► native verify
+                                           virtual OS ─► large proof ──────────────► native verify
                                                                                        pool: rebuild the
                                                                                        statement, compare
 ```
@@ -96,10 +96,10 @@ The wallet proves only the payment rules, in a small arithmetic circuit: 2 to 5 
 0.3 GiB natively. A related membership proof ran in Chrome/WASM in about 2 s. The proof is
 zero-knowledge before it leaves the device.
 
-A server then verifies it inside a Cairo account and wraps that execution as a PROOF2 through
-Starknet's large-proof path, which takes about 2 minutes and 28 GiB with bounded-memory storage.
-The server never sees keys, notes or amounts. It can refuse or delay service, but it cannot
-forge a spend or learn the witness. Anyone can run one.
+A server then verifies it inside a Cairo account and wraps that execution as a large proof,
+through the large-proof flow Starknet added in v0.14.4. That takes about 2 minutes and 28 GiB
+with bounded-memory storage. The server never sees keys, notes or amounts. It can refuse or
+delay service, but it cannot forge a spend or learn the witness. Anyone can run one.
 
 | Relation | Proves |
 |---|---|
@@ -107,22 +107,23 @@ forge a spend or learn the witness. Anyone can run one.
 | **P1** | Policy-note settlement: one committed outcome of one policy note |
 
 Status:
-- It runs end to end locally with real client proofs and real PROOF2: ordinary spends, open-note
-  swaps, and policy-note release and seed-only refund.
+- It runs end to end locally with real client proofs and real large proofs: ordinary spends,
+  open-note swaps, and policy-note release and seed-only refund.
 - On Sepolia, deposits are on chain, and a proof-carrying swap through live Ekubo succeeds in
-  simulation. The public gateway does not accept PROOF2 transactions yet.
+  simulation. The public gateway does not accept large-proof transactions yet.
 - The zero-knowledge argument for the compact proof is under review. One hiding issue was found
   and fixed.
 
 ### Future: a faster device-side path
 
 Wrapping takes about 2 minutes. A wallet could skip the server by proving the whole Cairo
-pipeline itself and submitting a Starknet-native PROOF1. Templar's earliest reference did this
-with a felt252 note format, but it is too heavy for a phone or browser, and a felt252 pool would
-split the anonymity set from the M31 pool. The likeliest route is a device-side PROOF1 over the
-same M31 pool once Starknet allows native M31 arithmetic (the `qm31` libfuncs) in contracts. An
-experiment estimates an M31 spend at about 0.5M Cairo steps with native M31 arithmetic
-([`qm31-opcode`](bench/m31-private-wrapper/qm31-opcode/README.md)). It is not implemented.
+pipeline itself and submitting a native Starknet small proof. Templar's earliest reference did
+this with a felt252 note format, but it is too heavy for a phone or browser, and a felt252 pool
+would split the anonymity set from the M31 pool. The likeliest route is a device-side small proof
+over the same M31 pool once Starknet allows native M31 arithmetic (the `qm31` libfuncs) in
+contracts. An experiment estimates an M31 spend at about 0.5M Cairo steps with native M31
+arithmetic ([`qm31-opcode`](bench/m31-private-wrapper/qm31-opcode/README.md)). It is not
+implemented.
 
 ## Repository map
 
@@ -133,13 +134,13 @@ experiment estimates an M31 spend at about 0.5M Cairo steps with native M31 arit
 | `docs/*-spec.md` | Specifications: [push payments](docs/push-payment-spec.md), [open notes](docs/open-note-spec.md), [policy notes](docs/policy-note-spec.md) |
 | `bench/m31-private-wrapper/client-port/` | Client side: the R0 and P1 relations (Rust), the Cairo bridges and statement accounts, the wallet CLI |
 | `bench/m31-pool/` | Pool: M31 commitment tree, spends, open notes, policy notes, escrow, wallet helpers, end-to-end drivers |
-| `bench/m31-private-wrapper/proof2-large/` | Server: PROOF2 wrapping, bounded-memory server build, memory profiler |
+| `bench/m31-private-wrapper/proof2-large/` | Server: large-proof wrapping, bounded-memory server build, memory profiler |
 | `bench/m31-sepolia/` | Sepolia: deploy and flow scripts, archived evidence |
 | `packages/` | Earlier package implementation; not yet integrated with the current formats |
 | [`TODO.md`](TODO.md) | Current priorities and open items |
 
 Most other `bench/` directories are measurement and pathfinding records, including the earlier
-full client-side PROOF1 references; each has a README.
+full client-side references; each has a README.
 
 ## Getting started
 
@@ -164,10 +165,10 @@ cd docs/guide && npm ci && npm run dev
 ```
 
 **End to end with real proofs.** `bench/m31-pool/open_note_e2e.py` and
-`bench/m31-pool/policy_e2e.py` run wallet → client proof → bridge → virtual OS → PROOF2 →
-settlement. They need a large machine: about 28 GiB per PROOF2 in the default bounded mode.
-Build the PROOF2 prover with `RUSTFLAGS="-C target-cpu=native"`; without it proving is about 1.7x
-slower ([build notes](bench/m31-private-wrapper/proof2-large/README.md#build)). Run artifacts and
+`bench/m31-pool/policy_e2e.py` run wallet → client proof → bridge → virtual OS → large proof →
+settlement. They need a large machine: about 28 GiB per large proof in the default bounded mode.
+Build the large-proof prover with `RUSTFLAGS="-C target-cpu=native"`; without it proving is about
+1.7x slower ([build notes](bench/m31-private-wrapper/proof2-large/README.md#build)). Run artifacts and
 wallet secrets go to `~/.local/share/templar/runs`, never into the repository.
 
 ## Relation to Starknet Privacy
@@ -190,7 +191,7 @@ The [comparison page](docs/guide/src/pages/comparison.mdx) in the guide goes int
 - **Hiding of the compact client proof** is still being qualified.
 - **Wallet keys** in the demos use fixture derivations, not a production key and
   backup standard.
-- **PROOF2** is not yet accepted by the public Sepolia gateway, and not enabled on mainnet.
+- **Large proofs** are not yet accepted by the public Sepolia gateway, and not enabled on mainnet.
 - **Public metadata:** submission, gas funding, RPC access and timing can still correlate
   activity. An open note makes funding private; it does not make the swap itself private.
 - **Operator trust:** pool owners can currently change verifiers and allowlists.

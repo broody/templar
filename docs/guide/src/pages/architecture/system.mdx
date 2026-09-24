@@ -16,7 +16,7 @@ Templar separates secret-dependent computation from public settlement. The holde
 | --- | --- |
 | Note client | Derives receiving and viewing keys, creates encrypted outputs, discovers receipts, restores history, and assembles a spend witness. |
 | Client prover | Proves the spend on the holder's device as a blinded client proof of the compact R0 or P1 relation. |
-| Wrapping server | Verifies the client proof inside the statement account and proves that execution as PROOF2. Receives the proof and public data, never the witness. |
+| Wrapping server | Verifies the client proof inside the statement account and proves that execution as a Starknet large proof. Receives the proof and public data, never the witness. |
 | Statement account | The virtual execution entry point. Verifies the client proof through its bridge and emits the public result that the final proof commits to. |
 | Transaction sender | Signs and submits the public proof-bearing transaction. It can be a different role from the note owner. |
 | Starknet native verifier | Verifies the cryptographic proof and exposes the resulting proof facts to contract execution. |
@@ -29,7 +29,7 @@ Templar separates secret-dependent computation from public settlement. The holde
 “Note client” describes a responsibility, not a released wallet or SDK. The current end-to-end harness performs that role programmatically.
 
 <Flow steps={[
-  { title: 'Holder device', detail: 'Secrets + membership paths → client proof, which a wrapping server turns into PROOF2.' },
+  { title: 'Holder device', detail: 'Secrets + membership paths → client proof, which a wrapping server turns into a large proof.' },
   { title: 'Public transaction', detail: 'Proof + public inputs + action list + transaction signature.' },
   { title: 'Starknet', detail: 'Native verification → adapter binding checks → pool state changes.' },
 ]} caption="The privacy boundary is crossed by the proof and public effects, not by the private witness." />

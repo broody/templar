@@ -58,15 +58,15 @@ optional off-chain message.
 The client proves R0 or P1 with a blinded stwo-circuits proof in an
 arithmetic-only component profile (no lookup tables, so no multiplicities to leak). The wrapping
 server runs a statement account whose bridge verifies that proof with the pinned circuit hash and
-emits `[class, tag, chain, pool, binding]`. The server proves the virtual execution as PROOF2 on
-StarkWare's large-proof path. The account's virtual message is committed to by the proof; it is
-not a real bridge withdrawal. The proof travels on the transaction, not as a Cairo argument. R0 and P1 each have their own bridge, statement account and account
+emits `[class, tag, chain, pool, binding]`. The server proves the virtual execution as a large
+proof, through Starknet's large-proof flow. The account's virtual message is committed to by the
+proof; it is not a real bridge withdrawal. The proof travels on the transaction, not as a Cairo argument. R0 and P1 each have their own bridge, statement account and account
 tag, so a proof of one can never be accepted as the other.
 
 Memory is the main engineering constraint on the server. A bounded-memory mode keeps polynomial
 coefficients instead of expanded evaluations, rebuilds Merkle trees for openings and processes FRI
-inputs in batches. It changes storage only: proofs are byte-identical. It brings PROOF2 from about
-51 to about 28 GiB.
+inputs in batches. It changes storage only: proofs are byte-identical. It brings the
+large proof's peak from about 51 to about 28 GiB.
 
 ## Verification has three layers
 

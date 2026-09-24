@@ -47,7 +47,7 @@ These concepts are similar to consuming and creating outputs in a UTXO system. T
 
 ## How spends are proved
 
-The device proves only the payment rules, in a small, browser-class circuit, and the proof is zero-knowledge before it leaves the device. A wrapping server that never sees private data turns it into a Starknet-native PROOF2. [Proving](/architecture/proving) explains the split and a future device-side path.
+The device proves only the payment rules, in a small, browser-class circuit, and the proof is zero-knowledge before it leaves the device. A wrapping server that never sees private data turns it into a native Starknet large proof. [Proving](/architecture/proving) explains the split and a future device-side path.
 
 ## Explore the architecture
 
@@ -57,7 +57,7 @@ The device proves only the payment rules, in a small, browser-class circuit, and
   <a className="guide-card" href="/architecture/receiving"><strong>Receiving & recovery →</strong><span>Offline receipt, optional viewing keys, and restoration from a wallet backup.</span></a>
   <a className="guide-card" href="/architecture/privacy"><strong>Privacy & trust →</strong><span>What an address reveals, what is public, and which dependencies remain.</span></a>
   <a className="guide-card" href="/architecture/lifecycle"><strong>Transaction lifecycle →</strong><span>Follow a deposit, payment, recipient spend, and withdrawal.</span></a>
-  <a className="guide-card" href="/architecture/proving"><strong>Proving →</strong><span>A compact client proof on the device, wrapped into PROOF2 by a server.</span></a>
+  <a className="guide-card" href="/architecture/proving"><strong>Proving →</strong><span>A compact client proof on the device, wrapped into a Starknet large proof by a server.</span></a>
   <a className="guide-card" href="/architecture/proofs"><strong>Proofs & verification →</strong><span>What a spend proves and what the pool must still check.</span></a>
   <a className="guide-card" href="/architecture/open-notes"><strong>Open notes →</strong><span>Private DeFi: fund notes from a public call, and keep positions in shadow accounts.</span></a>
   <a className="guide-card" href="/architecture/policy-notes"><strong>Policy notes →</strong><span>Escrow, vesting and conditional payments without a trusted signer.</span></a>
@@ -67,4 +67,4 @@ The device proves only the payment rules, in a small, browser-class circuit, and
 
 This guide explains the architecture and its security boundaries. Everything described is experimental and unaudited.
 
-Ordinary spends, open-note swaps and policy-note escrow run end to end locally with real client proofs and real PROOF2. On Sepolia, deposits are on chain and a proof-carrying swap succeeds in simulation; submission awaits the gateway's acceptance of PROOF2. Production integration, independent review and device qualification remain open. The [implementation status](/status) page identifies what is demonstrated and what remains unqualified.
+Ordinary spends, open-note swaps and policy-note escrow run end to end locally with real client proofs and real large proofs. On Sepolia, deposits are on chain and a proof-carrying swap succeeds in simulation; submission awaits the gateway's acceptance of large proofs. Production integration, independent review and device qualification remain open. The [implementation status](/status) page identifies what is demonstrated and what remains unqualified.
