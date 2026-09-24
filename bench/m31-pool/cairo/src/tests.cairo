@@ -12,3 +12,5 @@ mod test_policy_e2e;
 mod test_policy_adversarial;
 mod test_policy_e2e_adversarial;
 mod test_pool_v2;
+mod hidden_asset_vectors;
+mod test_hidden_asset_e2e;

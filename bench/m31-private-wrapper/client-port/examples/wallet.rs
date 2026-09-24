@@ -17,6 +17,12 @@
 //!   seed recovery (header, refund outcome, `orest`): `{policy, receiver, commitment, policy_id}`.
 //! - `wallet prove-refund SPEND_JSON OUT [MAX_FRI_COLUMNS]`: a P1 refund (outcome 0) from
 //!   `{chain, pool, token, leaves, note, header, refund, rest, data}`, without the other outcomes.
+//! - `wallet root LEAVES_JSON`: the pool's tree root over `leaves` in order.
+//! - `wallet prove4 SPEND_JSON OUT [MAX_FRI_COLUMNS]`: an R0 V4 proof (`docs/hidden-asset-spec.md`
+//!   §4) for `{chain, pool, token (the asset), leaves, inputs: [{sk, rho, amount, position}] x1
+//!   or x2, outputs: [{receiver, rho, amount, delivery}] x2, withdrawal, intent?,
+//!   identity_scope?}`. With one input, input 1 is a dummy drawn fresh from the OS CSPRNG for this
+//!   proof (spec §6); outputs of amount zero are dummies the caller built.
 use std::{fs, path::Path, time::Instant};
 #[path = "support/mod.rs"]
 mod support;
@@ -35,7 +41,7 @@ use templar_client_verifier_circuit::payment::{
     self, Digest, INNER, Identity, Input, NOTE, Output, Private, Public, Tree, amount_limbs, felt_limbs, h, receiver_of,
     tree_paths,
 };
-use templar_client_verifier_circuit::policy;
+use templar_client_verifier_circuit::{payment4, policy};
 
 const TREE: Tree = Tree::Compress;
 
@@ -80,9 +86,10 @@ fn no_intent() -> String {
     "0x0".into()
 }
 
-/// The relation a proof is for: an R0 spend or a P1 policy settlement.
+/// The relation a proof is for: an R0 spend, an R0 V4 spend or a P1 policy settlement.
 enum Relation {
     R0(Public, Private),
+    R4(payment4::Public, payment4::Private),
     P1(policy::Public, policy::Private),
 }
 
@@ -90,6 +97,7 @@ impl Relation {
     fn n_outputs(&self) -> usize {
         match self {
             Relation::R0(..) => payment::N_OUTPUTS,
+            Relation::R4(..) => payment4::N_OUTPUTS,
             Relation::P1(..) => policy::N_OUTPUTS,
         }
     }
@@ -97,6 +105,7 @@ impl Relation {
     fn limbs(&self) -> Vec<u32> {
         match self {
             Relation::R0(p, _) => payment::statement_limbs(TREE, p),
+            Relation::R4(p, _) => payment4::statement_limbs(TREE, p),
             Relation::P1(p, _) => policy::statement_limbs(TREE, p),
         }
     }
@@ -104,6 +113,7 @@ impl Relation {
     fn purpose(&self) -> &'static str {
         match self {
             Relation::R0(..) => "tmpzr0-client-payment",
+            Relation::R4(..) => "tmpzr4-client-payment",
             Relation::P1(..) => "tmpzp1-client-policy",
         }
     }
@@ -111,6 +121,7 @@ impl Relation {
     fn statement_tag(&self) -> [u32; 2] {
         match self {
             Relation::R0(..) => payment::statement_tag(TREE),
+            Relation::R4(..) => payment4::statement_tag(TREE),
             Relation::P1(..) => policy::statement_tag(TREE),
         }
     }
@@ -118,6 +129,7 @@ impl Relation {
     fn public_json(&self) -> Vec<u8> {
         match self {
             Relation::R0(p, _) => serde_json::to_vec_pretty(p).unwrap(),
+            Relation::R4(p, _) => serde_json::to_vec_pretty(p).unwrap(),
             Relation::P1(p, _) => serde_json::to_vec_pretty(p).unwrap(),
         }
     }
@@ -127,6 +139,7 @@ fn circuit<V: Lanes>(rel: &Relation, seed: [u8; 32], blinding: usize) -> Finaliz
     let mut c = Context::<V>::new(rel.n_outputs());
     let outputs = match rel {
         Relation::R0(public, private) => payment::build(&mut c, TREE, public, private),
+        Relation::R4(public, private) => payment4::build(&mut c, TREE, public, private),
         Relation::P1(public, private) => policy::build(&mut c, TREE, public, private),
     };
     c.set_outputs(&outputs);
@@ -165,6 +178,80 @@ fn prove(spec: SpendJson, out: &Path, max_fri_columns: Option<usize>) {
     .unwrap_or_else(|e| panic!("invalid spend: {e}"));
     assert_eq!(public.root, root);
     prove_relation(Relation::R0(public, private), out, max_fri_columns);
+}
+
+#[derive(Deserialize)]
+struct SpendOut4 {
+    receiver: Digest,
+    rho: Digest,
+    amount: String,
+    delivery: String,
+}
+#[derive(Deserialize)]
+struct SpendJson4 {
+    chain: String,
+    pool: String,
+    token: String,
+    leaves: Vec<Digest>,
+    inputs: Vec<SpendIn>,
+    outputs: [SpendOut4; 2],
+    withdrawal: WithdrawalIn,
+    #[serde(default = "no_intent")]
+    intent: String,
+    #[serde(default)]
+    identity_scope: Option<Digest>,
+}
+
+/// Nine canonical M31 words from the OS CSPRNG, not all zero.
+fn fresh_digest() -> Digest {
+    use rand::Rng;
+    loop {
+        let d: Digest = std::array::from_fn(|_| rand::rngs::OsRng.gen_range(0..payment::P));
+        if d.iter().any(|w| *w != 0) {
+            return d;
+        }
+    }
+}
+
+fn prove4(spec: SpendJson4, out: &Path, max_fri_columns: Option<usize>) {
+    fs::create_dir_all(out).unwrap();
+    let u128_of = |s: &str| s.parse::<u128>().expect("decimal u128");
+    assert!(spec.inputs.len() == 1 || spec.inputs.len() == 2, "one or two inputs");
+    let positions: Vec<u32> = spec.inputs.iter().map(|i| i.position).collect();
+    let (root, paths) = tree_paths(TREE, &spec.leaves, &positions);
+    let mut inputs: Vec<Input> = spec
+        .inputs
+        .iter()
+        .zip(paths)
+        .map(|(i, siblings)| Input { sk: i.sk, rho: i.rho, amount: u128_of(&i.amount), position: i.position, siblings })
+        .collect();
+    let dummy = inputs.len() == 1;
+    if dummy {
+        // Fresh for every proof, never derived from the seed (spec §6, HA-M6).
+        let position = rand::RngCore::next_u32(&mut rand::rngs::OsRng);
+        let siblings = (0..payment::DEPTH).map(|_| fresh_digest()).collect();
+        inputs.push(Input { sk: fresh_digest(), rho: fresh_digest(), amount: 0, position, siblings });
+    }
+    let private = payment4::Private {
+        token: spec.token.clone(),
+        inputs: [inputs[0].clone(), inputs[1].clone()],
+        dummy,
+        outputs: std::array::from_fn(|j| payment4::Output {
+            receiver: spec.outputs[j].receiver,
+            rho: spec.outputs[j].rho,
+            amount: u128_of(&spec.outputs[j].amount),
+        }),
+        identity: Identity { active: spec.identity_scope.is_some(), scope: spec.identity_scope.unwrap_or([0; 9]) },
+    };
+    let deliveries = [spec.outputs[0].delivery.clone(), spec.outputs[1].delivery.clone()];
+    let public = payment4::statement(
+        TREE, &spec.chain, &spec.pool, deliveries,
+        (spec.withdrawal.recipient.clone(), u128_of(&spec.withdrawal.amount)), &spec.intent, &private,
+    )
+    .unwrap_or_else(|e| panic!("invalid spend: {e}"));
+    payment4::bridge_checks(&public).unwrap_or_else(|e| panic!("the bridge would reject: {e}"));
+    assert_eq!(public.root, root);
+    prove_relation(Relation::R4(public, private), out, max_fri_columns);
 }
 
 #[derive(Deserialize)]
@@ -357,10 +444,18 @@ fn main() {
             let spec: RefundSpendJson = serde_json::from_slice(&fs::read(&a[2]).unwrap()).unwrap();
             prove_refund(spec, Path::new(&a[3]), a.get(4).map(|n| n.parse().unwrap()));
         }
+        Some("root") => {
+            let leaves: Vec<Digest> = serde_json::from_str(&a[2]).expect("leaves JSON");
+            println!("{}", json!(tree_paths(TREE, &leaves, &[]).0));
+        }
+        Some("prove4") => {
+            let spec: SpendJson4 = serde_json::from_slice(&fs::read(&a[2]).unwrap()).unwrap();
+            prove4(spec, Path::new(&a[3]), a.get(4).map(|n| n.parse().unwrap()));
+        }
         Some("prove-policy") => {
             let spec: PolicySpendJson = serde_json::from_slice(&fs::read(&a[2]).unwrap()).unwrap();
             prove_policy(spec, Path::new(&a[3]), a.get(4).map(|n| n.parse().unwrap()));
         }
-        _ => panic!("wallet keys|inner|commitment|prove|policy-note|prove-policy ..."),
+        _ => panic!("wallet keys|inner|commitment|prove|prove4|policy-note|prove-policy ..."),
     }
 }

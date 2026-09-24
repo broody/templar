@@ -16,7 +16,7 @@ CAPTURE = ROOT / 'target/m31-private-wrapper/capacity-capture-build-v3/capture'
 FIXTURE_TOOL = ROOT / 'target/m31-append/state-fixture-build-v4/state-fixture'
 TEMPLATE = WRAPPER / 'results/bridge-capacity/optimized/public-request.json'
 # V1: statement check in the account (log25/log23 runs). V2: upstream verifier, digest only.
-# SA: arithmetic-profile client bridge, statement emitted directly. R0: payment bridge, binding.
+# SA: arithmetic-profile client bridge, statement emitted directly. R0/R4: payment bridge (V3/V4), binding.
 TAG_VERSION = 'V1'
 
 
@@ -38,6 +38,11 @@ def expected_payload(fixture, public):
         pspec.loader.exec_module(pn)
         tag = int.from_bytes((TAG or 'TMPZP1_POLICY_V1').encode(), 'big')
         return [int(fixture['authority']['statement_class'], 16), tag, chain, int(public['pool'], 16), pn.binding(public)]
+    if TAG_VERSION == 'R4':
+        # R0 V4 payment bridge (hidden asset): the binding over `token_out`.
+        import validate_bridge_r4
+        tag = int.from_bytes((TAG or 'TMPZR0_PAYMENT_V4').encode(), 'big')
+        return [int(fixture['authority']['statement_class'], 16), tag, chain, int(public['pool'], 16), validate_bridge_r4.binding(public)]
     if TAG_VERSION == 'R0':
         # R0 payment bridge: the pool recomputes the binding from its spend data.
         import validate_bridge_r0
@@ -67,7 +72,7 @@ def main():
     ap.add_argument('--public', type=Path, required=True)
     ap.add_argument('--output', type=Path, required=True)
     ap.add_argument('--l2-gas', default='0x3b9aca00')
-    ap.add_argument('--tag-version', default='V1', choices=['V1', 'V2', 'SA', 'R0', 'P1'])
+    ap.add_argument('--tag-version', default='V1', choices=['V1', 'V2', 'SA', 'R0', 'R4', 'P1'])
     ap.add_argument('--prefix-hex')
     ap.add_argument('--tag')
     ap.add_argument('--expect-reject', action='store_true',

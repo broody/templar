@@ -125,5 +125,21 @@ def main():
     assert all(c['passed'] for c in report['cases'])
 
 
+def one():
+    """`validate_bridge_r4.py --one WORK PROOF_DIR OUT`: accept one wallet proof with its exact
+    binding, and reject it with a flipped asset (the server's check before wrapping)."""
+    work, proof_dir, out = map(Path, sys.argv[2:5])
+    out.mkdir(parents=True, exist_ok=False)
+    pub, data = load(proof_dir)
+    expected = [CHAIN, int(pub['pool'], 16), int(pub['token_out'], 16), binding(pub)]
+    other = '0x0' if int(pub['token_out'], 16) else hex(0x1234)
+    for name, a, accept in [('valid', args(pub, data), True), ('claimed-token-out', args(pub, data, token_out=other), False)]:
+        code, output, usage = run(work, out, name, a)
+        ok = (code == 0 and output is not None and [v % ref.P for v in output[-4:]] == expected) if accept else code != 0
+        steps = json.loads(usage)['resources']['n_steps'] if usage else None
+        print(json.dumps({'name': name, 'passed': ok, 'steps': steps}), flush=True)
+        assert ok, name
+
+
 if __name__ == '__main__':
-    main()
+    one() if sys.argv[1] == '--one' else main()

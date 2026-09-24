@@ -194,3 +194,77 @@ it. This is a privacy failure. It is not an inflation.
   The asset just below 2^251 is covered separately by `asset_just_below_2_251`.
 - The five native negatives in `prove_payment_r4` concern the proof and configuration, not the
   relation. They are adequate for this example.
+
+## Re-review of the test fixes
+
+2026-09-24, commit `32e622b` on `feat/hidden-assets`. The same constraints apply. I changed
+nothing except this file. Throwaway work lived only under
+`~/.local/share/templar/runs/r4-review/`.
+
+**Scope.** I read the diff `049df4b..32e622b` for `src/payment4.rs`, `tests/payment_r4.rs` and
+`tests/payment_r4_malicious.rs`. `build` is unchanged: the diff touches only the doc comment,
+`statement`, the new `below_2_251`/`bridge_checks` and one line of `fresh_shape`. I compared
+`bridge_checks` with the assertions in `cairo-r4/bridge/src/lib.cairo:103-143`.
+
+**Test runs.** On an out-of-repo copy of the crate, I ran the two suites against the unmodified
+code and against nine single-constraint mutants of `build`.
+- The baseline passes: 12 + 7 tests.
+- **Every mutant is killed:**
+
+| Mutant (in `build`) | Killed by |
+| --- | --- |
+| delete `conservation(...)` | `attacker_mutations_fail_the_circuit` |
+| delete `nonzero_vector(token)` | `zero_asset_fails_on_a_consistent_tree` |
+| delete `sum₁·(1−e₁) = 0` | `attacker_mutations_fail_the_circuit` |
+| delete `e₁·(cur₁ − cur₀) = 0` | `attacker_mutations_fail_the_circuit`, `inputs_under_two_assets_are_rejected` |
+| drop booleanity in `bit` (both `e₁` and `x`) | `e1_non_boolean_isolated`, `x_non_boolean` |
+| delete `(1−x)·withdrawn/intent = 0` | `x_zero_with_exit` |
+| input 0 via `amount_unchecked` (no nonzero check) | `zero_real_input_fails_on_a_consistent_tree` |
+| delete the output receiver `nonzero_vector` | `attacker_mutations_fail_the_circuit` |
+| publish `token` instead of `x·token` | `circuit_statement_matches_native_and_topology_is_fixed`, `v4_spends_v3_notes` |
+
+### Status
+
+- **HA-IM1: resolved.**
+  - `attacker_mutations_fail_the_circuit` asserts `!valid` for these, with a valid control:
+    - conservation ±1;
+    - a zero output receiver or rho;
+    - a dummy carrying value;
+    - an enabled off-tree input 1;
+    - a disabled real input 1.
+  - `zero_real_input_fails_on_a_consistent_tree` and `zero_asset_fails_on_a_consistent_tree`
+    re-place the leaves so the targeted constraint is the only one that can fail, each with a
+    valid control.
+  - The disjunctive check survives only in `other_mutations_change_the_statement`, for the
+    unknown-root and other-asset cases, where it is correct.
+- **HA-IM2: resolved.**
+  - (a) The same-leaf test now asserts the circuit is valid, and `bridge_checks` names
+    `duplicate nullifier`.
+  - (b) `e1_non_boolean_isolated` uses an enabled zero-value member. On that witness `e₁ = 0`
+    and `e₁ = 1` are both valid, so only booleanity rejects `e₁ = 2`; the mutation run
+    confirms it.
+  - (c) `outputs_use_the_inputs_asset` states that the case cannot be expressed. Its assertion
+    compares the native statement with a native commitment, so on its own it tests nothing
+    about the circuit. The circuit side is covered by the circuit-versus-native equality test.
+    I accept this as the documentation the finding asked for.
+- **HA-IM3: resolved.**
+  - `statement` now holds circuit rules only, and its doc comment points to `bridge_checks`.
+  - `bridge_checks` matches the Cairo bridge rule for rule: zero context, pool, `token_out` and
+    recipient below 2^251, nonzero and distinct nullifiers, nonzero commitments and deliveries,
+    recipient ⇔ amount, the exit rule, and identity ⇒ intent. The tag and padding checks are
+    limb-level and correctly absent from a `Public`-level mirror. `below_2_251` is correct for
+    `0x` hex with leading zeros.
+  - `bridge_only_rules` proves that the circuit admits a zero delivery, a recipient without an
+    amount, an identity without an intent and a duplicate nullifier, and that `bridge_checks`
+    rejects each with the right name. `voluntary_reveal_is_left_to_the_bridge` covers the
+    circuit side of the exit rule.
+  - *Residual, Info.* The address-range case exercises only `pool`. Range violations of
+    `token_out` or `recipient`, and zero context, are asserted by neither the native tests nor
+    this suite. They belong in the `cairo-r4` bridge's negative tests, which are outside this
+    review.
+
+### Final verdict
+
+**GO.** The R0 V4 circuit (`build`, unchanged since `049df4b`) implements spec §4.2–4.3 exactly.
+Every constraint is now load-bearing in the test suite, and `statement` and `bridge_checks`
+split cleanly along the spec's §4.3/§4.5 boundary.
