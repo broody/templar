@@ -1,0 +1,10 @@
+{
+  "note": "After the successful diagnostic build, Astra added only package.default-run to preserve the original cargo run target. No code, dependency, or lockfile change. Validated by locked/offline cargo metadata; no diagnostic rebuild needed.",
+  "metadata_exit": 0,
+  "default_run": "templar-m31-statement",
+  "sha256": {
+    "bench/m31-statement/client/Cargo.toml": "50e0ee8d0f44e7eb517efccd42bd6851c9f8a74798717d2124bef60d8f8ab255",
+    "bench/m31-statement/client/Cargo.lock": "c7ce456551b889ab45c8ebe13543faf492c3f00bfcdc5fbd011b8abee04387ef",
+    "bench/m31-statement/client/src/bin/masking_diagnostic.rs": "9c52f46f3fdef89437ddaa1cabd0bcd69b2cd2dcf2c9992117cfcf067fd78495"
+  }
+}

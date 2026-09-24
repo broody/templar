@@ -1,0 +1,34 @@
+{
+  "l2_to_l1_messages": [
+    {
+      "from_address": "0x2cf1508719af6bea1642429465a622812f8e5dc8d8f72fa52e2a6ac757907cf",
+      "payload": [
+        "0x242955fcd57fc3952339dddf28cadc88c68467fd8e05c8f5caa040ef623cba2",
+        "0x544d505a52305f5041594d454e545f5632",
+        "0x534e5f5345504f4c4941",
+        "0x723cf2e96220d78ca0ea1f51f9a62c8c45a79ac848151771c3049e5a7a3aa09",
+        "0x3b86d77f6919c3dda46371e58fd9e5b4b3ea8d4f238cb48a1adf31f86927568"
+      ],
+      "to_address": "0x0"
+    }
+  ],
+  "os_seconds": 11.718579213,
+  "resources": {
+    "builtin_instance_counter": {
+      "add_mod_builtin": 0,
+      "bitwise_builtin": 0,
+      "ec_op_builtin": 0,
+      "ecdsa_builtin": 0,
+      "keccak_builtin": 0,
+      "mul_mod_builtin": 0,
+      "output_builtin": 6,
+      "pedersen_builtin": 52,
+      "poseidon_builtin": 15025,
+      "range_check96_builtin": 0,
+      "range_check_builtin": 339884
+    },
+    "n_memory_holes": 142665,
+    "n_steps": 3364485
+  },
+  "scope": "public execution capture only; no proof"
+}

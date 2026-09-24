@@ -1,4 +1,4 @@
-# ADR-0023: Return notes with upstream-compatible external settlement
+# ADR-0023: Open notes (formerly return notes) with upstream-compatible external settlement
 
 - Date: 2026-09-21
 - Status: Accepted architecture; experimental integration and production qualification tracked separately
@@ -6,7 +6,8 @@
 - Partially supersedes: ADR-0009's removal of open-note funding and ADR-0010's exclusion of external invokes
 - Extends: ADR-0021's push-payment scope and ADR-0018's native proof architecture
 - Amends: ADR-0007 publication metadata and ADR-0014 operation binding/output accounting for this execution path
-- Specification: [return notes](../return-note-spec.md)
+- Specification: [open notes](../open-note-spec.md)
+- Amended: 2026-09-24 (rename; compact client-proof path; shadow accounts), see below
 - Reference: [upstream adapter integration](../../bench/return-note-e2e/README.md)
 
 ## Context
@@ -112,3 +113,51 @@ integration, independent format and security review, production tokens, supporte
 route policies, reliable submission, bulk synchronization and desktop memory
 qualification remain required. No improvement in proving memory or anonymity is
 claimed from introducing this abstraction.
+
+## Amendment (2026-09-24): open notes on the compact client-proof path
+
+- **Name.** "Return note" becomes **open note**, matching upstream and the `OpenNoteDeposit` wire
+  type. Semantics are unchanged: upstream also requires every open note to be filled in its creating
+  transaction. Templar appends the funded commitment instead of filling a stored placeholder. The
+  first reference keeps its `ReturnNote` type names.
+- **Compact path.** ADR-0024's R0 relation gains a public execution `intent` and an optional identity
+  handle (R0 V3). The M31 pool gains `apply_spend_with_invoke`; see the
+  [specification](../open-note-spec.md#compact-client-proof-path-r0-v3). The budget is the
+  statement's withdrawal and may be zero; the intent names its recipient.
+- **Shadow accounts.** A bounded form of upstream's `ComputeAndInvoke`: the client proves the
+  identity handle `H(IDENTITY, sk₀ ‖ scope)`, and the pool derives upstream's identity commitment
+  from it. This supports persistent pseudonymous positions through upstream's shadow-account
+  anonymizer. General `privacy_compute` (arbitrary application logic on private data) needs
+  per-application circuits and remains out of scope.
+- **Limits.** 2 destinations, 4 new notes, 64 calldata felts, one adapter call and one input token
+  per transaction.
+- **Process deviation.** At the user's direction, the independent math review and the adversarial
+  test suite follow implementation rather than precede it, contrary to the default order in
+  `AGENTS.md`. The implementation is not qualified until both are done.
+- **Review outcome (2026-09-24).** Three independent reviews (relation math, statement binding, pool
+  contract; reports in `bench/m31-private-wrapper/client-port/reviews/` and `bench/m31-pool/reviews/`)
+  returned conditional go. All three found that a public nonce on the public identity handle lets
+  anyone enumerate a user's shadow accounts. Fix: the public nonce is reserved and must be zero, and
+  wallets separate accounts through the private scope (`shadow_scope`). The pool also rejects
+  destinations with a zero note id, token, minimum or inner before any external effect, and budgets
+  paid to the pool itself. The contract review's adversarial tests and new ones are in
+  `test_open_note_adversarial.cairo`. A re-review of the fixes is still pending.
+- **`COMPUTE` targets restricted (2026-09-24).** The pool calls `privacy_invoke_with_computation`
+  only on contracts of an owner-allowed class (upstream's shadow-account anonymizer). Upstream
+  targets treat that call's calldata prefix as their own proven `privacy_compute` output; the
+  compact path supplies the pool's identity commitment followed by user calldata. That matches only
+  the shadow anonymizer, and any other target trusting the pool would be open to forged compute
+  output. A class allowlist was chosen over an address allowlist (it has no per-deployment trust and
+  an anonymizer upgrade fails closed), over a Templar-specific selector (which would break
+  compatibility with the upstream anonymizer) and over documentation alone.
+- **General `privacy_compute` deferred (2026-09-24).** Upstream's `privacy_compute` runs a target's
+  own Cairo logic over the user's secret inside the client proof. The compact client proof is a
+  fixed arithmetic relation, so each such computation would need its own relation extension. Shadow
+  accounts cover DeFi composability, including continuity for applications that authorize by
+  caller address. What is given up is private continuity: authenticating as the same user across
+  actions without a shared public account (for example Whisper's operator check). A credential
+  proof on the pool tree (prove ownership of a note of an application-defined class under a pinned
+  root without spending it, and publish a per-context tag) was considered. It would support
+  anonymous membership, authentication and voter-private DAO voting (one member one vote, or
+  token-weighted against a snapshot root). It was deferred for lack of near-term demand; it would
+  fit with the policy-note design.

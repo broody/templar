@@ -1,0 +1,164 @@
+{
+  "scope": "arithmetic-profile client membership proof, same binary, RAYON_NUM_THREADS=1, 16 GiB cap, zero swap; fresh witness per run",
+  "bridge_check": {
+    "input": "max_fri_columns=16 run 1",
+    "accepted": true,
+    "n_steps": 3367102,
+    "same_circuit_hash_as_pinned": true
+  },
+  "runs": [
+    {
+      "max_fri_columns": null,
+      "run": 1,
+      "proving_seconds": 2.84,
+      "wall_seconds": 3.34,
+      "peak_rss_kib": 586912,
+      "trace_log_size": 18,
+      "proof_felts": 29470,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "max_fri_columns": null,
+      "run": 2,
+      "proving_seconds": 3.22,
+      "wall_seconds": 3.7,
+      "peak_rss_kib": 587588,
+      "trace_log_size": 18,
+      "proof_felts": 29646,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "max_fri_columns": null,
+      "run": 3,
+      "proving_seconds": 5.87,
+      "wall_seconds": 6.34,
+      "peak_rss_kib": 587480,
+      "trace_log_size": 18,
+      "proof_felts": 29254,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "max_fri_columns": 16,
+      "run": 1,
+      "proving_seconds": 4.1,
+      "wall_seconds": 4.61,
+      "peak_rss_kib": 295172,
+      "trace_log_size": 18,
+      "proof_felts": 30146,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "max_fri_columns": 16,
+      "run": 2,
+      "proving_seconds": 10.22,
+      "wall_seconds": 10.68,
+      "peak_rss_kib": 295248,
+      "trace_log_size": 18,
+      "proof_felts": 30110,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "max_fri_columns": 16,
+      "run": 3,
+      "proving_seconds": 4.55,
+      "wall_seconds": 5.0,
+      "peak_rss_kib": 296592,
+      "trace_log_size": 18,
+      "proof_felts": 29202,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "max_fri_columns": 1,
+      "run": 1,
+      "proving_seconds": 4.37,
+      "wall_seconds": 4.84,
+      "peak_rss_kib": 303972,
+      "trace_log_size": 18,
+      "proof_felts": 30118,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "max_fri_columns": 1,
+      "run": 2,
+      "proving_seconds": 12.48,
+      "wall_seconds": 12.94,
+      "peak_rss_kib": 303548,
+      "trace_log_size": 18,
+      "proof_felts": 29214,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "max_fri_columns": 1,
+      "run": 3,
+      "proving_seconds": 6.14,
+      "wall_seconds": 6.6,
+      "peak_rss_kib": 304160,
+      "trace_log_size": 18,
+      "proof_felts": 28822,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    }
+  ]
+}

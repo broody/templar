@@ -1,0 +1,19 @@
+[package]
+name = "pool"
+version = "0.1.0"
+edition = "2024_07"
+description = "TemplarPool v2 — trustless private pool (spec: docs/pool-v2-spec.md)"
+
+[dependencies]
+starknet = "2.18.0"
+
+[dev-dependencies]
+snforge_std = "0.63.0"
+assert_macros = "2.18.0"
+
+[scripts]
+test = "snforge test"
+
+[[target.starknet-contract]]
+sierra = true
+casm = true

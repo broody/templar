@@ -1,0 +1,13 @@
+   Compiling templar-m31-statement v0.1.0 (/home/broody/development/templar/bench/m31-statement/client)
+    Finished `release` profile [optimized] target(s) in 2.01s
+     Running unittests src/lib.rs (bench/m31-statement/client/target/release/deps/templar_m31_statement-f4e4067f4f9e591a)
+
+running 5 tests
+test m31::tests::independent_plonky3_permutation_and_padding_vectors ... ok
+test m31::tests::quadratic_constraints_and_witness ... ok
+test statement::tests::canonical_context_parser_rejects_aliases_and_field_overflow ... ok
+test statement::tests::chain_and_pool_have_distinct_numeric_bounds ... ok
+test statement::tests::context_encoding_preserves_every_felt_bit ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+

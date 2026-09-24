@@ -1,0 +1,102 @@
+---
+showAskAi: false
+title: FRI
+description: Proving a committed object is low-degree — without ever revealing it.
+---
+
+<div className="guide-eyebrow">Part 3 · STARK anatomy</div>
+
+# FRI
+
+## The problem FRI solves
+
+Everything now rests on one claim: *the committed values are the evaluations
+of genuine low-degree polynomials.* Without that, a cheater commits an
+arbitrary table that passes the query checks by luck of position. FRI —
+**Fast Reed–Solomon Interactive Oracle proof of Proximity** — proves
+closeness to low degree using only hashes and field arithmetic.
+
+## The folding idea
+
+Suppose `f` has degree `< N` and we hold its evaluations on `N·b` points
+(b = blowup). Draw a random challenge `α`, and define a new function on
+**half** the domain by pairing opposite points `p, −p` (on the circle group,
+Part 1.3):
+
+```
+f'(p) = f₀(p) + α · f₁(p)        (the two "butterfly" halves combined)
+```
+
+If `f` is degree `< N`, then `f'` is degree `< N/2` — the random combination
+halved the degree. Repeat ~`log N` times: degrees `N → N/2 → N/4 → … → 1`.
+At the bottom, the "polynomial" is a single constant — **sent in full, in
+the clear**. If any layer's object were secretly not low-degree, the
+deception must survive ~`log N` random foldings and the final constant must
+still match — probability falling geometrically.
+
+Each layer is committed with its own Merkle tree (Part 2.2). Concretely in
+this stack, with trace log 20, blowup 3, fold step 4:
+
+```
+degree bound 2²⁰  →  domain 2²³   (first layer, packed leaves)
+fold 4 → 2¹⁶ bound →  domain 2¹⁹
+fold 4 → 2¹² bound →  domain 2¹⁵
+fold 4 → 2⁸  bound →  domain 2¹¹
+fold 4 → 2⁴  bound →  domain 2⁷
+fold 4 → 2⁰  bound →  domain 2³   (last layer: 1 QM31 coefficient, sent in full)
+```
+
+Five folding layers, each a separate Merkle tree — that is the "9 Merkle
+trees" you will meet in the observation inventory (4 trace trees + 5 FRI
+trees).
+
+## Queries: walking the ladder
+
+The verifier picks `n_queries` random positions on the *largest* domain and
+demands, for each, the value at every layer consistent with that position
+(folded positions). At each layer, checking one position needs its whole
+*folding coset* — with fold step 4, that is 16 consecutive positions, of
+which the query touched one: the other **15 arrive as "FRI witnesses"** in
+the proof. The verifier re-derives the fold and compares against the next
+layer's committed value.
+
+These 15 values per query per layer are pure openings of the layer
+polynomials — remember them for Part 5 (they are part of the ~50k observable
+functionals).
+
+> **Check.** Degree bound `2²⁰`, blowup 3, fold step 4, `23` queries.
+> Count total revealed FRI values: `5 layers × 23 queries × 15 witnesses ≈ 1725`,
+> plus 23 queried values re-derived by the verifier from the trace columns
+> (so they are *not* extra information — see Part 3.3). Verify the arithmetic.
+
+## The security budget
+
+Every query independently tests the low-degree claim; each random position
+catches a cheat with probability ≈ `1/2^blowup` (the fraction of the
+extended domain that "kills" a fake). Total soundness against forgery:
+
+```
+security bits = pow_bits + blowup · n_queries
+```
+
+The pinned configuration: `27 + 3 · 23 = 96` bits. **Proof-of-work** adds
+the remaining bits: the prover must grind a nonce that makes the channel's
+hash have enough trailing zeros before queries are drawn — forcing the
+query positions to be adversarially unpredictable, not prover-chosen. Two
+PoW nonces exist (one before interaction randomness, one before queries);
+both are checked in the transcript.
+
+## What FRI does *not* prove
+
+FRI proves low-degree-ness of whatever was committed. It says nothing about
+whether the constraints hold (that is DEEP-ALI, next page), nothing about
+the statement's meaning, and nothing about hiding. It is one bolt in a
+three-bolt machine: low-degree (FRI) + constraint-consistency (OOD/DEEP) +
+binding (the Merkle roots and the channel).
+
+## What to carry forward
+
+1. FRI = repeated random halvings ending in a revealed constant; the
+   deception must survive every rung.
+2. Each query reveals a 16-value coset per layer — most of it as witnesses.
+3. Security = `pow_bits + blowup · queries`; here 96 bits.

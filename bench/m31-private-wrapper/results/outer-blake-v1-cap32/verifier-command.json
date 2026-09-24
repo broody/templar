@@ -1,0 +1,21 @@
+[
+  "systemd-run",
+  "--user",
+  "--wait",
+  "--pipe",
+  "--unit=templar-blake-outer-1517422-verify",
+  "-p",
+  "MemoryMax=4G",
+  "-p",
+  "MemorySwapMax=0",
+  "-p",
+  "CPUQuota=100%",
+  "-p",
+  "CPUAffinity=0",
+  "-p",
+  "RuntimeMaxSec=120",
+  "/usr/bin/time",
+  "-v",
+  "/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/local-verifier",
+  "/home/broody/development/templar/bench/m31-private-wrapper/results/outer-blake-v1-cap32"
+]

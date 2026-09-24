@@ -1,0 +1,61 @@
+{
+  "actual_fee": {
+    "amount": "0x9612af81c00740",
+    "unit": "FRI"
+  },
+  "block_hash": "0x1172a2dce49f6d2b38de49a5070e40f66795e77871bfb1517e893778edd50df",
+  "block_number": 15513908,
+  "events": [
+    {
+      "data": [
+        "0x26b2153c669f904d2f3d4ff8e17253d7475d7da48116d7b92e07b1b56fe0f5f",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x0",
+        "0x5f88de8bc92876d2542daaccaeed8323156799e68e45e763563df1ac9882dda",
+        "0x3",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x2710",
+        "0x0",
+        "0x677899bd75ee8ff69ad63247610cba165da1975e8b8ca2b140e90fe4bce7a8"
+      ],
+      "from_address": "0x2ceed65a4bd731034c01113685c831b01c15d7d432f71afb1cf1634b53a2125",
+      "keys": [
+        "0x26b160f10156dea0639bec90696772c640b9706a47f5b8c52ea1abe5858b34d"
+      ]
+    },
+    {
+      "data": [
+        "0x1",
+        "0x1",
+        "0x26b2153c669f904d2f3d4ff8e17253d7475d7da48116d7b92e07b1b56fe0f5f"
+      ],
+      "from_address": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+      "keys": [
+        "0x1dcde06aabdbca2f80aa51392b345d7549d7757aa855f7e37f5d335ac8243b1",
+        "0x6ba271c7b5d392f4743ddb121ee82eeb3c41a74fd2c86fa319d5247d937fe04"
+      ]
+    },
+    {
+      "data": [
+        "0x9612af81c00740",
+        "0x0"
+      ],
+      "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+      "keys": [
+        "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8"
+      ]
+    }
+  ],
+  "execution_resources": {
+    "l1_data_gas": 320,
+    "l1_gas": 0,
+    "l2_gas": 2000720
+  },
+  "execution_status": "SUCCEEDED",
+  "finality_status": "ACCEPTED_ON_L2",
+  "messages_sent": [],
+  "transaction_hash": "0x6ba271c7b5d392f4743ddb121ee82eeb3c41a74fd2c86fa319d5247d937fe04",
+  "type": "INVOKE"
+}

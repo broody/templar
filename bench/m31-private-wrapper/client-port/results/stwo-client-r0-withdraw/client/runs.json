@@ -1,0 +1,53 @@
+{
+  "scope": "R0 V2 client proof per shape, Tree::Compress, 4 threads (taskset 0-3), 16 GiB cap",
+  "runs": [
+    {
+      "shape": "transfer",
+      "max_fri_columns": null,
+      "threads": 4,
+      "proving_seconds": 1.75,
+      "peak_rss_kib": 615152,
+      "trace_log_size": 18
+    },
+    {
+      "shape": "transfer",
+      "max_fri_columns": 16,
+      "threads": 4,
+      "proving_seconds": 1.79,
+      "peak_rss_kib": 324996,
+      "trace_log_size": 18
+    },
+    {
+      "shape": "partial",
+      "max_fri_columns": null,
+      "threads": 4,
+      "proving_seconds": 1.92,
+      "peak_rss_kib": 613384,
+      "trace_log_size": 18
+    },
+    {
+      "shape": "partial",
+      "max_fri_columns": 16,
+      "threads": 4,
+      "proving_seconds": 1.36,
+      "peak_rss_kib": 334396,
+      "trace_log_size": 18
+    },
+    {
+      "shape": "full",
+      "max_fri_columns": null,
+      "threads": 4,
+      "proving_seconds": 1.47,
+      "peak_rss_kib": 602100,
+      "trace_log_size": 18
+    },
+    {
+      "shape": "full",
+      "max_fri_columns": 16,
+      "threads": 4,
+      "proving_seconds": 6.73,
+      "peak_rss_kib": 324728,
+      "trace_log_size": 18
+    }
+  ]
+}

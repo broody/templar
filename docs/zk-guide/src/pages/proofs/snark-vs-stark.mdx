@@ -1,0 +1,81 @@
+---
+showAskAi: false
+title: SNARK vs STARK
+description: The two families of succinct proofs, and why Starknet's stack is STARK-based.
+---
+
+<div className="guide-eyebrow">Part 2 · Proof systems</div>
+
+# SNARK vs STARK
+
+## SNARKs: tiny proofs, borrowed trust
+
+SNARKs (Groth16, PLONK, Marlin…) commit to polynomials with **pairing-based
+cryptographic objects** (KZG-style polynomial commitments over elliptic-curve
+groups).
+
+- **Proof size**: hundreds of bytes. **Verification**: milliseconds, constant.
+- **Zero-knowledge: native.** Blinding factors are mixed into the polynomial
+  commitments as part of the scheme — hiding is built into the math, not an
+  add-on. This is why "ZK-SNARK" is almost redundant: a well-built SNARK
+  hides by default.
+- **The cost: a trusted setup.** The commitments rest on secret parameters
+  ("toxic waste") that must be generated once and destroyed; Groth16 needs
+  this *per circuit*. Multi-party ceremonies mitigate but complicate.
+- **Post-quantum: no.** Pairings break under quantum algorithms.
+- **Field inflexibility**: the circuit's arithmetic lives over an
+  elliptic-curve field (BN254, BLS12-381). Computations in *other* fields —
+  say felt252, Starknet's 252-bit prime — must be **emulated** limb by limb,
+  multiplying cost by tens.
+
+## STARKs: big proofs, no trust
+
+STARKs commit with **hashes** (Merkle trees, Part 2.2) and prove low-degree
+structure with **FRI** (Part 3.2).
+
+- **Transparent**: no setup, no ceremony — the system's security is
+  hash-function security.
+- **Post-quantum-friendly**: hash-based.
+- **Proof size**: tens to hundreds of kilobytes (measured in this repo:
+  ~232 KB for a payment proof, vs ~0.2–8 KB for SNARK-class proofs).
+- **Zero-knowledge: not native.** Nothing in the hash/FRI machinery hides
+  the witness; hiding must be added deliberately. This asymmetry — soundness
+  free, hiding expensive — is Part 5's subject.
+- **Arithmetic freedom**: the base field is a design choice made for *speed*
+  (M31! Part 1.1), and foreign-field computation can instead be structured
+  around it.
+- **Verifier cost on-chain**: STARK verification is hash-heavy; SNARK
+  verification is pairing-heavy. Which is cheaper *on Starknet* depends on
+  what the chain can verify natively — see Part 4.
+
+## Why Starknet's stack is STARK-based
+
+Three compounding reasons, each verified in this repo's history:
+
+1. **Cairo is STARK-native.** Cairo's execution model was designed to
+   produce STARK traces; the toolchain (Part 4) speaks this language
+   natively.
+2. **No ceremony.** A permissionless system whose security rests on a
+   ceremony is a harder sell than one resting on hashes.
+3. **Starknet verifies STARK proofs at the protocol level** (the PROOF1 /
+   PROOF2 path), so a user-proven STARK attached to a transaction costs
+   ~zero *contract* gas — whereas verifying a SNARK in-contract costs
+   ~150–270M gas (measured in this repo's Garaga experiments).
+
+The historical attempt in the other direction is instructive: expressing
+felt252/Poseidon arithmetic *inside* a SNARK needed 47k constraints per
+Poseidon permutation (measured), and a full statement's compiler OOM'd at
+~99 GB. Emulation is the tax that made the STARK path win.
+
+> **Check.** Rank the three payments-system desiderata — hiding, no setup,
+> cheap on-chain verification — for each family. You should find no family
+> wins all three; the rest of this guide is about living inside "no setup +
+> cheap verification" while retrofitting hiding.
+
+## What to carry forward
+
+1. SNARKs: hiding native, proofs tiny, setup trusted, foreign fields slow.
+2. STARKs: transparent, hash-fast, proofs chunky, hiding must be engineered.
+3. Starknet's infrastructure pays for STARK verification natively — which is
+   why this project's proving stack is S-two, and why hiding is the open
+   problem rather than the default.

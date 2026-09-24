@@ -1,6 +1,6 @@
 # ADR-0018: Adopt client-side S-two ZK proving with native Starknet proof facts
 
-- Status: Accepted (PROOF1 pool lifecycle demonstrated on Sepolia; production integration and desktop qualification pending); preserved note semantics amended by [ADR-0021](0021-push-only-payments.md)
+- Status: Accepted (PROOF1 pool lifecycle demonstrated on Sepolia; production integration and desktop qualification pending); preserved note semantics amended by [ADR-0021](0021-push-only-payments.md); client/server proving split, private hash format and device assumptions amended by [ADR-0024](0024-compact-client-proofs-and-server-wrapping.md)
 - Date: 2026-09-20
 - Deciders: broody
 - Supersedes: [ADR-0008](0008-inner-proof-system.md),

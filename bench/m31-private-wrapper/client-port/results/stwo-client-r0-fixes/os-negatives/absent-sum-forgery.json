@@ -1,0 +1,41 @@
+{
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-client-capture-1790152199399965422",
+    "-p",
+    "WorkingDirectory=/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/upstream/sequencer-e6b6fd2e9932909107833579e5b6efd6c75fa0af",
+    "-p",
+    "MemoryMax=16G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUQuota=400%",
+    "-p",
+    "CPUAffinity=0 1 2 3",
+    "-p",
+    "RuntimeMaxSec=600",
+    "--setenv=RAYON_NUM_THREADS=4",
+    "--setenv=TOKIO_WORKER_THREADS=4",
+    "/usr/bin/time",
+    "-v",
+    "/home/broody/development/templar/target/m31-private-wrapper/capacity-capture-build-v3/capture",
+    "http://127.0.0.1:46855",
+    "/tmp/claude-1000/-home-broody-development-templar/5fc13b65-b1f1-4714-b584-08d0d0577803/scratchpad/fix/os-neg-absent-sum-forgery/request.json",
+    "/tmp/claude-1000/-home-broody-development-templar/5fc13b65-b1f1-4714-b584-08d0d0577803/scratchpad/fix/os-neg-absent-sum-forgery"
+  ],
+  "fixture_sha256": "6007a1209fed7636b445dbb1dd70ba03f0b02a150144476912d1e042436fb5df",
+  "request_sha256": "e9337a330acb20e7b48b9e6763a27bea3792aff8adf6f7a459b5572f21a5f158",
+  "capture_binary_sha256": "9920dedb496508ae1245ab8261dca7c76641dd11ff9a79d3709010e39e8b722b",
+  "exit_code": 101,
+  "elapsed_seconds": 0.985592439013999,
+  "expect_reject": true,
+  "rejected": true,
+  "n_messages": 0,
+  "reason": [
+    "thread 'main' (2263803) panicked at /home/broody/development/templar/bench/m31-private-wrapper/bridge-capacity/capture.rs:30:91:",
+    "called `Result::unwrap()` on an `Err` value: VirtualBlockExecutor(TransactionReverted(TransactionHash(0x44319c6aeadbb74dac2970d51320ee6f9ff19178e51fc2f827f6f874e9ebe7e), \"Transaction execution has failed:\\n0: Error in the called contract (contract address: 0x03edf5ea8ceb895154fb9c42293480c77c617911645ee6c3e321de1c7922bbeb, class hash: 0x060be845bf5fde97bb50cc699596b28ed6879cc9e4f4b34da58800bf1eacade0, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\\nExecution failed. Failure reason:\\nError in contract (contract address: 0x03edf5ea8ceb895154fb9c42293480c77c617911645ee6c3e321de1c7922bbeb, class hash: 0x060be845bf5fde97bb50cc699596b28ed6879cc9e4f4b34da58800bf1eacade0, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\\n\\\"absent component claims a nonzero sum\\\".\\n\"))"
+  ]
+}

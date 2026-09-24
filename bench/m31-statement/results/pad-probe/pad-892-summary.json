@@ -1,0 +1,28 @@
+{
+  "binary_bytes": 179886,
+  "complete_seconds": 0.159173303,
+  "interaction_pow_bits": 24,
+  "log_size": 10,
+  "native_verified": true,
+  "pcs_config": {
+    "fri_config": {
+      "fold_step": 4,
+      "log_blowup_factor": 3,
+      "log_last_layer_degree_bound": 0,
+      "n_queries": 23
+    },
+    "lifting_log_size": 13,
+    "pow_bits": 27
+  },
+  "phases": {
+    "base_commit_seconds": 0.006043499,
+    "interaction_seconds": 0.035595252,
+    "native_verify_seconds": 0.009773027,
+    "stark_prove_seconds": 0.093415904,
+    "twiddles_and_witness_seconds": 0.008575861
+  },
+  "requests": 1024,
+  "rows": 1024,
+  "scope": "payment-shaped M31 statement measurement; no private-payment or privacy claim; secrets synthetic and in the clear",
+  "trace_columns": 1172
+}

@@ -1,0 +1,233 @@
+{
+  "scope": "R0 payment client proof, same binary, 16 GiB cap, zero swap, fresh witness per run; 4-thread runs pinned to cores 0-3 with taskset",
+  "runs": [
+    {
+      "threads": 1,
+      "max_fri_columns": null,
+      "run": 1,
+      "proving_seconds": 16.17,
+      "build_seconds": 1.75,
+      "wall_seconds": 18.01,
+      "peak_rss_kib": 2277580,
+      "trace_log_size": 20,
+      "proof_felts": 35010,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": null,
+      "run": 2,
+      "proving_seconds": 9.54,
+      "build_seconds": 1.75,
+      "wall_seconds": 11.39,
+      "peak_rss_kib": 2276696,
+      "trace_log_size": 20,
+      "proof_felts": 35862,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": null,
+      "run": 3,
+      "proving_seconds": 23.5,
+      "build_seconds": 1.74,
+      "wall_seconds": 25.34,
+      "peak_rss_kib": 2275856,
+      "trace_log_size": 20,
+      "proof_felts": 36174,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": 16,
+      "run": 1,
+      "proving_seconds": 20.35,
+      "build_seconds": 1.73,
+      "wall_seconds": 22.14,
+      "peak_rss_kib": 1121912,
+      "trace_log_size": 20,
+      "proof_felts": 34354,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": 16,
+      "run": 2,
+      "proving_seconds": 20.05,
+      "build_seconds": 1.74,
+      "wall_seconds": 21.84,
+      "peak_rss_kib": 1121552,
+      "trace_log_size": 20,
+      "proof_felts": 35310,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 1,
+      "max_fri_columns": 16,
+      "run": 3,
+      "proving_seconds": 29.63,
+      "build_seconds": 1.74,
+      "wall_seconds": 31.41,
+      "peak_rss_kib": 1121544,
+      "trace_log_size": 20,
+      "proof_felts": 34702,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": null,
+      "run": 1,
+      "proving_seconds": 2.64,
+      "build_seconds": 0.72,
+      "wall_seconds": 3.46,
+      "peak_rss_kib": 2341388,
+      "trace_log_size": 20,
+      "proof_felts": 35586,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": null,
+      "run": 2,
+      "proving_seconds": 3.76,
+      "build_seconds": 0.7,
+      "wall_seconds": 4.57,
+      "peak_rss_kib": 2352612,
+      "trace_log_size": 20,
+      "proof_felts": 35302,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": null,
+      "run": 3,
+      "proving_seconds": 2.47,
+      "build_seconds": 0.72,
+      "wall_seconds": 3.29,
+      "peak_rss_kib": 2283320,
+      "trace_log_size": 20,
+      "proof_felts": 34622,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": 16,
+      "run": 1,
+      "proving_seconds": 5.22,
+      "build_seconds": 0.72,
+      "wall_seconds": 6.01,
+      "peak_rss_kib": 1149856,
+      "trace_log_size": 20,
+      "proof_felts": 35650,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": 16,
+      "run": 2,
+      "proving_seconds": 4.43,
+      "build_seconds": 0.72,
+      "wall_seconds": 5.22,
+      "peak_rss_kib": 1132144,
+      "trace_log_size": 20,
+      "proof_felts": 34878,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    },
+    {
+      "threads": 4,
+      "max_fri_columns": 16,
+      "run": 3,
+      "proving_seconds": 4.47,
+      "build_seconds": 0.71,
+      "wall_seconds": 5.25,
+      "peak_rss_kib": 1148280,
+      "trace_log_size": 20,
+      "proof_felts": 34202,
+      "native_negatives": [
+        "output",
+        "trace",
+        "topology",
+        "circuit-hash",
+        "claimed-sum-shift",
+        "config"
+      ]
+    }
+  ]
+}

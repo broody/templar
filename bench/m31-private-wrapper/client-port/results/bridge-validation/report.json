@@ -1,0 +1,75 @@
+{
+  "scope": "standalone Cairo execution of circuit-A bridge; no OS, no PROOF2",
+  "executable_sha256": "1ee51c2179933a8de87be71b872ab95094ec8bc428bdfbdc79ece6bffc1c2137",
+  "cases": [
+    {
+      "name": "valid",
+      "expected_accept": true,
+      "passed": true,
+      "exit_code": 0,
+      "output": [
+        11,
+        393402133025997798000961,
+        291,
+        759696394,
+        1678229074,
+        1140606806,
+        751569570,
+        15811233,
+        834971455,
+        424496475,
+        1487860005,
+        390107937
+      ],
+      "usage": "{\"program_output\":\"11\\n393402133025997798000961\\n291\\n759696394\\n1678229074\\n1140606806\\n751569570\\n15811233\\n834971455\\n424496475\\n1487860005\\n390107937\",\"resources\":{\"n_steps\":4933943,\"n_memory_holes\":375856,\"builtin_instance_counter\":[[\"range_check_builtin\",734368],[\"output_builtin\",12]],\"syscalls\":[],\"memory_segment_sizes\":[[\"execution\",4225060],[\"range_check\",734368],[\"output\",12]],\"max_memory_address\":5344226}}"
+    },
+    {
+      "name": "digest-output",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null
+    },
+    {
+      "name": "root-output",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null
+    },
+    {
+      "name": "wrong-pool",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null
+    },
+    {
+      "name": "wrong-chain",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null
+    },
+    {
+      "name": "trailing",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null
+    },
+    {
+      "name": "truncated",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null
+    }
+  ]
+}

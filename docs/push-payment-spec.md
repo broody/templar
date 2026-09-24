@@ -6,7 +6,7 @@ under [ADR-0021](adr/0021-push-only-payments.md) and the S-two selection in
 [bench/controlled-push-e2e](../bench/controlled-push-e2e/README.md), under
 [ADR-0022](adr/0022-controlled-push-payments.md). The ordinary-only reference and
 its separate live evidence remain in [bench/push-e2e](../bench/push-e2e/README.md).
-[Return notes](return-note-spec.md), accepted by [ADR-0023](adr/0023-return-notes-and-adapter-compatibility.md), extend ordinary spends with atomic external funding.
+[Return notes](open-note-spec.md), accepted by [ADR-0023](adr/0023-return-notes-and-adapter-compatibility.md), extend ordinary spends with atomic external funding.
 The primary packages are not yet integrated with these formats.
 
 ## Payment and authority model
@@ -185,7 +185,7 @@ export, rotation, and address authentication are production requirements.
 
 Push payments are the sole receiving model. Persistent delivery channels and
 invoice features are outside the initial product. Controlled notes are an optional
-authorization condition within the push model. [Return notes](return-note-spec.md) add a proof-bound external call and atomic
+authorization condition within the push model. [Return notes](open-note-spec.md) add a proof-bound external call and atomic
 funding of ordinary notes. Persistent or asynchronous external positions remain
 outside this reference.
 

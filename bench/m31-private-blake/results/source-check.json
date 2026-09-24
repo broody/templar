@@ -1,0 +1,23 @@
+{
+  "review_source_hashes_match": [
+    "src/air.rs",
+    "src/constants.rs",
+    "src/crypto.rs",
+    "src/hash.rs",
+    "src/lib.rs",
+    "src/main.rs",
+    "src/poly.rs",
+    "src/proof.rs",
+    "Cargo.toml",
+    "Cargo.lock",
+    "blake-vectors.json",
+    "golden-vectors.json"
+  ],
+  "unchanged_application_and_algebra_files": [
+    "air.rs",
+    "constants.rs",
+    "hash.rs",
+    "poly.rs",
+    "main.rs"
+  ]
+}

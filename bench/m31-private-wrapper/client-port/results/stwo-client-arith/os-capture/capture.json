@@ -1,0 +1,42 @@
+{
+  "l2_to_l1_messages": [
+    {
+      "from_address": "0x721433bc4165069c04eb406a3f81442c645760683cc6dda9c17217e764594f1",
+      "payload": [
+        "0x2aa1f3801d56a57e3b733372ec16c345af23de5d8f3bc2f82ba69f8c557a3e0",
+        "0x544d505a534130315f4d454d424552534849505f5631",
+        "0x534e5f5345504f4c4941",
+        "0x123",
+        "0xe4515fe",
+        "0x39dfd158",
+        "0x2abdb117",
+        "0x7f916db6",
+        "0x55c111ce",
+        "0x1b20fe8f",
+        "0x5ad0c778",
+        "0x229076a3",
+        "0x278a38b1"
+      ],
+      "to_address": "0x0"
+    }
+  ],
+  "os_seconds": 8.743507323,
+  "resources": {
+    "builtin_instance_counter": {
+      "add_mod_builtin": 0,
+      "bitwise_builtin": 0,
+      "ec_op_builtin": 0,
+      "ecdsa_builtin": 0,
+      "keccak_builtin": 0,
+      "mul_mod_builtin": 0,
+      "output_builtin": 6,
+      "pedersen_builtin": 8,
+      "poseidon_builtin": 15172,
+      "range_check96_builtin": 0,
+      "range_check_builtin": 640849
+    },
+    "n_memory_holes": 279131,
+    "n_steps": 4926932
+  },
+  "scope": "public execution capture only; no proof"
+}

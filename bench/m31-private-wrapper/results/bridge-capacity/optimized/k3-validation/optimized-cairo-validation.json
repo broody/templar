@@ -1,0 +1,141 @@
+{
+  "scope": "public hash circuit bridge, optimized-cairo target, correctness only; wall time/RSS not comparable (concurrent root build); no membership or PROOF1 claim",
+  "expected": [
+    16395037,
+    4039736935,
+    3584290885,
+    2498661915,
+    1010425508,
+    4144414143,
+    973893265,
+    2643594634
+  ],
+  "executable_sha256": "7128fbe863320b13b2ccfeab10990efb49436b4e38b35295de1f493c52c0cda2",
+  "cases": [
+    {
+      "name": "valid",
+      "passed": true,
+      "expected_accept": true,
+      "exit_code": 0,
+      "program_rejection": false,
+      "output_matches": true,
+      "resources": {
+        "n_steps": 4247207,
+        "n_memory_holes": 344145,
+        "builtin_instance_counter": [
+          [
+            "range_check_builtin",
+            610519
+          ],
+          [
+            "output_builtin",
+            8
+          ]
+        ],
+        "syscalls": [],
+        "memory_segment_sizes": [
+          [
+            "execution",
+            3668784
+          ],
+          [
+            "range_check",
+            610519
+          ],
+          [
+            "output",
+            8
+          ]
+        ],
+        "max_memory_address": 4784166
+      },
+      "peak_rss_gib": 0.7426338195800781,
+      "elapsed_seconds": 2.2894173309905455,
+      "arguments_sha256": "60651c9a9cd06acd8be92ec203aa92f38990cc0ba422dd4356351b5d1a86f7e0"
+    },
+    {
+      "name": "output",
+      "passed": true,
+      "expected_accept": false,
+      "exit_code": 1,
+      "program_rejection": true,
+      "output_matches": false,
+      "resources": null,
+      "peak_rss_gib": 0.09468460083007812,
+      "elapsed_seconds": 1.0471791549935006,
+      "arguments_sha256": "159d199d14b41757e2dcd5b71ea5bec1d5b639b4bec7e24dfdb1a3c45f73e5bb"
+    },
+    {
+      "name": "interaction-nonce",
+      "passed": true,
+      "expected_accept": false,
+      "exit_code": 1,
+      "program_rejection": true,
+      "output_matches": false,
+      "resources": null,
+      "peak_rss_gib": 0.09453582763671875,
+      "elapsed_seconds": 1.0569756100012455,
+      "arguments_sha256": "21571d4dfb5dd43656c0d4d0726e51ce94d0f6a7f068a7430a81ad08a514e5c1"
+    },
+    {
+      "name": "config",
+      "passed": true,
+      "expected_accept": false,
+      "exit_code": 1,
+      "program_rejection": true,
+      "output_matches": false,
+      "resources": null,
+      "peak_rss_gib": 0.0944976806640625,
+      "elapsed_seconds": 1.000867616996402,
+      "arguments_sha256": "732ca02988723b9ff4b87b378baefed12bc01bde5a9bf18386df1844a44a5041"
+    },
+    {
+      "name": "trusted-root",
+      "passed": true,
+      "expected_accept": false,
+      "exit_code": 1,
+      "program_rejection": true,
+      "output_matches": false,
+      "resources": null,
+      "peak_rss_gib": 0.09448623657226562,
+      "elapsed_seconds": 1.0048348950222135,
+      "arguments_sha256": "1635aa1d167aba6d5aea6eba34e7bf8b9a1fcae724165475a9e68b2728be67dd"
+    },
+    {
+      "name": "trace-root",
+      "passed": true,
+      "expected_accept": false,
+      "exit_code": 1,
+      "program_rejection": true,
+      "output_matches": false,
+      "resources": null,
+      "peak_rss_gib": 0.09506607055664062,
+      "elapsed_seconds": 0.9942608970159199,
+      "arguments_sha256": "f3a94b99c6929f7af38381306aaf3f786e34a71d4e23aaa1a478f86a2d036adf"
+    },
+    {
+      "name": "trailing",
+      "passed": true,
+      "expected_accept": false,
+      "exit_code": 1,
+      "program_rejection": true,
+      "output_matches": false,
+      "resources": null,
+      "peak_rss_gib": 0.0946044921875,
+      "elapsed_seconds": 1.0581187159987167,
+      "arguments_sha256": "18e54aa3f36004496804b07731fdddf027fdfb767cfd6744b81c20f230bbde3d"
+    },
+    {
+      "name": "truncated",
+      "passed": true,
+      "expected_accept": false,
+      "exit_code": 1,
+      "program_rejection": true,
+      "output_matches": false,
+      "resources": null,
+      "peak_rss_gib": 0.0941162109375,
+      "elapsed_seconds": 1.0000850390060805,
+      "arguments_sha256": "bc46f1e4d54ab823907a411b31c9156d8a9357a057a3064060534f1656636223"
+    }
+  ]
+}

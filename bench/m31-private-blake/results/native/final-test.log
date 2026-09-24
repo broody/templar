@@ -1,0 +1,28 @@
+   Compiling templar-private-membership v0.2.0 (/home/broody/development/templar/bench/m31-private-blake/client)
+    Finished `release` profile [optimized] target(s) in 2.56s
+     Running unittests src/lib.rs (target/m31-private-blake/native/release/deps/templar_private_membership-c384a34bffb26231)
+
+running 8 tests
+test crypto::tests::full_byte_ro_and_indexed_coins_match_independent_vectors ... ok
+test tests::hash_golden_vectors ... ok
+test tests::field_and_context_canonicality ... ok
+test tests::independent_sparse_folds_match_stwo ... ok
+test tests::all_membership_constraints_and_negative_wiring ... ok
+test tests::invalid_trace_can_reach_proof_verifier_without_host_gate ... ok
+test tests::masks_preserve_trace_and_fit_reviewed_degree ... ok
+test tests::complete_roundtrip_freshness_and_artifact_rejections ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.47s
+
+     Running unittests src/main.rs (target/m31-private-blake/native/release/deps/templar_private_membership-abdc0e577c0d10a4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests templar_private_membership
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

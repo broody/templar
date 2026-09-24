@@ -106,4 +106,4 @@ or improved prover memory.
 The owner can change the experimental pool's verifier and fee settings. Token
 behavior, supported routes, private submission, bulk history, independent review,
 production package integration and physical-desktop qualification remain open.
-The [specification](../../docs/return-note-spec.md) defines the accepted boundaries.
+The [specification](../../docs/open-note-spec.md) defines the accepted boundaries.

@@ -1,0 +1,30 @@
+[package]
+name = "templar-client-verifier-circuit"
+version = "0.1.0"
+edition = "2024"
+
+[workspace]
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+circuits = { path = "../../../target/proving-main/crates/circuits" }
+circuit-common = { path = "../../../target/proving-main/crates/circuit_common", features = ["prover"] }
+circuit-prover = { path = "../../../target/proving-main/crates/circuit_prover" }
+circuit-verifier = { path = "../../../target/proving-main/crates/circuit_verifier" }
+circuit-cairo-serialize = { path = "../../../target/proving-main/crates/circuit_cairo_serialize" }
+stwo = { path = "../../../target/proving-main/crates/stwo", features = ["prover", "parallel"] }
+stwo-constraint-framework = { path = "../../../target/proving-main/crates/constraint-framework", features = ["prover", "parallel"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+num-traits = "0.2.19"
+blake2 = "=0.10.6"
+rand = "=0.8.8"
+templar-private-membership = { path = "oracle" }
+anyhow = "1"
+starknet-ff = "0.3"
+stwo-cairo-serialize = { path = "../../../target/proving-main/crates/cairo-serialize" }
+
+[profile.release]
+debug = false

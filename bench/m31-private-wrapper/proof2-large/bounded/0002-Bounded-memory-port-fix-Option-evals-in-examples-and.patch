@@ -1,0 +1,122 @@
+From 12954330d044b9254e188f46d4ca7095e2559f32 Mon Sep 17 00:00:00 2001
+From: broody <broody@gmail.com>
+Date: Wed, 23 Sep 2026 14:58:15 +0800
+Subject: [PATCH 2/5] Bounded-memory port: fix Option evals in examples and
+ relation tracker; test aux equality
+
+Addresses the bounded-PCS review: stwo-examples and stwo-cairo-prover
+--features relation-tracker build again (the original patch's changes to
+those files had not been carried over), and the bounded/unbounded equality
+test now also compares the proof aux (sorted hash-map entries), which the
+verifier-input conversions read.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>
+---
+ crates/circuit_prover/src/prover_test.rs      | 33 ++++++++++++++++++-
+ crates/examples/src/blake/air.rs              |  2 +-
+ .../examples/src/xor/gkr_lookups/mle_eval.rs  |  6 ++--
+ .../src/debug_tools/relation_tracker.rs       |  7 +++-
+ 4 files changed, 43 insertions(+), 5 deletions(-)
+
+diff --git a/crates/circuit_prover/src/prover_test.rs b/crates/circuit_prover/src/prover_test.rs
+index 8b1d2beed..1d4d56fa4 100644
+--- a/crates/circuit_prover/src/prover_test.rs
++++ b/crates/circuit_prover/src/prover_test.rs
+@@ -489,14 +489,45 @@ fn test_bounded_memory_proof_is_identical() {
+     let unbounded = prove(None);
+     for max_fri_columns in [1, 16] {
+         let bounded = prove(Some(max_fri_columns));
+-        // `aux` holds hash maps, whose Debug order varies; the proof proper must match exactly.
+         assert_eq!(
+             format!("{:?}", bounded.stark_proof.proof),
+             format!("{:?}", unbounded.stark_proof.proof)
+         );
++        // `aux` feeds the verifier-input conversions; its hash maps compare by sorted entries.
++        assert_eq!(
++            canonical_aux(&bounded.stark_proof.aux),
++            canonical_aux(&unbounded.stark_proof.aux)
++        );
+         assert_eq!(bounded.interaction_claim, unbounded.interaction_claim);
+         assert_eq!(bounded.claim, unbounded.claim);
+         assert_eq!(bounded.circuit_hash, unbounded.circuit_hash);
+         stwo_verify(bounded, &preprocessed_circuit);
+     }
+ }
++
++/// `aux` with every hash map as a sorted entry list, so equal contents compare equal.
++fn canonical_aux(
++    aux: &stwo::core::pcs::quotients::CommitmentSchemeProofAux<Blake2sMerkleHasher>,
++) -> String {
++    fn sorted<'a, M, K, V>(maps: &'a [M]) -> Vec<Vec<(K, String)>>
++    where
++        &'a M: IntoIterator<Item = (&'a K, &'a V)>,
++        K: Ord + Copy + 'a,
++        V: std::fmt::Debug + 'a,
++    {
++        maps.iter()
++            .map(|m| {
++                let mut e: Vec<(K, String)> =
++                    m.into_iter().map(|(k, v)| (*k, format!("{v:?}"))).collect();
++                e.sort_by_key(|(k, _)| *k);
++                e
++            })
++            .collect()
++    }
++    let trees: Vec<_> = aux.trace_decommitment.iter().map(|t| sorted(&t.all_node_values)).collect();
++    let fri: Vec<_> = std::iter::once(&aux.fri.first_layer)
++        .chain(&aux.fri.inner_layers)
++        .map(|l| (sorted(&l.all_values), sorted(&l.decommitment.all_node_values)))
++        .collect();
++    format!("{:?} {trees:?} {fri:?}", aux.unsorted_query_locations)
++}
+diff --git a/crates/examples/src/blake/air.rs b/crates/examples/src/blake/air.rs
+index 79a5f6d47..2c0e63b4e 100644
+--- a/crates/examples/src/blake/air.rs
++++ b/crates/examples/src/blake/air.rs
+@@ -436,7 +436,7 @@ where
+         commitment_scheme
+             .polynomials()
+             .as_cols_ref()
+-            .map_cols(|c| c.evals.domain.log_size() - config.fri_config.log_blowup_factor)
++            .map_cols(|c| c.committed_domain.log_size() - config.fri_config.log_blowup_factor)
+             .0,
+         stmt0.log_sizes().0
+     );
+diff --git a/crates/examples/src/xor/gkr_lookups/mle_eval.rs b/crates/examples/src/xor/gkr_lookups/mle_eval.rs
+index 8cdbdf90c..ec87d929a 100644
+--- a/crates/examples/src/xor/gkr_lookups/mle_eval.rs
++++ b/crates/examples/src/xor/gkr_lookups/mle_eval.rs
+@@ -203,8 +203,10 @@ impl<O: MleCoeffColumnOracle> ComponentProver<SimdBackend> for MleEvalProverComp
+         let eval_domain = CanonicCoset::new(self.max_constraint_log_degree_bound()).circle_domain();
+         let trace_domain = CanonicCoset::new(self.log_size());
+ 
+-        let mut component_trace =
+-            trace.polys.sub_tree(&self.trace_locations).map_cols(|c| &c.evals);
++        let mut component_trace = trace
++            .polys
++            .sub_tree(&self.trace_locations)
++            .map_cols(|c| c.evals.as_ref().expect("This component requires retained evaluations"));
+ 
+         // Build auxiliary trace.
+         let span = span!(Level::INFO, "Extension").entered();
+diff --git a/crates/prover/src/debug_tools/relation_tracker.rs b/crates/prover/src/debug_tools/relation_tracker.rs
+index 28523e4d4..29399fa8b 100644
+--- a/crates/prover/src/debug_tools/relation_tracker.rs
++++ b/crates/prover/src/debug_tools/relation_tracker.rs
+@@ -42,7 +42,12 @@ where
+         interaction_tree
+             .iter()
+             .map(|poly| {
+-                let coeffs = reduce_degree(poly.evals.clone().interpolate());
++                let coeffs = reduce_degree(
++                    poly.evals
++                        .clone()
++                        .expect("relation tracking requires retained evaluations")
++                        .interpolate(),
++                );
+                 coeffs
+                     .evaluate(CanonicCoset::new(coeffs.log_size()).circle_domain())
+                     .values
+-- 
+2.43.0
+

@@ -1,0 +1,26 @@
+
+Showing nodes accounting for 4067902 steps, 81.06% of 5018523 steps total
+Showing top 20 nodes out of 184
+
+         flat |  flat% |   sum% |           cum |   cum% |  
+--------------+--------+--------+---------------+--------+--------------------------------------------------------------------------------------------------------------------------
+ 941668 steps | 18.76% | 18.76% |  941668 steps | 18.76% | "stwo_verifier_core::fields::m31::naive::repeated_square" 
+ 334985 steps |  6.67% | 25.44% |  334985 steps |  6.67% | "stwo_verifier_core::pcs::quotients::accumulate_row_quotients[1329-2042]" 
+ 305455 steps |  6.09% | 31.53% | 1268571 steps | 25.28% | "stwo_verifier_core::fri::fold_coset[832-1302]" 
+ 297297 steps |  5.92% | 37.45% |  600325 steps | 11.96% | "core::array::deserialize_array_helper" 
+ 272090 steps |  5.42% | 42.87% | 1379378 steps | 27.49% | "stwo_verifier_core::fields::m31::naive::M31InvertibleImpl::inverse" 
+ 241809 steps |  4.82% | 47.69% |  241809 steps |  4.82% | "stwo_verifier_core::circle::CirclePointIndexImpl::to_point" 
+ 196478 steps |  3.92% | 51.60% |  196478 steps |  3.92% | "stwo_verifier_core::vcs::blake2s_hasher::Blake2sHashSerde::deserialize" 
+ 193346 steps |  3.85% | 55.46% |  297107 steps |  5.92% | "stwo_verifier_core::vcs::verifier::MerkleVerifierImpl::verify[2471-4455]" 
+ 159111 steps |  3.17% | 58.63% |  159111 steps |  3.17% | "stwo_verifier_core::fields::qm31::naive::QM31Mul::mul" 
+ 154350 steps |  3.08% | 61.70% |  283640 steps |  5.65% | "stwo_verifier_core::pcs::quotients::tree_take_n[268-434]" 
+ 149538 steps |  2.98% | 64.68% |  149538 steps |  2.98% | "stwo_verifier_core::utils::bit_reverse_index[284-457]" 
+ 133770 steps |  2.67% | 67.35% |  491808 steps |  9.80% | "stwo_verifier_core::pcs::quotients::accumulate_row_quotients[806-2194]" 
+ 129376 steps |  2.58% | 69.93% |  129376 steps |  2.58% | "core::array::ArrayImpl" 
+ 106920 steps |  2.13% | 72.06% |  106920 steps |  2.13% | "stwo_verifier_core::fields::qm31::QM31Serde::deserialize" 
+ 103761 steps |  2.07% | 74.12% |  103761 steps |  2.07% | "stwo_verifier_core::vcs::blake2s_hasher::Blake2sMerkleHasher::hash_node{Option::Some(NotSpecialized), { @array![] }, }" 
+  95252 steps |  1.90% | 76.02% |   95252 steps |  1.90% | "stwo_verifier_core::fri::compute_decommitment_positions_and_rebuild_evals[1062-1738]" 
+  66248 steps |  1.32% | 77.34% |  624624 steps | 12.45% | "stwo_verifier_core::fields::m31::naive::repeated_square{NotSpecialized, 8, }" 
+  66150 steps |  1.32% | 78.66% |   66150 steps |  1.32% | "stwo_verifier_core::fri::build_merkle_verification_inputs[598-837]" 
+  63735 steps |  1.27% | 79.93% | 1160000 steps | 23.11% | "stwo_verifier_core::pcs::quotients::fri_answers[4335-4838]" 
+  56563 steps |  1.13% | 81.06% |  288435 steps |  5.75% | "stwo_verifier_core::fri::SparseEvaluationImpl::fold_line[778-980]" 

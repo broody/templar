@@ -1,0 +1,1000 @@
+{
+ "blinding_iterations": 210,
+ "breakdown": {
+  "fri_witness_m31": 644,
+  "sampled_and_queried": 405
+ },
+ "functionals": 1049,
+ "invariants": [
+  {
+   "free": "sampled.t1.col12.mask0.c0",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col12.mask0.c0",
+     1
+    ],
+    [
+     "sampled.t1.col4.mask0.c0",
+     -1
+    ],
+    [
+     "sampled.t1.col8.mask0.c0",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "sampled.t1.col12.mask0.c1",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col12.mask0.c1",
+     1
+    ],
+    [
+     "sampled.t1.col4.mask0.c1",
+     -1
+    ],
+    [
+     "sampled.t1.col8.mask0.c1",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "sampled.t1.col12.mask0.c2",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col12.mask0.c2",
+     1
+    ],
+    [
+     "sampled.t1.col4.mask0.c2",
+     -1
+    ],
+    [
+     "sampled.t1.col8.mask0.c2",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "sampled.t1.col12.mask0.c3",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col12.mask0.c3",
+     1
+    ],
+    [
+     "sampled.t1.col4.mask0.c3",
+     -1
+    ],
+    [
+     "sampled.t1.col8.mask0.c3",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "sampled.t1.col13.mask0.c0",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col13.mask0.c0",
+     1
+    ],
+    [
+     "sampled.t1.col5.mask0.c0",
+     -1
+    ],
+    [
+     "sampled.t1.col9.mask0.c0",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "sampled.t1.col13.mask0.c1",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col13.mask0.c1",
+     1
+    ],
+    [
+     "sampled.t1.col5.mask0.c1",
+     -1
+    ],
+    [
+     "sampled.t1.col9.mask0.c1",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "sampled.t1.col13.mask0.c2",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col13.mask0.c2",
+     1
+    ],
+    [
+     "sampled.t1.col5.mask0.c2",
+     -1
+    ],
+    [
+     "sampled.t1.col9.mask0.c2",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "sampled.t1.col13.mask0.c3",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col13.mask0.c3",
+     1
+    ],
+    [
+     "sampled.t1.col5.mask0.c3",
+     -1
+    ],
+    [
+     "sampled.t1.col9.mask0.c3",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "sampled.t1.col14.mask0.c0",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col14.mask0.c0",
+     1
+    ],
+    [
+     "sampled.t1.col6.mask0.c0",
+     -1
+    ],
+    [
+     "sampled.t1.col10.mask0.c0",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "sampled.t1.col14.mask0.c1",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col14.mask0.c1",
+     1
+    ],
+    [
+     "sampled.t1.col6.mask0.c1",
+     -1
+    ],
+    [
+     "sampled.t1.col10.mask0.c1",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "sampled.t1.col14.mask0.c2",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col14.mask0.c2",
+     1
+    ],
+    [
+     "sampled.t1.col6.mask0.c2",
+     -1
+    ],
+    [
+     "sampled.t1.col10.mask0.c2",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "sampled.t1.col14.mask0.c3",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col14.mask0.c3",
+     1
+    ],
+    [
+     "sampled.t1.col6.mask0.c3",
+     -1
+    ],
+    [
+     "sampled.t1.col10.mask0.c3",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "sampled.t1.col15.mask0.c0",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col15.mask0.c0",
+     1
+    ],
+    [
+     "sampled.t1.col7.mask0.c0",
+     -1
+    ],
+    [
+     "sampled.t1.col11.mask0.c0",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "sampled.t1.col15.mask0.c1",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col15.mask0.c1",
+     1
+    ],
+    [
+     "sampled.t1.col7.mask0.c1",
+     -1
+    ],
+    [
+     "sampled.t1.col11.mask0.c1",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "sampled.t1.col15.mask0.c2",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col15.mask0.c2",
+     1
+    ],
+    [
+     "sampled.t1.col7.mask0.c2",
+     -1
+    ],
+    [
+     "sampled.t1.col11.mask0.c2",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "sampled.t1.col15.mask0.c3",
+   "n_terms": 3,
+   "terms": [
+    [
+     "sampled.t1.col15.mask0.c3",
+     1
+    ],
+    [
+     "sampled.t1.col7.mask0.c3",
+     -1
+    ],
+    [
+     "sampled.t1.col11.mask0.c3",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col12.q0",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col12.q0",
+     1
+    ],
+    [
+     "queried.t1.col4.q0",
+     -1
+    ],
+    [
+     "queried.t1.col8.q0",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col12.q1",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col12.q1",
+     1
+    ],
+    [
+     "queried.t1.col4.q1",
+     -1
+    ],
+    [
+     "queried.t1.col8.q1",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col12.q2",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col12.q2",
+     1
+    ],
+    [
+     "queried.t1.col4.q2",
+     -1
+    ],
+    [
+     "queried.t1.col8.q2",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col12.q3",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col12.q3",
+     1
+    ],
+    [
+     "queried.t1.col4.q3",
+     -1
+    ],
+    [
+     "queried.t1.col8.q3",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col12.q4",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col12.q4",
+     1
+    ],
+    [
+     "queried.t1.col4.q4",
+     -1
+    ],
+    [
+     "queried.t1.col8.q4",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col13.q0",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col13.q0",
+     1
+    ],
+    [
+     "queried.t1.col5.q0",
+     -1
+    ],
+    [
+     "queried.t1.col9.q0",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col13.q1",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col13.q1",
+     1
+    ],
+    [
+     "queried.t1.col5.q1",
+     -1
+    ],
+    [
+     "queried.t1.col9.q1",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col13.q2",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col13.q2",
+     1
+    ],
+    [
+     "queried.t1.col5.q2",
+     -1
+    ],
+    [
+     "queried.t1.col9.q2",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col13.q3",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col13.q3",
+     1
+    ],
+    [
+     "queried.t1.col5.q3",
+     -1
+    ],
+    [
+     "queried.t1.col9.q3",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col13.q4",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col13.q4",
+     1
+    ],
+    [
+     "queried.t1.col5.q4",
+     -1
+    ],
+    [
+     "queried.t1.col9.q4",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col14.q0",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col14.q0",
+     1
+    ],
+    [
+     "queried.t1.col6.q0",
+     -1
+    ],
+    [
+     "queried.t1.col10.q0",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col14.q1",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col14.q1",
+     1
+    ],
+    [
+     "queried.t1.col6.q1",
+     -1
+    ],
+    [
+     "queried.t1.col10.q1",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col14.q2",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col14.q2",
+     1
+    ],
+    [
+     "queried.t1.col6.q2",
+     -1
+    ],
+    [
+     "queried.t1.col10.q2",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col14.q3",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col14.q3",
+     1
+    ],
+    [
+     "queried.t1.col6.q3",
+     -1
+    ],
+    [
+     "queried.t1.col10.q3",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col14.q4",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col14.q4",
+     1
+    ],
+    [
+     "queried.t1.col6.q4",
+     -1
+    ],
+    [
+     "queried.t1.col10.q4",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col15.q0",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col15.q0",
+     1
+    ],
+    [
+     "queried.t1.col7.q0",
+     -1
+    ],
+    [
+     "queried.t1.col11.q0",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col15.q1",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col15.q1",
+     1
+    ],
+    [
+     "queried.t1.col7.q1",
+     -1
+    ],
+    [
+     "queried.t1.col11.q1",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col15.q2",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col15.q2",
+     1
+    ],
+    [
+     "queried.t1.col7.q2",
+     -1
+    ],
+    [
+     "queried.t1.col11.q2",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col15.q3",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col15.q3",
+     1
+    ],
+    [
+     "queried.t1.col7.q3",
+     -1
+    ],
+    [
+     "queried.t1.col11.q3",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "queried.t1.col15.q4",
+   "n_terms": 3,
+   "terms": [
+    [
+     "queried.t1.col15.q4",
+     1
+    ],
+    [
+     "queried.t1.col7.q4",
+     -1
+    ],
+    [
+     "queried.t1.col11.q4",
+     -1
+    ]
+   ]
+  },
+  {
+   "free": "fri.l2.w3.c0",
+   "n_terms": 924,
+   "terms": [
+    [
+     "fri.l2.w3.c0",
+     1
+    ],
+    [
+     "sampled.t1.col0.mask0.c0",
+     -1023895956
+    ],
+    [
+     "sampled.t1.col0.mask0.c1",
+     383344459
+    ],
+    [
+     "sampled.t1.col0.mask0.c2",
+     -706855211
+    ],
+    [
+     "sampled.t1.col0.mask0.c3",
+     774824509
+    ],
+    [
+     "sampled.t1.col1.mask0.c0",
+     -81720266
+    ],
+    [
+     "sampled.t1.col1.mask0.c1",
+     1020962609
+    ],
+    [
+     "sampled.t1.col1.mask0.c2",
+     738493895
+    ],
+    [
+     "sampled.t1.col1.mask0.c3",
+     -587352714
+    ],
+    [
+     "sampled.t1.col2.mask0.c0",
+     619975607
+    ],
+    [
+     "sampled.t1.col2.mask0.c1",
+     -147516389
+    ],
+    [
+     "sampled.t1.col2.mask0.c2",
+     736842029
+    ]
+   ]
+  },
+  {
+   "free": "fri.l2.w3.c1",
+   "n_terms": 924,
+   "terms": [
+    [
+     "fri.l2.w3.c1",
+     1
+    ],
+    [
+     "sampled.t1.col0.mask0.c0",
+     -383344459
+    ],
+    [
+     "sampled.t1.col0.mask0.c1",
+     -1023895956
+    ],
+    [
+     "sampled.t1.col0.mask0.c2",
+     -774824509
+    ],
+    [
+     "sampled.t1.col0.mask0.c3",
+     -706855211
+    ],
+    [
+     "sampled.t1.col1.mask0.c0",
+     -1020962609
+    ],
+    [
+     "sampled.t1.col1.mask0.c1",
+     -81720266
+    ],
+    [
+     "sampled.t1.col1.mask0.c2",
+     587352714
+    ],
+    [
+     "sampled.t1.col1.mask0.c3",
+     738493895
+    ],
+    [
+     "sampled.t1.col2.mask0.c0",
+     147516389
+    ],
+    [
+     "sampled.t1.col2.mask0.c1",
+     619975607
+    ],
+    [
+     "sampled.t1.col2.mask0.c2",
+     477032114
+    ]
+   ]
+  },
+  {
+   "free": "fri.l2.w3.c2",
+   "n_terms": 924,
+   "terms": [
+    [
+     "fri.l2.w3.c2",
+     1
+    ],
+    [
+     "sampled.t1.col0.mask0.c0",
+     -879549344
+    ],
+    [
+     "sampled.t1.col0.mask0.c1",
+     -701703600
+    ],
+    [
+     "sampled.t1.col0.mask0.c2",
+     -713731636
+    ],
+    [
+     "sampled.t1.col0.mask0.c3",
+     -536235876
+    ],
+    [
+     "sampled.t1.col1.mask0.c0",
+     -719403561
+    ],
+    [
+     "sampled.t1.col1.mask0.c1",
+     588891781
+    ],
+    [
+     "sampled.t1.col1.mask0.c2",
+     159280111
+    ],
+    [
+     "sampled.t1.col1.mask0.c3",
+     -192462368
+    ],
+    [
+     "sampled.t1.col2.mask0.c0",
+     76502719
+    ],
+    [
+     "sampled.t1.col2.mask0.c1",
+     -225994805
+    ],
+    [
+     "sampled.t1.col2.mask0.c2",
+     -147751344
+    ]
+   ]
+  },
+  {
+   "free": "fri.l2.w3.c3",
+   "n_terms": 924,
+   "terms": [
+    [
+     "fri.l2.w3.c3",
+     1
+    ],
+    [
+     "sampled.t1.col0.mask0.c0",
+     701703600
+    ],
+    [
+     "sampled.t1.col0.mask0.c1",
+     -879549344
+    ],
+    [
+     "sampled.t1.col0.mask0.c2",
+     536235876
+    ],
+    [
+     "sampled.t1.col0.mask0.c3",
+     -713731636
+    ],
+    [
+     "sampled.t1.col1.mask0.c0",
+     -588891781
+    ],
+    [
+     "sampled.t1.col1.mask0.c1",
+     -719403561
+    ],
+    [
+     "sampled.t1.col1.mask0.c2",
+     192462368
+    ],
+    [
+     "sampled.t1.col1.mask0.c3",
+     159280111
+    ],
+    [
+     "sampled.t1.col2.mask0.c0",
+     225994805
+    ],
+    [
+     "sampled.t1.col2.mask0.c1",
+     76502719
+    ],
+    [
+     "sampled.t1.col2.mask0.c2",
+     -944081067
+    ]
+   ]
+  }
+ ],
+ "invariants_witness_dependent_flags": [
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false
+ ],
+ "n_gates": 400,
+ "n_queries": 5,
+ "rank": 936,
+ "scope": "full revealed transcript (trees 1-3 samples and openings, FRI witnesses, last layer, claimed sums) with pinned challenges; small synthetic circuit with private muls; fork blinding",
+ "seconds": 6.393031189,
+ "seed_invariant_combinations": 113,
+ "seeds": 976,
+ "stopped_after_dependent_seeds": 40,
+ "trace_log_size": 11,
+ "witness_dependent_invariants": 72,
+ "invariants_note": "first 40 of the invariant basis, 12 terms each"
+}

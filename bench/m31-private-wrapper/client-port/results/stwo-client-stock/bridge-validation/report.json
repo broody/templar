@@ -1,0 +1,83 @@
+{
+  "scope": "standalone Cairo execution of circuit-A bridge on unmodified upstream circuit_air (proving@5a7c5ed); no OS, no PROOF2",
+  "executable_sha256": "89f76323e71dd09b6348202abca39aae9bd351427c70c8c09ce3f9bf05e8f90b",
+  "cases": [
+    {
+      "name": "valid",
+      "expected_accept": true,
+      "passed": true,
+      "exit_code": 0,
+      "output": [
+        11,
+        393402133025997798000961,
+        291,
+        1440713645,
+        334269431,
+        1213245531,
+        1269004041,
+        1308135287,
+        1423952482,
+        794700905,
+        30826607,
+        2111514436
+      ],
+      "usage": "{\"program_output\":\"11\\n393402133025997798000961\\n291\\n1440713645\\n334269431\\n1213245531\\n1269004041\\n1308135287\\n1423952482\\n794700905\\n30826607\\n2111514436\",\"resources\":{\"n_steps\":5055106,\"n_memory_holes\":335464,\"builtin_instance_counter\":[[\"range_check_builtin\",682714],[\"output_builtin\",12]],\"syscalls\":[],\"memory_segment_sizes\":[[\"execution\",4301481],[\"range_check\",682714],[\"output\",12]],\"max_memory_address\":5420453}}"
+    },
+    {
+      "name": "digest-output",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null
+    },
+    {
+      "name": "proof-body",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null
+    },
+    {
+      "name": "wrong-pool",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null
+    },
+    {
+      "name": "wrong-chain",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null
+    },
+    {
+      "name": "wrong-root",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null
+    },
+    {
+      "name": "trailing",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null
+    },
+    {
+      "name": "truncated",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null
+    }
+  ]
+}

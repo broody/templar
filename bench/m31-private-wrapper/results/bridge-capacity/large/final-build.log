@@ -1,0 +1,11 @@
+warning: patch `circuit-cairo-serialize v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/circuit_cairo_serialize)` was not used in the crate graph
+warning: patch `circuit-multiverifier v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/circuit_multiverifier)` was not used in the crate graph
+warning: patch `circuits-stark-verifier-examples v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-circuits/crates/stark_verifier_examples)` was not used in the crate graph
+warning: patch `stwo-cairo-dev-utils v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/dev_utils)` was not used in the crate graph
+warning: patch `stwo-cairo-utils v1.2.2 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity/stwo-cairo/stwo_cairo_prover/crates/utils)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling templar-large-wrapper-capacity v0.1.0 (/home/broody/development/templar/target/m31-private-wrapper/large-capacity)
+    Finished `release` profile [optimized] target(s) in 9.97s

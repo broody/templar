@@ -1,0 +1,2 @@
+{"status":"executing","message":"templar_blake_probe"}
+{"program_output":"8\n2511856093\n396332937\n2669345930\n49777381\n3264843312\n2336687225\n3839773075\n752280613","resources":{"n_steps":180776,"n_memory_holes":4,"builtin_instance_counter":[["range_check_builtin",21653],["output_builtin",9]],"syscalls":[],"memory_segment_sizes":[["execution",129590],["range_check",21653],["output",9]],"max_memory_address":163228}}

@@ -1,0 +1,43 @@
+{
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-client-capture-1790154459421560071",
+    "-p",
+    "WorkingDirectory=/tmp/templar-stwo-privacy-dtgn6e8l/sepolia-v1-test/upstream/sequencer-e6b6fd2e9932909107833579e5b6efd6c75fa0af",
+    "-p",
+    "MemoryMax=16G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUQuota=400%",
+    "-p",
+    "CPUAffinity=0 1 2 3",
+    "-p",
+    "RuntimeMaxSec=600",
+    "--setenv=RAYON_NUM_THREADS=4",
+    "--setenv=TOKIO_WORKER_THREADS=4",
+    "/usr/bin/time",
+    "-v",
+    "/home/broody/development/templar/target/m31-private-wrapper/capacity-capture-build-v3/capture",
+    "http://127.0.0.1:39269",
+    "/tmp/claude-1000/-home-broody-development-templar/5fc13b65-b1f1-4714-b584-08d0d0577803/scratchpad/wd/os-partial/request.json",
+    "/tmp/claude-1000/-home-broody-development-templar/5fc13b65-b1f1-4714-b584-08d0d0577803/scratchpad/wd/os-partial"
+  ],
+  "fixture_sha256": "53c2fbdf54b38a2127fb21065246d6ca79ff038ef8d06d6f35fba0a0ea7f9a80",
+  "request_sha256": "4de3018caac53608b80e57c0c714b701ee14d31a6a827785085f73cea3bb681c",
+  "capture_binary_sha256": "9920dedb496508ae1245ab8261dca7c76641dd11ff9a79d3709010e39e8b722b",
+  "exit_code": 0,
+  "elapsed_seconds": 6.411684806982521,
+  "exact_message_verified": true,
+  "pie_sha256": "ce481a0e0f49acae35be7b25e53c49bf2964e6dc71cde11c78c2bc55fc874542",
+  "payload": [
+    "0x64b7d6a2519f576de8bbe8f98a49bb9ef65a81f4b4c4ce2a2060d98c50d53bf",
+    "0x544d505a52305f5041594d454e545f5632",
+    "0x534e5f5345504f4c4941",
+    "0xba96adf2a7f1832e",
+    "0x6d3f249bf1307b950644d359d79f88eaccad5477f9796bfd26cdca7fe12dcf0"
+  ]
+}

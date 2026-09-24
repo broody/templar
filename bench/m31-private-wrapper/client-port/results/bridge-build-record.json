@@ -1,0 +1,26 @@
+{
+  "trusted_manifest_sha256": "0ad5e42aadb1020fabf4f1f57918aafe4e9b901cb22bd073102ea28a55a7a810",
+  "statement_prefix_hex": "544d505a4b303032e0848f7dcf23c7a9532e3da5eacd32e9cb20880453c192995753d73080010345",
+  "client_sources": {
+    "air.rs": "aa0adfcdad4405dddc1d0e43ab3b942fa26e445ab3590a2ee2dcdbaa55db64f6",
+    "constants.rs": "46ea8e2ffb0149af567fd09622d3ddfc73ce08f6c7f3f64ef3960f929ce064f3",
+    "crypto.rs": "3ad0c0f0d782441b3b0876da9e1b27ca16a35beff7ee8c9b8fbae6166a9295a9",
+    "hash.rs": "fdffbfcc63170def2dd98a7663bd60b272c9f667e31f35b02b0e15f6df03914c",
+    "lib.rs": "74f72ec637648d1763429cd3f23ac07eec040b7c60458e908b546eeff7c70d5b",
+    "main.rs": "42cb5699427f67481f021e87bd94d11f4354f11214ceb054fd9132a74f0ab45c",
+    "poly.rs": "add368607576f12f582a69937495ce2ebe8c983fb094c74b19f738a69b86bbb7",
+    "proof.rs": "592598493876793e4a0540eec3cbc5cfced4416c1895597631ac5250277b482a"
+  },
+  "vendor_source": "/home/broody/development/templar/target/m31-private-wrapper/optimized-cairo/vendor",
+  "generated_files": {
+    "circuit_air/src/preprocessed_columns.cairo": "ce88c62d296714e02dd818ba2e1583ba3a3af6fb82c46d1684c93ae7d39775ec",
+    "circuit_air/src/privacy_consts.cairo": "6160a97a3260b055e2cc0fa1eac39aa52524441530adcef3a8b1d069f5908dbc"
+  },
+  "template_files": {
+    "cairo/Scarb.toml": "efa11cda591d737904c9b9aa9f4ddb5feb0ba662ca6563e9d545b0c3f2c2b31e",
+    "cairo/account/Scarb.toml": "4dfc17bf8da1b5f8c992435d87f7d3b5b67e6376711ffc64b19bfa9985bcbee1",
+    "cairo/account/src/lib.cairo": "accc0d635fa42779b9d5cd09074b72fb58f093eb5440ce9cdec1a89447bf88ad",
+    "cairo/bridge/Scarb.toml": "6384dd9abb95266f94a013bac7e0c976bccbed5e44a56dfb5c8fab204961bf2f",
+    "cairo/bridge/src/lib.cairo": "4ff3d5f3e100028d62ca4ca07fa2d574e63f38d0cae42e85bb291490307e8d6c"
+  }
+}

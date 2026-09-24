@@ -1,0 +1,32 @@
+{
+  "source_proof_sha256": "3e17323f8f9516f141aa35981f17bb192b3e74b835deb9209aef764074633a7b",
+  "jobs_sha256": "5d9f8367db490cf5ded116bd66c8b20b637cd0766514ea57de073fd01b9bdccd",
+  "jobs": 82,
+  "bytes": 57046,
+  "compressions": 934,
+  "full_cached_workload": {
+    "format": "TMPZK002",
+    "digest_bytes": 32,
+    "salt_bytes": 96,
+    "proof_sha256": "3e17323f8f9516f141aa35981f17bb192b3e74b835deb9209aef764074633a7b",
+    "proof_bytes": 2044180,
+    "unique_queries": 118,
+    "trace_leaves": 233,
+    "uncached_counts": {
+      "claims": 1,
+      "small": 1739,
+      "base": 233,
+      "node": 21195
+    },
+    "cached_counts": {
+      "claims": 1,
+      "small": 1739,
+      "base": 233,
+      "node": 5812
+    },
+    "uncached_shake_permutations": 54772,
+    "cached_shake_permutations": 24006,
+    "uncached_blake_compressions": 89315,
+    "cached_blake_compressions": 43166
+  }
+}

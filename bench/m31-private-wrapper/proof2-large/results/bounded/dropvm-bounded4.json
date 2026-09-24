@@ -1,0 +1,39 @@
+{
+ "pie": "policy-e2e release note (A) virtual-OS PIE, 3.41M OS steps",
+ "cap": "115G",
+ "cairo_fri_columns": 4,
+ "circuit_fri_columns": 4,
+ "exit_code": 0,
+ "elapsed_seconds": 125.0704243183136,
+ "oom_killed": false,
+ "max_rss_gib": 27.81540298461914,
+ "cgroup_peak_gib": 27.241302490234375,
+ "stage_peaks_gib": {
+  "before program execution": 0.44,
+  "after Program execution done": 0.92,
+  "after Write Preprocessed trace": 14.49,
+  "after Write Base trace": 24.18,
+  "after Compute preprocessed trace commitment": 25.86,
+  "after Compute base trace commitment": 24.59,
+  "after Write interaction trace": 22.92,
+  "after Compute interaction trace commitment": 23.97,
+  "after Cairo proving done": 27.24,
+  "after Circuit proving done": 16.26
+ },
+ "prover": {
+  "bounded_cairo_fri_columns": 4,
+  "bounded_circuit_fri_columns": 4,
+  "gateway_max_proof_size": 480000,
+  "leaf_verifier_trace_log_size": 25,
+  "output_preimage_len": 7,
+  "proof_bytes": 257470,
+  "prove_seconds": 123.11032865,
+  "rejects_changed_output": true,
+  "rejects_flipped_proof_byte": true,
+  "rejects_truncated_proof": true,
+  "verified": true,
+  "verify_seconds": 0.094579875
+ },
+ "proof_identical_to_default": true,
+ "run": "dropvm-bounded4"
+}

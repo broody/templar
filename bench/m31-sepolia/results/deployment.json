@@ -1,0 +1,30 @@
+{
+  "token": "0x026b2153c669f904d2f3d4ff8e17253d7475d7da48116d7b92e07b1b56fe0f5f",
+  "pool": "0x0723cf2e96220d78ca0ea1f51f9a62c8c45a79ac848151771c3049e5a7a3aa09",
+  "statement": "0x02cf1508719af6bea1642429465a622812f8e5dc8d8f72fa52e2a6ac757907cf",
+  "adapter": "0x029356229c06913f8c58b548559e7192f4975db46084d85140fac79c1c59b158",
+  "classes": {
+    "token": "0x05f88de8bc92876d2542daaccaeed8323156799e68e45e763563df1ac9882dda",
+    "pool": "0x0078d6924a21ce829cb94e7ae307946d1723eab507bdf9b7d3ae56e1de0f479b",
+    "adapter": "0x05a4044e5e626f566735e43f01268d4a0954647710582fcfd278acca01cc0c09",
+    "statement": "0x0242955fcd57fc3952339dddf28cadc88c68467fd8e05c8f5caa040ef623cba2"
+  },
+  "os_program": "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+  "max_proof_age": 4096,
+  "supply": 10000,
+  "start_block": 15513908,
+  "statement_build": {
+    "circuit_hash_u32_le": [
+      1537955674,
+      2704590172,
+      567193057,
+      1383214718,
+      2752535231,
+      2534439410,
+      971290200,
+      3062293219
+    ],
+    "trusted_manifest_sha256": "fc3d1c7a128cbfd1f17a8a791aa0e6aa0ae86f4d23f1defbde94c3c87f089bfd",
+    "fork_commit": "14718352853befced0118611c39e5eacdabd041e"
+  }
+}

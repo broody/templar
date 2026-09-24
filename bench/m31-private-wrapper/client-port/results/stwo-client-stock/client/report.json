@@ -1,0 +1,28 @@
+{
+  "blinding_rows": 45,
+  "build_seconds": 1.52660614,
+  "component_log_sizes": [
+    9,
+    18,
+    9,
+    6,
+    9,
+    16,
+    20,
+    8,
+    14,
+    18,
+    16
+  ],
+  "native_negatives": [
+    "output",
+    "trace",
+    "topology",
+    "circuit-hash",
+    "config"
+  ],
+  "proof_felts": 45998,
+  "proving_seconds": 15.464200572,
+  "scope": "stock blinded stwo-circuits client membership proof (proving@5a7c5ed)",
+  "trace_log_size": 20
+}

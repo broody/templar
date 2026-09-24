@@ -1,0 +1,12 @@
+[package]
+name = "templar_blake_cost_account"
+version = "0.1.0"
+edition = "2024_07"
+
+[dependencies]
+starknet = "2.18.0"
+templar_blake_probe = { path = "../blake" }
+
+[[target.starknet-contract]]
+sierra = true
+casm = true

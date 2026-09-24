@@ -1,0 +1,110 @@
+From b54ed94f832e4e3537aec783101582cfcd632659 Mon Sep 17 00:00:00 2001
+From: broody <broody@gmail.com>
+Date: Thu, 24 Sep 2026 12:48:59 +0800
+Subject: [PATCH 5/5] Bounded mode: whole-tree commitments by default;
+ streaming opt-in
+
+set_streamed_commitments defaults to false; prove_circuit_assignment_bounded
+builds whole trees; prove_large streams only with TEMPLAR_BOUNDED_STREAM=1.
+Streaming stays available (about 20% less memory for about 20% more time).
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>
+---
+ crates/circuit_prover/src/prover.rs          |  7 ++++---
+ crates/privacy_prove/examples/prove_large.rs |  7 ++++---
+ crates/stwo/src/prover/pcs/mod.rs            | 12 +++++++-----
+ 3 files changed, 15 insertions(+), 11 deletions(-)
+
+diff --git a/crates/circuit_prover/src/prover.rs b/crates/circuit_prover/src/prover.rs
+index 578c984bd..3f2ca7a77 100644
+--- a/crates/circuit_prover/src/prover.rs
++++ b/crates/circuit_prover/src/prover.rs
+@@ -89,12 +89,13 @@ where
+         base_column_pool,
+         pcs_config,
+         max_fri_columns,
+-        true,
++        false,
+     )
+ }
+ 
+-/// [`prove_circuit_assignment_bounded`], choosing whether bounded mode streams its commitments
+-/// (`stream_commitments`, see `CommitmentSchemeProver::set_streamed_commitments`).
++/// [`prove_circuit_assignment_bounded`] (whole-tree commitments), choosing whether bounded mode
++/// streams its commitments instead (`stream_commitments`, see
++/// `CommitmentSchemeProver::set_streamed_commitments`).
+ pub fn prove_circuit_assignment_bounded_with<MC>(
+     values: &[QM31],
+     preprocessed_circuit: &PreprocessedCircuit,
+diff --git a/crates/privacy_prove/examples/prove_large.rs b/crates/privacy_prove/examples/prove_large.rs
+index 0f5b68b9e..4fcbe4ed6 100644
+--- a/crates/privacy_prove/examples/prove_large.rs
++++ b/crates/privacy_prove/examples/prove_large.rs
+@@ -4,8 +4,9 @@
+ //!
+ //! Bounded-memory storage per stage, from the environment (unset or 0 keeps the default):
+ //! `TEMPLAR_BOUNDED_CAIRO_COLUMNS` (the Cairo proof) and `TEMPLAR_BOUNDED_CIRCUIT_COLUMNS` (the
+-//! cairo-verifier circuit proof), each the FRI column batch size; `TEMPLAR_BOUNDED_STREAM`
+-//! (default 1) builds bounded trees 16 columns at a time, 0 one whole tree at a time.
++//! cairo-verifier circuit proof), each the FRI column batch size; `TEMPLAR_BOUNDED_STREAM=1`
++//! builds bounded trees 16 columns at a time (less memory, more time) instead of one whole tree
++//! at a time (the default).
+ use std::path::PathBuf;
+ use std::time::Instant;
+ use std::{env, fs};
+@@ -32,7 +33,7 @@ fn main() {
+     let bounded = BoundedMemory {
+         cairo_fri_columns: columns("TEMPLAR_BOUNDED_CAIRO_COLUMNS"),
+         circuit_fri_columns: columns("TEMPLAR_BOUNDED_CIRCUIT_COLUMNS"),
+-        stream_commitments: env::var("TEMPLAR_BOUNDED_STREAM").as_deref() != Ok("0"),
++        stream_commitments: env::var("TEMPLAR_BOUNDED_STREAM").as_deref() == Ok("1"),
+     };
+     tracing::info!("bounded memory: {bounded:?}");
+     let args: Vec<String> = env::args().collect();
+diff --git a/crates/stwo/src/prover/pcs/mod.rs b/crates/stwo/src/prover/pcs/mod.rs
+index 5c5efd68d..470b702fc 100644
+--- a/crates/stwo/src/prover/pcs/mod.rs
++++ b/crates/stwo/src/prover/pcs/mod.rs
+@@ -43,7 +43,8 @@ pub struct CommitmentSchemeProver<'a, B: BackendForChannel<MC>, MC: MerkleChanne
+     pub base_column_pool: MaybeOwned<'a, BaseColumnPool<B>>,
+     low_memory_mode: bool,
+     max_fri_columns: Option<usize>,
+-    /// In bounded mode, build and rebuild trees 16 columns at a time (less memory, more time).
++    /// In bounded mode, build and rebuild trees 16 columns at a time (less memory, more time;
++    /// off by default).
+     stream_commitments: bool,
+ }
+ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a, B, MC> {
+@@ -58,7 +59,7 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+             base_column_pool: MaybeOwned::Owned(BaseColumnPool::new()),
+             low_memory_mode: false,
+             max_fri_columns: None,
+-            stream_commitments: true,
++            stream_commitments: false,
+         }
+     }
+ 
+@@ -75,7 +76,7 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+             base_column_pool: MaybeOwned::Borrowed(base_column_pool),
+             low_memory_mode: false,
+             max_fri_columns: None,
+-            stream_commitments: true,
++            stream_commitments: false,
+         }
+     }
+ 
+@@ -106,8 +107,9 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+     }
+ 
+     /// In bounded mode, whether trees are built (and rebuilt for opening) by extending and hashing
+-    /// 16 columns at a time (`true`, the default: the whole expanded tree never exists at once) or
+-    /// one whole tree at a time (`false`: faster, more memory). Proofs are identical either way.
++    /// 16 columns at a time (`true`: the whole expanded tree never exists at once, about 20% less
++    /// memory for about 20% more time on the PROOF2 large path) or one whole tree at a time
++    /// (`false`, the default). Proofs are identical either way.
+     pub fn set_streamed_commitments(&mut self, stream: bool) {
+         assert!(self.trees.is_empty(), "Select memory mode before committing trees");
+         self.stream_commitments = stream;
+-- 
+2.43.0
+

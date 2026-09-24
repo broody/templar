@@ -1,0 +1,97 @@
+---
+showAskAi: false
+title: What a proof system is
+description: Soundness, completeness, zero-knowledge — and how interactivity becomes a transcript.
+---
+
+<div className="guide-eyebrow">Part 2 · Proof systems</div>
+
+# What a proof system is
+
+## The three properties
+
+A proof system is a conversation (or transcript) between a **prover** who
+knows something — call it the *witness* — and a **verifier** who sees a
+public *statement* but not the witness. It must satisfy:
+
+1. **Completeness** — an honest prover always convinces the verifier.
+2. **Soundness** — a lying prover (who does not know a valid witness)
+   convinces the verifier only with tiny probability. "Tiny" here is a
+   security parameter, e.g. 2⁻⁹⁶.
+3. **Zero-knowledge (optional!)** — the verifier learns *nothing* about the
+   witness beyond the truth of the statement. We will make this precise in
+   Part 5; hold the intuition "a simulator who does not know the witness can
+   produce an equally convincing transcript".
+
+Soundness and zero-knowledge are independent axes. A proof can be
+bulletproof against cheating while leaking its witness wholesale — that is
+exactly what a transparent STARK does, and it is the central surprise of
+this course.
+
+## A toy interactive proof
+
+Statement: "I know `w` with `hash(w) = y`" (`y` public). Simple protocol:
+
+- **Prover → Verifier:** commit to `w` (e.g., a Merkle root of padded
+  encodings of `w`).
+- **Verifier → Prover:** random challenge `c` (a field element).
+- **Prover → Verifier:** reveal `w ⊕ c`-derived shares and a consistency
+  proof that they recombine to something hashing to `y`.
+
+A cheater who does not know `w` must answer a challenge fixed *after* their
+commitment; they can only pre-prepare for a fraction of possible challenges,
+so many rounds drive their success probability down geometrically.
+
+## Fiat–Shamir: interactivity becomes a transcript
+
+Real deployments cannot do round trips. **Fiat–Shamir**: replace the
+verifier's random challenges with hashes of the transcript so far:
+
+```
+c = hash(commitment ‖ statement ‖ everything-so-far)
+```
+
+The prover now generates the whole transcript alone. Crucially, the
+challenges are still *unpredictable to the prover at commitment time* —
+they depend on values the prover fixed first. This is why every prover in
+this stack runs a **channel**: an object that hashes in each new artifact
+and spits out the next random challenge. In S-two it is literally called
+`Channel` and it is a Blake2s sponge.
+
+The security footnote that matters: the *hashing* is what binds the prover.
+Change any earlier value and every later challenge changes — which is why
+provers grind (proof-of-work) to steer challenges, and why verifiers re-derive
+the identical transcript. Nothing in a STARK is random except through this
+channel.
+
+## Knowledge soundness
+
+Stronger than soundness: whoever produces an accepting transcript must
+*know* a witness — there is an efficient **extractor** that, given
+sufficient transcripts (or rewind-style access), recovers the witness.
+This is what makes "I know a note whose secret is `s`" meaningful: the
+proof would let someone extract `s` if they could fake it. It is also the
+reason a leaking proof is dangerous — if the transcript *implicitly*
+contains enough to reconstruct `s`, soundness machinery (the extractor)
+tells us it is in there, mathematically.
+
+## The shape of modern systems
+
+Modern SNARKs/STARKs = an **information-theoretic core** (an IOP: a few
+rounds where the verifier reads small random samples of huge tables, which
+can be made perfectly sound) + a **polynomial commitment scheme** (Merkle
+trees + FRI for STARKs) + **Fiat–Shamir**. Part 3 builds each piece.
+
+> **Check.** In the toy protocol, why does the cheater's success rate fall
+> with rounds? With one challenge, a cheater who can answer fraction `q` of
+> challenges succeeds with probability `q`. After `k` independent
+> challenges: `qᵏ`. Compute `q = 1/2, k = 20` and compare with the 96-bit
+> security target.
+
+## What to carry forward
+
+1. Completeness / soundness / zero-knowledge are separate dials.
+2. Fiat–Shamir turns interactive proofs into fixed transcripts via a hash
+   channel — the prover's randomness is the channel's output.
+3. Transparent ≠ private: coming in Part 5, the same transcript that is
+   unforgeable can be a readable database of the witness.

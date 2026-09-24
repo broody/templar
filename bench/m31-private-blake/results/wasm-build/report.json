@@ -1,0 +1,60 @@
+{
+  "command": [
+    "cargo",
+    "+nightly-2026-01-15",
+    "build",
+    "--release",
+    "--lib",
+    "--locked",
+    "--offline",
+    "--target",
+    "wasm32-unknown-unknown",
+    "--manifest-path",
+    "bench/m31-private-blake/client/Cargo.toml"
+  ],
+  "environment": {
+    "RUSTUP_HOME": "/tmp/templar-stwo-privacy-dtgn6e8l/rustup",
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_TARGET_DIR": "/home/broody/development/templar/target/m31-private-blake/wasm-target",
+    "RUSTFLAGS": "-C target-feature=+simd128 -C link-arg=-zstack-size=8388608 -C link-arg=--max-memory=2147483648"
+  },
+  "build_exit": 0,
+  "bindgen_command": [
+    "target/wasm-membership/tools/bin/wasm-bindgen",
+    "--target",
+    "web",
+    "--out-dir",
+    "/home/broody/development/templar/bench/m31-private-blake/pkg",
+    "--out-name",
+    "membership",
+    "/home/broody/development/templar/target/m31-private-blake/wasm-target/wasm32-unknown-unknown/release/templar_private_membership.wasm"
+  ],
+  "bindgen_exit": 0,
+  "artifacts": [
+    {
+      "path": "target/m31-private-blake/wasm-target/wasm32-unknown-unknown/release/templar_private_membership.wasm",
+      "bytes": 924419,
+      "sha256": "2054dd40863964fed50ca8d48b41d43068110c57f6de221777bc5a93ebe3df21"
+    },
+    {
+      "path": "bench/m31-private-blake/pkg/membership.d.ts",
+      "bytes": 1946,
+      "sha256": "bc692c8a63076ac2c46fb56446d41cc92a70e7579bf83252930fccc33b8cab3b"
+    },
+    {
+      "path": "bench/m31-private-blake/pkg/membership.js",
+      "bytes": 12382,
+      "sha256": "9cc12b1f062a06ab38ca503d077e5a9c9905b4869b2347d65ca3620417642ea4"
+    },
+    {
+      "path": "bench/m31-private-blake/pkg/membership_bg.wasm",
+      "bytes": 470976,
+      "sha256": "d28164e87ea5c5c3b4d9c0f8686e4104c45d37b3500d5864f45d0fb16a48cff3"
+    },
+    {
+      "path": "bench/m31-private-blake/pkg/membership_bg.wasm.d.ts",
+      "bytes": 789,
+      "sha256": "c0ddb91cf9d78a228d81145ed67fa087cb06f738115070b1f12464ad1e32d51b"
+    }
+  ]
+}

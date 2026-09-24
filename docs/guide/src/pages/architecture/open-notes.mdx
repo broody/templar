@@ -1,0 +1,111 @@
+---
+showAskAi: false
+title: Open notes
+description: Fund private notes from a public DeFi call in the same transaction, and keep persistent positions through shadow accounts.
+---
+
+import { Flow } from '../../components/Flow'
+
+# Open notes
+
+An **open note** is a destination for funds whose amount is known only after an external call. A wallet can spend private notes into a swap, a vault or another application, and receive the proceeds as private notes in the same transaction. The funded result is an ordinary note that is spent through the usual ownership proof.
+
+For example, a wallet holding token A can swap 300 A for B through Ekubo. It prepares the receiving information for B before the swap, and the market determines the actual amount. If the transaction settles, the wallet holds an ordinary B note; if anything fails, nothing happens.
+
+The name and the adapter interface match upstream Starknet Privacy. Upstream also requires every open note to be filled in the transaction that creates it. Upstream stores an empty note and then fills it. Templar appends only the funded commitment, which suits an append-only tree whose commitment includes the amount. The first reference called the destination a `ReturnNote`; that name survives only in `bench/return-note-e2e`.
+
+## Prepare, execute, fund
+
+<Flow steps={[
+  { title: 'Prepare', detail: 'Choose each destination: token, minimum amount, owner commitment and encrypted recovery payload.' },
+  { title: 'Execute', detail: 'Prove the spend bound to the execution intent; the pool pays the budget and calls the adapter.' },
+  { title: 'Fund', detail: 'The pool pulls the proceeds, checks its balance and appends each funded note.' },
+]} caption="Every step succeeds together or reverts together. Network gas is still payable on failure." />
+
+A destination has an opaque `note_id`, a token, a minimum amount, an `inner` value and a ciphertext. `inner` is the owner commitment of an ordinary note: `H(INNER, receiver, randomness)`. The destination holds no balance and grants no authority before funding. Only the final commitment, computed on chain from the actual amount, enters the tree.
+
+## The execution intent
+
+The client proof carries one public felt, `intent`. It commits the spend to exactly one execution:
+
+```text
+intent = Poseidon('OPEN_EXEC_V1', chain, pool, token, kind, adapter, nonce,
+                  budget_recipient, budget, expiry, selector, |calldata|, calldata…,
+                  |destinations|, (note_id, token, minimum, inner₉, delivery_digest)…)
+```
+
+- The **budget** is the spend's public withdrawal and may be zero (collect only). Its recipient is named in the intent: usually the adapter, never the pool.
+- `expiry` is the last block number at which the execution may settle.
+- `nonce` is reserved and must be zero.
+- Changing the adapter, the calldata, any destination, its ciphertext or the budget invalidates the proof. A relayer can only submit the transaction as authorized, or not at all.
+
+An ordinary spend carries `intent = 0` and cannot reach an adapter.
+
+## Settlement in the pool
+
+`apply_spend_with_invoke(spend, intent, proof)` runs under the pool's reentrancy lock:
+
+1. Recompute `intent` and check the expiry. The adapter must be nonzero and not the pool, and the identity rule must hold for the kind (below).
+2. Verify the spend: context, binding, proof verdict, known root and fresh nullifiers.
+3. Pay the budget to its recipient.
+4. Call the adapter. Deserialize `Span<OpenNoteDeposit>`, then, for a shadow-account call, the associated addresses. Nothing else may follow.
+5. Match exactly one deposit to each destination, in order: same `note_id` and token, and an amount that is nonzero and at least `minimum`.
+6. Pull each amount from the adapter with `transfer_from`, and check the pool's balance grew by exactly that amount. This rejects fee-on-transfer tokens.
+7. Compute each commitment on chain from the actual amount, as `deposit` does, and append the transaction's new notes in pairs. Emit `NotePublished` for each note and `OpenNoteFunded { note_id, index, token, amount }` for each open note.
+
+Destinations are checked before any external effect: the note id, token, minimum and `inner` must be nonzero, and note ids distinct. The pool never grants an adapter an allowance over its holdings.
+
+**Limits:** one adapter call and one input token per transaction, at most 2 destinations, 4 new notes in total and 64 calldata felts.
+
+## Writing an adapter
+
+Any contract with upstream's anonymizer interface works unchanged:
+
+```cairo
+#[derive(Copy, Drop, Serde)]
+pub struct OpenNoteDeposit {
+    pub note_id: felt252,
+    pub token: ContractAddress,
+    pub amount: u128,
+}
+
+// kind INVOKE: called with the intent's calldata.
+fn privacy_invoke(ref self: T, /* adapter-specific calldata */) -> Span<OpenNoteDeposit>;
+```
+
+The adapter receives the budget before the call, performs its operation, **approves the pool** for each amount it reports, and returns one deposit per destination. A reported amount is an instruction, not evidence: the pool pulls and measures the tokens itself. Upstream's Ekubo and Vesu anonymizers are stateless and have no caller check. A budget left in one after a partial fill can be taken by anyone, so the destination's minimum must force the fill.
+
+## Shadow accounts
+
+A **shadow account** is a persistent account that holds a position (a lending deposit, an LP share) on behalf of a private owner. It uses upstream's shadow-account anonymizer, deployed unchanged with the Templar pool as its privacy contract.
+
+For kind `COMPUTE`, the proof also publishes an **identity handle**:
+
+```text
+handle              = H(IDENTITY, sk₀ ‖ scope)          // nine M31 words, proven in the client
+partial             = Poseidon('TEMPLAR_IDENTITY_V1', handle)
+identity_commitment = Poseidon(partial, 0)             // upstream's commitment_from_partial
+```
+
+The pool calls `privacy_invoke_with_computation([identity_commitment] ++ calldata)`. The anonymizer deploys, or reuses, the shadow account keyed by that commitment, runs the calls as that account, and collects the results into open notes. Only the holder of `sk₀` can produce the handle, so only they can drive their accounts. The account's address is deterministic, so a budget can be paid straight to it.
+
+- **Separate accounts come from the private scope, not the nonce.** The handle is public, so anyone can compute `Poseidon(partial, n)` for every `n`. The public nonce is therefore always zero. A wallet derives a distinct nine-word `scope` per account from a secret seed and the chain, pool, anonymizer, application and account index (`open_note.py`, `shadow_scope`).
+- **Linkage.** All actions under one scope are linked, which is what keeps a position persistent. Different scopes are not linked to each other or to the owner's notes.
+- **Only allowed classes.** `COMPUTE` reaches only contracts whose class the pool owner allowed with `set_shadow_class`. Upstream contracts trust the calldata prefix of `privacy_invoke_with_computation` as the output of their own `privacy_compute`. Here the prefix is the pool's identity commitment followed by user calldata. That matches the shadow anonymizer and nothing else. An upgrade changes the anonymizer's class and disables it until the new class is allowed.
+- **Not supported:** upstream's general `privacy_compute`, which runs a target's own Cairo over the user's secret inside the proof. The compact client proof is a fixed relation. Shadow accounts cover positions and applications that authorize by caller address.
+
+## Recovery
+
+The destination's ciphertext carries the owner's opening except the amount. `OpenNoteFunded` supplies the amount and index, and `NotePublished` the commitment and ciphertext. The wallet decrypts, rebuilds the commitment with the settled amount and checks the leaf before crediting the note. Seed recovery and viewing work as for ordinary payments, provided the history includes the funding events.
+
+## Privacy boundary
+
+The adapter, calldata, budget and its recipient, destination tokens and amounts, and for `COMPUTE` the handle and shadow account are public, as upstream. The swap is an ordinary public swap. What stays private is which notes funded it and who owns the proceeds. Sender, gas funding, RPC access and amount or timing correlation have their own exposure. An open note does not turn a public AMM into a private exchange.
+
+## Where it lives
+
+- **Spec:** `docs/open-note-spec.md` and ADR-0023.
+- **Compact path:** the client relation (R0 V3) in `bench/m31-private-wrapper/client-port`; the pool entry point in `bench/m31-pool/cairo/src/{open_note,pool}.cairo`; wallet helpers in `bench/m31-pool/open_note.py`.
+- **First reference, on the client-side Cairo pipeline:** `bench/return-note-e2e`.
+
+Demonstrated results and open items are on the [status page](/status#open-notes-on-the-compact-path).

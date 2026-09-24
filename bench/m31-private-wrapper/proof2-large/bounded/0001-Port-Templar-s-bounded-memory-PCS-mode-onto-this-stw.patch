@@ -1,0 +1,1471 @@
+From 2d451a92d02902b6cffc2ac2d491fcaa64077ec9 Mon Sep 17 00:00:00 2001
+From: broody <broody@gmail.com>
+Date: Wed, 23 Sep 2026 13:50:11 +0800
+Subject: [PATCH 1/5] Port Templar's bounded-memory PCS mode onto this stwo,
+ with a circuit-prover entry point
+
+Owned trees keep coefficients instead of expanded evaluations and are
+regenerated one tree at a time for opening (root checked); FRI quotients are
+accumulated max_fri_columns columns at a time. Storage policy only: a new
+circuit-prover test checks bounded proofs equal unbounded ones on both
+profiles. Three-way merge of bench/bounded-memory/stwo.patch (runtime files;
+the unused streamed-Merkle API is left out) from stwo 489a0f3.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>
+---
+ crates/circuit_prover/src/prover.rs           |  59 +-
+ crates/circuit_prover/src/prover_test.rs      |  31 ++
+ .../src/prover/component_prover.rs            | 235 +++++++-
+ .../stwo/src/prover/air/component_prover.rs   | 114 +++-
+ crates/stwo/src/prover/pcs/mod.rs             | 511 +++++++++++++++++-
+ crates/stwo/src/prover/pcs/quotient_ops.rs    | 209 ++++++-
+ 6 files changed, 1120 insertions(+), 39 deletions(-)
+
+diff --git a/crates/circuit_prover/src/prover.rs b/crates/circuit_prover/src/prover.rs
+index c2e6430bb..03a1d47f7 100644
+--- a/crates/circuit_prover/src/prover.rs
++++ b/crates/circuit_prover/src/prover.rs
+@@ -53,6 +53,31 @@ pub fn prove_circuit_assignment_with_channel<MC>(
+     base_column_pool: &BaseColumnPool<SimdBackend>,
+     pcs_config: PcsConfig,
+ ) -> Result<CircuitProof<MC::H>, ProvingError>
++where
++    MC: MerkleChannel,
++    SimdBackend: stwo::prover::backend::BackendForChannel<MC>,
++    <MC::H as MerkleHasherLifted>::Hash: Into<Blake2sHash>,
++{
++    prove_circuit_assignment_bounded::<MC>(
++        values,
++        preprocessed_circuit,
++        base_column_pool,
++        pcs_config,
++        None,
++    )
++}
++
++/// [`prove_circuit_assignment_with_channel`] with optional bounded-memory commitment storage:
++/// owned trees keep coefficients instead of expanded evaluations, and FRI quotients are
++/// accumulated `max_fri_columns` columns at a time. A storage policy only: the proof is
++/// identical.
++pub fn prove_circuit_assignment_bounded<MC>(
++    values: &[QM31],
++    preprocessed_circuit: &PreprocessedCircuit,
++    base_column_pool: &BaseColumnPool<SimdBackend>,
++    pcs_config: PcsConfig,
++    max_fri_columns: Option<usize>,
++) -> Result<CircuitProof<MC::H>, ProvingError>
+ where
+     MC: MerkleChannel,
+     SimdBackend: stwo::prover::backend::BackendForChannel<MC>,
+@@ -86,13 +111,14 @@ where
+         base_column_pool,
+     );
+ 
+-    prove_circuit_with_precompute::<MC>(
++    prove_circuit_with_precompute_bounded::<MC>(
+         base_column_pool,
+         &twiddles,
+         preprocessed_circuit,
+         MaybeOwned::Owned(preprocessed_tree),
+         values,
+         pcs_config,
++        max_fri_columns,
+     )
+ }
+ 
+@@ -104,6 +130,34 @@ pub fn prove_circuit_with_precompute<'a, MC>(
+     values: &[QM31],
+     pcs_config: PcsConfig,
+ ) -> Result<CircuitProof<MC::H>, ProvingError>
++where
++    MC: MerkleChannel,
++    SimdBackend: stwo::prover::backend::BackendForChannel<MC>,
++    <MC::H as MerkleHasherLifted>::Hash: Into<Blake2sHash>,
++{
++    prove_circuit_with_precompute_bounded::<MC>(
++        base_column_pool,
++        twiddles,
++        preprocessed_circuit,
++        preprocessed_tree,
++        values,
++        pcs_config,
++        None,
++    )
++}
++
++/// Proves the same circuit with optional coefficient-backed commitment storage and a bounded
++/// number of columns materialized together for FRI quotient accumulation. The preprocessed tree,
++/// if owned, must retain its coefficients.
++pub fn prove_circuit_with_precompute_bounded<'a, MC>(
++    base_column_pool: &BaseColumnPool<SimdBackend>,
++    twiddles: &TwiddleTree<SimdBackend>,
++    preprocessed_circuit: &PreprocessedCircuit,
++    preprocessed_tree: MaybeOwned<'a, CommitmentTreeProver<SimdBackend, MC>>,
++    values: &[QM31],
++    pcs_config: PcsConfig,
++    max_fri_columns: Option<usize>,
++) -> Result<CircuitProof<MC::H>, ProvingError>
+ where
+     MC: MerkleChannel,
+     SimdBackend: stwo::prover::backend::BackendForChannel<MC>,
+@@ -134,6 +188,9 @@ where
+         base_column_pool,
+     );
+ 
++    if let Some(max_fri_columns) = max_fri_columns {
++        commitment_scheme.set_bounded_memory_mode(max_fri_columns);
++    }
+     commitment_scheme.set_store_polynomials_coefficients();
+ 
+     // Grab the preprocessed root for the circuit hash before it is consumed by `commit_tree` below.
+diff --git a/crates/circuit_prover/src/prover_test.rs b/crates/circuit_prover/src/prover_test.rs
+index b956c7fd6..8b1d2beed 100644
+--- a/crates/circuit_prover/src/prover_test.rs
++++ b/crates/circuit_prover/src/prover_test.rs
+@@ -469,3 +469,34 @@ fn test_pad_context() {
+     assert!(qm31_ops.is_power_of_two());
+     context.validate_circuit();
+ }
++
++/// Bounded-memory proving is a storage policy only: the proof must equal the unbounded one field
++/// for field, and verify.
++#[test]
++fn test_bounded_memory_proof_is_identical() {
++    let mut context = build_fibonacci_context().finalize(false);
++    let preprocessed_circuit = PreprocessedCircuit::preprocess_circuit(&mut context);
++    let prove = |max_fri_columns| {
++        crate::prover::prove_circuit_assignment_bounded::<Blake2sM31MerkleChannel>(
++            context.values(),
++            &preprocessed_circuit,
++            &BaseColumnPool::<SimdBackend>::new(),
++            default_circuit_pcs_config(preprocessed_circuit.trace_log_size),
++            max_fri_columns,
++        )
++        .unwrap()
++    };
++    let unbounded = prove(None);
++    for max_fri_columns in [1, 16] {
++        let bounded = prove(Some(max_fri_columns));
++        // `aux` holds hash maps, whose Debug order varies; the proof proper must match exactly.
++        assert_eq!(
++            format!("{:?}", bounded.stark_proof.proof),
++            format!("{:?}", unbounded.stark_proof.proof)
++        );
++        assert_eq!(bounded.interaction_claim, unbounded.interaction_claim);
++        assert_eq!(bounded.claim, unbounded.claim);
++        assert_eq!(bounded.circuit_hash, unbounded.circuit_hash);
++        stwo_verify(bounded, &preprocessed_circuit);
++    }
++}
+diff --git a/crates/constraint-framework/src/prover/component_prover.rs b/crates/constraint-framework/src/prover/component_prover.rs
+index a84795e18..c26a30b25 100644
+--- a/crates/constraint-framework/src/prover/component_prover.rs
++++ b/crates/constraint-framework/src/prover/component_prover.rs
+@@ -42,6 +42,11 @@ fn get_trace_columns<'a, B: Backend>(
+ ) -> TreeVec<Vec<Cow<'a, CircleEvaluation<B, BaseField, BitReversedOrder>>>> {
+     match mode {
+         EvaluationMode::SubDomain { .. } => {
++            let regenerated_twiddles = component_polys
++                .iter()
++                .flatten()
++                .any(|poly| poly.evals.is_none())
++                .then(|| B::precompute_twiddles(eval_domain.half_coset));
+             // Borrow committed evaluations directly. Only the first
+             // 2^max_constraint_log_degree_bound indices are going to be used for the
+             // constraint quotient evaluation (in bit-reversed order these form the
+@@ -49,7 +54,30 @@ fn get_trace_columns<'a, B: Backend>(
+             //
+             // Ideally we'd slice to just those indices, but the type system requires
+             // borrowing the entire evaluation.
+-            component_polys.map_cols(|c| Cow::Borrowed(&c.evals))
++            component_polys.map_cols(|c| {
++                if let Some(evals) = &c.evals {
++                    Cow::Borrowed(evals)
++                } else {
++                    // Reproduce precisely the prefix read from this column in the cached path.
++                    // Keeping each column's own domain also preserves existing semantics if a
++                    // component refers to columns with different committed heights.
++                    let log_split = c
++                        .committed_domain
++                        .log_size()
++                        .checked_sub(eval_domain.log_size())
++                        .expect("Constraint subdomain exceeds the committed domain");
++                    let domain = c.committed_domain.split(log_split).0;
++                    if domain == eval_domain {
++                        Cow::Owned(c.get_evaluation_on_prefix(
++                            domain,
++                            regenerated_twiddles.as_ref().unwrap(),
++                        ))
++                    } else {
++                        let twiddles = B::precompute_twiddles(domain.half_coset);
++                        Cow::Owned(c.get_evaluation_on_prefix(domain, &twiddles))
++                    }
++                }
++            })
+         }
+         EvaluationMode::ExtendToEvalDomain => {
+             let _span = span!(Level::INFO, "Constraint Extension").entered();
+@@ -266,3 +294,208 @@ fn accumulate_pointwise_cpu<E: FrameworkEval>(
+     }
+     res
+ }
++
++#[cfg(test)]
++mod bounded_tests {
++    use stwo::core::channel::Blake2sM31Channel;
++    use stwo::core::fri::FriConfig;
++    use stwo::core::pcs::{CommitmentSchemeVerifier, PcsConfig};
++    use stwo::core::utils::bit_reverse_index;
++    use stwo::core::vcs_lifted::blake2_merkle::Blake2sM31MerkleChannel;
++    use stwo::core::verifier::verify;
++    use stwo::prover::backend::{BackendForChannel, Column};
++    use stwo::prover::poly::circle::CircleCoefficients;
++    use stwo::prover::{CommitmentSchemeProver, prove};
++
++    use crate::{EvalAtRow, TraceLocationAllocator};
++
++    #[derive(Clone)]
++    struct OffsetEval {
++        log_size: u32,
++    }
++
++    impl FrameworkEval for OffsetEval {
++        fn log_size(&self) -> u32 {
++            self.log_size
++        }
++        fn max_constraint_log_degree_bound(&self) -> u32 {
++            self.log_size + 1
++        }
++        fn evaluate<E: EvalAtRow>(&self, mut eval: E) -> E {
++            let [previous, _, next] = eval.next_interaction_mask(1, [-1, 0, 1]);
++            let next_square = eval.next_trace_mask();
++            let previous_square = eval.next_trace_mask();
++            eval.add_constraint(next.clone() * next - next_square);
++            eval.add_constraint(previous.clone() * previous - previous_square);
++            eval
++        }
++    }
++
++    fn check_offset_stark<B: BackendForChannel<Blake2sM31MerkleChannel>>()
++    where
++        FrameworkComponent<OffsetEval>: ComponentProver<B>,
++    {
++        for log_size in [3, 6] {
++            // The preprocessed tree is empty, so upstream requires it lifted to height 0.
++            let config = PcsConfig {
++                preprocessed_lifting_log_size: 0,
++                ..PcsConfig::from_fri_and_trace_size(FriConfig::new(4, 0, 3, 3, 1), log_size)
++            };
++            let twiddles = B::precompute_twiddles(CanonicCoset::new(log_size + 4).half_coset());
++            let trace_domain = CanonicCoset::new(log_size).circle_domain();
++            let values = (0..1 << log_size)
++                .map(|row| BaseField::from((row * row + row * 7 + 3) as u32))
++                .collect_vec();
++            let points = (0..1 << log_size)
++                .map(|row| trace_domain.at(bit_reverse_index(row, log_size)))
++                .collect_vec();
++            let make_trace = || {
++                [0, 1, -1]
++                    .into_iter()
++                    .map(|offset| {
++                        let column = (0..values.len())
++                            .map(|row| {
++                                if offset == 0 {
++                                    values[row]
++                                } else {
++                                    let shifted = points[row]
++                                        + CanonicCoset::new(log_size).step().mul_signed(offset);
++                                    let value = values[points
++                                        .iter()
++                                        .position(|point| *point == shifted)
++                                        .unwrap()];
++                                    value * value
++                                }
++                            })
++                            .collect();
++                        CircleEvaluation::<B, _, BitReversedOrder>::new(trace_domain, column)
++                    })
++                    .collect_vec()
++            };
++            let component = FrameworkComponent::new(
++                &mut TraceLocationAllocator::default(),
++                OffsetEval { log_size },
++                SecureField::from(0),
++            );
++            let run = |bounded: bool| {
++                let mut channel = Blake2sM31Channel::default();
++                let mut scheme =
++                    CommitmentSchemeProver::<B, Blake2sM31MerkleChannel>::new(config, &twiddles);
++                scheme.set_store_polynomials_coefficients();
++                if bounded {
++                    scheme.set_bounded_memory_mode(1);
++                }
++                scheme.tree_builder().commit(&mut channel);
++                let mut builder = scheme.tree_builder();
++                builder.extend_evals(make_trace());
++                builder.commit(&mut channel);
++                prove::<B, Blake2sM31MerkleChannel>(&[&component], &mut channel, scheme).unwrap()
++            };
++            let baseline = run(false);
++            let bounded = run(true);
++            assert_eq!(format!("{baseline:?}"), format!("{bounded:?}"));
++            let mut channel = Blake2sM31Channel::default();
++            let mut verifier = CommitmentSchemeVerifier::<Blake2sM31MerkleChannel>::new(config);
++            let sizes = component.trace_log_degree_bounds();
++            verifier.commit(bounded.commitments[0], &sizes[0], &mut channel);
++            verifier.commit(bounded.commitments[1], &sizes[1], &mut channel);
++            verify(&[&component], &mut channel, &mut verifier, bounded).unwrap();
++        }
++    }
++
++    #[test]
++    fn bounded_offset_stark_cpu() {
++        check_offset_stark::<CpuBackend>();
++    }
++
++    #[test]
++    fn bounded_offset_stark_simd() {
++        check_offset_stark::<SimdBackend>();
++    }
++
++    use super::*;
++
++    fn check_component_columns<B: Backend>() {
++        // Mixed committed heights deliberately exercise the per-column prefix fallback;
++        // small requested domains also exercise prefixes shorter than the coefficient vector.
++        let coefficients = [3, 4, 6]
++            .into_iter()
++            .map(|log_size| {
++                CircleCoefficients::<B>::new(
++                    (0..1 << log_size).map(|row| BaseField::from((row * 11 + 7) as u32)).collect(),
++                )
++            })
++            .collect_vec();
++        let mut polynomials = coefficients
++            .into_iter()
++            .map(|coefficients| {
++                let domain = CanonicCoset::new(coefficients.log_size() + 3).circle_domain();
++                let evaluations = coefficients.evaluate(domain);
++                Poly::new(Some(coefficients), evaluations)
++            })
++            .collect_vec();
++        for eval_log_size in [2, 4, 6] {
++            let eval_domain = subdomain_eval_domain(eval_log_size, 2);
++            let expected = {
++                let refs = polynomials.iter().collect_vec();
++                let columns = get_trace_columns(
++                    TreeVec(vec![refs.iter().collect()]),
++                    eval_domain,
++                    EvaluationMode::SubDomain { log_expansion: 2 },
++                );
++                columns[0]
++                    .iter()
++                    .map(|column| column.values.to_cpu()[..1 << eval_log_size].to_vec())
++                    .collect_vec()
++            };
++            // Temporarily take evaluations to exercise the exact coefficient-backed path.
++            let cached = polynomials.iter_mut().map(|poly| poly.evals.take()).collect_vec();
++            let refs = polynomials.iter().collect_vec();
++            let columns = get_trace_columns(
++                TreeVec(vec![refs.iter().collect()]),
++                eval_domain,
++                EvaluationMode::SubDomain { log_expansion: 2 },
++            );
++            assert_eq!(
++                columns[0].iter().map(|column| column.values.to_cpu()).collect_vec(),
++                expected
++            );
++            drop(columns);
++            for (poly, evaluations) in polynomials.iter_mut().zip(cached) {
++                poly.evals = evaluations;
++            }
++        }
++        // ExtendToEvalDomain must continue to evaluate the same polynomial, irrespective of
++        // whether the committed LDE happens to be retained.
++        let eval_domain = CanonicCoset::new(8).circle_domain();
++        let expected = {
++            let refs = polynomials.iter().collect_vec();
++            get_trace_columns(
++                TreeVec(vec![refs.iter().collect()]),
++                eval_domain,
++                EvaluationMode::ExtendToEvalDomain,
++            )[0]
++            .iter()
++            .map(|column| column.values.to_cpu())
++            .collect_vec()
++        };
++        polynomials.iter_mut().for_each(Poly::evict_evaluations);
++        let refs = polynomials.iter().collect_vec();
++        let actual = get_trace_columns(
++            TreeVec(vec![refs.iter().collect()]),
++            eval_domain,
++            EvaluationMode::ExtendToEvalDomain,
++        );
++        assert_eq!(actual[0].iter().map(|column| column.values.to_cpu()).collect_vec(), expected);
++    }
++
++    #[test]
++    fn bounded_component_columns_cpu() {
++        check_component_columns::<CpuBackend>();
++    }
++
++    #[test]
++    fn bounded_component_columns_simd() {
++        check_component_columns::<SimdBackend>();
++    }
++}
+diff --git a/crates/stwo/src/prover/air/component_prover.rs b/crates/stwo/src/prover/air/component_prover.rs
+index 699fbef89..bf6eff2d9 100644
+--- a/crates/stwo/src/prover/air/component_prover.rs
++++ b/crates/stwo/src/prover/air/component_prover.rs
+@@ -9,7 +9,7 @@ use crate::core::pcs::TreeVec;
+ use crate::core::poly::circle::CircleDomain;
+ use crate::prover::CirclePoint;
+ use crate::prover::air::accumulation::{DomainEvaluationAccumulator, EvaluationMode};
+-use crate::prover::backend::Backend;
++use crate::prover::backend::{Backend, Column};
+ use crate::prover::poly::BitReversedOrder;
+ use crate::prover::poly::circle::{CircleCoefficients, CircleEvaluation, SecureCirclePoly};
+ use crate::prover::poly::twiddles::TwiddleTree;
+@@ -35,11 +35,13 @@ pub struct Trace<'a, B: Backend> {
+ }
+ 
+ /// A struct for representing a polynomial corresponding to a trace column.
+-/// A polynomial is defined by it's evaluations on a circle domain of size at least it's degree,
+-/// and optionally its coefficients in the FFT basis.
++/// A polynomial retains its committed domain and at least one complete representation: FFT
++/// coefficients or evaluations. In bounded-memory mode the expanded evaluations are regenerated
++/// from coefficients only when needed.
+ pub struct Poly<B: Backend> {
+     pub coeffs: Option<CircleCoefficients<B>>,
+-    pub evals: CircleEvaluation<B, BaseField, BitReversedOrder>,
++    pub evals: Option<CircleEvaluation<B, BaseField, BitReversedOrder>>,
++    pub committed_domain: CircleDomain,
+ }
+ 
+ impl<B: Backend> Poly<B> {
+@@ -47,7 +49,13 @@ impl<B: Backend> Poly<B> {
+         coeffs: Option<CircleCoefficients<B>>,
+         evals: CircleEvaluation<B, BaseField, BitReversedOrder>,
+     ) -> Self {
+-        Self { coeffs, evals }
++        Self { committed_domain: evals.domain, coeffs, evals: Some(evals) }
++    }
++
++    /// Releases expanded evaluations while preserving the polynomial and committed domain.
++    pub fn evict_evaluations(&mut self) {
++        assert!(self.coeffs.is_some(), "Eviction requires polynomial coefficients");
++        self.evals = None;
+     }
+ 
+     pub fn eval_at_point(
+@@ -58,12 +66,15 @@ impl<B: Backend> Poly<B> {
+         if let Some(coeffs) = &self.coeffs {
+             coeffs.eval_at_point(point)
+         } else {
+-            self.evals.barycentric_eval_at_point(
+-                &weights_hash_map
+-                    .unwrap()
+-                    .get(&(self.evals.domain.log_size(), point))
+-                    .expect("weights should exist for all sampled points"),
+-            )
++            self.evals
++                .as_ref()
++                .expect("Polynomial representation is missing")
++                .barycentric_eval_at_point(
++                    &weights_hash_map
++                        .unwrap()
++                        .get(&(self.committed_domain.log_size(), point))
++                        .expect("weights should exist for all sampled points"),
++                )
+         }
+     }
+ 
+@@ -78,6 +89,30 @@ impl<B: Backend> Poly<B> {
+             panic!("The polynomial's coefficients are not stored");
+         }
+     }
++
++    /// Recreates a prefix of the committed bit-reversed evaluation vector. A requested domain
++    /// smaller than the coefficient vector is handled by evaluating on the full committed
++    /// domain first; coefficients are never truncated to fit a smaller FFT.
++    pub fn get_evaluation_on_prefix(
++        &self,
++        domain: CircleDomain,
++        twiddles: &TwiddleTree<B>,
++    ) -> CircleEvaluation<B, BaseField, BitReversedOrder> {
++        let log_split = self
++            .committed_domain
++            .log_size()
++            .checked_sub(domain.log_size())
++            .expect("Requested prefix exceeds the committed domain");
++        assert_eq!(self.committed_domain.split(log_split).0, domain);
++        if self.coeffs.as_ref().expect("Prefix regeneration requires coefficients").log_size()
++            <= domain.log_size()
++        {
++            return self.get_evaluation_on_domain(domain, twiddles);
++        }
++        let full_twiddles = B::precompute_twiddles(self.committed_domain.half_coset);
++        let full = self.get_evaluation_on_domain(self.committed_domain, &full_twiddles);
++        CircleEvaluation::new(domain, (0..domain.size()).map(|row| full.values.at(row)).collect())
++    }
+ }
+ 
+ pub struct ComponentProvers<'a, B: Backend> {
+@@ -115,3 +150,60 @@ impl<B: Backend> ComponentProvers<'_, B> {
+         accumulator.finalize(twiddles)
+     }
+ }
++
++#[cfg(test)]
++mod bounded_tests {
++    use super::*;
++    use crate::prover::backend::CpuBackend;
++    use crate::prover::backend::simd::SimdBackend;
++
++    fn check_prefixes<B: Backend>() {
++        for coeff_log_size in [3, 5, 8] {
++            for blowup in [0, 1, 3] {
++                for kind in 0..3 {
++                    let coeffs = CircleCoefficients::<B>::new(
++                        (0..1 << coeff_log_size)
++                            .map(|i| {
++                                BaseField::from(match kind {
++                                    0 => 0,
++                                    1 => {
++                                        if i == 0 {
++                                            7
++                                        } else {
++                                            0
++                                        }
++                                    }
++                                    _ => (i * 17 + 5) as u32,
++                                })
++                            })
++                            .collect(),
++                    );
++                    let domain =
++                        crate::core::poly::circle::CanonicCoset::new(coeff_log_size + blowup)
++                            .circle_domain();
++                    let full = coeffs.evaluate(domain);
++                    let expected = full.values.to_cpu();
++                    let mut poly = Poly::new(Some(coeffs), full);
++                    poly.evict_evaluations();
++                    for prefix_log_size in 1..=domain.log_size() {
++                        let prefix = domain.split(domain.log_size() - prefix_log_size).0;
++                        let twiddles = B::precompute_twiddles(prefix.half_coset);
++                        let actual = poly.get_evaluation_on_prefix(prefix, &twiddles);
++                        assert_eq!(actual.domain, prefix);
++                        assert_eq!(actual.values.to_cpu(), expected[..prefix.size()]);
++                    }
++                }
++            }
++        }
++    }
++
++    #[test]
++    fn bounded_prefixes_cpu() {
++        check_prefixes::<CpuBackend>();
++    }
++
++    #[test]
++    fn bounded_prefixes_simd() {
++        check_prefixes::<SimdBackend>();
++    }
++}
+diff --git a/crates/stwo/src/prover/pcs/mod.rs b/crates/stwo/src/prover/pcs/mod.rs
+index 9cb14c2aa..9811681f5 100644
+--- a/crates/stwo/src/prover/pcs/mod.rs
++++ b/crates/stwo/src/prover/pcs/mod.rs
+@@ -21,10 +21,10 @@ use crate::core::utils::MaybeOwned;
+ use crate::core::vcs_lifted::merkle_hasher::MerkleHasherLifted;
+ use crate::core::vcs_lifted::verifier::ExtendedMerkleDecommitmentLifted;
+ use crate::prover::air::component_prover::{Poly, Trace, WeightsHashMap};
+-use crate::prover::backend::BackendForChannel;
++use crate::prover::backend::{BackendForChannel, Col, Column};
+ use crate::prover::fri::{FriDecommitResult, FriProver};
+ use crate::prover::mempool::BaseColumnPool;
+-use crate::prover::pcs::quotient_ops::compute_fri_quotients;
++use crate::prover::pcs::quotient_ops::{compute_fri_quotients, compute_fri_quotients_bounded};
+ use crate::prover::poly::BitReversedOrder;
+ use crate::prover::poly::circle::{CircleCoefficients, CircleEvaluation};
+ use crate::prover::poly::twiddles::TwiddleTree;
+@@ -41,6 +41,8 @@ pub struct CommitmentSchemeProver<'a, B: BackendForChannel<MC>, MC: MerkleChanne
+     pub store_polynomials_coefficients: bool,
+     /// Pre-allocated base field column pool for polynomial evaluation during commit.
+     pub base_column_pool: MaybeOwned<'a, BaseColumnPool<B>>,
++    low_memory_mode: bool,
++    max_fri_columns: Option<usize>,
+ }
+ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a, B, MC> {
+     /// Creates a new empty commitment scheme prover with the given configuration and twiddles. The
+@@ -52,6 +54,8 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+             twiddles,
+             store_polynomials_coefficients: false,
+             base_column_pool: MaybeOwned::Owned(BaseColumnPool::new()),
++            low_memory_mode: false,
++            max_fri_columns: None,
+         }
+     }
+ 
+@@ -66,6 +70,8 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+             twiddles,
+             store_polynomials_coefficients: false,
+             base_column_pool: MaybeOwned::Borrowed(base_column_pool),
++            low_memory_mode: false,
++            max_fri_columns: None,
+         }
+     }
+ 
+@@ -75,6 +81,26 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+         self.store_polynomials_coefficients = true;
+     }
+ 
++    /// Reduces retained proving data by recomputing owned Merkle trees when opening them and
++    /// releasing owned polynomial coefficients after out-of-domain evaluation. Call before
++    /// committing any trees. Borrowed preprocessed trees are never modified.
++    ///
++    /// This changes only storage lifetimes; the commitment and proof format are unchanged.
++    pub fn set_low_memory_mode(&mut self) {
++        assert!(self.trees.is_empty(), "Select memory mode before committing trees");
++        self.low_memory_mode = true;
++    }
++
++    /// Retains coefficients instead of expanded evaluations for owned trees. Commitments and
++    /// openings currently materialize one tree at a time; FRI evaluates at most `max_fri_columns`
++    /// columns per batch. This is a storage policy and does not alter the proof protocol.
++    pub fn set_bounded_memory_mode(&mut self, max_fri_columns: usize) {
++        assert!(max_fri_columns > 0, "FRI batch size must be positive");
++        self.set_low_memory_mode();
++        self.store_polynomials_coefficients = true;
++        self.max_fri_columns = Some(max_fri_columns);
++    }
++
+     /// Evaluates the given polynomials, commits them into a Merkle tree, mixes the root into
+     /// the channel, and appends the resulting tree to the scheme.
+     ///
+@@ -83,7 +109,7 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+     fn commit(&mut self, polynomials: ColumnVec<CircleCoefficients<B>>, channel: &mut MC::C) {
+         let _span = span!(Level::INFO, "Commitment").entered();
+         let lifting_log_size = self.config.lifting_log_size(self.trees.len());
+-        let tree = CommitmentTreeProver::new(
++        let mut tree = CommitmentTreeProver::new(
+             polynomials,
+             self.config.fri_config.log_blowup_factor,
+             self.twiddles,
+@@ -91,6 +117,12 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+             lifting_log_size,
+             &self.base_column_pool,
+         );
++        if self.low_memory_mode {
++            tree.retain_merkle_root();
++        }
++        if self.max_fri_columns.is_some() {
++            tree.evict_evaluations();
++        }
+         MC::mix_root(channel, tree.commitment.root());
+         self.trees.push(MaybeOwned::Owned(tree));
+     }
+@@ -99,9 +131,17 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+     /// Merkle root into the channel. Accepts both owned and borrowed trees.
+     pub fn commit_tree(
+         &mut self,
+-        tree: MaybeOwned<'a, CommitmentTreeProver<B, MC>>,
++        mut tree: MaybeOwned<'a, CommitmentTreeProver<B, MC>>,
+         channel: &mut MC::C,
+     ) {
++        if self.low_memory_mode {
++            if let MaybeOwned::Owned(tree) = &mut tree {
++                tree.retain_merkle_root();
++                if self.max_fri_columns.is_some() {
++                    tree.evict_evaluations();
++                }
++            }
++        }
+         MC::mix_root(channel, tree.commitment.root());
+         self.trees.push(tree);
+     }
+@@ -121,7 +161,16 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+     pub fn evaluations(
+         &self,
+     ) -> TreeVec<ColumnVec<&CircleEvaluation<B, BaseField, BitReversedOrder>>> {
+-        self.trees.as_ref().map(|tree| tree.polynomials.iter().map(|poly| &poly.evals).collect())
++        self.trees.as_ref().map(|tree| {
++            tree.polynomials
++                .iter()
++                .map(|poly| {
++                    poly.evals
++                        .as_ref()
++                        .expect("Expanded evaluations are not retained in bounded-memory mode")
++                })
++                .collect()
++        })
+     }
+ 
+     pub fn trace(&self) -> Trace<'_, B> {
+@@ -153,7 +202,7 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+                 });
+             };
+ 
+-            let log_size = poly.evals.domain.log_size();
++            let log_size = poly.committed_domain.log_size();
+             // For each sample point, compute the weights needed to evaluate the polynomial at
+             // the folded sample point.
+             // TODO(Leo): the computation `point.repeated_double(max_log_size - log_size)` is
+@@ -183,7 +232,9 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+             span!(Level::INFO, "Evaluate columns out of domain", class = "EvaluateOutOfDomain")
+                 .entered();
+ 
+-        let weights_hash_map = if self.store_polynomials_coefficients {
++        let needs_weights =
++            self.trees.iter().any(|tree| tree.polynomials.iter().any(|poly| poly.coeffs.is_none()));
++        let weights_hash_map = if !needs_weights {
+             None
+         } else {
+             Some(self.build_weights_hash_map(sampled_points, lifting_log_size))
+@@ -197,7 +248,7 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+                 .map(|&point| PointSample {
+                     point,
+                     value: poly.eval_at_point(
+-                        point.repeated_double(lifting_log_size - poly.evals.domain.log_size()),
++                        point.repeated_double(lifting_log_size - poly.committed_domain.log_size()),
+                         weights_hash_map.as_ref(),
+                     ),
+                 })
+@@ -231,21 +282,49 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+         // Evaluate polynomials on open points.
+         let samples = self.compute_samples(&sampled_points, lifting_log_size);
+ 
++        if self.low_memory_mode {
++            // The samples own their field values. All remaining PCS operations read evaluations
++            // (or regenerate them from coefficients), so coefficients are no longer needed where
++            // evaluations are retained.
++            for tree in &mut self.trees.0 {
++                if let MaybeOwned::Owned(tree) = tree {
++                    for poly in &mut tree.polynomials {
++                        if poly.evals.is_some() {
++                            poly.coeffs = None;
++                        }
++                    }
++                }
++            }
++        }
++
+         let sampled_values =
+             samples.as_cols_ref().map_cols(|x| x.iter().map(|o| o.value).collect());
+         channel.mix_felts(&sampled_values.clone().flatten_cols());
+ 
+-        let columns = self.evaluations();
+-        print_column_size_histogram::<B, MC>(&columns);
+         // Compute oods quotients for boundary constraints on the sampled points.
+-        let quotients = compute_fri_quotients(
+-            &columns,
+-            &samples,
+-            channel.draw_secure_felt(),
+-            lifting_log_size,
+-            self.twiddles,
+-            self.config.fri_config.log_blowup_factor,
+-        );
++        let random_coeff = channel.draw_secure_felt();
++        let quotients = if let Some(max_columns) = self.max_fri_columns {
++            compute_fri_quotients_bounded(
++                &self.polynomials(),
++                &samples,
++                random_coeff,
++                lifting_log_size,
++                self.twiddles,
++                self.config.fri_config.log_blowup_factor,
++                max_columns,
++            )
++        } else {
++            let columns = self.evaluations();
++            print_column_size_histogram::<B, MC>(&columns);
++            compute_fri_quotients(
++                &columns,
++                &samples,
++                random_coeff,
++                lifting_log_size,
++                self.twiddles,
++                self.config.fri_config.log_blowup_factor,
++            )
++        };
+ 
+         // Run FRI commitment phase on the oods quotients.
+         let fri_prover =
+@@ -284,7 +363,9 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+             .trees
+             .as_ref()
+             .zip_eq(query_positions_tree)
+-            .map(|(tree, query_positions)| tree.decommit(query_positions))
++            .map(|(tree, query_positions)| {
++                tree.decommit_with_twiddles(query_positions, self.twiddles)
++            })
+             .0
+             .into_iter()
+             .map(|(v, x)| (v, x.decommitment, x.aux))
+@@ -294,8 +375,9 @@ impl<'a, B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentSchemeProver<'a,
+         for tree in &mut self.trees.0 {
+             if let MaybeOwned::Owned(tree) = tree {
+                 for poly in tree.polynomials.drain(..) {
+-                    let log_size = poly.evals.domain.log_size();
+-                    self.base_column_pool.give_back(log_size, poly.evals.values);
++                    if let Some(evals) = poly.evals {
++                        self.base_column_pool.give_back(evals.domain.log_size(), evals.values);
++                    }
+                 }
+             }
+         }
+@@ -357,7 +439,10 @@ impl<B: BackendForChannel<MC>, MC: MerkleChannel> TreeBuilder<'_, '_, B, MC> {
+ /// commit on a set of polynomials at a time. This corresponds to such a set.
+ pub struct CommitmentTreeProver<B: BackendForChannel<MC>, MC: MerkleChannel> {
+     pub polynomials: ColumnVec<Poly<B>>,
++    /// In low-memory PCS mode, non-root layer buffers are empty but the vector retains the
++    /// logical tree height. The owning PCS reconstructs these layers before opening the tree.
+     pub commitment: MerkleProverLifted<B, MC::H>,
++    recompute_merkle_decommitment: bool,
+ }
+ 
+ impl<B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentTreeProver<B, MC> {
+@@ -381,12 +466,56 @@ impl<B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentTreeProver<B, MC> {
+ 
+         let _span = span!(Level::INFO, "Merkle").entered();
+         let tree = MerkleProverLifted::commit(
+-            polynomials.iter().map(|poly: &Poly<B>| &poly.evals.values).collect(),
++            polynomials.iter().map(|poly: &Poly<B>| &poly.evals.as_ref().unwrap().values).collect(),
+             lifting_log_size,
+             0,
+         );
+ 
+-        CommitmentTreeProver { polynomials, commitment: tree }
++        CommitmentTreeProver { polynomials, commitment: tree, recompute_merkle_decommitment: false }
++    }
++
++    /// Keep the root and logical tree height while releasing all other hash buffers. This is
++    /// private to PCS trees: FRI commitments can use packed leaves and are not affected.
++    fn retain_merkle_root(&mut self) {
++        for layer in self.commitment.layers.iter_mut().skip(1) {
++            *layer = Col::<B, <MC::H as MerkleHasherLifted>::Hash>::zeros(0);
++        }
++        self.recompute_merkle_decommitment = true;
++    }
++
++    fn evict_evaluations(&mut self) {
++        assert!(
++            self.polynomials.iter().all(|poly| poly.coeffs.is_some()),
++            "Owned preprocessed trees need coefficients for bounded-memory mode"
++        );
++        for poly in &mut self.polynomials {
++            poly.evict_evaluations();
++        }
++    }
++
++    fn decommit_with_twiddles(
++        &self,
++        queries: &[usize],
++        twiddles: &TwiddleTree<B>,
++    ) -> (ColumnVec<Vec<BaseField>>, ExtendedMerkleDecommitmentLifted<MC::H>) {
++        if self.polynomials.iter().all(|poly| poly.evals.is_some()) {
++            return self.decommit(queries);
++        }
++        let _span = span!(Level::INFO, "Regenerate tree evaluations and opening").entered();
++        // Only this tree is expanded. Drop all buffers when its opening has been produced.
++        let evaluations = self
++            .polynomials
++            .iter()
++            .map(|poly| poly.get_evaluation_on_domain(poly.committed_domain, twiddles))
++            .collect_vec();
++        let columns = evaluations.iter().map(|eval| &eval.values).collect_vec();
++        let rebuilt = MerkleProverLifted::<B, MC::H>::commit(
++            columns.clone(),
++            self.commitment.layers.len() as u32 - 1,
++            0,
++        );
++        assert_eq!(rebuilt.root(), self.commitment.root());
++        rebuilt.decommit(queries, columns)
+     }
+ 
+     /// Decommits the merkle tree on the given query positions.
+@@ -397,8 +526,29 @@ impl<B: BackendForChannel<MC>, MC: MerkleChannel> CommitmentTreeProver<B, MC> {
+         &self,
+         queries: &[usize],
+     ) -> (ColumnVec<Vec<BaseField>>, ExtendedMerkleDecommitmentLifted<MC::H>) {
+-        let eval_vec = self.polynomials.iter().map(|poly| &poly.evals.values).collect_vec();
+-        self.commitment.decommit(queries, eval_vec)
++        let eval_vec = self
++            .polynomials
++            .iter()
++            .map(|poly| {
++                &poly
++                    .evals
++                    .as_ref()
++                    .expect("Use decommit_with_twiddles for evicted evaluations")
++                    .values
++            })
++            .collect_vec();
++        if self.recompute_merkle_decommitment {
++            let _span = span!(Level::INFO, "Recompute Merkle opening").entered();
++            let rebuilt = MerkleProverLifted::<B, MC::H>::commit(
++                eval_vec.clone(),
++                self.commitment.layers.len() as u32 - 1,
++                0,
++            );
++            assert_eq!(rebuilt.root(), self.commitment.root());
++            rebuilt.decommit(queries, eval_vec)
++        } else {
++            self.commitment.decommit(queries, eval_vec)
++        }
+     }
+ }
+ 
+@@ -415,3 +565,314 @@ fn print_column_size_histogram<B: BackendForChannel<MC>, MC: MerkleChannel>(
+         info!("Log size {log_size}: {count}");
+     }
+ }
++
++#[cfg(test)]
++mod low_memory_tests {
++    use super::*;
++    use crate::core::channel::Blake2sChannel;
++    use crate::core::circle::SECURE_FIELD_CIRCLE_GEN;
++    use crate::core::fields::m31::M31;
++    use crate::core::pcs::CommitmentSchemeVerifier;
++    use crate::core::vcs_lifted::blake2_merkle::Blake2sMerkleChannel;
++    use crate::core::vcs_lifted::verifier::MerkleVerifierLifted;
++    use crate::prover::backend::CpuBackend;
++    use crate::prover::backend::simd::SimdBackend;
++
++    fn polynomials<B: BackendForChannel<Blake2sMerkleChannel>>() -> Vec<CircleCoefficients<B>> {
++        // Deliberately unsorted, with equal-height columns whose stable order must be retained.
++        [6, 4, 7, 4]
++            .into_iter()
++            .enumerate()
++            .map(|(column, log_size)| {
++                CircleCoefficients::new(
++                    (0..1 << log_size).map(|row| M31::from((row + column * 31) as u32)).collect(),
++                )
++            })
++            .collect()
++    }
++
++    fn check_recomputed_tree<B: BackendForChannel<Blake2sMerkleChannel>>() {
++        let twiddles = B::precompute_twiddles(CanonicCoset::new(9).half_coset());
++        let pool = BaseColumnPool::new();
++        let mut tree = CommitmentTreeProver::<B, Blake2sMerkleChannel>::new(
++            polynomials(),
++            1,
++            &twiddles,
++            true,
++            9,
++            &pool,
++        );
++        let root = tree.commitment.root();
++        let query_sets = [vec![], vec![0], vec![1, 1, 3, 12, 511]];
++        let expected = query_sets.iter().map(|q| tree.decommit(q)).collect_vec();
++        tree.retain_merkle_root();
++        assert_eq!(tree.commitment.root(), root);
++        assert_eq!(tree.commitment.layers.len(), 10);
++        assert!(tree.commitment.layers.iter().skip(1).all(Column::is_empty));
++        for (queries, (values, extended)) in query_sets.iter().zip(expected) {
++            let (actual_values, actual) = tree.decommit(queries);
++            assert_eq!(actual_values, values);
++            assert_eq!(actual.decommitment.hash_witness, extended.decommitment.hash_witness);
++            assert_eq!(actual.aux.all_node_values, extended.aux.all_node_values);
++            if !queries.is_empty() {
++                let verifier = MerkleVerifierLifted::new(root, vec![7, 5, 8, 5], 9);
++                verifier
++                    .verify(queries, actual_values.clone(), actual.decommitment.clone())
++                    .unwrap();
++                let mut corrupted = actual_values;
++                corrupted[0][0] += M31::from(1);
++                // Use a distinct query to keep this a Merkle rejection, not a duplicate-value
++                // consistency assertion in the verifier.
++                if queries.len() == 1 {
++                    assert!(verifier.verify(queries, corrupted, actual.decommitment).is_err());
++                }
++            }
++        }
++
++        // A stale/mutated retained root must fail closed before returning an opening.
++        let old_root = tree.commitment.root();
++        tree.commitment.layers[0].set(0, Default::default());
++        assert_ne!(tree.commitment.root(), old_root);
++        assert!(
++            std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| tree.decommit(&[0]))).is_err()
++        );
++
++        let mut empty = CommitmentTreeProver::<B, Blake2sMerkleChannel>::new(
++            vec![],
++            1,
++            &twiddles,
++            true,
++            0,
++            &pool,
++        );
++        let expected = empty.decommit(&[]);
++        empty.retain_merkle_root();
++        assert_eq!(empty.commitment.layers.len(), 1);
++        let actual = empty.decommit(&[]);
++        assert_eq!(expected.0, actual.0);
++        assert_eq!(expected.1.decommitment.hash_witness, actual.1.decommitment.hash_witness);
++        assert_eq!(expected.1.aux.all_node_values, actual.1.aux.all_node_values);
++    }
++
++    fn check_pcs<B: BackendForChannel<Blake2sMerkleChannel>>(store_coeffs: bool, borrowed: bool) {
++        let config =
++            PcsConfig::from_fri_and_lifting_size(crate::core::fri::FriConfig::default(), 8); // Test-only parameters, identical in both modes.
++        let twiddles = B::precompute_twiddles(CanonicCoset::new(8).half_coset());
++        let pool = BaseColumnPool::new();
++        let make_tree = || {
++            CommitmentTreeProver::<B, Blake2sMerkleChannel>::new(
++                polynomials(),
++                1,
++                &twiddles,
++                store_coeffs,
++                8,
++                &pool,
++            )
++        };
++        let cached = make_tree();
++        let original_layers = cached.commitment.layers.iter().map(Column::to_cpu).collect_vec();
++        let sampled_points = TreeVec(vec![vec![vec![SECURE_FIELD_CIRCLE_GEN]; 4]; 2]);
++        let prove = |low_memory_mode| {
++            let mut scheme =
++                CommitmentSchemeProver::<B, Blake2sMerkleChannel>::new(config, &twiddles);
++            if store_coeffs {
++                scheme.set_store_polynomials_coefficients();
++            }
++            if low_memory_mode {
++                scheme.set_low_memory_mode();
++            }
++            let mut channel = Blake2sChannel::default();
++            scheme.commit_tree(
++                if borrowed {
++                    MaybeOwned::Borrowed(&cached)
++                } else {
++                    MaybeOwned::Owned(make_tree())
++                },
++                &mut channel,
++            );
++            let mut builder = scheme.tree_builder();
++            builder.extend_polys(polynomials());
++            builder.commit(&mut channel);
++            if low_memory_mode {
++                assert_eq!(scheme.trees[0].recompute_merkle_decommitment, !borrowed);
++                assert!(scheme.trees[1].recompute_merkle_decommitment);
++            }
++            scheme.prove_values(sampled_points.clone(), &mut channel)
++        };
++        let full = prove(false);
++        let reduced = prove(true);
++        // The proof has ordered vectors only; debug equality compares every proof field without
++        // adding a serialization dependency. End-to-end callers additionally compare bytes.
++        assert_eq!(format!("{:?}", full.proof), format!("{:?}", reduced.proof));
++        assert_eq!(full.aux.unsorted_query_locations, reduced.aux.unsorted_query_locations);
++        for (left, right) in
++            full.aux.trace_decommitment.iter().zip(reduced.aux.trace_decommitment.iter())
++        {
++            assert_eq!(left.all_node_values, right.all_node_values);
++        }
++        assert_eq!(
++            cached.commitment.layers.iter().map(Column::to_cpu).collect_vec(),
++            original_layers
++        );
++        assert!(cached.polynomials.iter().all(|poly| poly.coeffs.is_some() == store_coeffs));
++
++        let verify = |proof: CommitmentSchemeProof<_>| {
++            let mut channel = Blake2sChannel::default();
++            let mut verifier = CommitmentSchemeVerifier::<Blake2sMerkleChannel>::new(config);
++            for root in &proof.commitments.0 {
++                verifier.commit(*root, &[6, 4, 7, 4], &mut channel);
++            }
++            verifier.verify_values(sampled_points.clone(), proof, &mut channel)
++        };
++        verify(reduced.proof.clone()).unwrap();
++        let mut corrupted = reduced.proof;
++        corrupted.sampled_values[0][0][0] += SecureField::from(1);
++        assert!(verify(corrupted).is_err());
++    }
++
++    fn check_bounded_pcs<B: BackendForChannel<Blake2sMerkleChannel>>() {
++        let config =
++            PcsConfig::from_fri_and_lifting_size(crate::core::fri::FriConfig::default(), 8);
++        let twiddles = B::precompute_twiddles(CanonicCoset::new(8).half_coset());
++        let pool = BaseColumnPool::new();
++        let sampled_points = TreeVec(vec![
++            vec![
++                vec![],
++                vec![SECURE_FIELD_CIRCLE_GEN],
++                vec![SECURE_FIELD_CIRCLE_GEN; 2],
++                vec![SECURE_FIELD_CIRCLE_GEN],
++            ],
++            vec![vec![SECURE_FIELD_CIRCLE_GEN]; 4],
++        ]);
++        for borrowed in [false, true] {
++            for cache_coefficients in [false, true] {
++                let cached = CommitmentTreeProver::<B, Blake2sMerkleChannel>::new(
++                    polynomials(),
++                    1,
++                    &twiddles,
++                    cache_coefficients,
++                    8,
++                    &pool,
++                );
++                let cached_root = cached.commitment.root();
++                let prove = |max_columns: Option<usize>| {
++                    let mut scheme =
++                        CommitmentSchemeProver::<B, Blake2sMerkleChannel>::new(config, &twiddles);
++                    scheme.set_store_polynomials_coefficients();
++                    if let Some(max_columns) = max_columns {
++                        scheme.set_bounded_memory_mode(max_columns);
++                    }
++                    let mut channel = Blake2sChannel::default();
++                    scheme.commit_tree(
++                        if borrowed {
++                            MaybeOwned::Borrowed(&cached)
++                        } else {
++                            MaybeOwned::Owned(CommitmentTreeProver::new(
++                                polynomials(),
++                                1,
++                                &twiddles,
++                                true,
++                                8,
++                                &pool,
++                            ))
++                        },
++                        &mut channel,
++                    );
++                    let mut builder = scheme.tree_builder();
++                    builder.extend_polys(polynomials());
++                    builder.commit(&mut channel);
++                    if max_columns.is_some() {
++                        assert!(
++                            scheme.trees[1]
++                                .polynomials
++                                .iter()
++                                .all(|poly| poly.evals.is_none() && poly.coeffs.is_some())
++                        );
++                        assert!(
++                            scheme.trees[0]
++                                .polynomials
++                                .iter()
++                                .all(|poly| poly.evals.is_some() == borrowed)
++                        );
++                    }
++                    scheme.prove_values(sampled_points.clone(), &mut channel)
++                };
++                let baseline = prove(None);
++                for max_columns in [1, 3, 16] {
++                    let bounded = prove(Some(max_columns));
++                    assert_eq!(format!("{:?}", baseline.proof), format!("{:?}", bounded.proof));
++                    assert_eq!(
++                        baseline.aux.unsorted_query_locations,
++                        bounded.aux.unsorted_query_locations
++                    );
++                    for (left, right) in baseline
++                        .aux
++                        .trace_decommitment
++                        .iter()
++                        .zip(&bounded.aux.trace_decommitment.0)
++                    {
++                        assert_eq!(left.all_node_values, right.all_node_values);
++                    }
++                    let verify = |proof: CommitmentSchemeProof<_>| {
++                        let mut channel = Blake2sChannel::default();
++                        let mut verifier =
++                            CommitmentSchemeVerifier::<Blake2sMerkleChannel>::new(config);
++                        for root in &proof.commitments.0 {
++                            verifier.commit(*root, &[6, 4, 7, 4], &mut channel);
++                        }
++                        verifier.verify_values(sampled_points.clone(), proof, &mut channel)
++                    };
++                    verify(bounded.proof.clone()).unwrap();
++                    let mut bad_sample = bounded.proof.clone();
++                    bad_sample.sampled_values[0][1][0] += SecureField::from(1);
++                    assert!(verify(bad_sample).is_err());
++                    let mut bad_opening = bounded.proof;
++                    bad_opening.queried_values[0][0][0] += BaseField::from(1);
++                    assert!(verify(bad_opening).is_err());
++                }
++                assert_eq!(cached.commitment.root(), cached_root);
++                assert!(cached.polynomials.iter().all(
++                    |poly| poly.evals.is_some() && poly.coeffs.is_some() == cache_coefficients
++                ));
++            }
++        }
++    }
++
++    #[test]
++    fn bounded_pcs_cpu() {
++        check_bounded_pcs::<CpuBackend>();
++    }
++
++    #[test]
++    fn bounded_pcs_simd() {
++        check_bounded_pcs::<SimdBackend>();
++    }
++
++    #[test]
++    fn low_memory_tree_cpu() {
++        check_recomputed_tree::<CpuBackend>();
++    }
++
++    #[test]
++    fn low_memory_tree_simd() {
++        check_recomputed_tree::<SimdBackend>();
++    }
++
++    #[test]
++    fn low_memory_pcs_cpu() {
++        for store_coeffs in [false, true] {
++            for borrowed in [false, true] {
++                check_pcs::<CpuBackend>(store_coeffs, borrowed);
++            }
++        }
++    }
++
++    #[test]
++    fn low_memory_pcs_simd() {
++        for store_coeffs in [false, true] {
++            for borrowed in [false, true] {
++                check_pcs::<SimdBackend>(store_coeffs, borrowed);
++            }
++        }
++    }
++}
+diff --git a/crates/stwo/src/prover/pcs/quotient_ops.rs b/crates/stwo/src/prover/pcs/quotient_ops.rs
+index 124addeca..9c5998444 100644
+--- a/crates/stwo/src/prover/pcs/quotient_ops.rs
++++ b/crates/stwo/src/prover/pcs/quotient_ops.rs
+@@ -11,7 +11,8 @@ use crate::core::pcs::quotients::{
+     ColumnSampleBatch, PointSample, build_samples_with_randomness_and_periodicity,
+ };
+ use crate::prover::AccumulationOps;
+-use crate::prover::backend::ColumnOps;
++use crate::prover::air::component_prover::Poly;
++use crate::prover::backend::{Backend, Column, ColumnOps};
+ use crate::prover::poly::BitReversedOrder;
+ use crate::prover::poly::circle::{CircleEvaluation, PolyOps, SecureEvaluation};
+ use crate::prover::poly::twiddles::TwiddleTree;
+@@ -121,6 +122,104 @@ pub fn compute_fri_quotients<B: QuotientOps + AccumulationOps>(
+             )
+         });
+ 
++    combine_accumulated_numerators(
++        accumulated_numerators_vec,
++        lifting_log_size,
++        log_blowup_factor,
++        twiddles,
++    )
++}
++
++/// Computes the same DEEP quotients as `compute_fri_quotients` without retaining all expanded
++/// columns. Random powers and periodicity samples are assigned once in the original tree/column
++/// order, before any grouping or chunking. Each regenerated column contains exactly the prefix
++/// subdomain read by the cached implementation.
++pub fn compute_fri_quotients_bounded<B: Backend>(
++    polynomials: &TreeVec<Vec<&Poly<B>>>,
++    samples: &TreeVec<Vec<Vec<PointSample>>>,
++    random_coeff: SecureField,
++    lifting_log_size: u32,
++    twiddles: &TwiddleTree<B>,
++    log_blowup_factor: u32,
++    max_columns: usize,
++) -> SecureEvaluation<B, BitReversedOrder> {
++    assert!(max_columns > 0, "FRI batch size must be positive");
++    let _span =
++        span!(Level::INFO, "Compute bounded FRI quotients", class = "FRIQuotients").entered();
++    let samples_with_randomness = build_samples_with_randomness_and_periodicity(
++        samples,
++        polynomials.iter().map(|tree| tree.iter().map(|p| p.committed_domain.log_size())).collect(),
++        lifting_log_size,
++        random_coeff,
++    );
++    let mut accumulated_numerators_vec = Vec::new();
++    let grouped = zip(polynomials.iter().flatten(), samples_with_randomness.iter().flatten())
++        .sorted_by_key(|(poly, _)| poly.committed_domain.log_size())
++        .group_by(|(poly, _)| poly.committed_domain.log_size());
++    for (_, columns_and_samples) in &grouped {
++        let columns_and_samples = columns_and_samples.collect_vec();
++        let subdomain = columns_and_samples[0].0.committed_domain.split(log_blowup_factor).0;
++        let subdomain_twiddles = B::precompute_twiddles(subdomain.half_coset);
++        let mut per_size: Vec<AccumulatedNumerators<B>> = Vec::new();
++        for chunk in columns_and_samples.chunks(max_columns) {
++            let evaluations = chunk
++                .iter()
++                .map(|(poly, _)| {
++                    let domain = poly.committed_domain.split(log_blowup_factor).0;
++                    if let Some(evals) = &poly.evals {
++                        // Borrowed preprocessed trees may not retain coefficients. Copy only the
++                        // prefix needed by numerator accumulation rather than extending anything.
++                        CircleEvaluation::new(
++                            domain,
++                            (0..domain.size()).map(|row| evals.values.at(row)).collect(),
++                        )
++                    } else {
++                        assert_eq!(domain, subdomain);
++                        poly.get_evaluation_on_prefix(domain, &subdomain_twiddles)
++                    }
++                })
++                .collect_vec();
++            let sample_refs = chunk.iter().map(|(_, samples)| *samples).collect_vec();
++            let sample_batches = ColumnSampleBatch::new_vec(&sample_refs);
++            let mut chunk_acc = Vec::new();
++            B::accumulate_numerators(
++                &evaluations.iter().collect_vec(),
++                &sample_batches,
++                &mut chunk_acc,
++                0,
++            );
++            // Merge equal-size sums before the original cross-size lifting step. Every random
++            // power has already been assigned globally; no power is restarted at a chunk edge.
++            for acc in chunk_acc {
++                if let Some(existing) =
++                    per_size.iter_mut().find(|entry| entry.sample_point == acc.sample_point)
++                {
++                    B::accumulate(
++                        &mut existing.partial_numerators_acc,
++                        &acc.partial_numerators_acc,
++                    );
++                    existing.first_linear_term_acc += acc.first_linear_term_acc;
++                } else {
++                    per_size.push(acc);
++                }
++            }
++        }
++        accumulated_numerators_vec.extend(per_size);
++    }
++    combine_accumulated_numerators(
++        accumulated_numerators_vec,
++        lifting_log_size,
++        log_blowup_factor,
++        twiddles,
++    )
++}
++
++fn combine_accumulated_numerators<B: QuotientOps + AccumulationOps>(
++    accumulated_numerators_vec: Vec<AccumulatedNumerators<B>>,
++    lifting_log_size: u32,
++    log_blowup_factor: u32,
++    twiddles: &TwiddleTree<B>,
++) -> SecureEvaluation<B, BitReversedOrder> {
+     // Group and accumulate the numerators per sample point: the accumulations (of different
+     // lengths) get lifted and accumulated to a single vector. After this step, there is a single
+     // accumulation per sample point.
+@@ -183,6 +282,114 @@ mod tests {
+     use crate::prover::poly::circle::{CircleCoefficients, CircleEvaluation, PolyOps};
+     use crate::prover::{CommitmentSchemeProver, SecureField};
+ 
++    fn bounded_quotients_match<B: Backend>() {
++        use super::compute_fri_quotients_bounded;
++        use crate::prover::air::component_prover::Poly;
++        for log_blowup in [1, 3] {
++            let sizes = [8, 3, 5, 4, 5, 8, 5, 3, 8, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
++            let lifting_log_size = 8 + log_blowup + 1;
++            let coeffs = sizes
++                .into_iter()
++                .enumerate()
++                .map(|(column, log_size)| {
++                    CircleCoefficients::<B>::new(
++                        (0..1 << log_size)
++                            .map(|row| {
++                                M31::from(match column {
++                                    0 => 0,
++                                    1 => {
++                                        if row == 0 {
++                                            7
++                                        } else {
++                                            0
++                                        }
++                                    }
++                                    _ => (row * 19 + column * 7) as u32,
++                                })
++                            })
++                            .collect(),
++                    )
++                })
++                .collect_vec();
++            let evals = coeffs
++                .iter()
++                .map(|p| p.evaluate(CanonicCoset::new(p.log_size() + log_blowup).circle_domain()))
++                .collect_vec();
++            let points = [SECURE_FIELD_CIRCLE_GEN, SECURE_FIELD_CIRCLE_GEN.mul(19)];
++            let samples = coeffs
++                .iter()
++                .enumerate()
++                .map(|(column, poly)| {
++                    points
++                        .iter()
++                        .take(column % 3)
++                        .map(|&point| PointSample {
++                            point,
++                            value: poly.eval_at_point(point.repeated_double(
++                                lifting_log_size - (poly.log_size() + log_blowup),
++                            )),
++                        })
++                        .collect_vec()
++                })
++                .collect_vec();
++            let samples = TreeVec(vec![samples[..7].to_vec(), samples[7..].to_vec()]);
++            let columns = TreeVec(vec![evals[..7].iter().collect(), evals[7..].iter().collect()]);
++            let twiddles = B::precompute_twiddles(CanonicCoset::new(lifting_log_size).half_coset());
++            let alpha = SecureField::from_m31_array([11, 13, 17, 19].map(M31::from));
++            let expected = compute_fri_quotients(
++                &columns,
++                &samples,
++                alpha,
++                lifting_log_size,
++                &twiddles,
++                log_blowup,
++            )
++            .values
++            .to_cpu();
++            for retain_some_evals in [false, true] {
++                let polys = coeffs
++                    .iter()
++                    .cloned()
++                    .zip(evals.iter().cloned())
++                    .enumerate()
++                    .map(|(column, (coeffs, evals))| {
++                        let mut poly = Poly::new(Some(coeffs), evals);
++                        if retain_some_evals && column % 2 == 0 {
++                            poly.coeffs = None; // Borrowed preprocessed cache without coefficients.
++                        } else {
++                            poly.evict_evaluations();
++                        }
++                        poly
++                    })
++                    .collect_vec();
++                let poly_refs =
++                    TreeVec(vec![polys[..7].iter().collect(), polys[7..].iter().collect()]);
++                for max_columns in [1, 3, 16, 17, 64] {
++                    let actual = compute_fri_quotients_bounded(
++                        &poly_refs,
++                        &samples,
++                        alpha,
++                        lifting_log_size,
++                        &twiddles,
++                        log_blowup,
++                        max_columns,
++                    );
++                    assert_eq!(actual.values.to_cpu().columns, expected.columns);
++                }
++            }
++        }
++    }
++
++    #[test]
++    fn bounded_quotients_cpu() {
++        bounded_quotients_match::<CpuBackend>();
++    }
++
++    #[test]
++    fn bounded_quotients_simd() {
++        bounded_quotients_match::<SimdBackend>();
++    }
++
+     #[test]
+     fn test_quotients_are_low_degree() {
+         let mut rng = SmallRng::seed_from_u64(0);
+-- 
+2.43.0
+

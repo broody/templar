@@ -50,7 +50,7 @@ This run records **four successful native spends, two deposits, five adversarial
 
 Final wallet checks reconcile 1,200 unspent units to pool tokens: Alice 400 controlled, Dave 500 controlled plus 100 ordinary, and Carol 200 ordinary. Bob has withdrawn 100. Restored and viewed notes preserve their controller and policy. Network gas is charged for reverted transactions even though pool state and synthetic token transfers revert.
 
-The controller is an immutable-key Stark ECDSA fixture with a scoped off-chain policy, not a full application policy service. It has no escape, key rotation or revocation mechanism. Controller refusal can freeze value. The [controller architecture](/architecture/controllers) explains approval and disclosure.
+The controller is an immutable-key Stark ECDSA fixture with a scoped off-chain policy, not a full application policy service. It has no escape, key rotation or revocation mechanism. Controller refusal can freeze value. [Policy notes](/architecture/policy-notes) (ADR-0025) supersede this design; this evidence is kept as history.
 
 | Operation | Prover request | Peak prover RSS | Proof size |
 | --- | ---: | ---: | ---: |
@@ -78,7 +78,65 @@ Six adversarial transactions were rejected without changing pool or token state:
 
 These are single runs on four cores of the larger host with a 16 GiB process cap and no swap. The Ekubo operation used 103,155,120 L2 gas and cost 1.813773 test STRK at the recorded prices; declaration fees are separate. These measurements do not qualify a physical 16 GiB desktop or predict mainnet fees. Completed receipts, source checks and measurements are archived in `bench/return-note-e2e/results/`.
 
-The [return-note architecture](/architecture/returns) preserves ordinary ownership and spending after funding. The external operation, amounts and return deposit remain public. Production integration, independent review, supported token/route policies, scalable synchronization and desktop qualification remain open.
+The [open-note architecture](/architecture/open-notes) preserves ordinary ownership and spending after funding. The external operation, amounts and return deposit remain public. Production integration, independent review, supported token/route policies, scalable synchronization and desktop qualification remain open.
+
+## Open notes on the compact path
+
+The compact client proof (R0 V3) binds a public execution intent and an optional identity handle. The M31 pool's `apply_spend_with_invoke` settles `INVOKE` (Ekubo- and Vesu-style anonymizers) and `COMPUTE` (upstream's shadow-account anonymizer, restricted to owner-allowed classes).
+
+**Local end to end with real proofs:**
+
+| Stage | Result |
+| --- | --- |
+| Client proof | 2.0 s, 0.31 GiB |
+| Bridge | 19/19 cases, 1.99M steps |
+| Virtual OS | 3.34M steps, exact message |
+| PROOF2 | 119.6 s, 253,430 bytes, 52.1 GiB |
+| Settlement | passes in snforge with the real proof facts |
+
+One output plus one funded open note costs 62.3M L2 gas in the pool call.
+
+**Review.** Three independent reviews (relation math, statement binding, pool contract) found that a public nonce on the public identity handle let anyone enumerate a user's shadow accounts. The nonce is now fixed at zero, and accounts are separated by a private scope. The pool rejects malformed destinations before any external effect, and `COMPUTE` targets must be allowed classes. 32 adversarial open-note tests pass: 12 from the contract review and 20 new, including the target allowlist. A re-review of the fixes is pending.
+
+**Sepolia (2026-09-24):**
+- The deposits are on chain.
+- The proof-carrying swap of 300 A through upstream's unchanged Ekubo anonymizer and the live Ekubo router, into an open note of 299 B, succeeds when the exact signed transaction is simulated against live state: 150.3M L2 gas, 3.80 STRK.
+- The gateway still rejects PROOF2 (`PROOF_VERSION_NOT_ALLOWED`).
+- Evidence is in `bench/m31-sepolia/results/v3-open-note/`.
+
+A shadow-account end to end with upstream's anonymizer has not been run.
+
+## Policy notes
+
+The design (ADR-0025, `docs/policy-note-spec.md`) was reviewed independently before implementation: three revisions, ending with GO from both the math and protocol reviews. The implementation adds the P1 relation, its bridge and account, `apply_policy_spend`, the reference escrow and the wallet's seed-recoverable backup.
+
+**Tests:**
+- P1 relation: 7 tests, covering the native reference, tampered witnesses, the refund-slot rules and finalization.
+- P1 bridge on a real proof: 32/32 cases, including every altered statement field and an R0 proof.
+- Pool: 181 tests, of which 79 are policy tests. They cover decoy notes on another escrow, unset approvals, controller revert, re-entry and wrong return, rollback of a failed callback, and replay.
+
+**Local end to end with real proofs** (`bench/m31-pool/policy_e2e.py`):
+1. A depositor creates two escrow notes by deposit.
+2. An executor holding only one note's opening proves the arbiter-approved release.
+3. The depositor recovers the other note from the seed alone and proves its refund after the deadline.
+4. Both settle through the P1 PROOF2 adapter, and the pool's tree ends at the root the beneficiary's wallet computed.
+5. The beneficiary finds its notes by trial decryption and proves an ordinary spend of them.
+
+| | Release | Refund |
+| --- | ---: | ---: |
+| Client proof | 5.3 s, 0.31 GiB | 1.9 s, 0.30 GiB |
+| Bridge | 2.02M steps | 1.96M steps |
+| Virtual OS | 3.41M steps | 3.33M steps |
+| PROOF2 | 111.0 s, 50.9 GiB | 110.8 s, 51.7 GiB |
+| `apply_policy_spend` | 52.4M L2 gas | 51.5M L2 gas |
+
+The implementation review found no blocking issue in the relation or the contracts; its wallet and defense-in-depth findings are addressed, and both reviewers' tests (33 contract and 11 malicious-witness) are in the repository. The wallet's derivations and encodings are pinned by known-answer vectors.
+
+**Still open:**
+- a real-proof split settlement;
+- private creation through an ordinary output, end to end;
+- Sepolia, which is blocked on PROOF2 acceptance at the gateway;
+- a production wallet key scheme: the end to end uses fixture spending and incoming keys.
 
 ## Measured resource envelope
 
@@ -113,8 +171,8 @@ A separate compact-client experiment has verified two synthetic Rust proofs in
 Cairo and rejected nine altered inputs. This establishes a serialization and
 verifier bridge, not a payment prover or a completed native PROOF1 round trip.
 The upstream circuit baseline still fails a 2 GiB client cap, completing at
-2.61 GiB RSS under an 8 GiB cap. Client privacy, a real depth-32 payment, server
-wrapping, and full private-client WASM remain unqualified. The accepted architecture is unchanged;
+2.61 GiB RSS under an 8 GiB cap. That baseline does not qualify client privacy,
+a real depth-32 payment, server wrapping or full private-client WASM. The accepted architecture is unchanged;
 the experiment and its limits are recorded in `bench/direct-air/`.
 
 A follow-up proves the actual felt252/Poseidon arithmetic for two **public**
@@ -131,8 +189,8 @@ capacity; a fresh browser passes a 4 GiB process-group cap. Browser plus harness
 memory peaks at 2.21–2.23 GiB with zero swap, and the page heartbeat remains active.
 These distinct memory measurements qualify this public workload's browser
 portability on the development host. A complete private payment, consumer
-hardware, other browsers, and mobile remain unqualified. The supported client
-privacy construction and its full cost are the next architecture decision.
+hardware, other browsers, and mobile remain unqualified. That public benchmark
+does not establish the privacy construction or cost of a complete private payment.
 Evidence and reproduction are in `bench/wasm-membership/`.
 
 A follow-up M31 tree experiment in
@@ -163,8 +221,8 @@ repeated deterministic fixtures (same proof-of-work search), not latency
 distributions; Cairo figures are local VM resources, not network fee quotes.
 RSS, WASM linear memory, and cgroup charge are distinct metrics above.
 
-Source review of the pinned and current upstream implementations has not yet
-established a supported compact client privacy construction. The concrete
+Source review of the pinned and current upstream implementations did not itself
+establish a supported compact client privacy construction. The concrete
 upstream fixed-Cairo privacy workflow does not by itself qualify a custom AIR
 or new verifier-circuit topology. Public membership's native path and lookup
 checks must also become proof constraints before those inputs can be hidden.
@@ -180,6 +238,51 @@ three completed synthetic proofs, including the unsplit reference, match
 byte-for-byte and pass the original verifier libraries. The unchanged wrapper
 therefore misses the client budget; this does not establish the footprint of a
 different compact private construction or its eventual WASM implementation.
+
+### Proposed compact-client architecture
+
+**ADR-0024 is Proposed; local Cairo/PROOF1 proving remains the accepted
+architecture.** The proposal evaluates a compact private proof on the client
+and a service that verifies and wraps it into PROOF1. The service receives
+public inputs and proof bytes; private payment validity must be enforced in
+the client proof, with the full verification enforced by the outer proof.
+
+The custom M31 membership experiment in `bench/m31-private-e2e/` demonstrates
+a private leaf preimage and one depth-32 path. Three native proofs take
+**1.17–1.20 seconds at 63–64 MiB peak RSS**. Three proofs in a Chrome WASM worker
+take **1.89–2.12 seconds**, with linear memory stable at **79.94 MiB**. All six
+pass a separate native verifier given only public input and proof; the browser
+also accepts a native artifact. Proofs are roughly 3.4 MiB. Whole-browser
+memory is additional: sampled totals peak near 1.08 GiB summed RSS and
+466.5 MiB summed PSS on the development workstation.
+
+Protocol/source review and the independent math/PCS challenge reviews support
+this research milestone under their explicit random-oracle and randomness
+assumptions. The numerical bound concerns single-proof knowledge error in the
+classical programmable random-oracle model; unrestricted adaptive multi-proof
+service composition remains open. This is not a production audit or a full
+payment benchmark.
+
+A separately versioned Blake candidate preserves the membership relation and
+M31 application tree. Native proofs take **0.98–1.03 seconds at 52.7–54.5 MiB
+peak RSS**; Chrome WASM proofs take **1.71–1.92 seconds at 63.25 MiB linear-memory
+high water**. Proofs are approximately 2 MB. Native/browser cross-checks and
+version/rejection controls pass; evidence is in `bench/m31-private-blake/`.
+
+A public hash-work component produces genuine PROOF1 accepted by the original
+verifier, but the complete private membership verifier has not been wrapped.
+A specialized server hash circuit verifies in Cairo; checked M31 inversion
+reduces its verification steps by **15.37%**. Actual OS work still requires
+log22 trace components. A larger experimental configuration exhausts a
+**96 GiB server cap** before producing a proof and requires different trusted
+verifier parameters. These are server capacity findings; the compact-client
+measurements above do not include wrapping. See `bench/m31-private-wrapper/`.
+
+Adoption requires reviewed complete ordinary payment constraints, measured
+server wrapping, actual Sepolia payment acceptance, and an explicit hash/note
+format and service-availability decision. The proposal is recorded in
+`docs/adr/0024-compact-client-proofs-and-server-wrapping.md`; source identities,
+measurements and limitations are in `bench/m31-private-e2e/results/README.md`.
 
 ### Sepolia reference measurements
 
@@ -242,7 +345,7 @@ Submission uses sncast signing and the official Sepolia gateway for proof-bearin
 | Desktop operation | Reduce memory needs; test repeated and worst-case workloads on physical target machines |
 | Synchronization | Authenticated bulk history, private spent-status queries, historical availability, and scale testing |
 | Wallet experience | Secure key storage, address authentication, recovery UX, optional viewing exports, rotation, and unsolicited-note handling |
-| Controller operation | Application policies, availability, key rotation/revocation, escape design, and independent review |
+| Policy notes | Implementation review, application controllers, private creation end to end, and Sepolia once PROOF2 is accepted |
 | Transport | Intended wallet submission, estimation, bounded retry behavior, and proof attachment |
 | Contract readiness | Production token behavior, adversarial callbacks, governance, and independent security review |
 | Deployment | Safe format boundaries, mainnet qualification, and an explicit deployment policy |

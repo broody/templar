@@ -1,0 +1,43 @@
+{
+  "source": "Sepolia via local node http://127.0.0.1:9545/rpc/v0_9, blocks 15506259-15506308 (median prices; L2 price flat across all 50 blocks)",
+  "l2_gas_price_fri": 20751159341.0,
+  "l1_data_gas_price_fri": 581373080519.0,
+  "fee_strk": {
+    "m31_compress_frontier": {
+      "deposit": 1.1974,
+      "full_withdrawal": 0.0392,
+      "partial_withdrawal": 1.0801,
+      "transfer_unbatched": 2.1107,
+      "transfer_at_even_index": 1.0755,
+      "transfer_at_odd_index_1": 1.1073,
+      "transfer_at_odd_index_3": 1.172,
+      "transfer": 1.1073
+    },
+    "m31_compress_nodes": {
+      "deposit": 1.2412,
+      "transfer_unbatched": 2.1998,
+      "transfer_at_even_index": 1.1209
+    },
+    "m31_sponge_frontier": {
+      "deposit": 2.2915,
+      "full_withdrawal": 0.0392,
+      "partial_withdrawal": 2.1742,
+      "transfer_unbatched": 4.2989,
+      "transfer_at_even_index": 2.1695,
+      "transfer_at_odd_index_1": 2.2355,
+      "transfer_at_odd_index_3": 2.3686,
+      "transfer": 2.2355
+    },
+    "m31_sponge_nodes": {
+      "deposit": 2.3353,
+      "transfer_unbatched": 4.3879
+    },
+    "felt252_reference": {
+      "deposit": 0.1303,
+      "transfer": 0.24,
+      "partial_withdrawal": 0.1404,
+      "full_withdrawal": 0.0294
+    }
+  },
+  "formula": "l2_gas * l2_gas_price + l1_data_gas * l1_data_gas_price (pool call only; no account validation, calldata or real fact check)"
+}

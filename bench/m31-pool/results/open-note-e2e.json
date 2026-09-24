@@ -1,0 +1,27 @@
+{
+ "client": {
+  "trace_log_size": 18,
+  "blinding_rows": 2390,
+  "proving_seconds": 2.038612692,
+  "max_rss_gib": 0.3148460388183594,
+  "proof_felts": 29390
+ },
+ "bridge": {
+  "passed": 19,
+  "cases": 19,
+  "steps": 1987450
+ },
+ "os": {
+  "steps": 3343612,
+  "seconds": 6.445106332999785,
+  "exact_message": true
+ },
+ "proof2": {
+  "prove_seconds": 119.645528844,
+  "proof_bytes": 253430,
+  "verified": true,
+  "max_rss_gib": 52.0989875793457
+ },
+ "binding": "0x3c7621a6c1e2ad16d087f10fd981cffb8cff0829ae3ec140b2431043cff9825",
+ "intent": "0x17f7abcba533cc38f842492627e58c38ea1209c7851c575e12fa9d365087466"
+}

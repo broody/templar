@@ -1,0 +1,63 @@
+{
+  "actual_fee": {
+    "amount": "0x12861626d6be440",
+    "unit": "FRI"
+  },
+  "block_hash": "0x1dff3e2f12929980920fb95f18973acf868417df9ec9e627533185d2ffe0414",
+  "block_number": 15513933,
+  "events": [
+    {
+      "data": [
+        "0x29356229c06913f8c58b548559e7192f4975db46084d85140fac79c1c59b158",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x0",
+        "0x5a4044e5e626f566735e43f01268d4a0954647710582fcfd278acca01cc0c09",
+        "0x5",
+        "0x723cf2e96220d78ca0ea1f51f9a62c8c45a79ac848151771c3049e5a7a3aa09",
+        "0x2cf1508719af6bea1642429465a622812f8e5dc8d8f72fa52e2a6ac757907cf",
+        "0x242955fcd57fc3952339dddf28cadc88c68467fd8e05c8f5caa040ef623cba2",
+        "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+        "0x1000",
+        "0x677899bd75ee8ff69ad63247ae3f9e427f879468878697c760edfce5c5e7ac"
+      ],
+      "from_address": "0x2ceed65a4bd731034c01113685c831b01c15d7d432f71afb1cf1634b53a2125",
+      "keys": [
+        "0x26b160f10156dea0639bec90696772c640b9706a47f5b8c52ea1abe5858b34d"
+      ]
+    },
+    {
+      "data": [
+        "0x1",
+        "0x1",
+        "0x29356229c06913f8c58b548559e7192f4975db46084d85140fac79c1c59b158"
+      ],
+      "from_address": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+      "keys": [
+        "0x1dcde06aabdbca2f80aa51392b345d7549d7757aa855f7e37f5d335ac8243b1",
+        "0x737ab32b38078fc2a794600a4fa8ff4fe34118125db5896c8b0088351bfec01"
+      ]
+    },
+    {
+      "data": [
+        "0x12861626d6be440",
+        "0x0"
+      ],
+      "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+      "keys": [
+        "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8"
+      ]
+    }
+  ],
+  "execution_resources": {
+    "l1_data_gas": 704,
+    "l1_gas": 0,
+    "l2_gas": 3949200
+  },
+  "execution_status": "SUCCEEDED",
+  "finality_status": "ACCEPTED_ON_L2",
+  "messages_sent": [],
+  "transaction_hash": "0x737ab32b38078fc2a794600a4fa8ff4fe34118125db5896c8b0088351bfec01",
+  "type": "INVOKE"
+}

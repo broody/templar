@@ -1,0 +1,18 @@
+[package]
+name = "templar_private_wrapper_hash_probe"
+version = "0.1.0"
+edition = "2024_07"
+
+[lib]
+
+[[target.executable]]
+
+[dependencies]
+cairo_execute = "2.18.0"
+
+[dev-dependencies]
+cairo_test = "2.18.0"
+
+[cairo]
+enable-gas = false
+allow-warnings = false

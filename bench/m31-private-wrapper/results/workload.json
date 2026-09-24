@@ -1,0 +1,64 @@
+{
+  "proof_sha256": "ef2735e10988a2704be45f999e37f258df79e50d819e774b21b9508a8bcc2f37",
+  "proof_bytes": 3586428,
+  "unique_queries": 120,
+  "trace_leaves": 239,
+  "uncached_counts": {
+    "claims": 1,
+    "small": 1701,
+    "base": 239,
+    "node": 20919
+  },
+  "cached_counts": {
+    "claims": 1,
+    "small": 1701,
+    "base": 239,
+    "node": 5678
+  },
+  "uncached_shake_permutations": 77225,
+  "cached_shake_permutations": 31502,
+  "candidate_cost_only": true,
+  "candidate_prefix": "Templar-private-membership-BLAKE2S-v1",
+  "candidate_salts": {
+    "64": {
+      "message_lengths": {
+        "claims": 38341,
+        "small": 181,
+        "base": 4929,
+        "node": 161
+      },
+      "uncached_compressions": 87102,
+      "cached_compressions": 41379
+    },
+    "96": {
+      "message_lengths": {
+        "claims": 38373,
+        "small": 213,
+        "base": 4961,
+        "node": 161
+      },
+      "uncached_compressions": 88803,
+      "cached_compressions": 43080
+    },
+    "128": {
+      "message_lengths": {
+        "claims": 38405,
+        "small": 245,
+        "base": 4993,
+        "node": 161
+      },
+      "uncached_compressions": 89043,
+      "cached_compressions": 43320
+    },
+    "192": {
+      "message_lengths": {
+        "claims": 38469,
+        "small": 309,
+        "base": 5057,
+        "node": 161
+      },
+      "uncached_compressions": 90984,
+      "cached_compressions": 45261
+    }
+  }
+}

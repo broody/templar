@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/broody/development/templar/bench/m31-sepolia/flow.py", line 147, in <module>
+    deposit(name, owner, amount)
+  File "/home/broody/development/templar/bench/m31-sepolia/flow.py", line 84, in deposit
+    invoke('deposit-' + name, POOL, 'deposit', [TOKEN, amount, 9, *n['inner'], 10, *n['ciphertext']], 150_000_000, HERE)
+  File "/home/broody/development/templar/bench/m31-sepolia/sepolia.py", line 144, in invoke
+    return normal_tx(name, ['invoke', '--contract-address', h(address), '--function', fn,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/broody/development/templar/bench/m31-sepolia/sepolia.py", line 139, in normal_tx
+    receipt(v['transaction_hash'], path.parent / 'receipt.json')
+  File "/home/broody/development/templar/bench/m31-sepolia/sepolia.py", line 122, in receipt
+    assert v['execution_status'] == expected, (tx, v.get('execution_status'), v.get('revert_reason'))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('0x07db3415cdd55c4a2adc3c2ef001d5e685a4014966dac71a1d4d37034e3ad2b2', 'REVERTED', 'Insufficient max L2Gas: max amount: 150000000, actual used: 188065680.')

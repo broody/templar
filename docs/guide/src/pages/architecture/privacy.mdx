@@ -71,10 +71,10 @@ The push pool owner can change the verifier and fee configuration. A verifier th
 
 Correct statement code, the recursive privacy pipeline, Starknet consensus and native verification, compatible tokens, secure keys, and available encrypted history remain necessary. The native verifier cannot repair a missing application invariant. The [status page](/status) records the remaining qualification work.
 
-## Controlled-note disclosure
+## Policy-note disclosure
 
-A controlled spend publicly identifies its controller. Its authorizer sees the scoped amounts, policies, nullifiers, output commitments and withdrawal destinations needed for its decision. This can link activity from that controller’s perspective. It does not receive spending keys or membership paths. Receiving and restoring a controlled note does not remove its approval requirement. See [controlled notes](/architecture/controllers).
+A policy note's creation looks like any other note. Its settlement publicly identifies its controller, handle, `policy_id`, outcome and deadline, and links the settlement to that application case. Fixed-outcome amounts and receivers stay hidden; a split reveals its public amount. See [policy notes](/architecture/policy-notes).
 
 ## External operations
 
-A [return note](/architecture/returns) keeps proceeds usable through ordinary private notes. The external operation and its return deposit remain publicly linked. It does not conceal an AMM trade or remove transaction-sender, gas-funding or amount/timing correlation. Supported adapter routes and compatible token behavior remain explicit assumptions.
+An [open note](/architecture/open-notes) keeps proceeds usable through ordinary private notes. The external operation and its return deposit remain publicly linked. It does not conceal an AMM trade or remove transaction-sender, gas-funding or amount/timing correlation. A shadow account's actions are linked to each other by design. Supported adapter routes and compatible token behavior remain explicit assumptions.

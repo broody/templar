@@ -1,0 +1,30 @@
+{
+  "builtin_segments": {
+    "add_mod_builtin": null,
+    "bitwise_builtin": {
+      "begin_addr": 7176101,
+      "stop_ptr": 7176181
+    },
+    "ec_op_builtin": null,
+    "mul_mod_builtin": null,
+    "output": {
+      "begin_addr": 6127476,
+      "stop_ptr": 6127477
+    },
+    "pedersen_builtin": {
+      "begin_addr": 6127477,
+      "stop_ptr": 6127525
+    },
+    "poseidon_builtin": {
+      "begin_addr": 7176181,
+      "stop_ptr": 7372789
+    },
+    "range_check96_builtin": null,
+    "range_check_builtin": {
+      "begin_addr": 6127525,
+      "stop_ptr": 7176101
+    }
+  },
+  "pc_count": 33291,
+  "seconds": 5.394746806
+}

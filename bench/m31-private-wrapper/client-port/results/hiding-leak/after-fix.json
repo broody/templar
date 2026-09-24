@@ -1,0 +1,18 @@
+{
+  "base_trace_columns": 16,
+  "blinding_free_leak_confirmed": false,
+  "blinding_iterations": 2390,
+  "d_extension_identical_across_seeds": false,
+  "fri": "FriConfig { pow_bits: 26, log_blowup_factor: 2, log_last_layer_degree_bound: 0, n_queries: 35, fold_step: 4 }",
+  "hits": {
+    "d_in_seed_a": 35,
+    "d_in_seed_b": 0,
+    "op0_in_seed_a": 35,
+    "op0_in_seed_b": 0
+  },
+  "lde_points": 1048576,
+  "op0_extension_points_equal_across_seeds": 0,
+  "opened_queries": 35,
+  "scope": "R0 V2 transfer, arithmetic profile, compressed nodes; proof with seed A, lookups in seed B's committed trace",
+  "trace_log_size": 18
+}

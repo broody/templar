@@ -1,0 +1,59 @@
+{
+  "actual_fee": {
+    "amount": "0x149fbd7a54c642a",
+    "unit": "FRI"
+  },
+  "block_hash": "0x2565dd882c057691475c31c728ec42d68ce0e1a39b01c3576cb5558ddc75474",
+  "block_number": 15538399,
+  "events": [
+    {
+      "data": [
+        "0x176012200fd867044a34ddbc7ac5d2286f27ae75537d3f57dad8a1074344d07",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x0",
+        "0x6eedab0f977c20d2d46795fc2f9b209002bb8a0c31436406fe4ef75f9816243",
+        "0x5",
+        "0x6335784eaf51ccc7731809cd4217b731e37ce49cb90cd5e0b6aee5eac3d786",
+        "0x355de63e17156aafe59f25640a2fd37a696a07fe3a2a139ca46b0e71bbfa22e",
+        "0x512d39f2be00a93462bdf0747e2ff8a5b94a9258b358a0d2ce23b1afcbe94ba",
+        "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+        "0x1000",
+        "0xf0850663959b356c9db4c6ad264c256a53bc420ec1c78aa6d9db3d1bed5812"
+      ],
+      "from_address": "0x2ceed65a4bd731034c01113685c831b01c15d7d432f71afb1cf1634b53a2125",
+      "keys": [
+        "0x26b160f10156dea0639bec90696772c640b9706a47f5b8c52ea1abe5858b34d"
+      ]
+    },
+    {
+      "data": [],
+      "from_address": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+      "keys": [
+        "0x1dcde06aabdbca2f80aa51392b345d7549d7757aa855f7e37f5d335ac8243b1",
+        "0x22a5ab0b849a568c6a032e3846abb70783ff446d3f5eab14cd208cb4e0ca0ee"
+      ]
+    },
+    {
+      "data": [
+        "0x149fbd7a54c642a",
+        "0x0"
+      ],
+      "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+      "keys": [
+        "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8"
+      ]
+    }
+  ],
+  "execution_resources": {
+    "l1_data_gas": 704,
+    "l1_gas": 0,
+    "l2_gas": 4025175
+  },
+  "execution_status": "SUCCEEDED",
+  "finality_status": "ACCEPTED_ON_L2",
+  "messages_sent": [],
+  "transaction_hash": "0x22a5ab0b849a568c6a032e3846abb70783ff446d3f5eab14cd208cb4e0ca0ee",
+  "type": "INVOKE"
+}

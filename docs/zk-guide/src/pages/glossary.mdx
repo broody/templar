@@ -1,0 +1,148 @@
+---
+showAskAi: false
+title: Glossary
+description: Quick definitions for every term used in this guide.
+---
+
+<div className="guide-eyebrow">Reference</div>
+
+# Glossary
+
+**AIR** — Algebraic Intermediate Representation: a computation's honesty
+condition written as short per-row polynomial equations over the trace
+([trace and AIR](/starks/trace-and-air)).
+
+**AIR constraint** — one such equation; must hold on every row (and across
+row neighborhoods). Degree ≤ 2 in this stack.
+
+**Arithmetic-only profile** — a stwo-circuits component set of just `eq` and
+`qm31_ops`, dropping the XOR/range lookup tables that dominate client memory
+([two ways to build the client proof](/starknet/client-proof-routes)).
+
+**Blowup** — the ratio of evaluation-domain size to trace size; buys room
+for FRI and cheap random testing. Pinned config: `3` (8× domain)
+([commitments](/proofs/commitments)).
+
+**Blinding** — adding prover-known randomness to a proof so its observables
+become simulatable. Two forms: row padding and polynomial masking
+([blinding in practice](/privacy/blinding)).
+
+**Channel** — the Fiat–Shamir object: hashes in every artifact, spits out
+random challenges. Blake2s-based here
+([what a proof system is](/proofs/what-is-a-proof-system)).
+
+**Claimed sum** — the public side of a lookup's fraction identity; mixed
+into the channel and enforced in-circuit
+([lookups](/starks/lookups)).
+
+**Commitment** — a short, binding fingerprint of a big table; here, a
+Merkle root over extended evaluations.
+
+**Completeness / Soundness / Zero-knowledge** — the three proof-system
+dials: honest provers always succeed / liars almost never / observers
+learn nothing ([what a proof system is](/proofs/what-is-a-proof-system)).
+
+**Coset** — a translate of a subgroup; all evaluation domains here are
+circle cosets of power-of-two size. Trace and evaluation cosets are
+disjoint ([circle group](/foundations/circles)).
+
+**Cairo** — the virtual machine whose every execution is STARK-provable;
+Starknet's programming language
+([how Starknet proves](/starknet/how-starknet-proves)).
+
+**Client proof** — the already-zero-knowledge proof generated on the user's
+device for the private payment transition. In the compact architecture, a
+server verifies it without receiving the witness
+([client proofs and server wrapping](/starknet/client-proof-wrapping)).
+
+**Circuit hash** — `H(blowup, component log sizes, preprocessed root)`; mixed
+into a stwo-circuits proof's transcript and pinned by the verifier so it
+accepts exactly one circuit ([two ways to build the client proof](/starknet/client-proof-routes)).
+
+**DEEP-ALI** — the check tying OOD samples, query openings, and the
+composition polynomial together via line quotients; "ALI" for algebraic
+linking identity ([what the verifier sees](/starks/openings)).
+
+**felt252** — Starknet's 252-bit prime field; carried in proofs as 28
+nine-bit M31 limbs ([Cairo and S-two](/starknet/cairo-and-s-two)).
+
+**Fiat–Shamir** — replacing interactive challenges with hashes of the
+transcript; makes proofs non-interactive.
+
+**FRI** — the protocol proving a committed object is close to low-degree,
+by repeated random folding down to a revealed constant
+([FRI](/starks/fri)).
+
+**Fold complement (FRI witness)** — the ~15 coset-sibling values per query
+per layer that complete the folding check; part of the artifact.
+
+**Lifting** — committing all trees on one common domain size (23 here) so
+openings align.
+
+**LogUp** — the lookup argument: membership proved via a random-fraction
+identity over committed multiplicities
+([lookups](/starks/lookups)).
+
+**Low-degree extension (LDE)** — evaluating a degree-`n` polynomial on
+`n·blowup` points; the thing Merkle-committed.
+
+**M31** — the prime `2³¹−1`; the fast base field, Mersenne-friendly for
+SIMD ([finite fields](/foundations/fields)).
+
+**Merkle tree** — hash tree; root = commitment, path = opening
+([commitments](/proofs/commitments)).
+
+**Multiplicity** — per-table-row count of how often a lookup entry was
+used; committed, and therefore open — a leak channel of its own.
+
+**Observation inventory** — the full list of values a verifier learns from
+an artifact (~40–50k functionals for a payment statement); the object every
+hiding design must drown
+([what the verifier sees](/starks/openings)).
+
+**OOD (out-of-domain) sample** — every committed column evaluated at one
+random off-domain point; the global consistency anchor — and the primary
+leak channel ([what the verifier sees](/starks/openings)).
+
+**PoW (proof of work)** — grinding a nonce so challenge positions become
+adversarially unpredictable; contributes `pow_bits` to the security budget.
+
+**Poseidon** — Starknet's hash; a Hades permutation over felt252, with
+purpose-built AIR components.
+
+**Proof-of-work grinding / security bits** — `security = pow_bits +
+blowup · queries`; pinned: `27 + 3·23 = 96` ([FRI](/starks/fri)).
+
+**PROOF1 / PROOF2** — Starknet's native proof-verification versions;
+PROOF1 is the demonstrated gateway path for user-proven payment proofs.
+PROOF2 (v0.14.4) adds a large-proof path for traces of 2^25–2^29 rows, which
+the server wrapper uses ([how Starknet proves](/starknet/how-starknet-proves)).
+
+**QM31** — the "secure field": 4 M31 coordinates (~124 bits); every
+security-critical value lives here ([finite fields](/foundations/fields)).
+
+**Simulator** — the zero-knowledge test: an algorithm knowing only public
+data whose transcript is indistinguishable from the real prover's
+([what zero-knowledge really means](/privacy/what-zk-means)).
+
+**SNARK / STARK** — the two succinct-proof families: pairing-based (tiny
+proofs, native hiding, trusted setup) vs hash-based (transparent, setup
+free, chunky proofs) ([SNARK vs STARK](/proofs/snark-vs-stark)).
+
+**S-two** — the M31/circle-STARK prover this stack runs
+([Cairo and S-two](/starknet/cairo-and-s-two)).
+
+**Wrapper proof** — a Starknet-compatible proof generated by a server after it
+verifies the client proof and binds the public chain state and transaction
+intent. A wrapper cannot repair a leaking client artifact
+([client proofs and server wrapping](/starknet/client-proof-wrapping)).
+
+**Trace** — the execution table: rows = steps, columns = registers; the
+witness of a STARK proof ([trace and AIR](/starks/trace-and-air)).
+
+**Vanishing polynomial** — the object zero exactly on the trace domain;
+dividing the constraint combination by it turns honesty into
+"the quotient is low-degree".
+
+**Witness** — the private input(s) a statement is about; in STARKs, the
+trace itself is effectively the witness.

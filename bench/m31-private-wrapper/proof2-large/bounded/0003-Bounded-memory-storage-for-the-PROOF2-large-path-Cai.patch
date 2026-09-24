@@ -1,0 +1,336 @@
+From 3d8ce3e5bcab8bda080c57c4a23f6c1a1ecf9982 Mon Sep 17 00:00:00 2001
+From: broody <broody@gmail.com>
+Date: Thu, 24 Sep 2026 11:12:40 +0800
+Subject: [PATCH 3/5] Bounded-memory storage for the PROOF2 large path (Cairo
+ leaf and verifier circuit)
+
+prove_cairo_bounded, prove_leaf_bounded and privacy_recursive_prove_large_bounded
+take an optional FRI column batch per stage and select the ported
+coefficient-backed PCS mode; the existing functions are unchanged (None).
+The bounded Cairo preprocessed tree keeps coefficients so it can be evicted.
+prove_leaf drops the Cairo VM runner after the adapter. prove_large reads
+TEMPLAR_BOUNDED_CAIRO_COLUMNS / TEMPLAR_BOUNDED_CIRCUIT_COLUMNS and, with
+TEMPLAR_SPAN_EVENTS=1, logs span closes for stage timing.
+
+Storage policy only: proofs are byte-identical to the default path and
+verify with the V2 verifier.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>
+---
+ crates/leaf_prover/src/prove_leaf.rs         | 37 +++++++--
+ crates/privacy_prove/examples/prove_large.rs | 86 ++++++++++++++++++++
+ crates/privacy_prove/src/lib.rs              | 14 +++-
+ crates/prover/src/prover.rs                  | 26 +++++-
+ 4 files changed, 154 insertions(+), 9 deletions(-)
+ create mode 100644 crates/privacy_prove/examples/prove_large.rs
+
+diff --git a/crates/leaf_prover/src/prove_leaf.rs b/crates/leaf_prover/src/prove_leaf.rs
+index c228f9096..a024848ce 100644
+--- a/crates/leaf_prover/src/prove_leaf.rs
++++ b/crates/leaf_prover/src/prove_leaf.rs
+@@ -17,7 +17,7 @@ use circuit_cairo_verifier::verify::{
+ use circuit_common::finalize::pad_to_targets;
+ use circuit_common::preprocessed::PreprocessedCircuit;
+ use circuit_prover::prover::{
+-    BaseColumnPool, prepare_circuit_proof_for_circuit_verifier, prove_circuit_assignment,
++    BaseColumnPool, prepare_circuit_proof_for_circuit_verifier, prove_circuit_assignment_bounded,
+ };
+ use circuit_registry::CircuitRegistry;
+ use circuit_serialize::serialize::CircuitSerialize;
+@@ -33,7 +33,7 @@ use stwo::core::verifier::PREPROCESSED_TRACE_IDX;
+ use stwo_cairo_adapter::adapter::adapt;
+ use stwo_cairo_common::preprocessed_columns::preprocessed_trace::PreProcessedTraceVariant;
+ use stwo_cairo_common::prover_types::cpu::M31;
+-use stwo_cairo_prover::prover::{LiftingSizePolicy, prove_cairo};
++use stwo_cairo_prover::prover::{LiftingSizePolicy, prove_cairo_bounded};
+ use stwo_cairo_prover::witness::prelude::{Felt252, QM31};
+ use tracing::info;
+ 
+@@ -57,6 +57,15 @@ pub fn prove_leaf_from_files(
+     prove_leaf(&program, program_input, &circuit_registry)
+ }
+ 
++/// Bounded-memory storage for the two proving stages of a leaf: `Some(n)` keeps owned commitment
++/// trees as coefficients and accumulates FRI quotients `n` columns at a time. Proofs are
++/// unchanged; `None` keeps the default storage.
++#[derive(Clone, Copy, Debug, Default)]
++pub struct BoundedMemory {
++    pub cairo_fri_columns: Option<usize>,
++    pub circuit_fri_columns: Option<usize>,
++}
++
+ /// Proves `program`'s run, verifies that proof with the cairo-verifier circuit, and proves that
+ /// circuit's execution.
+ ///
+@@ -65,6 +74,16 @@ pub fn prove_leaf(
+     program: &Program,
+     program_input: Option<ProgramInput>,
+     circuit_registry: &CircuitRegistry,
++) -> SerializedLeafProof {
++    prove_leaf_bounded(program, program_input, circuit_registry, BoundedMemory::default())
++}
++
++/// [`prove_leaf`] with a [`BoundedMemory`] storage policy for its stages.
++pub fn prove_leaf_bounded(
++    program: &Program,
++    program_input: Option<ProgramInput>,
++    circuit_registry: &CircuitRegistry,
++    bounded: BoundedMemory,
+ ) -> SerializedLeafProof {
+     let cairo_prover_parameters = circuit_registry.cairo_prover_params;
+     assert!(
+@@ -103,6 +122,8 @@ pub fn prove_leaf(
+     info!("Program execution done");
+ 
+     let prover_input = adapt(&runner).unwrap();
++    // The VM's memory and trace are not needed past the adapter; free them before proving.
++    drop(runner);
+     let output_addresses = prover_input.builtin_segments.output.unwrap();
+ 
+     let program_output_u256s: Vec<[u32; 8]> = (output_addresses.begin_addr
+@@ -127,8 +148,12 @@ pub fn prove_leaf(
+         chunk.copy_from_slice(&cell[..N_WORDS_PER_OUTPUT_CELL]);
+     }
+     let output_hash = Blake2sHash::from(digest_words);
+-    let proof =
+-        prove_cairo::<Blake2sM31MerkleChannel>(prover_input, cairo_prover_parameters).unwrap();
++    let proof = prove_cairo_bounded::<Blake2sM31MerkleChannel>(
++        prover_input,
++        cairo_prover_parameters,
++        bounded.cairo_fri_columns,
++    )
++    .unwrap();
+     info!("Cairo proving done");
+ 
+     let preprocessed_root = proof.extended_stark_proof.proof.commitments[PREPROCESSED_TRACE_IDX];
+@@ -212,11 +237,13 @@ pub fn prove_leaf(
+         preprocessed_circuit.trace_log_size,
+     );
+     let base_column_pool = BaseColumnPool::new();
+-    let circuit_proof = prove_circuit_assignment(
++    // The Cairo stage's buffers are gone by now; this stage's peak is its own.
++    let circuit_proof = prove_circuit_assignment_bounded::<Blake2sM31MerkleChannel>(
+         context.values(),
+         &preprocessed_circuit,
+         &base_column_pool,
+         circuit_prover_pcs_config,
++        bounded.circuit_fri_columns,
+     )
+     .unwrap();
+     info!("Circuit proving done");
+diff --git a/crates/privacy_prove/examples/prove_large.rs b/crates/privacy_prove/examples/prove_large.rs
+new file mode 100644
+index 000000000..165a35ee9
+--- /dev/null
++++ b/crates/privacy_prove/examples/prove_large.rs
+@@ -0,0 +1,86 @@
++//! Measurement harness: prove a virtual-OS PIE through the PROOF2 large path, verify it with the
++//! V2 recursive-circuit verifier, and run three rejection controls. Writes proof.bin,
++//! output-preimage.json and summary.json into OUT_DIR.
++//!
++//! Bounded-memory storage per stage, from the environment (unset or 0 keeps the default):
++//! `TEMPLAR_BOUNDED_CAIRO_COLUMNS` (the Cairo proof) and `TEMPLAR_BOUNDED_CIRCUIT_COLUMNS` (the
++//! cairo-verifier circuit proof), each the FRI column batch size.
++use std::path::PathBuf;
++use std::time::Instant;
++use std::{env, fs};
++
++use cairo_vm::vm::runners::cairo_pie::CairoPie;
++use privacy_circuit_verify::{
++    PrivacyProofOutput, get_large_proofs_circuit_registry, verify_recursive_circuit,
++};
++use leaf_prover::prove_leaf::BoundedMemory;
++use privacy_prove::privacy_recursive_prove_large_bounded;
++use tracing_subscriber::fmt::format::FmtSpan;
++use serde_json::json;
++use starknet_types_core::felt::Felt;
++
++fn rejects(proof: Vec<u8>, output_preimage: Vec<Felt>) -> bool {
++    verify_recursive_circuit(&PrivacyProofOutput { proof, output_preimage }).is_err()
++}
++
++fn main() {
++    // Span-close events time each stage (`TEMPLAR_SPAN_EVENTS=1`); off by default, as they cost time.
++    let spans = if env::var("TEMPLAR_SPAN_EVENTS").as_deref() == Ok("1") { FmtSpan::CLOSE } else { FmtSpan::NONE };
++    tracing_subscriber::fmt().with_max_level(tracing::Level::INFO).with_span_events(spans).init();
++    let columns = |name: &str| env::var(name).ok().and_then(|v| v.parse::<usize>().ok()).filter(|n| *n > 0);
++    let bounded = BoundedMemory {
++        cairo_fri_columns: columns("TEMPLAR_BOUNDED_CAIRO_COLUMNS"),
++        circuit_fri_columns: columns("TEMPLAR_BOUNDED_CIRCUIT_COLUMNS"),
++    };
++    tracing::info!("bounded memory: {bounded:?}");
++    let args: Vec<String> = env::args().collect();
++    assert_eq!(args.len(), 3, "prove_large PIE OUT_DIR");
++    let out = PathBuf::from(&args[2]);
++    fs::create_dir_all(&out).unwrap();
++
++    let pie = CairoPie::read_zip_file(&PathBuf::from(&args[1])).unwrap();
++    let start = Instant::now();
++    let output = privacy_recursive_prove_large_bounded(pie, bounded).unwrap();
++    let prove_seconds = start.elapsed().as_secs_f64();
++    fs::write(out.join("proof.bin"), &output.proof).unwrap();
++    fs::write(out.join("output-preimage.json"), serde_json::to_vec_pretty(&output.output_preimage).unwrap()).unwrap();
++
++    let start = Instant::now();
++    let verified = verify_recursive_circuit(&output).is_ok();
++    let verify_seconds = start.elapsed().as_secs_f64();
++
++    // Leaf verifier selected by the header's preprocessed root (bytes 3..35).
++    let root: Vec<u32> = output.proof[3..35]
++        .chunks_exact(4)
++        .map(|c| u32::from_le_bytes(c.try_into().unwrap()))
++        .collect();
++    let leaf_log = get_large_proofs_circuit_registry()
++        .leaf_verifiers
++        .iter()
++        .find(|lv| lv.preprocessed_root.0.as_slice() == root.as_slice())
++        .map(|lv| lv.trace_log_size);
++
++    let mut changed_output = output.output_preimage.clone();
++    *changed_output.last_mut().unwrap() += Felt::ONE;
++    let mut flipped = output.proof.clone();
++    let mid = 35 + (flipped.len() - 35) / 2;
++    flipped[mid] ^= 1;
++    let truncated = output.proof[..output.proof.len() - 1].to_vec();
++
++    let summary = json!({
++        "prove_seconds": prove_seconds,
++        "bounded_cairo_fri_columns": bounded.cairo_fri_columns,
++        "bounded_circuit_fri_columns": bounded.circuit_fri_columns,
++        "verify_seconds": verify_seconds,
++        "verified": verified,
++        "proof_bytes": output.proof.len(),
++        "gateway_max_proof_size": 480000,
++        "leaf_verifier_trace_log_size": leaf_log,
++        "output_preimage_len": output.output_preimage.len(),
++        "rejects_changed_output": rejects(output.proof.clone(), changed_output),
++        "rejects_flipped_proof_byte": rejects(flipped, output.output_preimage.clone()),
++        "rejects_truncated_proof": rejects(truncated, output.output_preimage.clone()),
++    });
++    fs::write(out.join("summary.json"), serde_json::to_vec_pretty(&summary).unwrap()).unwrap();
++    println!("{}", serde_json::to_string_pretty(&summary).unwrap());
++}
+diff --git a/crates/privacy_prove/src/lib.rs b/crates/privacy_prove/src/lib.rs
+index 407be55e7..fc3c28ddf 100644
+--- a/crates/privacy_prove/src/lib.rs
++++ b/crates/privacy_prove/src/lib.rs
+@@ -31,7 +31,7 @@ use circuits::utils::bytes_from_le_u32s;
+ use circuits_stark_verifier::proof::ProofConfig;
+ use itertools::chain;
+ use leaf_proof_format::{DigestHex, SerializedLeafProof};
+-use leaf_prover::prove_leaf::prove_leaf;
++use leaf_prover::prove_leaf::{BoundedMemory, prove_leaf_bounded};
+ use privacy_circuit_verify::consts::{
+     CAIRO_PCS_CONFIG, CIRCUIT_FRI_CONFIG, CIRCUIT_PCS_CONFIG,
+     PRIVACY_RECURSION_CIRCUIT_PREPROCESSED_ROOT,
+@@ -199,6 +199,15 @@ pub fn prepare_recursive_prover_precomputes()
+ }
+ 
+ pub fn privacy_recursive_prove_large(pie: CairoPie) -> Result<PrivacyProofOutput, Box<dyn Error>> {
++    privacy_recursive_prove_large_bounded(pie, BoundedMemory::default())
++}
++
++/// [`privacy_recursive_prove_large`] with a bounded-memory storage policy for the leaf's Cairo
++/// and circuit stages. The proof is unchanged.
++pub fn privacy_recursive_prove_large_bounded(
++    pie: CairoPie,
++    bounded: BoundedMemory,
++) -> Result<PrivacyProofOutput, Box<dyn Error>> {
+     let leaf_bootloader = get_leaf_bootloader_program()?;
+     let circuit_registry = get_large_proofs_circuit_registry();
+     let output_preimage_file = NamedTempFile::new()?;
+@@ -212,10 +221,11 @@ pub fn privacy_recursive_prove_large(pie: CairoPie) -> Result<PrivacyProofOutput
+         circuit_preprocessed_root: DigestHex(preprocessed_root),
+         circuit_hash: _,
+         proof,
+-    }: SerializedLeafProof = prove_leaf(
++    }: SerializedLeafProof = prove_leaf_bounded(
+         &leaf_bootloader,
+         Some(ProgramInput::Value(Box::new(leaf_bootloader_input))),
+         &circuit_registry,
++        bounded,
+     );
+     // Read the output preimage
+     let output_preimage_content = read_to_string(output_preimage_path)?;
+diff --git a/crates/prover/src/prover.rs b/crates/prover/src/prover.rs
+index b0fe57dad..c00ae049a 100644
+--- a/crates/prover/src/prover.rs
++++ b/crates/prover/src/prover.rs
+@@ -98,6 +98,21 @@ pub fn prove_cairo<MC: MerkleChannel>(
+     input: ProverInput,
+     prover_params: ProverParameters,
+ ) -> Result<CairoProof<MC::H>, ProvingError>
++where
++    SimdBackend: BackendForChannel<MC>,
++{
++    prove_cairo_bounded::<MC>(input, prover_params, None)
++}
++
++/// [`prove_cairo`] with an optional bounded-memory storage policy: owned trees keep coefficients
++/// instead of expanded evaluations and are rebuilt one at a time for opening, and FRI quotients
++/// are accumulated `max_fri_columns` columns at a time. The proof is unchanged; `None` is
++/// [`prove_cairo`] exactly.
++pub fn prove_cairo_bounded<MC: MerkleChannel>(
++    input: ProverInput,
++    prover_params: ProverParameters,
++    max_fri_columns: Option<usize>,
++) -> Result<CairoProof<MC::H>, ProvingError>
+ where
+     SimdBackend: BackendForChannel<MC>,
+ {
+@@ -176,11 +191,12 @@ where
+         SimdBackend::interpolate_columns(gen_trace(preprocessed_trace.clone()), &twiddles);
+ 
+     let base_column_pool = BaseColumnPool::new();
++    // Bounded mode evicts the owned preprocessed tree's evaluations, so it keeps coefficients.
+     let preprocessed_tree = MaybeOwned::Owned(CommitmentTreeProver::<SimdBackend, MC>::new(
+         preprocessed_trace_polys,
+         fri_config.log_blowup_factor,
+         &twiddles,
+-        store_polynomials_coefficients,
++        store_polynomials_coefficients || max_fri_columns.is_some(),
+         preprocessed_lifting_log_size,
+         &base_column_pool,
+     ));
+@@ -196,6 +212,7 @@ where
+         interaction_generator,
+         prover_params,
+         pcs_config,
++        max_fri_columns,
+     )
+ }
+ 
+@@ -239,9 +256,11 @@ where
+         interaction_generator,
+         prover_params,
+         pcs_config,
++        None,
+     )
+ }
+ 
++#[allow(clippy::too_many_arguments)]
+ fn prove_cairo_common<'a, MC: MerkleChannel>(
+     twiddles: &TwiddleTree<SimdBackend>,
+     base_column_pool: &BaseColumnPool<SimdBackend>,
+@@ -252,6 +271,7 @@ fn prove_cairo_common<'a, MC: MerkleChannel>(
+     interaction_generator: CairoInteractionClaimGenerator,
+     prover_params: ProverParameters,
+     pcs_config: PcsConfig,
++    max_fri_columns: Option<usize>,
+ ) -> Result<CairoProof<MC::H>, ProvingError>
+ where
+     SimdBackend: BackendForChannel<MC>,
+@@ -279,7 +299,9 @@ where
+         twiddles,
+         base_column_pool,
+     );
+-    if store_polynomials_coefficients {
++    if let Some(max_columns) = max_fri_columns {
++        commitment_scheme.set_bounded_memory_mode(max_columns);
++    } else if store_polynomials_coefficients {
+         commitment_scheme.set_store_polynomials_coefficients();
+     }
+ 
+-- 
+2.43.0
+

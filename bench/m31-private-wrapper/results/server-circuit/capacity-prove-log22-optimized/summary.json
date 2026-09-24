@@ -1,0 +1,22 @@
+{
+  "scope": "research enlarged final wrapper on actual optimized public hash-circuit OS execution; new verifier configuration; no private membership claim",
+  "command": [
+    "/home/broody/development/templar/target/m31-private-wrapper/large-capacity/rust-target/release/capacity",
+    "prove",
+    "22",
+    "/home/broody/development/templar/bench/m31-private-wrapper/results/bridge-capacity/optimized/os-capture/os.pie.zip",
+    "/home/broody/development/templar/bench/m31-private-wrapper/results/bridge-capacity/large/proof-optimized"
+  ],
+  "binary_sha256": "82a20d8699b0c426dbc8a3888c27507c4664617b1259ba418d3ea5ed33a2eef9",
+  "cap_gib": 96,
+  "threads": 4,
+  "cpu_affinity": "0 1 2 3",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 1,
+  "elapsed_seconds": 71.25574245399912,
+  "sampled_peak_rss_gib": 95.78590774536133,
+  "sampled_peak_cgroup_gib": 96.0,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 1,
+  "time_peak_rss_gib": null
+}

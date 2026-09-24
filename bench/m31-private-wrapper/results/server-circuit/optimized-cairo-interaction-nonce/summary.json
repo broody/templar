@@ -1,0 +1,31 @@
+{
+  "scope": "public hash circuit bridge, optimized-cairo target, correctness only; wall time/RSS not comparable (concurrent root build); no membership or PROOF1 claim",
+  "command": [
+    "/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb",
+    "--json",
+    "--manifest-path",
+    "/home/broody/development/templar/target/m31-private-wrapper/optimized-cairo/Scarb.toml",
+    "execute",
+    "--no-build",
+    "-p",
+    "templar_server_hash_bridge",
+    "--arguments-file",
+    "/home/broody/development/templar/bench/m31-private-wrapper/results/bridge-capacity/optimized/k3-validation/cairo-interaction-nonce.json",
+    "--print-program-output",
+    "--print-resource-usage",
+    "--output",
+    "none"
+  ],
+  "binary_sha256": "97eafe061de1e473e6649578e320225d41abaf708784db1858173132811f01d6",
+  "cap_gib": 8,
+  "threads": 4,
+  "cpu_affinity": "0 1 2 3",
+  "privacy_qualified_by_measurement": false,
+  "exit_code": 1,
+  "elapsed_seconds": 1.0569756100012455,
+  "sampled_peak_rss_gib": 0.0,
+  "sampled_peak_cgroup_gib": 0.085479736328125,
+  "sampled_swap_peak_bytes": 0,
+  "sampled_oom_kill": 0,
+  "time_peak_rss_gib": 0.09453582763671875
+}

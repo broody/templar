@@ -1,0 +1,23 @@
+{
+  "trusted_manifest_sha256": "b4cf4376108368012fdfdda17e9f44afe4df8be91348b294235dbecbdc05ba5d",
+  "circuit_hash_u32_le": [
+    3249413348,
+    2954588814,
+    1022072598,
+    720028169,
+    1681982252,
+    2351325767,
+    958957808,
+    3608281147
+  ],
+  "statement_prefix_hex": "544d505a4b303032e0848f7dcf23c7a9532e3da5eacd32e9cb20880453c192995753d73080010345",
+  "vendor_change": "circuit_air/src/multiverifier_consts.cairo circuit_fri_config: log_blowup_factor 1->2, n_queries 70->35",
+  "upstream_vendor": {},
+  "template_files": {
+    "cairo-proving/Scarb.toml": "ee05e005b540e68eba782a962cec4a65b4e0382ce6295e82ac5ded7ce8a6b6ef",
+    "cairo-proving/account/Scarb.toml": "4dfc17bf8da1b5f8c992435d87f7d3b5b67e6376711ffc64b19bfa9985bcbee1",
+    "cairo-proving/account/src/lib.cairo": "fcb842791d1c1f13c63725d6025bd68db4fcef174b2ff41d0a31f1282c4c4251",
+    "cairo-proving/bridge/Scarb.toml": "6384dd9abb95266f94a013bac7e0c976bccbed5e44a56dfb5c8fab204961bf2f",
+    "cairo-proving/bridge/src/lib.cairo": "9dbed2e99734e750bce17286ab13294a3f4228d26e9efc3de700774ac441344e"
+  }
+}

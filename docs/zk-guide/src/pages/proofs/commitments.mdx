@@ -1,0 +1,103 @@
+---
+showAskAi: false
+title: Commitments
+description: Merkle trees over big tables — how a prover promises a fixed set of values without revealing them.
+---
+
+<div className="guide-eyebrow">Part 2 · Proof systems</div>
+
+# Commitments
+
+## The problem
+
+A proof must reference a huge object — the prover's whole computation
+(millions of field elements). The verifier will not read it. The prover must
+**commit**: publish something short that irrevocably pins the object, then
+later reveal only selected pieces of it, with proof that the pieces come
+from the committed object.
+
+## Merkle trees
+
+The workhorse: hash pairs of hashes up a binary tree; the root is the
+commitment.
+
+```python
+import hashlib
+
+def h(b): return hashlib.blake2s(b, digest_size=16).digest()
+
+def merkle_root(leaves):
+    level = leaves[:]
+    while len(level) > 1:
+        if len(level) % 2: level.append(level[-1])
+        level = [h(level[i] + level[i+1]) for i in range(0, len(level), 2)]
+    return level[0]
+
+def merkle_path(leaves, i):
+    """Sibling hashes from leaf i up to the root."""
+    path = []
+    level = leaves[:]
+    while len(level) > 1:
+        if len(level) % 2: level.append(level[-1])
+        j = i - (i % 2 ^ 1)
+        path.append(level[j])
+        level = [h(level[k] + level[k+1]) for k in range(0, len(level), 2)]
+        i //= 2
+    return path
+
+leaves = [bytes([x]) for x in range(8)]
+print(merkle_root(leaves).hex())
+print(len(merkle_path(leaves, 5)))   # 3 = log2(8) openings per leaf
+```
+
+Properties:
+
+- **Binding**: changing any leaf changes the root. The 16-byte root pins a
+  million leaves.
+- **Opening cost**: revealing leaf `i` costs `log₂(n)` sibling hashes.
+- **Hiding: none.** A Merkle root reveals nothing, but *openings* reveal
+  whatever is opened, and the set of opened positions is chosen by the
+  verifier's random challenges. Keep this asymmetry in mind — it returns in
+  Part 5.
+
+> **Check.** With the snippet: change `leaves[5]` by one byte, recompute the
+> root — it changes. Then open leaf 5 against the old root and confirm the
+> path length is 3.
+
+## Committing to a polynomial
+
+Encode a polynomial as its evaluations on a *large* domain — the **low-degree
+extension (LDE)**. If the polynomial has degree `< n`, evaluate it on `n·b`
+points (`b` = the **blowup factor**, typically 4–8). Commit to the `n·b`
+values with a Merkle tree.
+
+Why evaluate on more points than the degree requires? Because the verifier
+will *sample* this tree at random positions later, and FRI (Part 3.2) needs
+the extra room to do its folding. Concretely in this stack: a trace of `2²⁰`
+rows committed with blowup 3 lives on `2²³` points — the numbers from the
+real system.
+
+An **opening** at point `q` = the Merkle path for the leaf holding `f(q)`
+plus the value itself. The verifier checks the path, then uses `f(q)` in its
+constraint checks. Since `q` is random (from the channel, Part 2.1), a
+dishonest polynomial disagrees with the honest one at ~`d/(n·b)` of all
+positions — sampling a few positions catches the lie.
+
+## Two refinements the real system adds
+
+1. **Many columns per leaf.** The trace is not one polynomial but hundreds
+   (one per "register"). All columns at the same position are hashed into
+   one leaf, so one path opens *all* columns at that position at once. This
+   is why, in the real system, one query reveals a whole row-slice across
+   every committed column — remember this for Part 5.
+2. **Packing.** Small values (4 × QM31 = 16 M31 elements = 64 bytes) are
+   hashed as one packed leaf to save hash calls — a constant-factor trick
+   used on the FRI layers.
+
+## What to carry forward
+
+1. A commitment is a short, binding fingerprint of a big table.
+2. Opening = one Merkle path ≈ `log n` hashes, and reveals exactly the
+   opened values and nothing else.
+3. Committing a polynomial = Merkle over its extended evaluations; blowup
+   buys room for FRI and cheap random testing.

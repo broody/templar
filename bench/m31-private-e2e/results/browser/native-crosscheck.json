@@ -1,0 +1,61 @@
+{
+  "binary_sha256": "cb963e1d7330e1d2b427c100e76124ec1d207235071dcfac729234295f2736f8",
+  "cwd": "/home/broody/development/templar/target/m31-private-e2e/browser-native-verifier",
+  "checks": [
+    {
+      "command": [
+        "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+        "verify",
+        "public.json",
+        "proof-1.bin"
+      ],
+      "exit": 0,
+      "proof_sha256": "8e19ae45e2581b742cd75e42a75014cb7bf65d4f39a214fb00b8745b99aec987",
+      "result": {
+        "accepted": true,
+        "action": "verify",
+        "proof_bytes": 3593832,
+        "seconds": 0.174376656
+      }
+    },
+    {
+      "command": [
+        "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+        "verify",
+        "public.json",
+        "proof-2.bin"
+      ],
+      "exit": 0,
+      "proof_sha256": "8d1e6f39379691a76a3b8f8b3f609c5f46c4ebc51cb63bc073cce7a754d9faa9",
+      "result": {
+        "accepted": true,
+        "action": "verify",
+        "proof_bytes": 3595216,
+        "seconds": 0.176968463
+      }
+    },
+    {
+      "command": [
+        "/home/broody/development/templar/bench/m31-private-e2e/client/target/release/templar-private-membership",
+        "verify",
+        "public.json",
+        "proof-3.bin"
+      ],
+      "exit": 0,
+      "proof_sha256": "66e836199968fd4d9bcf860d433cbdcd061558a0131b75135c97c6e00ae3d0c4",
+      "result": {
+        "accepted": true,
+        "action": "verify",
+        "proof_bytes": 3629688,
+        "seconds": 0.161993433
+      }
+    }
+  ],
+  "verifier_directory_files": [
+    "proof-1.bin",
+    "proof-2.bin",
+    "proof-3.bin",
+    "public.json"
+  ],
+  "status": "passed"
+}

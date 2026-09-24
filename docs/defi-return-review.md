@@ -8,7 +8,7 @@ pathfinding experiment.
 
 The architectural decision is now captured in [ADR-0023](adr/0023-return-notes-and-adapter-compatibility.md):
 `ReturnNote` is the transaction-local funding destination, while `OpenNoteDeposit`
-is the upstream adapter response. See the [specification](return-note-spec.md) and
+is the upstream adapter response. See the [specification](open-note-spec.md) and
 [new compatibility reference](../bench/return-note-e2e/README.md). The earlier
 experiment below remains preserved evidence.
 

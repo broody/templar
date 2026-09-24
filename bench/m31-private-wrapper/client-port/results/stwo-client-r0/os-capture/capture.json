@@ -1,0 +1,34 @@
+{
+  "l2_to_l1_messages": [
+    {
+      "from_address": "0x6276825586fc16c0857dd0d6dc7ce81ec578e7ba501df8ed00c075b3eedd95a",
+      "payload": [
+        "0x6186755ef4552ae586092f86b89fa97434e2db1552999e1a896ba7695d9db3f",
+        "0x544d505a52305f5041594d454e545f5631",
+        "0x534e5f5345504f4c4941",
+        "0x24bad0f8e6c66051",
+        "0x6a9db1a81c14ec656f284160d98ec6fbe3c5cac3c6da1d131028dd4fdd3b7c6"
+      ],
+      "to_address": "0x0"
+    }
+  ],
+  "os_seconds": 9.615610821,
+  "resources": {
+    "builtin_instance_counter": {
+      "add_mod_builtin": 0,
+      "bitwise_builtin": 0,
+      "ec_op_builtin": 0,
+      "ecdsa_builtin": 0,
+      "keccak_builtin": 0,
+      "mul_mod_builtin": 0,
+      "output_builtin": 6,
+      "pedersen_builtin": 8,
+      "poseidon_builtin": 17236,
+      "range_check96_builtin": 0,
+      "range_check_builtin": 713230
+    },
+    "n_memory_holes": 295452,
+    "n_steps": 5421338
+  },
+  "scope": "public execution capture only; no proof"
+}

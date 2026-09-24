@@ -1,0 +1,69 @@
+{
+ "a": {
+  "client": {
+   "trace_log_size": 18,
+   "blinding_rows": 2390,
+   "proving_seconds": 5.322278004,
+   "proof_felts": 29506,
+   "max_rss_gib": 0.31224822998046875
+  },
+  "bridge": {
+   "passed": 31,
+   "cases": 31,
+   "steps": 2024075
+  },
+  "os": {
+   "steps": 3406832,
+   "seconds": 6.059483238999746,
+   "exact_message": true
+  },
+  "proof2": {
+   "prove_seconds": 110.950634778,
+   "proof_bytes": 257470,
+   "verified": true,
+   "max_rss_gib": 50.93138122558594
+  }
+ },
+ "b": {
+  "client": {
+   "trace_log_size": 18,
+   "blinding_rows": 2390,
+   "proving_seconds": 1.947344849,
+   "proof_felts": 28486,
+   "max_rss_gib": 0.2961921691894531
+  },
+  "bridge": {
+   "passed": 31,
+   "cases": 31,
+   "steps": 1964911
+  },
+  "os": {
+   "steps": 3334832,
+   "seconds": 6.097419935998914,
+   "exact_message": true
+  },
+  "proof2": {
+   "prove_seconds": 110.846717131,
+   "proof_bytes": 253006,
+   "verified": true,
+   "max_rss_gib": 51.699058532714844
+  }
+ },
+ "beneficiary_r0": {
+  "trace_log_size": 18,
+  "proving_seconds": 3.420843588,
+  "max_rss_gib": 0.32157135009765625
+ },
+ "settlement": [
+  "[PASS] m31_pool::tests::test_policy_e2e::policy_real_cancelled_release_rejected (l1_gas: ~0, l1_data_gas: ~9120, l2_gas: ~157688672)",
+  "[PASS] m31_pool::tests::test_policy_e2e::policy_real_other_facts_rejected (l1_gas: ~0, l1_data_gas: ~9120, l2_gas: ~157140098)",
+  "[PASS] m31_pool::tests::test_policy_e2e::policy_real_deadline_is_bound (l1_gas: ~0, l1_data_gas: ~9024, l2_gas: ~155879806)",
+  "[PASS] m31_pool::tests::test_policy_e2e::policy_real_redirected_output_rejected (l1_gas: ~0, l1_data_gas: ~9120, l2_gas: ~156827973)",
+  "[PASS] m31_pool::tests::test_policy_e2e::policy_real_release_needs_the_arbiter (l1_gas: ~0, l1_data_gas: ~9024, l2_gas: ~156878282)",
+  "GAS apply_policy_spend release two_notes=52371282",
+  "[PASS] m31_pool::tests::test_policy_e2e::policy_real_replay_rejected (l1_gas: ~0, l1_data_gas: ~9408, l2_gas: ~209800884)",
+  "GAS apply_policy_spend refund one_note=51530215",
+  "[PASS] m31_pool::tests::test_policy_e2e::policy_real_release_and_seed_refund (l1_gas: ~0, l1_data_gas: ~10080, l2_gas: ~265242886)"
+ ],
+ "policy_id_a": "0x46bc63c47a480586dd3b16bb0c27123d43c8c7d2a29ce8769eb37d8248389b2"
+}

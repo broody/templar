@@ -1,0 +1,63 @@
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.10s
+   Compiling test(m31_pool_unittest) m31_pool v0.1.0 (/home/broody/development/templar/bench/m31-pool/cairo/Scarb.toml)
+warn[E2100]: Unused import: `m31_pool::test_token::E2EToken::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/m31-pool/cairo/src/test_token.cairo:9:59
+        Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_pool::test_token::E2EToken::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/m31-pool/cairo/src/test_token.cairo:10:9
+        StoragePointerWriteAccess,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"corelib-internal-use"` with no `#[feature("corelib-internal-use")]` attribute. Note: "Use `starknet` directly"
+ --> /home/broody/development/templar/bench/m31-pool/cairo/src/test_token.cairo:6:15
+    use core::starknet::{get_caller_address, ContractAddress};
+              ^^^^^^^^
+
+    Finished `dev` profile target(s) in 0 seconds
+
+
+Collected 27 test(s) from m31_pool package
+Running 27 test(s) from src/
+[PASS] m31_pool::tests::test_hash::pack_is_lossless (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~1118840)
+[PASS] m31_pool::tests::test_hash::deposit_commitment_matches_client (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~6614550)
+[PASS] m31_pool::tests::test_hash::permutation_matches_client_and_python_reference (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~5804720)
+[PASS] m31_pool::tests::test_pool::unknown_root_rejected (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~93513642)
+[PASS] m31_pool::tests::test_pool::changed_output_rejected (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~93005568)
+[PASS] m31_pool::tests::test_pool::duplicate_nullifiers_rejected (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~93877462)
+[PASS] m31_pool::tests::test_pool::non_canonical_commitment_rejected (l1_gas: ~0, l1_data_gas: ~7968, l2_gas: ~94181584)
+[PASS] m31_pool::tests::test_hash::zeros_match_node (l1_gas: ~0, l1_data_gas: ~0, l2_gas: ~144010890)
+[PASS] m31_pool::tests::test_pool::replay_rejected (l1_gas: ~0, l1_data_gas: ~8736, l2_gas: ~199042276)
+[PASS] m31_pool::tests::test_pool::spend_marks_nullifiers_and_publishes (l1_gas: ~0, l1_data_gas: ~8736, l2_gas: ~197754406)
+[PASS] m31_pool::tests::test_pool::tree_roots_match_client_compress_frontier (l1_gas: ~0, l1_data_gas: ~8032, l2_gas: ~334135785)
+[PASS] m31_pool::tests::test_pool::tree_roots_match_client_compress_nodes (l1_gas: ~0, l1_data_gas: ~9856, l2_gas: ~354013285)
+[PASS] m31_pool::tests::test_pool::old_root_still_accepted (l1_gas: ~0, l1_data_gas: ~10944, l2_gas: ~332639520)
+[PASS] m31_pool::tests::test_pool::cost_base_compress_frontier (l1_gas: ~0, l1_data_gas: ~9600, l2_gas: ~374416082)
+[PASS] m31_pool::tests::test_pool::cost_base_compress_nodes (l1_gas: ~0, l1_data_gas: ~11424, l2_gas: ~394293482)
+GAS deposit format=1 store_nodes=false warm=57694152
+[PASS] m31_pool::tests::test_pool::cost_deposit_compress_frontier (l1_gas: ~0, l1_data_gas: ~9888, l2_gas: ~433610514)
+GAS apply_spend format=1 store_nodes=true warm=105853169
+GAS deposit format=1 store_nodes=true warm=59794852
+[PASS] m31_pool::tests::test_pool::cost_spend_compress_nodes (l1_gas: ~0, l1_data_gas: ~12768, l2_gas: ~507004301)
+[PASS] m31_pool::tests::test_pool::cost_deposit_compress_nodes (l1_gas: ~0, l1_data_gas: ~12096, l2_gas: ~457196514)
+GAS apply_spend format=1 store_nodes=false warm=101578829
+[PASS] m31_pool::tests::test_pool::cost_spend_compress_frontier (l1_gas: ~0, l1_data_gas: ~10368, l2_gas: ~480440661)
+[PASS] m31_pool::tests::test_pool::tree_roots_match_client_sponge_frontier (l1_gas: ~0, l1_data_gas: ~7936, l2_gas: ~650071065)
+[PASS] m31_pool::tests::test_pool::tree_roots_match_client_sponge_nodes (l1_gas: ~0, l1_data_gas: ~9760, l2_gas: ~669948565)
+[PASS] m31_pool::tests::test_pool::cost_base_sponge_nodes (l1_gas: ~0, l1_data_gas: ~11328, l2_gas: ~710228762)
+[PASS] m31_pool::tests::test_pool::cost_base_sponge_frontier (l1_gas: ~0, l1_data_gas: ~9504, l2_gas: ~690351362)
+GAS deposit format=0 store_nodes=true warm=112517732
+GAS deposit format=0 store_nodes=false warm=110417032
+[PASS] m31_pool::tests::test_pool::cost_deposit_sponge_nodes (l1_gas: ~0, l1_data_gas: ~12000, l2_gas: ~825861334)
+[PASS] m31_pool::tests::test_pool::cost_deposit_sponge_frontier (l1_gas: ~0, l1_data_gas: ~9792, l2_gas: ~802275334)
+GAS apply_spend format=0 store_nodes=false warm=207024589
+[PASS] m31_pool::tests::test_pool::cost_spend_sponge_frontier (l1_gas: ~0, l1_data_gas: ~10272, l2_gas: ~901821701)
+GAS apply_spend format=0 store_nodes=true warm=211298929
+[PASS] m31_pool::tests::test_pool::cost_spend_sponge_nodes (l1_gas: ~0, l1_data_gas: ~12672, l2_gas: ~928385341)
+Tests: 27 passed, 0 failed, 0 ignored, 0 filtered out
+

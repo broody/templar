@@ -1,0 +1,33 @@
+{
+  "blinding_rows": 2390,
+  "blinding_rule": "n_queries * sum over FRI layers of 2^fold_step + NON_QUERY_INFO_LEAK (math review H1)",
+  "build_seconds": 0.22921308,
+  "component_log_sizes": [
+    12,
+    18,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "max_fri_columns": 16,
+  "native_negatives": [
+    "output",
+    "trace",
+    "topology",
+    "circuit-hash",
+    "config"
+  ],
+  "proof_felts": 30246,
+  "proving_seconds": 1.9265443389999999,
+  "revealed_fri_values": 1737,
+  "scope": "blinded arithmetic-only R0 payment client proof (2-in/2-out, depth 32; fork templar/arithmetic-profile)",
+  "shape": "Partial",
+  "trace_log_size": 18,
+  "tree_nodes": "Compress"
+}

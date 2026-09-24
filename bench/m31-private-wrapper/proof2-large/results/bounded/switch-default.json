@@ -1,0 +1,42 @@
+{
+ "pie": "policy-e2e release note (A) virtual-OS PIE, 3.41M OS steps",
+ "cap": "115G",
+ "cairo_fri_columns": null,
+ "circuit_fri_columns": null,
+ "stream_commitments": true,
+ "exit_code": 0,
+ "elapsed_seconds": 120.5045394897461,
+ "oom_killed": false,
+ "max_rss_gib": 51.747901916503906,
+ "cgroup_peak_gib": 50.81967544555664,
+ "stage_peaks_gib": {
+  "before program execution": 0.41,
+  "after Program execution done": 0.88,
+  "after Write Preprocessed trace": 14.52,
+  "after Write Base trace": 23.7,
+  "after Compute preprocessed trace commitment": 33.1,
+  "after Compute base trace commitment": 32.67,
+  "after Write interaction trace": 34.31,
+  "after Compute interaction trace commitment": 50.82,
+  "after Prove STARKs": 20.54,
+  "after Cairo proving done": 42.86,
+  "after Circuit proving done": 26.63
+ },
+ "prover": {
+  "bounded_cairo_fri_columns": null,
+  "bounded_circuit_fri_columns": null,
+  "bounded_stream_commitments": true,
+  "gateway_max_proof_size": 480000,
+  "leaf_verifier_trace_log_size": 25,
+  "output_preimage_len": 7,
+  "proof_bytes": 257470,
+  "prove_seconds": 118.049469544,
+  "rejects_changed_output": true,
+  "rejects_flipped_proof_byte": true,
+  "rejects_truncated_proof": true,
+  "verified": true,
+  "verify_seconds": 0.099721927
+ },
+ "proof_identical_to_default": true,
+ "run": "switch-default"
+}

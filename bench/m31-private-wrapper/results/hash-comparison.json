@@ -1,0 +1,21 @@
+{
+  "scope": "same framed public bytes; different digest functions/widths; initial Cairo implementations and input representations; not full verifier or prover speedup",
+  "cases": [
+    {
+      "kind": "node",
+      "message_bytes": 285,
+      "shake96_steps": 143651,
+      "blake32_steps": 1778,
+      "step_ratio": 80.79358830146232,
+      "both_outputs_checked": true
+    },
+    {
+      "kind": "base",
+      "message_bytes": 5053,
+      "shake96_steps": 1836535,
+      "blake32_steps": 24114,
+      "step_ratio": 76.16052915318902,
+      "both_outputs_checked": true
+    }
+  ]
+}

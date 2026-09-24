@@ -1,0 +1,93 @@
+---
+showAskAi: false
+title: Finite fields
+description: Arithmetic where division always works — the substrate of every modern proof system.
+---
+
+<div className="guide-eyebrow">Part 1 · Foundations</div>
+
+# Finite fields
+
+## The problem with ordinary numbers
+
+Cryptography needs arithmetic where **every operation is exact**. Two
+problems with ordinary integers and floats:
+
+- *Integers* have no division: 1 ÷ 3 is not an integer.
+- *Floats* have division but it rounds: errors accumulate, and "equals" becomes
+  fuzzy. A proof system must be able to say `a × b == c` and have that be
+  absolutely true or absolutely false.
+
+## The fix: work modulo a prime
+
+Pick a prime `p` and do all arithmetic on the numbers `0 … p−1`, reducing
+after every operation. In `mod 7` arithmetic:
+
+- `3 × 5 = 15 ≡ 1 (mod 7)` — so `5` is the multiplicative inverse of `3`.
+- Every non-zero element has an inverse, because `p` is prime.
+- Division is therefore exact: `a ÷ b` means `a × (inverse of b)`.
+
+```python
+p = 7
+print((3 * 5) % p)   # 1   -> inverse of 3 is 5
+print((2 - 5) % p)   # 4   -> subtraction wraps around
+print(pow(3, -1, p)) # 5   -> exact division exists
+```
+
+The set with `+`, `−`, `×`, `÷` all working this way is called a **field**.
+Fields are the substrate of every modern proof system: polynomials over
+fields, hash outputs mapped to fields, all of it.
+
+> **Check.** In `mod 7`: what is `4 ÷ 3`? Compute `4 × pow(3,-1,7)`.
+> Verify your answer by multiplying back.
+
+## The prime Starknet's stack actually uses
+
+Real systems pick `p` by *hardware convenience*, not elegance. This stack
+uses **M31 = 2³¹ − 1** (a Mersenne prime):
+
+- Fits in a 32-bit machine word. A product of two such numbers fits in 64 bits.
+- Reduction is nearly free: because `2³¹ ≡ 1 (mod p)`, the top and bottom
+  halves of a 64-bit product can be added together with a couple of corrections.
+  This is a famous Mersenne-prime trick and it vectorizes (SIMD) beautifully.
+
+```python
+P = 2**31 - 1
+
+def m31_mul(a, b):
+    v = a * b
+    lo, hi = v & P, v >> 31          # split into 31-bit halves
+    r = (lo + hi) % P                # 2**31 == 1 (mod P), so add the halves
+    return r if r < P else r - P     # one final correction
+
+print(m31_mul(0x7fffffff, 0x7fffffff))  # max * max stays in range
+```
+
+Numbers in this field are called **M31 elements**. A Mersenne prime was
+chosen *for the prover's CPU*, not for mathematical beauty — a recurring
+theme: in proving, arithmetic speed *is* the product.
+
+> **Check.** Verify with the snippet that `m31_mul(2**30, 2**30) == 2**29`.
+> (Hint: `2**60 = 2**31 · 2**29`; since `2**31 ≡ 1 (mod P)`, the product
+> reduces to `2**29 = 536870912`.) Then check `m31_mul(P, P) == 0`.
+
+## The "secure field": QM31
+
+M31 has ~31 bits of security-worthiness — too small to stop brute force.
+The stack extends it, the way real numbers extend to complex numbers:
+
+- **CM31** — "complex numbers mod M31": pairs `(a + b·i)` with `i² = −1`.
+- **QM31** — one more quadratic extension on top: 4 M31 coordinates
+  `(a, b, c, d)`. Multiplication is defined so this forms a field of size
+  `(2³¹−1)⁴ ≈ 2¹²⁴` — big enough that guessing a random element is hopeless.
+
+This 4-coordinate object is what the prover and verifier treat as "one
+number" wherever ~128-bit security matters (random challenges, FRI folding
+values, claimed sums). You will see `QM31` constantly in Part 3.
+
+## What to carry forward
+
+1. All arithmetic is exact, mod a prime — `==` means `==`.
+2. M31 is the fast base field; QM31 is the secure extension.
+3. Any integer can be *represented* in a field; any field element can be
+   *checked* against equations. That second property is what proofs consume.

@@ -1,0 +1,29 @@
+[package]
+name = "m31_pool"
+version = "0.1.0"
+edition = "2024_07"
+description = "Option A measurement pool: R0 spends over an on-chain Poseidon2-M31 note tree"
+
+[dependencies]
+starknet = "2.18.0"
+# M31 reductions for the permutation (fork broody/proving, templar/arithmetic-profile).
+stwo_verifier_core = { path = "../../../target/proving-arith/stwo_cairo_verifier/crates/verifier_core" }
+
+[dev-dependencies]
+snforge_std = "0.63.0"
+assert_macros = "2.18.0"
+
+[features]
+# Shared round code for the permutation (src/perm_compact.cairo): smaller class, more gas per call.
+compact_perm = []
+
+[[target.starknet-contract]]
+sierra = true
+casm = true
+
+[scripts]
+test = "snforge test"
+
+[tool.snforge]
+# The sponge-node golden tests run 12 appends (768 permutations) in one test.
+max_n_steps = 100000000

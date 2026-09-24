@@ -1,6 +1,6 @@
 # ADR-0010: Single-phase architecture — on-chain inner-proof verification; operator removed; private invokes cut
 
-- Status: Accepted; proof transport, verification and milestone choices partially superseded by [ADR-0018](0018-stwo-private-proving.md); external-invoke exclusion superseded by [ADR-0023](0023-return-notes-and-adapter-compatibility.md)
+- Status: Accepted; proof transport, verification and milestone choices partially superseded by [ADR-0018](0018-stwo-private-proving.md); external-invoke exclusion superseded by [ADR-0023](0023-return-notes-and-adapter-compatibility.md); wrapping service role added by [ADR-0024](0024-compact-client-proofs-and-server-wrapping.md)
 - Date: 2026-09-19
 - Deciders: broody
 - Supersedes: [ADR-0001](0001-two-phase-proof-facts-architecture.md) (two-phase

@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "native_verifier_sha256": "d440fe6974729e508dc944f67fce9c9af9534b0daadcf584429f057b425bf4ac",
+  "proofs": [
+    {
+      "path": "bench/m31-private-blake/results/browser/proof-1.bin",
+      "sha256": "47b958308b07da406398078678d019158307113afd375b3e47a47293931fae4f",
+      "result": {
+        "accepted": true,
+        "action": "verify",
+        "proof_bytes": 2053828,
+        "seconds": 0.140764205
+      }
+    },
+    {
+      "path": "bench/m31-private-blake/results/browser/proof-2.bin",
+      "sha256": "f7b026b1519bade2599ea43b7dc8b8ba90185a471ce97d8c8e93b9a3a05638d7",
+      "result": {
+        "accepted": true,
+        "action": "verify",
+        "proof_bytes": 2025716,
+        "seconds": 0.135427521
+      }
+    },
+    {
+      "path": "bench/m31-private-blake/results/browser/proof-3.bin",
+      "sha256": "3ad7ef69f19db500175a233ce00580bb862b07296ead70ecb53590b5b1e8da5b",
+      "result": {
+        "accepted": true,
+        "action": "verify",
+        "proof_bytes": 2026680,
+        "seconds": 0.133671898
+      }
+    }
+  ]
+}

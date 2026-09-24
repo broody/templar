@@ -1,0 +1,91 @@
+:root {
+  --vocs-spacing-content: 760px;
+  --vocs-leading-p: 1.8;
+  --guide-surface: light-dark(#f5f5fa, #17172a);
+  --guide-border: light-dark(#e0e0ee, #33335a);
+  --guide-muted: light-dark(#5c5c74, #a9a9c8);
+  --guide-accent: light-dark(#4338ca, #a5b4fc);
+}
+
+.guide-eyebrow {
+  color: var(--guide-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0 0 1.1rem;
+}
+
+.guide-lead { font-size: 1.22rem; line-height: 1.65; max-width: 44rem; }
+.guide-diagram {
+  background: var(--guide-surface);
+  border: 1px solid var(--guide-border);
+  border-radius: 12px;
+  margin: 1.8rem 0;
+  padding: 1.5rem;
+}
+.guide-caption { font-size: 0.8rem; color: var(--guide-muted); }
+
+.guide-plot svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.guide-plot-grid line {
+  stroke: var(--guide-border);
+  stroke-width: 1;
+}
+
+.guide-plot-axis line {
+  stroke: var(--guide-muted);
+  stroke-width: 2;
+}
+
+.guide-plot-stems line {
+  stroke: var(--guide-accent);
+  stroke-width: 3;
+}
+
+.guide-plot-points circle {
+  fill: var(--guide-accent);
+  stroke: var(--guide-surface);
+  stroke-width: 3;
+}
+
+.guide-plot-points .guide-plot-root {
+  fill: var(--guide-surface);
+  stroke: var(--guide-accent);
+  stroke-width: 4;
+}
+
+.guide-plot text {
+  fill: currentColor;
+  font-family: inherit;
+  font-size: 14px;
+  text-anchor: middle;
+}
+
+.guide-plot-ticks text {
+  fill: var(--guide-muted);
+  font-size: 12px;
+}
+
+.guide-plot-values text {
+  font-weight: 700;
+}
+
+.guide-plot-values .guide-plot-root-label {
+  fill: var(--guide-accent);
+  font-size: 12px;
+}
+
+.guide-plot .guide-plot-axis-label {
+  fill: var(--guide-muted);
+  font-size: 13px;
+}
+
+.guide-plot figcaption {
+  margin-top: 0.75rem;
+}

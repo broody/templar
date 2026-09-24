@@ -1,0 +1,39 @@
+{
+ "pie": "policy-e2e release note (A) virtual-OS PIE, 3.41M OS steps",
+ "cap": "115G",
+ "cairo_fri_columns": 16,
+ "circuit_fri_columns": 16,
+ "exit_code": 0,
+ "elapsed_seconds": 123.17011523246765,
+ "oom_killed": false,
+ "max_rss_gib": 29.11752700805664,
+ "cgroup_peak_gib": 28.774959564208984,
+ "stage_peaks_gib": {
+  "before program execution": 0.44,
+  "after Program execution done": 0.92,
+  "after Write Preprocessed trace": 15.44,
+  "after Write Base trace": 25.04,
+  "after Compute preprocessed trace commitment": 28.77,
+  "after Compute base trace commitment": 24.49,
+  "after Write interaction trace": 21.8,
+  "after Compute interaction trace commitment": 23.75,
+  "after Cairo proving done": 26.54,
+  "after Circuit proving done": 14.55
+ },
+ "prover": {
+  "bounded_cairo_fri_columns": 16,
+  "bounded_circuit_fri_columns": 16,
+  "gateway_max_proof_size": 480000,
+  "leaf_verifier_trace_log_size": 25,
+  "output_preimage_len": 7,
+  "proof_bytes": 257470,
+  "prove_seconds": 121.313700609,
+  "rejects_changed_output": true,
+  "rejects_flipped_proof_byte": true,
+  "rejects_truncated_proof": true,
+  "verified": true,
+  "verify_seconds": 0.097269753
+ },
+ "proof_identical_to_default": true,
+ "run": "native-bounded16"
+}

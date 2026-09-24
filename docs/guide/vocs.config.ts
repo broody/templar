@@ -7,6 +7,9 @@ export default defineConfig({
   renderStrategy: 'full-static',
   accentColor: 'light-dark(#0f6555, #83d7bd)',
   iconUrl: '/mark.svg',
+  mcp: {
+    enabled: true,
+  },
   topNav: [
     { text: 'Architecture', link: '/' },
     { text: 'Implementation status', link: '/status' },
@@ -23,8 +26,8 @@ export default defineConfig({
         { text: 'Pool state', link: '/architecture/state' },
         { text: 'Transaction lifecycle', link: '/architecture/lifecycle' },
         { text: 'Proofs & verification', link: '/architecture/proofs' },
-        { text: 'Controlled notes', link: '/architecture/controllers' },
-        { text: 'Return notes', link: '/architecture/returns' },
+        { text: 'Open notes', link: '/architecture/open-notes' },
+        { text: 'Policy notes', link: '/architecture/policy-notes' },
         { text: 'Privacy & trust', link: '/architecture/privacy' },
       ],
     },

@@ -1,0 +1,74 @@
+   Compiling snforge_scarb_plugin v0.63.0
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.10s
+   Compiling test(m31_pool_unittest) m31_pool v0.1.0 (/home/broody/development/templar/bench/m31-pool/cairo/Scarb.toml)
+warn[E2100]: Unused import: `m31_pool::test_token::E2EToken::StoragePointerReadAccess`
+ --> /home/broody/development/templar/bench/m31-pool/cairo/src/test_token.cairo:9:59
+        Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2100]: Unused import: `m31_pool::test_token::E2EToken::StoragePointerWriteAccess`
+ --> /home/broody/development/templar/bench/m31-pool/cairo/src/test_token.cairo:10:9
+        StoragePointerWriteAccess,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warn[E2066]: Usage of deprecated feature `"corelib-internal-use"` with no `#[feature("corelib-internal-use")]` attribute. Note: "Use `starknet` directly"
+ --> /home/broody/development/templar/bench/m31-pool/cairo/src/test_token.cairo:6:15
+    use core::starknet::{get_caller_address, ContractAddress};
+              ^^^^^^^^
+
+    Finished `dev` profile target(s) in 3 seconds
+
+
+Collected 27 test(s) from m31_pool package
+Running 27 test(s) from src/
+[PASS] m31_pool::tests::test_pool::cost_tb_base_c_f_3 (l1_gas: ~0, l1_data_gas: ~9120, l2_gas: ~268806488)
+GAS transfer_batched format=1 store_nodes=false start=5 warm=53343595
+[PASS] m31_pool::tests::test_pool::cost_tb_c_f_3 (l1_gas: ~0, l1_data_gas: ~9696, l2_gas: ~325238033)
+GAS apply_spend format=1 store_nodes=false outputs=2 withdrawal=false warm=51811135
+[PASS] m31_pool::tests::test_pool::cost_spend_compress_frontier (l1_gas: ~0, l1_data_gas: ~9984, l2_gas: ~379560335)
+[PASS] m31_pool::tests::test_pool::cost_tb_base_c_f_5 (l1_gas: ~0, l1_data_gas: ~9696, l2_gas: ~385373302)
+[PASS] m31_pool::tests::test_pool::cost_base_compress_nodes (l1_gas: ~0, l1_data_gas: ~11232, l2_gas: ~341838129)
+GAS apply_spend format=1 store_nodes=true outputs=2 withdrawal=false warm=53984175
+GAS transfer_batched format=1 store_nodes=false start=6 warm=51811135
+[PASS] m31_pool::tests::test_pool::cost_spend_compress_nodes (l1_gas: ~0, l1_data_gas: ~12384, l2_gas: ~401994415)
+[PASS] m31_pool::tests::test_pool::cost_tb_c_f_4 (l1_gas: ~0, l1_data_gas: ~9984, l2_gas: ~379663075)
+[PASS] m31_pool::tests::test_pool::cost_tb_base_c_n_4 (l1_gas: ~0, l1_data_gas: ~11232, l2_gas: ~342613030)
+GAS deposit format=1 store_nodes=false warm=57696252
+[PASS] m31_pool::tests::test_pool::cost_base_compress_frontier (l1_gas: ~0, l1_data_gas: ~9408, l2_gas: ~323989089)
+[PASS] m31_pool::tests::test_pool::cost_deposit_compress_frontier (l1_gas: ~0, l1_data_gas: ~9696, l2_gas: ~383184121)
+GAS apply_spend format=1 store_nodes=false outputs=0 withdrawal=true warm=1879962
+[PASS] m31_pool::tests::test_pool::cost_tb_base_c_f_4 (l1_gas: ~0, l1_data_gas: ~9408, l2_gas: ~324763990)
+[PASS] m31_pool::tests::test_pool::cost_full_compress_frontier (l1_gas: ~0, l1_data_gas: ~9696, l2_gas: ~328040188)
+GAS apply_spend format=1 store_nodes=false outputs=1 withdrawal=true warm=52034331
+[PASS] m31_pool::tests::test_pool::cost_partial_compress_frontier (l1_gas: ~0, l1_data_gas: ~9984, l2_gas: ~379608124)
+GAS transfer_batched format=1 store_nodes=false start=7 warm=56462945
+GAS transfer_batched format=1 store_nodes=true start=6 warm=53984175
+[PASS] m31_pool::tests::test_pool::cost_tb_c_f_5 (l1_gas: ~0, l1_data_gas: ~10272, l2_gas: ~444924197)
+[PASS] m31_pool::tests::test_pool::cost_tb_c_n_4 (l1_gas: ~0, l1_data_gas: ~12384, l2_gas: ~402097055)
+GAS deposit format=1 store_nodes=true warm=59796952
+[PASS] m31_pool::tests::test_pool::cost_deposit_compress_nodes (l1_gas: ~0, l1_data_gas: ~11904, l2_gas: ~404741861)
+GAS transfer_batched format=0 store_nodes=false start=5 warm=107714065
+[PASS] m31_pool::tests::test_pool::cost_tb_s_f_3 (l1_gas: ~0, l1_data_gas: ~9600, l2_gas: ~593399863)
+[PASS] m31_pool::tests::test_pool::cost_base_sponge_nodes (l1_gas: ~0, l1_data_gas: ~11136, l2_gas: ~605050529)
+[PASS] m31_pool::tests::test_pool::cost_base_sponge_frontier (l1_gas: ~0, l1_data_gas: ~9312, l2_gas: ~587201489)
+GAS deposit format=0 store_nodes=true warm=112519832
+GAS apply_spend format=0 store_nodes=false outputs=0 withdrawal=true warm=1879962
+[PASS] m31_pool::tests::test_pool::cost_full_sponge_frontier (l1_gas: ~0, l1_data_gas: ~9600, l2_gas: ~591252588)
+[PASS] m31_pool::tests::test_pool::cost_deposit_sponge_nodes (l1_gas: ~0, l1_data_gas: ~11808, l2_gas: ~720683801)
+GAS deposit format=0 store_nodes=false warm=110419132
+GAS apply_spend format=0 store_nodes=false outputs=2 withdrawal=false warm=104534015
+[PASS] m31_pool::tests::test_pool::cost_spend_sponge_frontier (l1_gas: ~0, l1_data_gas: ~9888, l2_gas: ~695502275)
+[PASS] m31_pool::tests::test_pool::cost_deposit_sponge_frontier (l1_gas: ~0, l1_data_gas: ~9600, l2_gas: ~699126061)
+GAS apply_spend format=0 store_nodes=true outputs=2 withdrawal=false warm=106707055
+GAS apply_spend format=0 store_nodes=false outputs=1 withdrawal=true warm=104757211
+GAS transfer_batched format=0 store_nodes=false start=6 warm=104534015
+[PASS] m31_pool::tests::test_pool::cost_spend_sponge_nodes (l1_gas: ~0, l1_data_gas: ~12288, l2_gas: ~717936355)
+[PASS] m31_pool::tests::test_pool::cost_partial_sponge_frontier (l1_gas: ~0, l1_data_gas: ~9888, l2_gas: ~695550064)
+[PASS] m31_pool::tests::test_pool::cost_tb_s_f_4 (l1_gas: ~0, l1_data_gas: ~9888, l2_gas: ~695605015)
+GAS transfer_batched format=0 store_nodes=false start=7 warm=114128595
+[PASS] m31_pool::tests::test_pool::cost_tb_s_f_5 (l1_gas: ~0, l1_data_gas: ~10176, l2_gas: ~820179377)
+Tests: 27 passed, 0 failed, 0 ignored, 24 filtered out
+

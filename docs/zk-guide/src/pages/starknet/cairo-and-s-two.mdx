@@ -1,0 +1,112 @@
+---
+showAskAi: false
+title: Cairo and S-two
+description: The felt252 stack in practice — limbs, tables, and what a client proof costs.
+---
+
+<div className="guide-eyebrow">Part 4 · Starknet</div>
+
+# Cairo and S-two
+
+## S-two: the prover this stack runs
+
+S-two is Starkware's current STARK prover, and it is built exactly as Parts
+1–3 described, with the M31/circle choices (Part 1.1, 1.3):
+
+- base field **M31**, secure field **QM31** (4 coordinates),
+- trace and FRI on **circle cosets**,
+- a single **combined FRI column**: after the OOD samples are drawn, every
+  committed column's OOD quotient is folded with channel randomness into
+  *one* polynomial that FRI proves low-degree,
+- a Blake2s **channel** for Fiat–Shamir, two PoW nonces,
+- the security budget `pow_bits + blowup · queries = 27 + 3·23 = 96` bits
+  in the pinned configuration.
+
+## felt252: the 252-bit guest
+
+Starknet's native field is **felt252** (`p ≈ 2²⁵¹`). But S-two's base field
+is M31 — 31 bits. So a felt252 value inside a proof is carried as **28
+nine-bit limbs**. This one fact explains most of the stack's shape:
+
+- Every felt252 multiplication becomes 28×28 = 784 limb multiplications plus
+  carry bookkeeping (with Karatsuba-style tricks),
+- Every limb must be **range-checked** (Part 3.4) — hence the ladder of
+  range tables at 2¹⁵–2²⁰ rows that dominate client memory,
+- The measured cost of one felt252 Poseidon **permutation** in a foreign
+  SNARK (the abandoned path) was ~47k constraints; in S-two it is the
+  purpose-built circuitry the machine was made for.
+
+The practical consequence measured in this repo: a public payment-shaped
+statement with ~128 felt252 Poseidon permutations proves in ~14 s at ~2 GB
+RSS — while the fixed range tables, not the permutations, set the memory
+floor. That benchmark did not provide witness privacy.
+
+## The component zoo
+
+A Cairo-statement proof instantiates dozens of specialized AIR components —
+the pinned payment statement uses 12: a **Poseidon aggregator** (the actual
+hash permutations), full/partial **round chains**, **cube_252** (felt
+cubing), and the range-check family, plus **round-key tables**. Each
+component owns its own trace columns, interaction columns, and constraints;
+together they form the "69-component" scale of a full Cairo VM proof (the
+OS) vs the 12-component scale of a payment statement.
+
+## The vocabulary you now have
+
+With Parts 1–3 in hand, the pinned configuration reads as plain language:
+
+| Term | Meaning from this course |
+| --- | --- |
+| `pow_bits: 27` | PoW grinding before queries (Part 3.2) |
+| `blowup: 3` | evaluation domain = 8× the trace (Part 2.2) |
+| `23 queries` | random openings; `3·23` security bits (Part 3.2) |
+| `fold_step: 4` | FRI folds 16 values per rung; 15 witnesses/query/layer (Part 3.2) |
+| `lifting: 23` | all trees committed on one common domain size (Part 3.3) |
+| `claimed sums` | the LogUp identity's public side (Part 3.4) |
+
+And the observation inventory (~40–50k functionals for a payment statement:
+~820 trace columns × (1 OOD + 23 queries) + ~1,725 FRI witnesses + 12
+claimed sums) is a *counted* object, not a metaphor — Part 5's privacy
+arguments live and die by this count.
+
+## A second way to use S-two
+
+S-two's primitives can also support a **purpose-built AIR** without proving a
+generic Cairo VM execution. That is the basis of the compact-client path:
+
+- express note membership, ownership, nullifiers, conservation and outputs
+  directly as M31 constraints;
+- use an M31-friendly hash inside the experimental private statement;
+- add polynomial masking and private commitments before any proof crosses the
+  client boundary;
+- let a server handle the generic Cairo/PROOF2 work after verifying that
+  already-private proof.
+
+The first complete experiment covers private depth-32 membership: 65 active
+Poseidon2-M31 permutations, 128 AIR rows, 1,191 columns and 1,273 constraints.
+It proves in 1.17–1.20 seconds at 63–64 MiB native peak RSS, and in 1.89–2.12
+seconds with about 80 MiB WASM linear memory in Chrome. This is strong evidence
+that the generic Cairo footprint is avoidable on the client. It is not yet a
+full payment: amounts, nullifiers, outputs, delivery binding, controllers and
+ReturnNotes remain to be constrained.
+
+## Where zero-knowledge lives — and doesn't
+
+S-two's stock core still has **no hiding switch**. The compact experiment adds
+its own reviewed protocol around S-two's fields, circle FFTs and CPU FRI folds:
+full polynomial masks, an independent random batching polynomial, salted
+private Merkle commitments and a transcript covering every oracle message.
+That custom layer is where witness privacy lives. Calling S-two alone does not
+provide it, and the wrapper cannot add it after the inner proof is disclosed.
+
+> **Check.** Using Part 3.3's counting: a statement with 1,228 committed
+> columns, 1-point OOD for most columns, 23 queries, and 1,725 FRI witness
+> values — how many *independent observables*? Confirm ≈ 41–50k.
+
+## What to carry forward
+
+1. felt252 = 28 nine-bit limbs inside S-two; limb range-checks set the
+   memory floor.
+2. Components are the unit of AIR design; payments need 12, the OS needs 69.
+3. A purpose-built M31 AIR can avoid that generic client footprint, but it
+   assumes responsibility for every payment rule and every privacy proof.

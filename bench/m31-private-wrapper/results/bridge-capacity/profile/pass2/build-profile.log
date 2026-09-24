@@ -1,0 +1,5 @@
+Error: Failed calculating Sierra variables (gas disabled).
+
+Caused by:
+    0: error from the program registry
+    1: Error during libfunc specialization of local_into_box<Tuple<stwo_verifier_core::fields::qm31::naive::QM31>>: Could not specialize libfunc `local_into_box` with generic_args: [Tuple<stwo_verifier_core::fields::qm31::naive::QM31>]. Error: Could not find the requested extension: local_into_box.

@@ -1,0 +1,166 @@
+{
+  "scope": "standalone Cairo execution of the R0 payment bridge (fork circuit_air); no OS, no PROOF2",
+  "executable_sha256": "c75f0c9a304f83e3cc543868248332930590e9a0af3b50d0c11433726c6ecb44",
+  "expected_binding": "0x684e1f52a29253a6f891f1fe757d7dcceae322271d88cde3b16cdf7bbc16b83",
+  "cases": [
+    {
+      "name": "valid",
+      "expected_accept": true,
+      "passed": true,
+      "exit_code": 0,
+      "output": [
+        4,
+        393402133025997798000961,
+        4804531802159108296,
+        337287198475669417,
+        -669842382060782327887131881305085180509405781192134163845947946924039378046
+      ],
+      "usage": "{\"program_output\":\"4\\n393402133025997798000961\\n4804531802159108296\\n337287198475669417\\n-669842382060782327887131881305085180509405781192134163845947946924039378046\",\"resources\":{\"n_steps\":2031287,\"n_memory_holes\":139713,\"builtin_instance_counter\":[[\"range_check_builtin\",241805],[\"poseidon_builtin\",27],[\"output_builtin\",5]],\"syscalls\":[],\"memory_segment_sizes\":[[\"execution\",1716662],[\"range_check\",241805],[\"poseidon\",162],[\"output\",5]],\"max_memory_address\":2027272}}",
+      "reason": null
+    },
+    {
+      "name": "tag",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"statement tag\\\".\"}"
+    },
+    {
+      "name": "nullifier-output",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+    },
+    {
+      "name": "commitment-output",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+    },
+    {
+      "name": "absent-claimed-sum",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"absent component claims a nonzero sum\\\".\"}"
+    },
+    {
+      "name": "proof-body",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Merkle Verification Error: Root Mismatch\\\".\"}"
+    },
+    {
+      "name": "wrong-chain",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+    },
+    {
+      "name": "wrong-pool",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+    },
+    {
+      "name": "wrong-token",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+    },
+    {
+      "name": "wrong-root",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"root\\\".\"}"
+    },
+    {
+      "name": "wrong-nullifier",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"nullifiers\\\".\"}"
+    },
+    {
+      "name": "swapped-outputs",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"commitments\\\".\"}"
+    },
+    {
+      "name": "wrong-delivery",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"deliveries\\\".\"}"
+    },
+    {
+      "name": "wrong-withdrawal-recipient",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"withdrawal\\\".\"}"
+    },
+    {
+      "name": "wrong-withdrawal-amount",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"withdrawal\\\".\"}"
+    },
+    {
+      "name": "trailing",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"trailing proof data\\\".\"}"
+    },
+    {
+      "name": "truncated",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 1,
+      "output": null,
+      "usage": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with 0x494e56414c49445f50524f4f465f454e434f44494e47 ('INVALID_PROOF_ENCODING').\"}"
+    }
+  ]
+}

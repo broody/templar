@@ -10,6 +10,8 @@ addresses, derived from
 **Current priorities: [TODO.md](TODO.md)**  
 **Live evidence: [push-payment and recovery lifecycle](bench/push-e2e/README.md)**
 
+**Go-to-market: [internal strategy draft](docs/gtm-strategy.md)**
+
 ## Architecture
 
 Recipients share an address once and can receive while offline. Payers create
