@@ -156,3 +156,21 @@ matter only for fitting the cheaper log20 path.
   submission with authentic chain state.
 - Cost with the complete private-client verifier in the bridge.
 - Repeated runs and an independent-verifier check of the saved proof bytes.
+
+## Core scaling (2026-09-24)
+
+The large proof parallelizes, but only to about 16 threads. Same PIE (the Sepolia S1 hidden-asset
+transfer), `templar-prove`, bounded whole trees, native build, one job, nothing else running
+(`results/core-scaling.json`):
+
+| Threads | Prove | Cores busy | Peak RSS |
+| ---: | ---: | ---: | ---: |
+| 4 | 126 s | ~4 | 28.2 GiB |
+| 8 | 84.9 s | 6.2 | 28.8 GiB |
+| 16 | 65.6 s | 10.8 | 29.3 GiB |
+| 18 | 65.2 s | 11.8 | 30.6 GiB |
+| 36 (hyperthreads) | 63.5 s | 20.6 | 29.7 GiB |
+
+The times fit about 45 s + 322 s / threads: roughly 45 s does not parallelize (not yet profiled).
+Memory does not depend on the thread count, so on one machine throughput is memory-bound: two
+16-thread jobs fit 36 cores and ~60 GiB. Every proof is byte-identical.

@@ -1,0 +1,46 @@
+{
+ "date": "2026-09-24",
+ "host": "i9-10980XE, 18 cores / 36 threads, 125 GB",
+ "binary": "templar-prove (broody/proving b54ed94f8), -C target-cpu=native, bounded whole trees 16/16",
+ "input": "Sepolia S1 hidden-asset transfer PIE (3,395,137 OS steps)",
+ "cpus": "CPUAffinity 0..n-1, RAYON_NUM_THREADS=n, cgroup MemoryMax 40G, no swap",
+ "fit": "prove_seconds ~= 45.5 + 322 / threads",
+ "all_proofs_identical": true,
+ "by_threads": {
+  "4": {
+   "prove_seconds": 126.1,
+   "cpu_percent": "346%",
+   "max_rss_gib": 28.2,
+   "verified": true,
+   "proof_bytes": 253020
+  },
+  "8": {
+   "prove_seconds": 84.9,
+   "cpu_percent": "615%",
+   "max_rss_gib": 28.8,
+   "verified": true,
+   "proof_bytes": 253020
+  },
+  "16": {
+   "prove_seconds": 65.6,
+   "cpu_percent": "1076%",
+   "max_rss_gib": 29.3,
+   "verified": true,
+   "proof_bytes": 253020
+  },
+  "18": {
+   "prove_seconds": 65.2,
+   "cpu_percent": "1175%",
+   "max_rss_gib": 30.6,
+   "verified": true,
+   "proof_bytes": 253020
+  },
+  "36": {
+   "prove_seconds": 63.5,
+   "cpu_percent": "2057%",
+   "max_rss_gib": 29.7,
+   "verified": true,
+   "proof_bytes": 253020
+  }
+ }
+}

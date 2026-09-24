@@ -24,8 +24,9 @@ with no network.
 
 ## Requirements
 
-- Per concurrent job: 4 cores, 32 GiB RAM (one job at a time by default). A proof takes about
-  2 minutes; the pre-check about 1 second; the OS run about 12 seconds.
+- Per concurrent job: 16 cores and 32 GiB RAM for a ~65 s proof (4 cores: ~126 s; beyond 16
+  cores there is almost no gain). The pre-check takes about 1 second and the OS run about 12. On
+  one machine, throughput is memory-bound: two 16-core jobs need ~60 GiB.
 - A Starknet RPC node with the v0.10 API. A local node is recommended: the OS run reads a lot of
   state, and the pre-checks send nullifiers and roots to it before settlement.
 - A delegated cgroup v2 subtree (systemd `Delegate=yes`, or the Docker recipe below). The server

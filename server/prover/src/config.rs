@@ -130,13 +130,15 @@ pub struct Prover {
     pub circuit_fri_columns: usize,
     #[serde(default)]
     pub stream_commitments: bool,
-    #[serde(default = "d_cpus")]
+    /// Proving threads per job (and the job's CPU limit). 16 halves the proof time against 4;
+    /// beyond 16 there is almost no gain (bench/m31-private-wrapper/proof2-large, core scaling).
+    #[serde(default = "d_threads")]
     pub threads: u32,
 }
 
 impl Default for Prover {
     fn default() -> Self {
-        Prover { cairo_fri_columns: 16, circuit_fri_columns: 16, stream_commitments: false, threads: 4 }
+        Prover { cairo_fri_columns: 16, circuit_fri_columns: 16, stream_commitments: false, threads: 16 }
     }
 }
 
@@ -156,6 +158,7 @@ fn d_check_secs() -> u64 { 120 }
 fn d_os_secs() -> u64 { 600 }
 fn d_prove_secs() -> u64 { 1800 }
 fn d_columns() -> usize { 16 }
+fn d_threads() -> u32 { 16 }
 fn d_no_network() -> Vec<String> {
     ["unshare", "--user", "--net"].map(String::from).to_vec()
 }

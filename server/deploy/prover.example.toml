@@ -5,7 +5,7 @@
 listen = "0.0.0.0:8480"
 data_dir = "/var/lib/templar-prover/jobs"   # server-owned: jobs, staged bridges; use a dedicated directory
 retention_secs = 3600
-max_concurrent_jobs = 1                      # each job needs ~4 cores and ~30 GiB
+max_concurrent_jobs = 1                      # each job needs `threads` cores and ~30 GiB
 max_concurrent_checks = 2                    # pre-checks at once; more are refused (503)
 queue_capacity = 16
 trust_forwarded_for = false                  # true only behind a trusted reverse proxy
@@ -61,7 +61,7 @@ no_network = ["unshare", "--user", "--net"]
 cairo_fri_columns = 16
 circuit_fri_columns = 16
 stream_commitments = false                    # true: ~22 GiB, ~30% slower
-threads = 4
+threads = 16                                  # ~65 s per proof; 4: ~126 s; more than 16 barely helps
 
 # Oblivious HTTP (optional): clients reach the server through an OHTTP relay, which hides their
 # address. The key file holds a hex X25519 private key (64 hex characters), e.g.
