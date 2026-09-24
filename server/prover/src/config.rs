@@ -153,7 +153,6 @@ fn d_relay_per_hour() -> u32 { 400 }
 fn d_backoff() -> u64 { 60 }
 fn d_job_memory() -> String { "32G".into() }
 fn d_check_memory() -> String { "2G".into() }
-fn d_cpus() -> u32 { 4 }
 fn d_check_secs() -> u64 { 120 }
 fn d_os_secs() -> u64 { 600 }
 fn d_prove_secs() -> u64 { 1800 }
