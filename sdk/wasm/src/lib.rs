@@ -107,8 +107,8 @@ pub fn asset_id(standard: u16, contract: &str, id_low: &str, id_high: &str) -> O
     Ok(felt::to_hex(&note::asset_id(standard, &f(contract)?, (u128_of(id_low)?, u128_of(id_high)?)).map_err(err)?))
 }
 
-/// A deposit's note for `address`: `{inner, ciphertext, commitment}` (the pool's `inner₉`,
-/// `ct₁₀` and the leaf it will publish).
+/// A deposit's note for `address`: `{inner, ciphertext, delivery, commitment}` (the pool's
+/// `inner₉`, `ct₁₀`, the digest it will record and the leaf it will publish).
 #[wasm_bindgen]
 pub fn note_for(address: &str, asset: &str, amount: &str) -> Out<String> {
     let to = Address::decode(address).map_err(err)?;
@@ -125,8 +125,19 @@ pub fn note_for(address: &str, asset: &str, amount: &str) -> Out<String> {
     to_json(&json!({
         "inner": note::inner(&to.receiver, &rho),
         "ciphertext": words.iter().map(felt::to_hex).collect::<Vec<_>>(),
+        "delivery": felt::to_hex(&sealbox::delivery(&words)),
         "commitment": cm,
     }))
+}
+
+/// `Poseidon('CTRL_DELIVERY_V1', 304, words)` of ten ciphertext words (what the pool records).
+#[wasm_bindgen]
+pub fn delivery_digest(words: &str) -> Out<String> {
+    let words: Vec<String> = parse(words, "words")?;
+    let words: Vec<Felt32> = words.iter().map(|w| f(w)).collect::<Out<_>>()?;
+    let words: [Felt32; 10] = words.try_into().map_err(|_| bad("not ten words"))?;
+    sealbox::from_words(&words).map_err(err)?;
+    Ok(felt::to_hex(&sealbox::delivery(&words)))
 }
 
 // ---------------------------------------------------------------- the tree
@@ -307,11 +318,20 @@ pub fn plan_spend(seed: &[u8], request: &str, tree: &Tree) -> Out<String> {
     plan_with(seed, request, tree, &mut OsRng)
 }
 
-/// Proves a plan (run in a worker): `{proof, statement, binding, calldata, circuit_hash, nullifiers}`.
+fn proved_json(p: &spend::Proved) -> Out<String> {
+    // The statement also goes out as its own JSON string: its u128 amount must reach the server
+    // exactly, and a JavaScript number cannot hold it.
+    let mut v = serde_json::to_value(p).map_err(|e| err(Error::new("internal", e.to_string())))?;
+    v["statement_json"] = Value::String(to_json(&p.statement)?);
+    to_json(&v)
+}
+
+/// Proves a plan (run in a worker): `{proof, statement, statement_json, binding, calldata,
+/// circuit_hash, nullifiers}`.
 #[wasm_bindgen]
 pub fn prove_spend(seed: &[u8], plan: &str) -> Out<String> {
     let plan: Plan = parse(plan, "plan")?;
-    to_json(&spend::prove_plan(&seed_of(seed)?, &plan, &mut OsRng).map_err(err)?)
+    proved_json(&spend::prove_plan(&seed_of(seed)?, &plan, &mut OsRng).map_err(err)?)
 }
 
 /// The companion's nullifier, which the wallet checks is unspent before proving (SDK-M17).
@@ -388,7 +408,7 @@ pub fn test_prove_spend_seeded(seed: &[u8], plan: &str, rng_seed: u64) -> Out<St
     use rand_core::SeedableRng;
     let plan: Plan = parse(plan, "plan")?;
     let mut rng = rand_chacha::ChaCha20Rng::seed_from_u64(rng_seed);
-    to_json(&spend::prove_plan(&seed_of(seed)?, &plan, &mut rng).map_err(err)?)
+    proved_json(&spend::prove_plan(&seed_of(seed)?, &plan, &mut rng).map_err(err)?)
 }
 
 #[cfg(feature = "test-rng")]

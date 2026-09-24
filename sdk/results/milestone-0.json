@@ -1,0 +1,54 @@
+{
+ "date": "2026-09-24",
+ "what": "Milestone 0 (docs/sdk-spec.md \u00a77.3): the R0 V4 client proof built for wasm32, proved single-threaded in a worker, byte-identical to the native core (sdk/vectors/determinism.json), accepted by the deployed bridge build (templar-prover check).",
+ "machine": "development workstation (x86_64); the same machine as the native numbers",
+ "wasm": {
+  "file": "sdk/ts/wasm/templar_bg.wasm",
+  "bytes": 7847258,
+  "note": "release, before wasm-opt"
+ },
+ "native": {
+  "proof_seconds": "about 1.0 (release, multi-threaded, core tests)"
+ },
+ "node": {
+  "runtime": "Node 22.22.1, worker thread",
+  "prove_seconds": 20.3,
+  "peak_rss_mib": 332,
+  "identical": true
+ },
+ "chrome": {
+  "browser": "chromium 153.0.8010.47",
+  "runs": [
+   {
+    "prove_ms": 18234.30000000447,
+    "linear_memory_mib": 257.3125,
+    "identical": true
+   },
+   {
+    "prove_ms": 18136.39999999851,
+    "linear_memory_mib": 257.3125,
+    "identical": true
+   },
+   {
+    "prove_ms": 18071.39999999851,
+    "linear_memory_mib": 257.3125,
+    "identical": true
+   }
+  ]
+ },
+ "thresholds": {
+  "proof_seconds_max": 30,
+  "memory_gib_max": 1.5,
+  "wasm_mb_max": 16,
+  "met": true
+ },
+ "server_check": {
+  "accepted": true,
+  "bridge_steps": 2006491,
+  "note": "the WASM-made proof through templar-prover check against the deployed R4 bridge build"
+ },
+ "not_measured": [
+  "grinding share of proof time",
+  "a mobile browser"
+ ]
+}

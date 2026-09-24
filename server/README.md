@@ -101,8 +101,9 @@ handling.
   is the wallet's `cairo-arguments.json` (a length-prefixed felt span) and `statement` its
   `public.json`. Returns `202 {"id", "position"}`, or `400` (a pre-check failed, with the reason),
   `409` (the root is unknown, a nullifier is spent, or this note already has a job for a different
-  submission; resending the identical submission returns the existing job), `429` (rate
-  limited) or `503` (queue full).
+  submission; resending the identical submission returns the existing job, even while the note is
+  in backoff), `429` (rate limited) or `503` (queue full). A finished job stops holding its note once
+  its `valid_until` has passed, so a wallet can re-prove it at the same server.
 - `GET /v1/jobs/{id}` — `{"status": "queued" | "running" | "done" | "failed", "stage", "position",
   "result", "error"}`. A result carries `proof` (base64), `proof_facts`, `base_block`,
   `submit_after` (`base_block + 11`), `valid_until` (`base_block + max_proof_age`), `binding`,

@@ -223,19 +223,41 @@ async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectIn
     }
     // 3. Work deduplication and backoff.
     let dkey = sub.dedup_key();
+    // A finished job whose proof is past its `valid_until` can no longer be submitted, so it stops
+    // holding its note (docs/sdk-spec.md §8, SDK-P3). The job itself is kept until retention.
+    let stale = {
+        let reg = state.registry.lock().unwrap();
+        reg.dedup.get(&dkey).and_then(|id| {
+            let j = reg.jobs.get(id)?;
+            let until = j.result.as_ref()?.get("valid_until")?.as_u64()?;
+            matches!(j.status, Status::Done).then(|| (id.clone(), until))
+        })
+    };
+    if let Some((id, until)) = stale {
+        if state.rpc.block_number().await.is_ok_and(|latest| latest > until) {
+            let mut reg = state.registry.lock().unwrap();
+            if reg.dedup.get(&dkey) == Some(&id) {
+                reg.dedup.remove(&dkey);
+                reg.refusals.remove(&dkey);
+            }
+        }
+    }
     {
         let mut reg = state.registry.lock().unwrap();
         let now = Instant::now();
-        if reg.refusals.get(&dkey).is_some_and(|r| now < r.until) {
-            return err(StatusCode::TOO_MANY_REQUESTS, "this note was submitted recently; retry later");
-        }
+        // An identical resubmission (a client that lost the admission reply) gets its job back,
+        // even while the note is in backoff (SDK-P3).
         if let Some(existing) = reg.dedup.get(&dkey) {
-            // An identical resubmission (a client that lost the admission reply) gets its job back.
             if reg.jobs.get(existing).is_some_and(|j| j.body_hash == body_hash) {
                 let id = existing.clone();
                 let position = reg.order.iter().position(|x| *x == id);
                 return (StatusCode::ACCEPTED, Json(json!({"id": id, "position": position})));
             }
+        }
+        if reg.refusals.get(&dkey).is_some_and(|r| now < r.until) {
+            return err(StatusCode::TOO_MANY_REQUESTS, "this note was submitted recently; retry later");
+        }
+        if reg.dedup.contains_key(&dkey) {
             let backoff = state.config.limits.duplicate_backoff_secs;
             let r = reg.refusals.entry(dkey.clone()).or_insert(Refusal { count: 0, until: now });
             r.count += 1;

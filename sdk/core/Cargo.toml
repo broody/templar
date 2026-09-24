@@ -38,4 +38,3 @@ test-rng = ["dep:rand_chacha"]
 
 [dev-dependencies]
 rand_chacha = "0.3"
-sha2 = "0.10"
