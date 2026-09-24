@@ -240,3 +240,99 @@ queue checks, and add tests for "identical under backoff → 202 with the same i
 - The eviction rule `leaf_count + 512` with the ≥ 10-block-deep leaf is right, and a re-plan
   (newer `leaf_count`) is conservative.
 - The worker runs one fresh instance per proof and is terminated afterwards.
+
+## Re-review (5bd6ac6)
+
+- **Date:** 2026-09-24. **Commit:** `5bd6ac6 Client SDK: implementation review fixes (SDK-IM1 to IM12, SDK-IP1 to IP15)`.
+- **Diff reviewed:** `git diff fee4419 5bd6ac6 -- sdk server docs/sdk-spec.md`. I reviewed the TypeScript layer, the WASM
+  API, `spend.rs` planning (the `spent` set) and `server/prover/src/api.rs`.
+- **Runs:**
+  - `npx tsc && npx vitest run`: 14/14 pass (63 s).
+  - `cargo test --release` in `server/prover`: 8/8, including the two new tokio tests.
+  - Scratch reproductions against `dist/` (repository unchanged): my IP1, IP2 and IP4 reproductions now behave correctly;
+    two new issues were reproduced (SDK-IP16, SDK-IP17).
+
+### Verdict: **CONDITIONAL GO**
+
+The 15 findings are resolved, with SDK-IP14 partly resolved. One new Medium (SDK-IP16) must be fixed before
+the live end-to-end run or any release. The new Lows (SDK-IP17 to SDK-IP19) and the remaining SDK-IP14 tests are
+needed before release.
+
+### Status of SDK-IP1 to SDK-IP15
+
+| Finding | Status | Evidence |
+| --- | --- | --- |
+| IP1 | Resolved | `address()` bounds by `highestUsed()`, which is `u` from complete syncs only (`usedAtComplete`); `created` only widens the scan. Addresses 0–3 are issued and 4 is refused (test); recovery past the first gap works (test). |
+| IP2 | Resolved (see IP16) | An incomplete sync truncates `checkpoints` to `kept`; `registry_complete` follows the sync. The drop-once and tamper-once tests pass, and my reproductions now recover on the next sync. |
+| IP3 | Resolved | `ProvedOut` is serialized directly; a Rust test checks `withdrawal_amount = 2^100` in both the output and `statement_json`. |
+| IP4 | Resolved | `note_for(…, chain, pool)` refuses with `wrong_pool`; `deposit` passes the wallet's chain and pool (test). |
+| IP5 | Resolved | `Spend` holds only an id. Every step goes through `Wallet.step` under the store lock, re-reads the record, and refuses it if closed or at a different version. `leaving` refuses a different companion. `resume(id)` exists. A superseded `Spend` is refused (test). |
+| IP6 | Resolved | `nullifiers` are fixed at plan time (inputs plus companion). `attempts` keeps the history. `replan` re-reads the record under the lock after the sync. The core refuses spent inputs and a spent companion (`spent`). Eviction requires a complete sync and uses the largest `leaf_count` across attempts. The "earlier attempt lands after a re-plan and the record settles" case is tested. |
+| IP7 | Resolved | `wrap` resubmits the stored identical body when the window has passed, the job failed, or the job is gone (at most two rounds). Tested for an expired window and for a failed job. |
+| IP8 | Resolved | `prove()` checks the circuit hash against the pin (test); `prover.info()` runs before `leaving` (test: a refused server leaves `left = false`). |
+| IP9 | Resolved | The estimate uses F3 (checked in the test). Not yet exercised against a real account's `__validate__` on Sepolia; confirm it in the live end-to-end run. |
+| IP10 | Resolved (see IP16) | `load()` takes exactly `state.leaves` leaves; `appendLeaf` overwrites entries past the committed count; commitment and nullifier words ≥ p are counted as malformed. |
+| IP11 | Resolved (see IP18) | Signed transaction, bounds and nonce are stored before `invokeSignedTx`. `FileKV` uses a pid lock with takeover of a stale lock (test). |
+| IP12 | Resolved (see IP17) | `spendable` excludes live-record inputs. |
+| IP13 | Resolved | Spec version on `account.provider`, STRK `balance_of` against the maximum fee, required `confirmFee`, Sierra warning, pending notes, deposit confirmation, `Unknown` withdrawals refused. The metadata, fork-pin and `wasm-opt` deviations are recorded in the spec. `checkRecipient` still reads through `t.provider`; acceptable. |
+| IP14 | Partly resolved | Now tested: submission sequence, re-wrap, circuit mismatch, bad data behind a checkpoint, two-output eviction, supersede, companion, deposits and ERC1155, gap recovery, FileKV and IndexedDB, WASM malformed input. **Still missing:** OHTTP (key mismatch; no direct server contact), 409/429 surfaced without retry, crash and `resume` at each stage, window expiry and root eviction before `submit`. `sepolia-e2e.mjs` still has no real relay (documented). |
+| IP15 | Resolved (see IP19) | `existing_job` runs before the rate and queue checks, matches only an identical body whose job still holds the dedup key, and releases a finished job past `valid_until`. Two tokio tests cover this. The later `stale` block for different bodies is kept. |
+
+### New findings
+
+#### SDK-IP16 — Medium — a sync that throws keeps its unchecked checkpoints, which freezes a gap for good
+`wallet.ts:285–383`. Checkpoints are trimmed to `kept` only when the sync reaches its completeness check. If the
+sync throws after checkpoints were pushed (for example a transient `get_leaf_count` or `getBlockWithTxHashes`
+error), the in-memory `state` keeps those checkpoints and the partial leaves. The next sync starts after the
+unchecked checkpoint, and then persists it.
+
+Reproduced: one leaf dropped by the RPC and one `get_leaf_count` failure in the same sync. Every later sync in
+that process is incomplete (`leaf count 0, the pool has 2`), and so is a freshly loaded wallet on the same store.
+Only wiping the store fixes it. This is SDK-IP2 again, reached through an exception.
+
+`address()` also calls `save()` outside the lock, so it can persist the state of a sync still in progress.
+
+**Required:**
+- On any throw in `syncLocked`, restore the committed state (`await this.load()` in a `catch`, then rethrow).
+- Make `address()` save under the store lock.
+- Test: a dropped leaf plus a thrown call in the same sync recovers on the next sync.
+
+#### SDK-IP17 — Low — the live-input cache belongs to one `Wallet` instance
+`this.live` (`wallet.ts:495`) is refreshed only by that instance's own `writeRecord` or `load`. `plan()` uses it
+through `spendable()` under the lock without re-reading the records. Reproduced: tab B planned note 0 while
+tab A's left record held note 0.
+
+No double payment is possible (the nullifier is shared, and B reuses the stored companion), but it breaks
+"notes named in a live record are not selectable" across tabs, which the Web Locks design is meant to support.
+This was a regression: before 5bd6ac6, the records were read on every `spendable()` call.
+
+**Required:** refresh `this.live = await this.liveInputs()` inside the lock in `plan()`, and in `balances()`
+callers after `sync`.
+
+#### SDK-IP18 — Low — `FileKV` stale-lock takeover races
+`store.ts:113–130`.
+- **Race 1 (fresh lock):** another process that finds the lock between `open('wx')` and `writeFile(pid)` reads
+  an empty pid (`0`), treats the lock as stale, deletes it, and takes it. Both processes then hold the lock.
+- **Race 2 (stale lock):** two processes taking over the same stale lock can both `rm` it and one removes the
+  other's fresh lock.
+
+**Required:** make creation and takeover atomic. For example, write `lock.<pid>.<rand>` completely, then `link()`
+it to the lock path (fails if the lock exists). On takeover, `rename()` the stale lock to a unique name and
+check it still holds the dead pid. Treat an empty or unreadable lock as held.
+
+#### SDK-IP19 — Low — server: the identical-body lookup is unmetered
+`api.rs:185–187, 345–367`. `existing_job` runs before any token is spent. It scans all jobs linearly and, for a
+finished job, calls the node's `block_number`. Anyone holding one finished body can call the RPC node without
+limit. The pool of bodies is small and the harm is bounded.
+
+**Required:**
+- Index jobs by `body_hash`.
+- Cache the latest block for a few seconds, or charge the rate bucket when the lookup reaches the RPC call.
+
+### Other notes (no action required for GO)
+
+- **Replan companion:** a re-plan of a record that has not left draws a fresh companion, while `nullifiers` keeps
+  the first plan's companion nullifier. Harmless, since the real input nullifier is shared, but recompute it on
+  re-plan.
+- **Overwritten history:** a re-wrap at a different URL, or a second `submit`, overwrites `server`/`tx` without
+  adding it to `attempts`. Keep them there for the sent history.

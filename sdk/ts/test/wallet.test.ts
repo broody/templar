@@ -123,7 +123,9 @@ describe('receiving, spending and submission', () => {
     expect((await a.sync()).balances).toMatchObject([{ unspent: 1000n, spendable: 0n }]);
     const again = await a.replan(spend.id, { kind: 'withdraw', asset: TOKEN, amount: '1000', recipient: '0xb0b' });
     const rec2 = await again.record();
-    expect(rec2.attempts.length).toBe(1);
+    // Earlier jobs (re-wraps) and the sent transaction are all in the history.
+    expect(rec2.attempts.length).toBeGreaterThanOrEqual(1);
+    expect(rec2.attempts.at(-1)!.tx?.hash).toBe('0xbeef');
     expect(rec2.nullifiers).toEqual(rec.nullifiers);
     expect((await again.plan()).companion).toEqual(plan.companion);
 
@@ -170,6 +172,64 @@ describe('receiving, spending and submission', () => {
     await expect(spend.prove()).rejects.toThrow(/circuit_mismatch/);
     expect((await spend.record()).left).toBe(false);
   }, 180_000);
+});
+
+describe('prover client and in-flight failures', () => {
+  test('OHTTP: pinned key enforced, relay only, no fallback', async () => {
+    // A key configuration list: one config, key id 1, X25519 (0x0020), HKDF-SHA256 + AES-128-GCM.
+    const config = new Uint8Array([0x00, 0x29, 0x01, 0x00, 0x20, ...new Uint8Array(32).fill(9), 0x00, 0x04, 0x00, 0x01, 0x00, 0x01]);
+    const hex = [...config].map((b) => b.toString(16).padStart(2, '0')).join('');
+    const network = structuredClone(SEPOLIA);
+    network.provers = [{ url: 'http://p', ohttpKeyConfig: hex }];
+    const { t } = await setup(network);
+    const other = config.slice();
+    other[5] ^= 1;
+    expect(() => t.prover({ url: 'http://p', ohttp: { relayUrl: 'http://relay', keyConfig: other } })).toThrow(/ohttp_key/);
+    const seen: string[] = [];
+    const fetch = async (u: string | URL) => (seen.push(String(u)), new Response(new Uint8Array([1, 2, 3])));
+    const client = t.prover({ url: 'http://p', ohttp: { relayUrl: 'http://relay', keyConfig: config }, fetch: fetch as any });
+    await expect(client.info()).rejects.toThrow(/ohttp/);
+    expect(seen).toEqual(['http://relay']);
+  });
+
+  test('409 reported, restart and resume, window expiry and eviction before submit', async () => {
+    const { chain, kv, t } = await setup();
+    const a = await t.wallet(alice);
+    const aAddr = (await a.address(0)).address;
+    depositTo(chain, aAddr, 9n);
+    chain.mine(12);
+    const spend = await a.transfer(TOKEN, 4n, aAddr);
+    const proved = await spend.prove();
+    const prover = mockProver(chain);
+    prover.binding = proved.binding;
+    const client = t.prover({ url: 'http://p', fetch: prover.fetch as any });
+    prover.conflictNext = true;
+    await expect(spend.wrap(client, { url: 'http://p' })).rejects.toThrow(/prover_conflict/);
+    expect(prover.bodies.length).toBe(1);
+    // The stored body is sent again as is.
+    const w = await spend.wrap(client, { url: 'http://p' });
+    expect(prover.bodies[1]).toBe(prover.bodies[0]);
+    // Past the window's margin, submit refuses.
+    chain.mine(w.valid_until - chain.latest - 5);
+    await expect(spend.submit(chain.account(), { confirmFee: () => true })).rejects.toThrow(/window_passed/);
+    await spend.wrap(client, { url: 'http://p' });
+    chain.mine(12);
+    // A restart: a new instance on the same store resumes the record.
+    const t2 = await Templar.connect({ provider: chain.provider(), network: SEPOLIA, kv });
+    const a2 = await t2.wallet(alice);
+    const resumed = await a2.resume(spend.id);
+    expect((await resumed.record()).stage).toBe('wrapped');
+    const sent = await resumed.submit(chain.account(), { confirmFee: () => true });
+    expect(sent.transactionHash).toBe('0xbeef');
+    // The expired job joined the history when it was re-wrapped.
+    expect((await resumed.record()).attempts.length).toBe(1);
+    // The transaction never lands; once the root is evicted the record dies and cannot be sent again.
+    chain.noise2(256);
+    chain.mine(12);
+    await a2.sync();
+    expect((await resumed.record()).stage).toBe('dead');
+    await expect(resumed.submit(chain.account(), { confirmFee: () => true })).rejects.toThrow(/record_closed/);
+  }, 240_000);
 });
 
 describe('sync faults', () => {

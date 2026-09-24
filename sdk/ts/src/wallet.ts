@@ -82,6 +82,8 @@ interface SyncState {
   created: number;
   /** `u` at the last complete sync. */
   usedAtComplete?: number;
+  /** Incremented on every save. */
+  rev?: number;
   complete: boolean;
   problems: string[];
 }
@@ -239,6 +241,7 @@ export class Wallet {
   }
 
   private async save(): Promise<void> {
+    this.state.rev = (this.state.rev ?? 0) + 1;
     await this.store.put('state', 'sync', this.state);
   }
 
@@ -265,8 +268,13 @@ export class Wallet {
     // The gap limit counts from `u` only; `created` widens the scan, never the limit (SDK-IP1).
     const info = json<AccountInfo>(() => wasm.account(this.seed, this.chain, this.pool, i, this.highestUsed()));
     if (i > this.state.created) {
-      this.state.created = i;
-      await this.save();
+      // Under the lock, on the stored state (SDK-IP16).
+      await this.store.lock(async () => {
+        const stored = await this.store.get<SyncState>('state', 'sync');
+        if (stored && (stored.rev ?? 0) !== (this.state.rev ?? 0)) await this.load();
+        this.state.created = Math.max(this.state.created, i);
+        await this.save();
+      });
     }
     return info;
   }
@@ -279,7 +287,18 @@ export class Wallet {
 
   /** Syncs to the latest block (spec §6); holds the store lock throughout. */
   sync(): Promise<SyncResult> {
-    return this.store.lock(() => this.syncLocked());
+    return this.store.lock(async () => {
+      // Another instance (tab) may have saved since this one loaded (SDK-IP16, SDK-IP17).
+      const stored = await this.store.get<SyncState>('state', 'sync');
+      if ((stored?.rev ?? 0) !== (this.state.rev ?? 0)) await this.load();
+      try {
+        return await this.syncLocked();
+      } catch (e) {
+        // A sync that fails part-way leaves nothing unchecked behind: back to the saved state.
+        await this.load();
+        throw e;
+      }
+    });
   }
 
   private async syncLocked(): Promise<SyncResult> {
@@ -630,6 +649,8 @@ export class Wallet {
     if (!r.complete) fail('incomplete_sync', r.problems.join('; '));
     return this.store.lock(async () => {
       this.companions = (await this.store.get<[number, Companion][]>('companions', 'all')) ?? [];
+      // Another tab's records count too (SDK-IP17).
+      this.live = await this.liveInputs();
       // Records that never left the wallet cannot settle: a new plan supersedes them.
       for (const old of await this.records()) {
         if (!old.left && LIVE(old)) await this.writeRecord({ ...old, stage: 'dead', closed: 'superseded' });
@@ -863,7 +884,15 @@ export class Spend {
       if (!jobId) {
         const body = current.server?.body ?? `{"relation":"r4","proof":${JSON.stringify(proved.proof)},"statement":${proved.statement_json}}`;
         // The exact body is stored, and the record marked as left, before it is sent (spec §9.1).
-        current = await this.step(async (r) => ({ ...(await this.w.leaving(r)), server: { url: opts.url, body }, result: undefined, window: undefined, stage: 'sent_to_server' }));
+        current = await this.step(async (r) => ({
+          ...(await this.w.leaving(r)),
+          // An earlier job (another server, or an expired one) joins the history.
+          attempts: r.server?.jobId ? [...r.attempts, { plan: r.plan, server: r.server, result: r.result, window: r.window }] : r.attempts,
+          server: { url: opts.url, body },
+          result: undefined,
+          window: undefined,
+          stage: 'sent_to_server',
+        }));
         jobId = await prover.submit(body);
         current = await this.step((r) => ({ ...r, server: { ...r.server!, jobId } }));
       }
@@ -920,6 +949,7 @@ export class Spend {
     // The signed transaction, bounds and nonce are stored before sending (SDK-IP11).
     await this.step((r) => ({
       ...r,
+      attempts: r.tx ? [...r.attempts, { plan: r.plan, server: r.server, result: r.result, window: r.window, tx: r.tx }] : r.attempts,
       left: true,
       stage: 'sent_to_chain',
       tx: { nonce: prepared.nonce, maxFee: prepared.maxFee.toString(), expectedFee: prepared.expectedFee.toString(), signed: JSON.parse(JSON.stringify(prepared.signed, (_, v) => (typeof v === 'bigint' ? '0x' + v.toString(16) : v))) },

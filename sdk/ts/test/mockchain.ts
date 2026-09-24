@@ -255,6 +255,7 @@ export class MockProver {
   jobs = new Map<string, { status: string; body: string; result?: unknown }>();
   /** What the next status call returns for a job (to simulate failures). */
   failNext = false;
+  conflictNext = false;
   base = 0;
   binding = '';
   constructor(private chain: MockChain, private facts: (binding: string, base: number, hash: string) => string[]) {}
@@ -272,6 +273,10 @@ export class MockProver {
     }
     if (u.pathname === '/v1/jobs' && init?.method === 'POST') {
       this.bodies.push(init.body!);
+      if (this.conflictNext) {
+        this.conflictNext = false;
+        return reply(409, { error: 'a job for this note is already queued, running or done' });
+      }
       const id = String(this.jobs.size + 1).padStart(32, '0');
       this.jobs.set(id, { status: 'done', body: init.body! });
       return reply(202, { id, position: 0 });

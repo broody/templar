@@ -113,27 +113,47 @@ export class FileKV implements KV {
   private async lockFile<T>(name: string, f: () => Promise<T>): Promise<T> {
     const fs = await this.fs();
     const path = `${this.dir}/.lock-${name.replace(/[^a-z0-9]/gi, '')}`;
-    const take = () => fs.open(path, 'wx');
-    let h = await take().catch(() => undefined);
-    if (!h) {
-      const pid = Number((await fs.readFile(path, 'utf8').catch(() => '')).trim());
-      const alive = (() => {
-        try {
-          return pid > 0 && (process.kill(pid, 0), true);
-        } catch {
-          return false;
+    const nonce = `${process.pid}-${globalThis.crypto.randomUUID()}`;
+    // The lock file is written complete under a unique name, then linked into place: `link` fails
+    // if the lock exists, and a reader never sees a lock without its pid (SDK-IP18).
+    const mine = `${path}.${nonce}`;
+    await fs.writeFile(mine, `${process.pid} ${nonce}`, { mode: 0o600 });
+    const take = () => fs.link(mine, path).then(() => true, () => false);
+    try {
+      if (!(await take())) {
+        const held = (await fs.readFile(path, 'utf8').catch(() => '')).trim();
+        const pid = Number(held.split(' ')[0]);
+        const alive = (() => {
+          try {
+            return pid > 0 && (process.kill(pid, 0), true);
+          } catch {
+            return false;
+          }
+        })();
+        if (alive || !held) fail('locked', `process ${pid || '?'} holds ${path}`);
+        // Take over a dead owner's lock: move it aside atomically, and check it was the one judged
+        // stale; if another process got there first, put back what was moved and give up.
+        const aside = `${path}.stale.${nonce}`;
+        if (await fs.rename(path, aside).then(() => true, () => false)) {
+          const moved = (await fs.readFile(aside, 'utf8').catch(() => '')).trim();
+          if (moved !== held) {
+            await fs.link(aside, path).catch(() => undefined);
+            await fs.rm(aside, { force: true });
+            fail('locked', `another process took ${path}`);
+          }
+          await fs.rm(aside, { force: true });
         }
-      })();
-      if (alive) fail('locked', `process ${pid} holds ${path}`);
-      await fs.rm(path, { force: true });
-      h = await take().catch(() => fail('locked', `another process took ${path}`));
+        if (!(await take())) fail('locked', `another process took ${path}`);
+      }
+    } finally {
+      await fs.rm(mine, { force: true });
     }
-    await h.writeFile(String(process.pid));
     try {
       return await f();
     } finally {
-      await h.close();
-      await fs.rm(path, { force: true });
+      // Release only our own lock.
+      const held = (await fs.readFile(path, 'utf8').catch(() => '')).trim();
+      if (held.endsWith(nonce)) await fs.rm(path, { force: true });
     }
   }
 }

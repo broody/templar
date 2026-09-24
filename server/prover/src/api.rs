@@ -64,6 +64,8 @@ struct Refusal {
 #[derive(Default)]
 struct Registry {
     jobs: HashMap<String, Job>,
+    /// Body hash → job id, for the identical-resubmission lookup (SDK-IP19).
+    by_body: HashMap<[u8; 32], String>,
     order: VecDeque<String>,
     /// Note key → the job holding it (queued, running or done).
     dedup: HashMap<String, String>,
@@ -83,6 +85,8 @@ pub struct AppState {
     buckets: Mutex<HashMap<String, Bucket>>,
     checks: Arc<Semaphore>,
     queue: mpsc::Sender<String>,
+    /// The latest block number and when it was read (the lookup reads it at most every 10 s).
+    latest: Mutex<Option<(Instant, u64)>>,
 }
 
 type Reply = (StatusCode, Json<Value>);
@@ -319,6 +323,7 @@ fn admit(state: &Arc<AppState>, id: String, sub: Submission, bridge: BridgeOutpu
         return Err(err(StatusCode::SERVICE_UNAVAILABLE, "queue full"));
     }
     reg.dedup.insert(dkey.clone(), id.clone());
+    reg.by_body.insert(body_hash, id.clone());
     reg.jobs.insert(id.clone(), Job {
         status: Status::Queued, stage: "queued".into(), finished: None, submission: Some(sub),
         bridge: Some(bridge), result: None, error: None, dedup_key: dkey, body_hash, address_key: key, dir,
@@ -345,14 +350,17 @@ async fn status(State(state): State<Arc<AppState>>, Path(id): Path<String>) -> R
 async fn existing_job(state: &Arc<AppState>, body_hash: &[u8; 32]) -> Option<Reply> {
     let found = {
         let reg = state.registry.lock().unwrap();
-        reg.jobs.iter().find(|(id, j)| j.body_hash == *body_hash && reg.dedup.get(&j.dedup_key) == Some(*id)).map(|(id, j)| {
-            let until = matches!(j.status, Status::Done).then(|| j.result.as_ref()?.get("valid_until")?.as_u64()).flatten();
-            (id.clone(), j.dedup_key.clone(), until)
-        })
-    }?;
+        let id = reg.by_body.get(body_hash)?;
+        let j = reg.jobs.get(id)?;
+        if reg.dedup.get(&j.dedup_key) != Some(id) {
+            return None;
+        }
+        let until = matches!(j.status, Status::Done).then(|| j.result.as_ref()?.get("valid_until")?.as_u64()).flatten();
+        (id.clone(), j.dedup_key.clone(), until)
+    };
     let (id, dkey, until) = found;
     if let Some(until) = until {
-        if state.rpc.block_number().await.is_ok_and(|latest| latest > until) {
+        if latest_block(state).await.is_some_and(|latest| latest > until) {
             let mut reg = state.registry.lock().unwrap();
             if reg.dedup.get(&dkey) == Some(&id) {
                 reg.dedup.remove(&dkey);
@@ -366,12 +374,24 @@ async fn existing_job(state: &Arc<AppState>, body_hash: &[u8; 32]) -> Option<Rep
     Some((StatusCode::ACCEPTED, Json(json!({"id": id, "position": position}))))
 }
 
+/// The latest block number, read from the node at most every 10 seconds (SDK-IP19).
+async fn latest_block(state: &Arc<AppState>) -> Option<u64> {
+    if let Some((at, n)) = *state.latest.lock().unwrap() {
+        if at.elapsed() < Duration::from_secs(10) {
+            return Some(n);
+        }
+    }
+    let n = state.rpc.block_number().await.ok()?;
+    *state.latest.lock().unwrap() = Some((Instant::now(), n));
+    Some(n)
+}
+
 /// Creates the state, the worker pool and the retention sweeper.
 pub fn start(config: Config, rpc: Rpc, info: Value) -> Arc<AppState> {
     let (tx, rx) = mpsc::channel::<String>(config.server.queue_capacity.max(1) * 4);
     let state = Arc::new(AppState {
         info, rpc, registry: Mutex::new(Registry::default()), buckets: Mutex::new(HashMap::new()),
-        checks: Arc::new(Semaphore::new(config.server.max_concurrent_checks)), queue: tx, config,
+        checks: Arc::new(Semaphore::new(config.server.max_concurrent_checks)), queue: tx, config, latest: Mutex::new(None),
     });
     let rx = Arc::new(tokio::sync::Mutex::new(rx));
     for _ in 0..state.config.server.max_concurrent_jobs {
@@ -449,6 +469,9 @@ fn sweep(state: &Arc<AppState>) {
         let mut dirs = vec![];
         for id in expired {
             if let Some(j) = reg.jobs.remove(&id) {
+                if reg.by_body.get(&j.body_hash) == Some(&id) {
+                    reg.by_body.remove(&j.body_hash);
+                }
                 if reg.dedup.get(&j.dedup_key) == Some(&id) {
                     reg.dedup.remove(&j.dedup_key);
                 }
@@ -488,6 +511,7 @@ mod tests {
             address_key: "1.2.3.4".into(), dir: std::env::temp_dir(),
         });
         reg.dedup.insert("note".into(), id.clone());
+        reg.by_body.insert(body_hash, id.clone());
         // The note is in backoff.
         reg.refusals.insert("note".into(), Refusal { count: 3, until: Instant::now() + Duration::from_secs(600) });
         drop(reg);
