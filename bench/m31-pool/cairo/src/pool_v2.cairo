@@ -163,6 +163,7 @@ pub mod M31PoolV2 {
     #[constructor]
     fn constructor(ref self: ContractState, owner: ContractAddress, verifier: ContractAddress, format: u8, store_nodes: bool) {
         assert(owner.into() != 0, 'ZERO_OWNER');
+        assert(verifier.into() != 0, 'ZERO_VERIFIER');
         self.owner.write(owner);
         self.verifier.write(verifier);
         self.tree.initializer(format, store_nodes);
@@ -232,12 +233,17 @@ pub mod M31PoolV2 {
             let created = pending.len();
             let n = intent.destinations.len();
             assert(created + n <= MAX_NOTES, 'TOTAL_NOTE_COUNT');
-            // The budget (possibly zero) goes to the recipient the intent names, never the pool.
+            // Destinations are ERC20, checked before any external effect.
+            for dest in intent.destinations {
+                let token: felt252 = (*dest.token).into();
+                assert(self.assets.read(token).standard == 0, 'ASSET_REGISTERED');
+                self.record_standard(*dest.token, ERC20);
+            }
+            // The budget (possibly zero; `verify_spend` ties a zero one to a zero recipient) goes
+            // to the recipient the intent names, never the pool.
             let w = spend.withdrawal;
             if w.amount != 0 {
                 self.pay_out(spend.asset, w.recipient, w.amount);
-            } else {
-                assert(w.recipient != this, 'BAD_RECIPIENT');
             }
             let mut calldata = array![];
             if intent.kind == COMPUTE {
@@ -258,8 +264,6 @@ pub mod M31PoolV2 {
                 assert(d.token == dest.token, 'OPEN_NOTE_TOKEN');
                 assert(d.amount != 0 && d.amount >= dest.minimum, 'OPEN_NOTE_AMOUNT');
                 let token: felt252 = dest.token.into();
-                assert(self.assets.read(token).standard == 0, 'ASSET_REGISTERED');
-                self.record_standard(dest.token, ERC20);
                 let erc = IERC20Dispatcher { contract_address: dest.token };
                 let before = erc.balance_of(this);
                 assert(erc.transfer_from(intent.adapter, this, d.amount.into()), 'TRANSFER_FAILED');

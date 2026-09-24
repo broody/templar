@@ -2,7 +2,8 @@
 //! §4) as a blinded arithmetic-only stwo-circuits client proof. The relation is `src/payment4.rs`;
 //! the 32 outputs carry the 127-limb public statement.
 //! `prove_payment_r4 OUT [MAX_FRI_COLUMNS] [--compress-nodes] [--shape transfer|single|one-out|partial|full|invoke|shadow|nft]
-//! [--forge voluntary-reveal|zero-delivery|recipient-only|identity-no-intent|duplicate-nullifier]`.
+//! [--forge voluntary-reveal|zero-delivery|recipient-only|identity-no-intent|duplicate-nullifier|asset-range|recipient-range|zero-chain]`.
+//! `asset-range` and `recipient-range` need an exiting shape (e.g. `--shape partial`).
 //! `--forge` proves a statement the native reference rejects but the circuit admits, so the
 //! bridge's own checks (spec §4.5) can be shown to reject it; `voluntary-reveal` needs the
 //! `tamper` feature.
@@ -188,6 +189,20 @@ fn public_from_circuit(tree: Tree, public: &Public, private: &Private) -> Public
     }
 }
 
+/// Re-plants the real inputs under the witness's current chain, pool and asset.
+fn replant(tree: Tree, public: &Public, private: &mut Private) {
+    let context = [payment::felt_limbs(&public.chain), payment::felt_limbs(&public.pool), payment::felt_limbs(&private.token)].concat();
+    let real = if private.dummy { 1 } else { 2 };
+    let leaves: Vec<(u32, payment::Digest)> = private.inputs[..real]
+        .iter()
+        .map(|i| (i.position, payment::commitment(&context, i.amount, &payment::receiver_of(&i.sk).0, &i.rho)))
+        .collect();
+    let (_, siblings) = payment4::sparse_paths(tree, &leaves, &mut rand::rngs::OsRng);
+    for (i, s) in private.inputs.iter_mut().zip(siblings) {
+        i.siblings = s;
+    }
+}
+
 /// A witness and public data the circuit admits but the bridge must reject.
 fn forged(tree: Tree, kind: &str, mut public: Public, mut private: Private) -> (Public, Private) {
     match kind {
@@ -204,6 +219,19 @@ fn forged(tree: Tree, kind: &str, mut public: Public, mut private: Private) -> (
             let total = 2 * private.inputs[0].amount;
             private.outputs[0].amount = 1;
             private.outputs[1].amount = total - 1;
+        }
+        "asset-range" => {
+            assert!(public.withdrawal_amount != 0, "asset-range needs an exit");
+            private.token = format!("0x8{}", "0".repeat(62));
+            replant(tree, &public, &mut private);
+        }
+        "recipient-range" => {
+            assert!(public.withdrawal_amount != 0, "recipient-range needs a withdrawal");
+            public.withdrawal_recipient = format!("0x8{}", "0".repeat(62));
+        }
+        "zero-chain" => {
+            public.chain = "0x0".into();
+            replant(tree, &public, &mut private);
         }
         other => panic!("unknown forgery {other}"),
     }

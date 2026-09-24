@@ -31,18 +31,31 @@ def output_to(w, i, asset, amount):
     return {'receiver': receiver, 'rho': rho, 'amount': str(amount), 'delivery': hex(pn.data_felt_delivery(words))}, words
 
 
+def fresh_digest():
+    """Nine words uniform in [0, p), not all zero: the Rust wallet's dummy sampling (spec §6)."""
+    while True:
+        d = [secrets.randbelow(pn.P) for _ in range(9)]
+        if any(d):
+            return d
+
+
 def dummy_output():
     """A zero-value note to a fresh random receiver, with a real sealed box of a random plaintext
     to a fresh X25519 key (spec §6: never 304 random bytes)."""
     words = pw.to_words(pw.seal(PrivateKey.generate().public_key, secrets.token_bytes(256)))
-    return {'receiver': pn.random_digest(), 'rho': pn.random_digest(), 'amount': '0',
+    return {'receiver': fresh_digest(), 'rho': fresh_digest(), 'amount': '0',
             'delivery': hex(pn.data_felt_delivery(words))}, words
 
 
-def find_notes(w, chain, pool, published, max_index=4):
+def find_notes(w, chain, pool, published, registry=None, max_index=4):
     """Ordinary notes of any asset for `w` among `published` `(index, commitment, words)`: trial
     decryption of `M301`, accepted only when the commitment recomputed from the decrypted asset,
-    amount and owner equals the leaf (spec §6, HA-M5)."""
+    amount and owner equals the leaf (spec §6, HA-M5).
+
+    `registry` maps asset identifiers to `(standard, contract, id)` from the pool's
+    `AssetRegistered` events (read in bulk from the pool's address). A registered identifier is
+    accepted only if it re-derives from its triple, and the note carries the triple; any other
+    identifier is an ERC20 address. Without a registry, notes carry the identifier only."""
     found = []
     for index, cm, words in published:
         try:
@@ -57,7 +70,16 @@ def find_notes(w, chain, pool, published, max_index=4):
             inner = pn.run('inner', json.dumps(m['receiver']), json.dumps(m['rho']))
             if pn.run('commitment', hex(chain), hex(pool), hex(m['token']), m['amount'], json.dumps(inner)) != cm:
                 continue
-            found.append({'index': index, 'commitment': cm, 'receiver_index': i, 'asset': m['token'], **m})
+            note = {'index': index, 'commitment': cm, 'receiver_index': i, 'asset': m['token'], **m}
+            if registry is not None:
+                if m['token'] in registry:
+                    standard, contract, token_id = registry[m['token']]
+                    if asset_id(standard, contract, token_id) != m['token']:
+                        continue
+                    note.update(standard=standard, contract=contract, token_id=token_id)
+                else:
+                    note.update(standard=ERC20, contract=m['token'], token_id=None)
+            found.append(note)
     return found
 
 

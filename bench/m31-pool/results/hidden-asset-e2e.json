@@ -1,4 +1,5 @@
 {
+ "note": "S1 and S2 are both hidden-asset transfers; their gas differs (55.2M vs 53.7M) with the tree position of the appended pair, not with the asset. S3 appends no note (a withdrawal-only outcome).",
  "s1": {
   "client": {
    "trace_log_size": 18,
@@ -12,6 +13,7 @@
   },
   "os": {
    "steps": 3394182,
+   "seconds": 6.332037742999091,
    "exact_message": true
   },
   "proof2": {
@@ -34,6 +36,7 @@
   },
   "os": {
    "steps": 3395022,
+   "seconds": 6.2112618880019,
    "exact_message": true
   },
   "proof2": {
@@ -56,6 +59,7 @@
   },
   "os": {
    "steps": 3423304,
+   "seconds": 6.297046729003341,
    "exact_message": true
   },
   "proof2": {
@@ -78,6 +82,7 @@
   },
   "os": {
    "steps": 3382267,
+   "seconds": 6.319167081001069,
    "exact_message": true
   },
   "proof2": {
@@ -93,5 +98,12 @@
   "apply_policy_spend erc1155_release withdrawal": 3525253,
   "apply_spend v4 nft_withdrawal two_dummy_outputs": 57967905
  },
- "leaves": 9
+ "settlement": [
+  "[PASS] m31_pool::tests::test_hidden_asset_e2e::hidden_asset_real_revealed_transfer_rejected (l1_gas: ~0, l1_data_gas: ~12576, l2_gas: ~232992403)",
+  "[PASS] m31_pool::tests::test_hidden_asset_e2e::hidden_asset_real_other_facts_rejected (l1_gas: ~0, l1_data_gas: ~12576, l2_gas: ~233739423)",
+  "[PASS] m31_pool::tests::test_hidden_asset_e2e::hidden_asset_real_replay_rejected (l1_gas: ~0, l1_data_gas: ~13152, l2_gas: ~291990687)",
+  "[PASS] m31_pool::tests::test_hidden_asset_e2e::hidden_asset_real_redirected_withdrawal_rejected (l1_gas: ~0, l1_data_gas: ~13728, l2_gas: ~348183228)",
+  "[PASS] m31_pool::tests::test_hidden_asset_e2e::hidden_asset_real_release_needs_the_arbiter (l1_gas: ~0, l1_data_gas: ~13728, l2_gas: ~349081720)",
+  "[PASS] m31_pool::tests::test_hidden_asset_e2e::hidden_asset_real_transfers_escrow_and_withdrawal (l1_gas: ~0, l1_data_gas: ~14400, l2_gas: ~414202449)"
+ ]
 }

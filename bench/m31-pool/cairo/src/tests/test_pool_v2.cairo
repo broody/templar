@@ -21,6 +21,7 @@ use m31_pool::policy_escrow::{IPolicyEscrowDispatcher, IPolicyEscrowDispatcherTr
 use m31_pool::pool_v2::{IM31PoolV2Dispatcher, IM31PoolV2DispatcherTrait};
 use m31_pool::spend::{IERC20Dispatcher, IERC20DispatcherTrait, Output, Withdrawal, delivery_digest};
 use m31_pool::spend4::{Spend, compute_binding};
+use m31_pool::test_adapters::Proceeds;
 use m31_pool::test_nft::{IMintDispatcher, IMintDispatcherTrait};
 use m31_pool::tree::{IM31TreeDispatcher, IM31TreeDispatcherTrait};
 
@@ -171,7 +172,7 @@ fn both_outputs_required() {
     let e = env();
     let mut sp = transfer(@e, 1000);
     sp.outputs = array![Output { commitment: digest(1), ciphertext: payload(2) }, Output { commitment: zeros(), ciphertext: payload(3) }].span();
-    sp.binding = compute_binding(@sp);
+    e.pool.apply_spend(sp, array![].span());
 }
 
 #[test]
@@ -180,7 +181,7 @@ fn both_ciphertexts_required() {
     let e = env();
     let mut sp = transfer(@e, 1000);
     sp.outputs = array![Output { commitment: digest(1), ciphertext: payload(2) }, Output { commitment: digest(2), ciphertext: array![].span() }].span();
-    sp.binding = compute_binding(@sp);
+    e.pool.apply_spend(sp, array![].span());
 }
 
 #[test]
@@ -466,4 +467,174 @@ fn nft_policy_note_release_pays_the_nft() {
     e.pool.apply_policy_spend(sp, array![].span(), array![array![].span(), array![].span()].span(), array![].span());
     assert_eq!(IERC721Dispatcher { contract_address: e.nft }.owner_of(2), addr(RECIPIENT));
     assert_eq!(e.pool.get_held(a), 0);
+}
+
+// ---------------------------------------------------------------- implementation review HA-IC1, HA-IC2
+
+#[starknet::interface]
+trait IFaucet<T> {
+    fn faucet(ref self: T, to: ContractAddress, amount: u256);
+}
+fn swap_calldata(in_token: ContractAddress, in_amount: u128, proceeds: Array<Proceeds>) -> Span<felt252> {
+    let mut data = array![];
+    in_token.serialize(ref data);
+    in_amount.serialize(ref data);
+    proceeds.span().serialize(ref data);
+    data.span()
+}
+/// A V4 execution: budget `budget` of the ERC20 to `adapter`, proceeds into one open note of
+/// `out_token`.
+fn swap(e: @Env, nf_seed: felt252, adapter: ContractAddress, budget: u128, out_token: ContractAddress, out_amount: u128) -> (Spend, ExecutionIntent) {
+    let intent = ExecutionIntent {
+        kind: INVOKE, adapter, nonce: 0, expiry: 1000000,
+        calldata: swap_calldata(*e.erc20.contract_address, budget, array![Proceeds { note_id: 77, token: out_token, amount: out_amount }]),
+        destinations: array![OpenDestination { note_id: 77, token: out_token, minimum: 1, inner: digest(900), ciphertext: payload(9) }].span(),
+    };
+    let mut sp = withdraw(e, nf_seed, (*e.erc20.contract_address).into(), adapter.into(), budget);
+    sp.intent = hash_intent_of(sp.chain, sp.pool.into(), sp.asset, sp.withdrawal, @intent);
+    sp.binding = compute_binding(@sp);
+    (sp, intent)
+}
+
+/// The V4 execution path: budget paid, proceeds pulled into an open note, `held` credited for
+/// both assets, two outputs and the open note appended.
+#[test]
+fn v4_execution_funds_an_open_note() {
+    let e = env();
+    let adapter = deploy("MockSwapAdapter", array![]);
+    let b = IERC20Dispatcher { contract_address: deploy("E2EToken", array![test_address().into(), 1000000, 0]) };
+    IFaucetDispatcher { contract_address: b.contract_address }.faucet(adapter, 500);
+    let (sp, intent) = swap(@e, 1000, adapter, 40, b.contract_address, 480);
+    let before = e.tree.get_leaf_count();
+    e.pool.apply_spend_with_invoke(sp, intent, array![].span());
+    assert_eq!(e.tree.get_leaf_count(), before + 3);
+    assert_eq!(e.erc20.balance_of(adapter), 40);
+    assert_eq!(b.balance_of(e.pool.contract_address), 480);
+    assert_eq!(e.pool.get_held(e.erc20.contract_address.into()), 960);
+    assert_eq!(e.pool.get_held(b.contract_address.into()), 480);
+    assert_eq!(e.pool.get_contract_standard(b.contract_address), ERC20);
+    assert!(e.pool.get_delivery_digest(before + 2) == delivery_digest(payload(9)));
+}
+
+/// `held` equals what each asset's notes are worth (deposits minus payouts, the notes being
+/// value-conserving in between) and the pool's own holdings, across every deposit and payout path.
+#[test]
+fn held_tracks_every_path() {
+    let e = env();
+    let a20: felt252 = e.erc20.contract_address.into();
+    let account = deploy("AccountLikeRecipient", array![]);
+    // ERC20: 1000 deposited; a transfer (value-neutral); 400 withdrawn; a 40 budget.
+    e.pool.apply_spend(transfer(@e, 1000), array![].span());
+    e.pool.apply_spend(withdraw(@e, 2000, a20, RECIPIENT, 400), array![].span());
+    let adapter = deploy("MockSwapAdapter", array![]);
+    let b = IERC20Dispatcher { contract_address: deploy("E2EToken", array![test_address().into(), 1000000, 0]) };
+    IFaucetDispatcher { contract_address: b.contract_address }.faucet(adapter, 500);
+    let (sp, intent) = swap(@e, 3000, adapter, 40, b.contract_address, 480);
+    e.pool.apply_spend_with_invoke(sp, intent, array![].span());
+    // ERC721: in and out, then in again. ERC1155: 300 in, 120 out.
+    let a721 = deposit_nft(@e, 1, 40);
+    e.pool.apply_spend(withdraw(@e, 4000, a721, RECIPIENT, 1), array![].span());
+    let a721b = deposit_nft(@e, 3, 41);
+    let a1155 = deposit_multi(@e, 300, 50);
+    e.pool.apply_spend(withdraw(@e, 5000, a1155, account.into(), 120), array![].span());
+    assert_eq!(e.pool.get_held(a20), 560);
+    assert_eq!(e.pool.get_held(a20), e.erc20.balance_of(e.pool.contract_address));
+    assert_eq!(e.pool.get_held(b.contract_address.into()), 480);
+    assert_eq!(e.pool.get_held(b.contract_address.into()), b.balance_of(e.pool.contract_address));
+    assert_eq!(e.pool.get_held(a721), 0);
+    assert_eq!(e.pool.get_held(a721b), 1);
+    assert_eq!(IERC721Dispatcher { contract_address: e.nft }.owner_of(3), e.pool.contract_address);
+    assert_eq!(e.pool.get_held(a1155), 180);
+    assert_eq!(e.pool.get_held(a1155), IERC1155Dispatcher { contract_address: e.multi }.balance_of(e.pool.contract_address, 7));
+}
+
+/// Calling the ERC721 hook without a transfer fails the ownership check.
+#[test]
+#[should_panic(expected: 'NOT_RECEIVED')]
+fn erc721_hook_without_transfer_rejected() {
+    let e = env();
+    start_cheat_caller_address(e.pool.contract_address, e.nft);
+    IAssetReceiverDispatcher { contract_address: e.pool.contract_address }
+        .on_erc721_received(test_address(), test_address(), 3, hook_data(1));
+}
+
+/// Calling the ERC721 hook again for a held id cannot mint a second note.
+#[test]
+#[should_panic(expected: 'ALREADY_HELD')]
+fn erc721_second_note_for_a_held_id_rejected() {
+    let e = env();
+    deposit_nft(@e, 2, 40);
+    start_cheat_caller_address(e.pool.contract_address, e.nft);
+    IAssetReceiverDispatcher { contract_address: e.pool.contract_address }
+        .on_erc721_received(test_address(), test_address(), 2, hook_data(1));
+}
+
+/// An ERC20 that delivers less than asked (fee on transfer) is rejected.
+#[test]
+#[should_panic(expected: 'DEPOSIT_AMOUNT')]
+fn fee_on_transfer_deposit_rejected() {
+    let e = env();
+    let fee = deploy("FeeToken", array![]);
+    IFaucetDispatcher { contract_address: fee }.faucet(test_address(), 1000);
+    IERC20Dispatcher { contract_address: fee }.approve(e.pool.contract_address, 1000);
+    e.pool.deposit(fee, 100, digest(9), payload(9));
+}
+
+/// A contract already living at an asset identifier's address blocks its registration.
+#[test]
+#[should_panic(expected: 'ASSET_COLLISION')]
+fn asset_identifier_with_code_rejected() {
+    let e = env();
+    let a = asset_id(ERC721, e.nft, 3);
+    declare("PlainRecipient").unwrap_syscall().contract_class().deploy_at(@array![], addr(a)).unwrap_syscall();
+    deposit_nft(@e, 3, 40);
+}
+
+/// An open-note destination cannot be an NFT asset identifier...
+#[test]
+#[should_panic(expected: 'ASSET_REGISTERED')]
+fn destination_nft_identifier_rejected() {
+    let e = env();
+    let a = deposit_nft(@e, 1, 40);
+    let adapter = deploy("MockSwapAdapter", array![]);
+    let (sp, intent) = swap(@e, 1000, adapter, 40, addr(a), 1);
+    e.pool.apply_spend_with_invoke(sp, intent, array![].span());
+}
+
+/// ...nor a contract recorded under another standard.
+#[test]
+#[should_panic(expected: 'STANDARD_MISMATCH')]
+fn destination_nft_contract_rejected() {
+    let e = env();
+    deposit_nft(@e, 1, 40);
+    let adapter = deploy("MockSwapAdapter", array![]);
+    let (sp, intent) = swap(@e, 1000, adapter, 40, e.nft, 1);
+    e.pool.apply_spend_with_invoke(sp, intent, array![].span());
+}
+
+/// An ERC721 contract offered through the ERC20 path (never recorded before) reverts: the pool is
+/// not approved, and an approved transfer would return no ERC20 `bool`.
+#[test]
+#[should_panic(expected: 'ERC721: unauthorized caller')]
+fn unrecorded_nft_contract_as_erc20_reverts() {
+    let e = env();
+    e.pool.deposit(e.nft, 1, digest(9), payload(9));
+}
+
+#[test]
+#[should_panic(expected: 'Returned data too short')]
+fn approved_nft_contract_as_erc20_reverts() {
+    let e = env();
+    IERC721ApproveDispatcher { contract_address: e.nft }.approve(e.pool.contract_address, 1);
+    e.pool.deposit(e.nft, 1, digest(9), payload(9));
+}
+#[starknet::interface]
+trait IERC721Approve<T> {
+    fn approve(ref self: T, to: ContractAddress, token_id: u256);
+}
+
+#[test]
+#[should_panic(expected: 'ZERO_VERIFIER')]
+fn zero_verifier_rejected_at_deployment() {
+    deploy("M31PoolV2", array![test_address().into(), 0, 1, 0]);
 }

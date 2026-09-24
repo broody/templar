@@ -1,4 +1,13 @@
 {
+  "forge-asset-range": {
+    "shape": "Partial",
+    "forged": "asset-range",
+    "trace_log_size": 18,
+    "proving_seconds": 0.275415805,
+    "proof_felts": 29874,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1722
+  },
   "forge-duplicate-nullifier": {
     "shape": "Transfer",
     "forged": "duplicate-nullifier",
@@ -26,6 +35,15 @@
     "blinding_rows": 2390,
     "revealed_fri_values": 1752
   },
+  "forge-recipient-range": {
+    "shape": "Partial",
+    "forged": "recipient-range",
+    "trace_log_size": 18,
+    "proving_seconds": 0.22051687,
+    "proof_felts": 30250,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1752
+  },
   "forge-voluntary-reveal": {
     "shape": "Transfer",
     "forged": "voluntary-reveal",
@@ -34,6 +52,15 @@
     "proof_felts": 29042,
     "blinding_rows": 2390,
     "revealed_fri_values": 1662
+  },
+  "forge-zero-chain": {
+    "shape": "Transfer",
+    "forged": "zero-chain",
+    "trace_log_size": 18,
+    "proving_seconds": 0.273812328,
+    "proof_felts": 29906,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1752
   },
   "forge-zero-delivery": {
     "shape": "Transfer",

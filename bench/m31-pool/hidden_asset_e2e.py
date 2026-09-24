@@ -15,7 +15,7 @@
        with the real proof facts; the pool's tree must end at the wallets' root.
 
 Secrets stay in a private run directory; the vectors carry public data only.
-Usage: hidden_asset_e2e.py [RUN_DIR]"""
+Usage: hidden_asset_e2e.py [RUN_DIR] | hidden_asset_e2e.py --summarize RUN_DIR"""
 from pathlib import Path
 import json, os, secrets, subprocess, sys, time
 import hidden_asset as ha
@@ -78,7 +78,35 @@ def serve(kind, client_dir, out, t, name):
     return facts, statement, statement_class, public
 
 
+def summarize(run_dir):
+    """The public results of a run, read back from its directory (client, bridge, OS and large
+    proof reports, and the settlement gas from the snforge log)."""
+    t = {'note': 'S1 and S2 are both hidden-asset transfers; their gas differs (55.2M vs 53.7M) with the tree '
+                 'position of the appended pair, not with the asset. S3 appends no note (a withdrawal-only outcome).'}
+    for n in ('s1', 's2', 's3', 's4'):
+        d = {}
+        rep = json.loads((run_dir / n / 'client/report.json').read_text())
+        d['client'] = {k: rep[k] for k in ('trace_log_size', 'proving_seconds', 'proof_felts')}
+        rows = [json.loads(l) for l in (run_dir / n / 'bridge.log').read_text().splitlines() if l.startswith('{')]
+        d['bridge'] = {'cases': len(rows), 'passed': sum(r['passed'] for r in rows), 'steps': rows[0].get('steps')}
+        capture = json.loads((run_dir / n / 'os/execution.json').read_text())
+        d['os'] = {'steps': json.loads((run_dir / n / 'os/capture.json').read_text())['resources']['n_steps'],
+                   'seconds': capture['elapsed_seconds'], 'exact_message': capture.get('exact_message_verified')}
+        p2 = json.loads((run_dir / n / 'proof2/summary.json').read_text())
+        rss = [l for l in (run_dir / n / 'proof2/run.log').read_text().splitlines() if 'Maximum resident' in l]
+        d['proof2'] = {'prove_seconds': p2['prove_seconds'], 'proof_bytes': p2['proof_bytes'], 'verified': p2['verified'],
+                       'max_rss_gib': round(int(rss[-1].split()[-1]) / 2**20, 1)}
+        t[n] = d
+    log = (run_dir / 'snforge.log').read_text()
+    t['settlement_gas'] = {l.split('GAS ')[1].split('=')[0]: int(l.split('=')[-1]) for l in log.splitlines() if l.startswith('GAS apply')}
+    t['settlement'] = [l.strip() for l in log.splitlines() if l.startswith('[PASS]') or l.startswith('[FAIL]')]
+    return t
+
+
 def main():
+    if len(sys.argv) > 2 and sys.argv[1] == '--summarize':
+        (HERE / 'results/hidden-asset-e2e.json').write_text(json.dumps(summarize(Path(sys.argv[2])), indent=1) + '\n')
+        return
     run_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path.home() / '.local/share/templar/runs' / f'hidden-asset-e2e-{int(time.time())}'
     run_dir.mkdir(parents=True, exist_ok=True)
     os.chmod(run_dir, 0o700)
@@ -184,12 +212,11 @@ def main():
     subprocess.run(['snforge', 'test', 'hidden_asset_real'], cwd=HERE / 'cairo', env=pe.SNFORGE_ENV, check=False,
                    stdout=open(run_dir / 'snforge.log', 'w'), stderr=subprocess.STDOUT)
     log = (run_dir / 'snforge.log').read_text()
-    t['settlement'] = [l.strip() for l in log.splitlines() if l.startswith('[PASS]') or l.startswith('[FAIL]') or 'GAS' in l]
     assert '[FAIL]' not in log and 'Tests:' in log, log[-3000:]
-    t['leaves'] = len(leaves)
     (HERE / 'results').mkdir(exist_ok=True)
-    (HERE / 'results/hidden-asset-e2e.json').write_text(json.dumps(t, indent=1) + '\n')
-    print(json.dumps(t, indent=1))
+    summary = summarize(run_dir)
+    (HERE / 'results/hidden-asset-e2e.json').write_text(json.dumps(summary, indent=1) + '\n')
+    print(json.dumps(summary, indent=1))
     print('run dir (private):', run_dir)
 
 

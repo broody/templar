@@ -27,6 +27,9 @@ FORGERIES = {
     'recipient-only': 'withdrawal',
     'identity-no-intent': 'identity intent',
     'duplicate-nullifier': 'duplicate nullifier',
+    'asset-range': 'address range',
+    'recipient-range': 'address range',
+    'zero-chain': 'zero context',
 }
 
 
@@ -49,9 +52,9 @@ def args(pub, data, chain=CHAIN, **over):
             int(p['withdrawal_amount']), int(p['intent'], 16), *span(p['identity']), *data]
 
 
-def load(d):
+def load(d, forged=False):
     pub = json.loads((d / 'public.json').read_text())
-    assert int(pub['chain'], 16) == CHAIN
+    assert forged or int(pub['chain'], 16) == CHAIN
     data = [int(x, 16) for x in json.loads((d / 'cairo-arguments.json').read_text())]
     assert data[0] == len(data) - 1 and data[1] == 32, 'span length and 32 outputs'
     return pub, data
@@ -104,8 +107,8 @@ def main():
         cases.append((f'{shape}-truncated', good[:n] + [data[0] - 1, *data[1:-1]], None, None))
     # Real proofs of forged statements: only the bridge's own check rejects each.
     for kind, reason in FORGERIES.items():
-        pub, data = load(proofs / f'forge-{kind}')
-        cases.append((f'forge-{kind}', args(pub, data), None, reason))
+        pub, data = load(proofs / f'forge-{kind}', forged=True)
+        cases.append((f'forge-{kind}', args(pub, data, chain=int(pub['chain'], 16)), None, reason))
     report = {'scope': 'standalone Cairo execution of the R0 V4 payment bridge (fork circuit_air); no OS, no large proof',
               'executable_sha256': hashlib.sha256((work / 'target/dev/templar_membership_bridge.executable.json').read_bytes()).hexdigest(),
               'cases': []}

@@ -400,6 +400,27 @@
       "passed": true,
       "steps": null,
       "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"duplicate nullifier\\\".\"}"
+    },
+    {
+      "name": "forge-asset-range",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"address range\\\".\"}"
+    },
+    {
+      "name": "forge-recipient-range",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"address range\\\".\"}"
+    },
+    {
+      "name": "forge-zero-chain",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"zero context\\\".\"}"
     }
   ]
 }

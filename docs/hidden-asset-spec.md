@@ -1,6 +1,6 @@
 # Hidden-asset spends and ERC721/ERC1155 notes
 
-Status: **design reviewed (GO); nothing is implemented.** Revision 3. Revision 1 was reviewed in
+Status: **design reviewed (GO); implemented experimentally (M31 pool V2, R0 V4); implementation reviewed (GO).** Revision 3, with §3.3 and §5.2 wording corrected after the implementation review. Revision 1 was reviewed in
 `bench/m31-pool/reviews/hidden-asset-design-{math,protocol}-review.md` (both CONDITIONAL GO);
 revision 2 was re-reviewed there (both GO), and revision 3 adds those re-reviews' Low and Info
 items. Finding IDs `HA-M*` and `HA-P*` are cited where they changed the text. Targets
@@ -116,8 +116,11 @@ paths are:
 Every future path that appends leaves must preserve I.
 
 **Solvency** is per contract ledger (HA-P1). For every asset `a`, the sum of unspent note amounts
-of `a` equals the pool's internal holding `held[a]` (§5.1). `held[a] ≤` what the contract reports
-the pool owns is checked at every deposit and payout, not assumed between them (HA-P14). Each spend conserves a single asset. A malicious contract can
+of `a` equals the pool's internal holding `held[a]` (§5.1). The contract's own view is checked
+per operation, not assumed between them (HA-P14, HA-IC7): each deposit requires the reported
+holding to cover `held[a]` (ERC1155 `≥`, ERC721 ownership, ERC20 the exact delta), and each payout
+requires its own delta (ERC20 by the transfer's result, ERC1155 the balance drop, ERC721 the new
+owner). Each spend conserves a single asset. A malicious contract can
 affect only notes of its own identifiers. Distinct contracts at different addresses that share a
 ledger (facades) cannot be detected on chain; that is a listing decision for a production pool.
 
@@ -284,7 +287,9 @@ the ciphertext's ten words passed to `delivery_digest` (HA-M9).
   recordable) as such. `hash_intent` binds `asset` in the token position. Each funded
   destination adds its measured amount to `held[dest.token]`.
 
-Effects order is unchanged: nullifiers, appends, then `pay_out`.
+Effects order: for `apply_spend`, nullifiers, appends, then `pay_out`; for
+`apply_spend_with_invoke`, as V3, nullifiers, the destination checks, the budget's `pay_out`, the
+adapter call, the pulls, then all appends together (HA-IC7).
 
 ### 5.3 Payout by standard
 
@@ -461,3 +466,4 @@ leaves and ciphertexts, and for single-input spends one extra nullifier write. T
 | HA-P14 | §3.3 restated claim; §5.1 u256 `held`; §5.3 checked decrement before the call |
 | HA-P15 | §5.5 hook assumptions |
 | HA-P16 | §5.7 entry points, including P1 |
+| HA-IC1–IC7 | Implementation review (`hidden-asset-impl-contract-review.md`): added tests, wallet registry resolution and dummy sampling, a size gate, destination checks before external effects, a nonzero verifier at deployment; §3.3 and §5.2 wording |
