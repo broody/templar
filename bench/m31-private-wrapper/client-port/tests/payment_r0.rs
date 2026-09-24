@@ -1,5 +1,6 @@
-//! R0 payment relation (V2: optional outputs, one withdrawal), for both tree-node formats and
-//! every shape: circuit outputs equal the native reference; broken witnesses fail.
+//! R0 payment relation (V3: optional outputs, one withdrawal, an execution intent and an identity
+//! handle), for both tree-node formats and every shape: circuit outputs equal the native
+//! reference; broken witnesses fail.
 use circuits::context::Context;
 use circuits::ivalue::NoValue;
 use rand::{SeedableRng, rngs::StdRng};
@@ -170,7 +171,7 @@ fn wallet_tree_paths_match_pool() {
 }
 
 /// V3: the identity handle is `H(IDENTITY, sk₀ ‖ scope)` exactly when the identity flag is set,
-/// and zero otherwise; an identity needs an intent, and an intent needs a budget.
+/// and zero otherwise; an identity needs an intent; an intent may carry a zero budget.
 #[test]
 fn v3_intent_and_identity() {
     for tree in TREES {
@@ -190,6 +191,13 @@ fn v3_intent_and_identity() {
         let mut pb = t_pub.clone();
         pb.intent = "0x1234".into();
         assert_eq!(redo(tree, &pb, &t_priv).map(|p| p.intent), Ok("0x1234".to_string()), "zero-budget intent");
+        // The handle is input 0's: swapping the inputs (different keys) changes it.
+        let mut swapped = private.clone();
+        swapped.inputs.swap(0, 1);
+        if swapped.inputs[0].sk != private.inputs[0].sk {
+            let (limbs, valid) = outputs(tree, &public, &swapped);
+            assert!(!valid || limbs != statement_limbs(tree, &public), "swapped inputs kept the handle");
+        }
         // A different scope gives a different handle (the circuit publishes the recomputed one).
         let mut p2 = private.clone();
         p2.identity.scope[0] ^= 1;

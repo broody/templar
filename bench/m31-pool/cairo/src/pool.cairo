@@ -147,12 +147,13 @@ pub mod M31Pool {
             let created = pending.len();
             let n = intent.destinations.len();
             assert(created + n <= MAX_NOTES, 'TOTAL_NOTE_COUNT');
-            // The budget (possibly zero) goes to the recipient the intent names.
+            // The budget (possibly zero) goes to the recipient the intent names, never the pool.
+            assert(spend.withdrawal.recipient != this, 'BUDGET_RECIPIENT');
             self.pay_withdrawal(@spend, true);
             // The external call; the adapter may not re-enter the pool (the lock is held).
             let mut calldata = array![];
             if intent.kind == COMPUTE {
-                calldata.append(identity_commitment(partial_commitment(spend.identity), intent.nonce));
+                calldata.append(identity_commitment(partial_commitment(spend.identity), 0));
             }
             calldata.append_span(intent.calldata);
             let mut ret = call_contract_syscall(intent.adapter, selector_of(intent.kind), calldata.span()).unwrap_syscall();

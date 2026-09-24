@@ -67,6 +67,7 @@ def main():
     cases.append(('wrong-withdrawal-recipient', args(pub, data, withdrawal_recipient=hex(int(pub['withdrawal_recipient'], 16) + 1)), False))
     cases.append(('wrong-withdrawal-amount', args(pub, data, withdrawal_amount=int(pub['withdrawal_amount']) + 1), False))
     cases.append(('wrong-intent', args(pub, data, intent=hex(int(pub['intent'], 16) + 1)), False))
+    cases.append(('wrong-identity', args(pub, data, identity=bump(pub['identity'], 0)), False))
     # A forged proof (math review M2): valid STARK and LogUp sum for a forged statement, balanced on
     # the absent triple_xor claimed sum. Only the absent-component check can reject it.
     forged_dir = proof_dir / 'forged-absent-sum'

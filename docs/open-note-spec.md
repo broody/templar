@@ -27,10 +27,14 @@ natural form on an append-only M31 tree whose commitment includes the amount.
 - `identity` (nine M31 words): `H(IDENTITY, sk₀ ‖ scope)` under a private flag, zero otherwise.
 
 The execution's budget is the statement's withdrawal (possibly zero); its recipient is part of the
-intent. Binding: `TMR0_BIND_V3`. Tags: `R0V3`, `R0C3`. Account message tag: `TMPZR0_PAYMENT_V3`.
+intent and may be any address except the pool (usually the adapter). A zero budget needs a zero
+recipient, as for any withdrawal. An identity requires an intent. Binding: `TMR0_BIND_V3`. Tags: `R0V3`, `R0C3`. Account message tag: `TMPZR0_PAYMENT_V3`.
 
 **Intent.** `ExecutionIntent { kind, adapter, nonce, expiry, calldata, destinations }`, with each
-destination `OpenDestination { note_id, token, minimum, inner (9 words), ciphertext }`:
+destination `OpenDestination { note_id, token, minimum, inner (9 words), ciphertext }`. `nonce` is
+reserved and must be zero (see *Shadow accounts*). Each destination's `note_id`, token and minimum
+are nonzero, its `inner` is a canonical nonzero digest, and `note_id`s are distinct; all are checked
+before any external effect.
 
 ```
 intent = Poseidon('OPEN_EXEC_V1', chain, pool, token, kind, adapter, nonce,
@@ -42,10 +46,22 @@ intent = Poseidon('OPEN_EXEC_V1', chain, pool, token, kind, adapter, nonce,
   anonymizers).
 - `kind = COMPUTE`: selector `privacy_invoke_with_computation`, calldata
   `[identity_commitment] ++ calldata`, where
-  `identity_commitment = Poseidon(partial, nonce)` (upstream `commitment_from_partial`) and
+  `identity_commitment = Poseidon(partial, 0)` (upstream `commitment_from_partial` at nonce 0) and
   `partial = Poseidon('TEMPLAR_IDENTITY_V1', identity₉)`. Only the owner of `sk₀` can produce a
   handle, so only they can address their shadow accounts. Upstream's shadow-account anonymizer is
   used unchanged, configured with the Templar pool as its privacy contract.
+
+**Shadow accounts.** The handle `H(IDENTITY, sk₀ ‖ scope)` is public, and anyone can compute
+`Poseidon(partial, n)` from it for every `n`. A public nonce would therefore let anyone enumerate
+every shadow account under one handle; the pool requires it to be zero. A wallet separates accounts
+through the private `scope` instead, nine M31 words derived from a wallet secret and the context:
+
+```
+scope_i = Poseidon('TEMPLAR_SHADOW_SCOPE_V1', seed, chain, pool, anonymizer, dapp, index, i) mod (2³¹−1)
+```
+
+(`bench/m31-pool/open_note.py`, `shadow_scope`). Handles for different scopes are unlinkable without
+`sk₀` and the seed; all executions under one scope share its handle and its shadow account.
 
 **Settlement (`apply_spend_with_invoke`)**, under the pool's lock:
 1. Recompute `intent`; check expiry (block number); the adapter is nonzero and not the pool; the
@@ -61,7 +77,7 @@ intent = Poseidon('OPEN_EXEC_V1', chain, pool, token, kind, adapter, nonce,
 7. Compute each commitment on chain, `commitment(chain, pool, token, amount, inner)`, as `deposit`
    does.
 8. Append all of the transaction's new notes (private outputs, then open notes) in `insert_two`
-   pairs. Emit `NotePublished` for each, and `OpenNoteFunded { note_id, index, token, amount }` for
+   pairs (only the root after each pair is recorded as known; intermediate roots are not). Emit `NotePublished` for each, and `OpenNoteFunded { note_id, index, token, amount }` for
    each open note.
 
 Any failure reverts every effect. The pool grants no allowances.
@@ -74,8 +90,16 @@ from `OpenNoteFunded` and `NotePublished`. A wallet trial-decrypts `NotePublishe
 deposits.
 
 **Public.** The adapter, calldata, budget and its recipient, destination tokens and amounts, and
-(for `COMPUTE`) the shadow account are public, as upstream. A shadow account links its own actions
-by design, not the owner's other notes.
+(for `COMPUTE`) the identity handle and shadow account are public, as upstream. All executions under
+one scope are linked through the handle by design; different scopes are not linked to each other or
+to the owner's notes (see *Shadow accounts*).
+
+**Trust in the adapter.** The pool relies only on the pulled balance and the destination checks;
+the adapter itself is trusted for the price it gets. Upstream's Ekubo and Vesu anonymizers are
+stateless with no caller check, so a budget left in one after a failed or partial fill can be taken
+by anyone; the transaction must consume it (the minimum enforces the fill). Upstream's shadow-account
+anonymizer checks its caller but is governance-upgradeable: whoever controls its upgrades controls
+the shadow accounts' future behavior.
 
 
 ## Types and lifecycle

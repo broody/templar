@@ -85,3 +85,108 @@ pub mod MockShadowAnonymizer {
         }
     }
 }
+
+// ---------------------------------------------------------------- adversarial adapters
+// From the open-note contract review (bench/m31-pool/reviews/open-note-contract-review.md).
+// `EvilAdapter.privacy_invoke(pool, token, amount, note_id, mode)`: mode 0 honest, 1 re-enters the
+// pool, 3 approves one unit less, 5 tries to pull from the pool, 6 returns no deposit, 7 reports a
+// different note id. `ExtraAdapter` appends a word after the deposits. `FeeToken` delivers one unit
+// less on `transfer_from`.
+use crate::open_note::OpenNoteDeposit;
+
+#[starknet::interface]
+pub trait IEvil<T> {
+    fn privacy_invoke(ref self: T, pool: ContractAddress, token: ContractAddress, amount: u128, note_id: felt252, mode: u8) -> Span<OpenNoteDeposit>;
+}
+#[starknet::interface]
+pub trait IExtra<T> {
+    fn privacy_invoke(ref self: T, token: ContractAddress, amount: u128, note_id: felt252) -> (Span<OpenNoteDeposit>, felt252);
+}
+
+#[starknet::contract]
+pub mod EvilAdapter {
+    use starknet::{ContractAddress, get_caller_address, get_contract_address};
+    use crate::open_note::OpenNoteDeposit;
+    use crate::spend::{IERC20Dispatcher, IERC20DispatcherTrait};
+    use crate::pool::{IM31PoolDispatcher, IM31PoolDispatcherTrait};
+    #[storage]
+    struct Storage {}
+    #[abi(embed_v0)]
+    impl Impl of super::IEvil<ContractState> {
+        fn privacy_invoke(ref self: ContractState, pool: ContractAddress, token: ContractAddress, amount: u128, note_id: felt252, mode: u8) -> Span<OpenNoteDeposit> {
+            let erc = IERC20Dispatcher { contract_address: token };
+            if mode == 1 {
+                // Re-enter the pool.
+                erc.approve(pool, 10);
+                IM31PoolDispatcher { contract_address: pool }.deposit(token, 10, array![1,2,3,4,5,6,7,8,9].span(), array![1,2,3,4,5,6,7,8,9,10].span());
+            }
+            if mode == 6 {
+                // Return no deposit at all.
+                return array![].span();
+            }
+            if mode == 7 {
+                // Report a deposit for a note the intent does not name.
+                erc.approve(get_caller_address(), amount.into());
+                return array![OpenNoteDeposit { note_id: note_id + 1, token, amount }].span();
+            }
+            if mode == 3 {
+                erc.approve(get_caller_address(), (amount - 1).into());
+            } else if mode == 5 {
+                // Try to pull the pool's funds (the pool grants no allowance).
+                erc.transfer_from(pool, get_contract_address(), 1);
+                erc.approve(get_caller_address(), amount.into());
+            } else {
+                erc.approve(get_caller_address(), amount.into());
+            }
+            array![OpenNoteDeposit { note_id, token, amount }].span()
+        }
+    }
+}
+
+#[starknet::contract]
+pub mod ExtraAdapter {
+    use starknet::{ContractAddress, get_caller_address};
+    use crate::open_note::OpenNoteDeposit;
+    use crate::spend::{IERC20Dispatcher, IERC20DispatcherTrait};
+    #[storage]
+    struct Storage {}
+    #[abi(embed_v0)]
+    impl Impl of super::IExtra<ContractState> {
+        fn privacy_invoke(ref self: ContractState, token: ContractAddress, amount: u128, note_id: felt252) -> (Span<OpenNoteDeposit>, felt252) {
+            IERC20Dispatcher { contract_address: token }.approve(get_caller_address(), amount.into());
+            (array![OpenNoteDeposit { note_id, token, amount }].span(), 0)
+        }
+    }
+}
+
+/// Fee-on-transfer token: `transfer_from` delivers one unit less.
+#[starknet::contract]
+pub mod FeeToken {
+    use core::starknet::{get_caller_address, ContractAddress};
+    use crate::spend::IERC20;
+    use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
+    #[storage]
+    struct Storage { balances: Map<ContractAddress, u256>, allowances: Map<(ContractAddress, ContractAddress), u256> }
+    #[abi(embed_v0)]
+    impl Erc20Impl of IERC20<ContractState> {
+        fn approve(ref self: ContractState, spender: ContractAddress, amount: u256) -> bool {
+            self.allowances.write((get_caller_address(), spender), amount); true
+        }
+        fn transfer(ref self: ContractState, recipient: ContractAddress, amount: u256) -> bool {
+            let s = get_caller_address();
+            self.balances.write(s, self.balances.read(s) - amount);
+            self.balances.write(recipient, self.balances.read(recipient) + amount); true
+        }
+        fn transfer_from(ref self: ContractState, sender: ContractAddress, recipient: ContractAddress, amount: u256) -> bool {
+            let sp = get_caller_address();
+            self.allowances.write((sender, sp), self.allowances.read((sender, sp)) - amount);
+            self.balances.write(sender, self.balances.read(sender) - amount);
+            self.balances.write(recipient, self.balances.read(recipient) + amount - 1); true
+        }
+        fn balance_of(self: @ContractState, account: ContractAddress) -> u256 { self.balances.read(account) }
+    }
+    #[external(v0)]
+    fn faucet(ref self: ContractState, to: ContractAddress, amount: u256) {
+        self.balances.write(to, self.balances.read(to) + amount);
+    }
+}

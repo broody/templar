@@ -39,13 +39,25 @@ def hash_intent(chain, pool, token, budget_recipient, budget, intent):
     return ref.poseidon_hash_span(data)
 
 
+def shadow_scope(chain, pool, anonymizer, dapp_name, index, seed):
+    """The private scope of one shadow account: nine M31 words from the wallet's secret `seed`
+    and public context (chain, pool, anonymizer, dapp, account index). The identity handle
+    `H(IDENTITY, sk₀ ‖ scope)` is public, so each account needs its own scope: the public nonce is
+    always zero, and handles for different scopes are unlinkable (review finding V3-1/M1/F2)."""
+    P = 2**31 - 1
+    words = [ref.poseidon_hash_span([s(b'TEMPLAR_SHADOW_SCOPE_V1'), seed, chain, pool, anonymizer, dapp_name, index, i]) % P
+             for i in range(9)]
+    assert any(words)
+    return words
+
+
 def partial_commitment(identity):
     return ref.poseidon_hash_span([s(b'TEMPLAR_IDENTITY_V1'), *identity])
 
 
-def identity_commitment(partial, nonce):
+def identity_commitment(partial, nonce=0):
     """Upstream `commitment_from_partial`; equal to `poseidon_hash_span([partial, nonce])`
-    (checked by `open_note_e2e`'s Cairo test)."""
+    (checked by `open_note_e2e`'s Cairo test). The pool always uses nonce 0."""
     return ref.poseidon_hash_span([partial, nonce])
 
 

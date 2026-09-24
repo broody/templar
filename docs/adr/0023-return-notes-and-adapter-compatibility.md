@@ -134,3 +134,11 @@ claimed from introducing this abstraction.
 - **Process deviation.** At the user's direction, the independent math review and the adversarial
   test suite follow implementation rather than precede it, contrary to the default order in
   `AGENTS.md`. The implementation is not qualified until both are done.
+- **Review outcome (2026-09-24).** Three independent reviews (relation math, statement binding, pool
+  contract; reports in `bench/m31-private-wrapper/client-port/reviews/` and `bench/m31-pool/reviews/`)
+  returned conditional go. All three found that a public nonce on the public identity handle lets
+  anyone enumerate a user's shadow accounts. Fix: the public nonce is reserved and must be zero, and
+  wallets separate accounts through the private scope (`shadow_scope`). The pool also rejects
+  destinations with a zero note id, token, minimum or inner before any external effect, and budgets
+  paid to the pool itself. The contract review's adversarial tests and new ones are in
+  `test_open_note_adversarial.cairo`. A re-review of the fixes is still pending.

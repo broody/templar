@@ -2,26 +2,26 @@
  "client": {
   "trace_log_size": 18,
   "blinding_rows": 2390,
-  "proving_seconds": 2.044493893,
-  "max_rss_gib": 0.3029975891113281,
-  "proof_felts": 30042
+  "proving_seconds": 2.038612692,
+  "max_rss_gib": 0.3148460388183594,
+  "proof_felts": 29390
  },
  "bridge": {
-  "passed": 18,
-  "cases": 18,
-  "steps": 2023863
+  "passed": 19,
+  "cases": 19,
+  "steps": 1987450
  },
  "os": {
-  "steps": 3388018,
-  "seconds": 6.1013563010001235,
+  "steps": 3343612,
+  "seconds": 6.445106332999785,
   "exact_message": true
  },
  "proof2": {
-  "prove_seconds": 110.942249067,
-  "proof_bytes": 254589,
+  "prove_seconds": 119.645528844,
+  "proof_bytes": 253430,
   "verified": true,
-  "max_rss_gib": 52.44221115112305
+  "max_rss_gib": 52.0989875793457
  },
- "binding": "0x79b6c470848a960c35b93972fed34dabdb4e46123c677d7352aab2ba7e0b36a",
- "intent": "0x34d1bc627bd2a2dd1e5d69c875fbd5e0261904431908598e18b57ec5ffa2eb1"
+ "binding": "0x3c7621a6c1e2ad16d087f10fd981cffb8cff0829ae3ec140b2431043cff9825",
+ "intent": "0x17f7abcba533cc38f842492627e58c38ea1209c7851c575e12fa9d365087466"
 }

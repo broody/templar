@@ -136,7 +136,7 @@ fn invoke_two_open_notes_with_two_outputs() {
 }
 
 /// A shadow-account execution with a zero budget (collect only): the anonymizer receives
-/// `Poseidon(partial(identity), nonce)`, and the collected tokens fund an open note.
+/// `Poseidon(partial(identity), 0)`, and the collected tokens fund an open note.
 #[test]
 fn shadow_compute_passes_identity_commitment() {
     let e = env();
@@ -147,13 +147,13 @@ fn shadow_compute_passes_identity_commitment() {
     let mut calldata = array![];
     array![Proceeds { note_id: 91, token: e.c.contract_address, amount: 60 }].span().serialize(ref calldata);
     let intent = ExecutionIntent {
-        kind: COMPUTE, adapter: shadow, nonce: 5, expiry: 1000000, calldata: calldata.span(),
+        kind: COMPUTE, adapter: shadow, nonce: 0, expiry: 1000000, calldata: calldata.span(),
         destinations: array![OpenDestination { note_id: 91, token: e.c.contract_address, minimum: 60, inner: digest(930), ciphertext: payload(13) }].span(),
     };
     finish(ref sp, @intent);
     let before = e.tree.get_leaf_count();
     e.pool.apply_spend_with_invoke(sp, intent, array![].span());
-    let expected = identity_commitment(partial_commitment(identity), 5);
+    let expected = identity_commitment(partial_commitment(identity), 0);
     assert_eq!(IMockShadowAnonymizerDispatcher { contract_address: shadow }.last_identity_commitment(), expected);
     assert_eq!(e.c.balance_of(e.pool.contract_address), 60);
     assert_eq!(e.tree.get_leaf_count(), before + 2);

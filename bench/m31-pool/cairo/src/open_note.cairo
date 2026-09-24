@@ -8,12 +8,18 @@
 //! commitment, computed on chain from the actual amount (as `deposit` does). Two kinds:
 //! - `INVOKE`: `privacy_invoke(calldata)`, as upstream's Ekubo and Vesu anonymizers;
 //! - `COMPUTE`: `privacy_invoke_with_computation([identity_commitment] ++ calldata)`, as
-//!   upstream's shadow-account anonymizer. The commitment is `Poseidon(partial, nonce)` (upstream's
-//!   `commitment_from_partial`), with `partial` derived from the proven identity handle, so only
-//!   the handle's owner can address their shadow accounts.
+//!   upstream's shadow-account anonymizer. The commitment is `Poseidon(partial, 0)` (upstream's
+//!   `commitment_from_partial` at nonce 0), with `partial` derived from the proven identity handle,
+//!   so only the handle's owner can address their shadow accounts.
+//!
+//! The handle is public, so the public nonce must be zero: a nonzero nonce would let anyone
+//! enumerate every account under one handle (review finding V3-1/M1/F2). A wallet separates
+//! shadow accounts, applications and deployments through the handle's private `scope` instead
+//! (`open_note.py`, `shadow_scope`).
 use core::hash::HashStateTrait;
 use core::poseidon::{PoseidonTrait, poseidon_hash_span};
 use starknet::ContractAddress;
+use crate::hash::{is_zero, read_digest};
 use crate::spend::{Spend, delivery_digest};
 
 pub const INVOKE: u8 = 0;
@@ -38,7 +44,7 @@ pub struct OpenDestination {
 pub struct ExecutionIntent {
     pub kind: u8,
     pub adapter: ContractAddress,
-    /// The shadow-account nonce (`COMPUTE`); zero for `INVOKE`.
+    /// Reserved; must be zero (shadow accounts are separated by the private scope).
     pub nonce: felt252,
     /// Last block number at which the execution may settle.
     pub expiry: u64,
@@ -70,6 +76,7 @@ pub fn hash_intent(spend: @Spend, intent: @ExecutionIntent) -> felt252 {
     assert(intent.calldata.len() <= MAX_CALLDATA, 'CALLDATA_LIMIT');
     let n = intent.destinations.len();
     assert(n > 0 && n <= MAX_DESTINATIONS, 'OPEN_NOTE_COUNT');
+    assert(*intent.nonce == 0, 'EXECUTION_NONCE');
     let w = *spend.withdrawal;
     let mut data = array![
         'OPEN_EXEC_V1', *spend.chain, (*spend.pool).into(), (*spend.token).into(), (*intent.kind).into(),
@@ -80,7 +87,11 @@ pub fn hash_intent(spend: @Spend, intent: @ExecutionIntent) -> felt252 {
     data.append(n.into());
     for i in 0..n {
         let d = *intent.destinations.at(i);
-        assert(d.inner.len() == 9, 'OPEN_NOTE_INNER');
+        // Checked before any external effect: a zero `inner` would fund a note nobody can open.
+        assert(d.note_id != 0, 'OPEN_NOTE_ID');
+        assert(d.token.into() != 0, 'OPEN_NOTE_TOKEN');
+        assert(d.minimum != 0, 'OPEN_NOTE_MINIMUM');
+        assert(!is_zero(read_digest(d.inner)), 'OPEN_NOTE_INNER');
         for j in 0..i {
             assert((*intent.destinations.at(j)).note_id != d.note_id, 'DUPLICATE_NOTE_ID');
         }
