@@ -34,6 +34,62 @@ smallest leaf verifier is log25. The Templar input is
 hash `0x53f6…daa1`, allowed by 0.14.4). Peak RSS comes from `/usr/bin/time`;
 the systemd cgroup peak line is not meaningful for this wrapper.
 
+## Bounded memory (2026-09-24)
+
+**The large path now runs at 28 GiB instead of 51 GiB, with byte-identical proofs**: +9% prove
+time, fitting a hard 30 GiB cap (zero swap). This is the client's coefficient-backed PCS mode
+(`bench/bounded-memory`, ported to the client fork), applied to both server stages: the Cairo leaf
+proof and the Cairo-verifier circuit proof.
+
+The branch `templar/bounded-server` starts at `proving@2b495a3`, the commit the sequencer's V2
+verifier pins. It carries no arithmetic-profile or blinding changes, so the registered circuits
+are untouched. Its patches are in `bounded/`:
+- `0001`, `0002`: the PCS port, conflicts resolved for this commit, with a test that bounded proofs
+  equal unbounded ones field for field;
+- `0003`: `prove_cairo_bounded`, `prove_leaf_bounded` and `privacy_recursive_prove_large_bounded`,
+  plus the `prove_large` harness. The existing functions are unchanged. `prove_leaf` also drops
+  the Cairo VM runner after the adapter.
+
+`run.sh` now uses this build with 16-column FRI batches by default;
+`TEMPLAR_BOUNDED_CAIRO_COLUMNS` and `TEMPLAR_BOUNDED_CIRCUIT_COLUMNS` override the batch size, and
+0 restores default storage. `bounded.py` runs one proof under a cap and samples the cgroup twice a
+second, attributing each sample to a prover stage from the span log.
+
+All runs below used the policy-note release PIE (3.41M virtual-OS steps, log25 leaf), four pinned
+cores, a 115 GiB cap unless stated, and zero swap. Every proof verified, and every completed
+bounded proof is byte-identical to the default-storage proof ([results](results/bounded/)).
+
+| Storage | Peak RSS | Prove time |
+|---|---:|---:|
+| Default | 51.1 GiB | 111.6 s |
+| Bounded, FRI batch 16 | 29.1 GiB | 121.3 s |
+| Bounded, batch 16, runner dropped early | 28.3 GiB | 122.1 s |
+| Same, batch 4 / batch 64 | 27.8 / 28.3 GiB | 123.1 / 120.8 s |
+| Same, hard caps | passes at 32G and 30G; killed at 28G and 26G | |
+
+Where the memory goes, default → bounded (peak GiB in each interval):
+
+| Interval | Default | Bounded |
+|---|---:|---:|
+| Base-trace witness generation | 15.0 | 14.6 |
+| Preprocessed / base / interaction commitments | 22.2 / 32.5 / 35.3 | 24.7 / 27.3 / 22.6 |
+| Cairo STARK proving (composition, openings, FRI) | **50.2** | 24.0 |
+| Cairo-verifier circuit stage | 44.0 | 26.4 |
+
+The Cairo STARK stage no longer holds every tree's extended evaluations. The peak has moved to the
+commitments, each of which still expands its whole tree before hashing, and to the circuit stage's
+own commitments on top of about 16–20 GiB of retained state. The FRI batch size therefore barely
+matters.
+
+**Next lever:** stream each commitment. Extend 16 columns at a time, in the leaf hasher's
+size-sorted order, and feed them to the Blake2s leaf builder, which already absorbs columns
+16 at a time with one state per row. Rebuild openings the same way. `bench/bounded-memory` has a
+tested column-provider Merkle API for this. We estimate it would remove roughly 6–10 GiB per
+commitment, giving a floor near the retained ~20 GiB; this is not measured.
+
+**Build note:** the prover must be built with `RUSTFLAGS="-C target-cpu=native"`. A default build
+of the same source proves in about 193 s instead of 112 s, with identical per-stage memory.
+
 ## What PROOF2 is
 
 Sequencer main verifies V1 through `proving-utils` and V2 through

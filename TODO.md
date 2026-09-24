@@ -274,6 +274,12 @@ the accepted local proving architecture is unchanged.
     (math GO; contract conditional GO on wallet test vectors), findings addressed.
     **Pending:** private creation through an R0 output end to end, a real-proof split
     settlement, a production wallet key scheme, and Sepolia.
+  - **Server memory, bounded (2026-09-24):** the PROOF2 large path now runs the
+    client's coefficient-backed storage mode in both server stages. A policy-note PIE
+    drops from 51.1 to 28.3 GiB (+9% time), passes a hard 30 GiB cap, and gives
+    byte-identical proofs
+    ([results](bench/m31-private-wrapper/proof2-large/README.md#bounded-memory-2026-09-24)).
+    Next: stream commitments (estimated floor about 20 GiB).
   Open for this route:
   - review of the fork's profile;
   - the hiding question (broody/templar#2), under test per
