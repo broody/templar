@@ -1,7 +1,8 @@
 # ADR-0025: Policy notes (bounded, capability-spent, controller-gated)
 
 - Status: Proposed — design reviewed (GO, revision 3); implemented experimentally with a local
-  real-proof end to end; implementation review pending;
+  real-proof end to end; implementation reviewed (math GO, contract conditional GO, findings
+  addressed);
   supersedes, once accepted, ADR-0022 and ADR-0009 §3, and ADR-0006's off-chain signer
 - Date: 2026-09-24
 - Deciders: broody

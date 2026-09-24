@@ -45,7 +45,7 @@ pub mod M31Pool {
         IERC20Dispatcher, IERC20DispatcherTrait, IVerifierDispatcher, IVerifierDispatcherTrait,
         Spend, compute_binding, delivery_digest, is_active,
     };
-    use crate::policy::{PolicySpend, FIXED, call_controller, key_or_zero, policy_binding};
+    use crate::policy::{FIXED, MAX_POLICY_DATA, PolicySpend, call_controller, policy_binding};
     use crate::tree::m31_tree_component;
     use crate::tree::m31_tree_component::M31TreeInternalTrait;
     component!(path: m31_tree_component, storage: tree, event: TreeEvent);
@@ -76,9 +76,16 @@ pub mod M31Pool {
         Withdrawn: Withdrawn,
         OpenNoteFunded: OpenNoteFunded,
         PolicySettled: PolicySettled,
+        PolicyVerifierSet: PolicyVerifierSet,
     }
-    /// A policy note settled; its new notes start at `first_index` (`x` lets split receivers
-    /// compute their amounts).
+    #[derive(Drop, starknet::Event)]
+    pub struct PolicyVerifierSet {
+        pub verifier: ContractAddress,
+    }
+    /// A policy note settled. `policy_id` is `key(policy_id₉)`, as controllers receive it.
+    /// `first_index` is the leaf count before settlement: the first new note's index when the
+    /// outcome appends any (`x` lets split receivers compute their amounts). Indexers must read
+    /// this event from the pool's address only; a controller can emit look-alikes.
     #[derive(Drop, starknet::Event)]
     pub struct PolicySettled {
         pub nullifier: felt252,
@@ -306,12 +313,18 @@ pub mod M31Pool {
             assert(!self.nullifiers.read(nf_key), 'NULLIFIER_USED');
             self.nullifiers.write(nf_key, true);
             self.emit(NullifierSpent { nullifier: nf.span() });
+            assert(data.len() <= MAX_POLICY_DATA, 'POLICY_DATA_LIMIT');
             assert(core::poseidon::poseidon_hash_span(data) == spend.data, 'POLICY_DATA');
             // Windows: not before `not_before`; the controller decides until the deadline, after
             // which only the refund settles.
             let b = get_block_number();
             assert(b >= spend.not_before, 'POLICY_NOT_BEFORE');
             assert(spend.index != 0 || spend.kind == FIXED, 'REFUND_TYPE');
+            // Defense in depth over P1: the refund is one private note and no withdrawal.
+            if spend.index == 0 {
+                let w = spend.withdrawal;
+                assert(w.amount == 0 && w.recipient.into() == 0 && notes.len() > 0, 'REFUND_SHAPE');
+            }
             let by_controller = b <= spend.deadline;
             if by_controller {
                 call_controller(@spend, this, data);
@@ -337,7 +350,7 @@ pub mod M31Pool {
             }
             self.emit(PolicySettled {
                 nullifier: nf_key, controller: spend.controller, handle: spend.handle,
-                policy_id: key_or_zero(read_digest(spend.policy_id)), outcome: spend.index, x: spend.x,
+                policy_id: key(read_digest(spend.policy_id)), outcome: spend.index, x: spend.x,
                 first_index: first, by_controller,
             });
             self.locked.write(false);
@@ -348,6 +361,7 @@ pub mod M31Pool {
             assert(get_caller_address() == self.owner.read(), 'NOT_OWNER');
             assert(verifier.into() != 0, 'ZERO_VERIFIER');
             self.policy_verifier.write(verifier);
+            self.emit(PolicyVerifierSet { verifier });
         }
 
         fn get_policy_verifier(self: @ContractState) -> ContractAddress {

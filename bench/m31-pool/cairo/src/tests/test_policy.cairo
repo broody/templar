@@ -496,3 +496,18 @@ fn print_policy_escrow_class() {
     let h: felt252 = (*class.class_hash).into();
     println!("POLICY_ESCROW_CLASS {}", h);
 }
+
+#[test]
+#[should_panic(expected: 'POLICY_DATA_LIMIT')]
+fn oversized_data_rejected() {
+    let e = env();
+    approve(@e, 1, 1);
+    let mut data = array![];
+    for i in 0..257_u32 {
+        data.append(i.into());
+    }
+    let mut sp = spend(@e, 3000, 1, 1);
+    sp.data = poseidon_hash_span(data.span());
+    sp.binding = policy_binding(@sp);
+    e.pool.apply_policy_spend(sp, data.span(), cts(), array![].span());
+}

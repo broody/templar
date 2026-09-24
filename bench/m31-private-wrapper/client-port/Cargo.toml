@@ -26,5 +26,14 @@ anyhow = "1"
 starknet-ff = "0.3"
 stwo-cairo-serialize = { path = "../../../target/proving-arith/crates/cairo-serialize" }
 
+[features]
+# Test-only hint overrides (`policy::TAMPER`, `payment::CARRIES`) for malicious-witness tests.
+# Production builds never read them.
+tamper = []
+
+[[test]]
+name = "policy_p1_malicious"
+required-features = ["tamper"]
+
 [profile.release]
 debug = false

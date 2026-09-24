@@ -138,7 +138,18 @@ same for both pools apart from R0's longer calldata.
 ## Policy notes (ADR-0025, experimental)
 
 Spec: [policy-note-spec.md](../../docs/policy-note-spec.md), reviewed before implementation
-(`reviews/policy-note-design-*.md`). The implementation has not had its own review yet.
+(`reviews/policy-note-design-*.md`). The implementation has also been reviewed
+(`reviews/policy-note-impl-*.md`): the math review gave GO, and the contract review gave a
+conditional GO on missing wallet test vectors. Every finding has been addressed:
+- the wallet vectors are now pinned (`vectors/policy-wallet-kat.json`, `test_policy_wallet.py`);
+- recovery survives a hostile backup, discovery checks each leaf, splits take `x` from the
+  event, and there is an acceptance checklist;
+- the pool now rechecks the refund shape, caps controller data and emits `PolicyVerifierSet`;
+- the native reference rejects unpaired withdrawals and non-canonical felts.
+
+Both reviewers' tests are in the repo: `tests/test_policy_adversarial.cairo` and
+`tests/test_policy_e2e_adversarial.cairo` (33 tests), and
+`client-port/tests/policy_p1_malicious.rs` (11 malicious-witness tests; `--features tamper`).
 
 - **Relation.** P1 (`client-port/src/policy.rs`) is a separate relation next to R0, which is
   unchanged. A policy note is an ordinary leaf whose receiver is `H(PRECV, H(PNK, cap) ‖ policy)`,

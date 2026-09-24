@@ -22,6 +22,7 @@ pub mod policy_escrow;
 pub mod pool;
 pub mod spend;
 pub mod test_adapters;
+pub mod test_policy_controllers;
 pub mod test_token;
 pub mod tree;
 pub mod zeros;

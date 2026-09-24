@@ -114,7 +114,10 @@ invoke('set-verifier', d['pool'], 'set_verifier', [d['adapter']], 20_000_000, HE
 invoke('approve', d['token'], 'approve', [d['pool'], SUPPLY, 0], 20_000_000, HERE)
 assert call(d['pool'], 'get_verifier') == [int(d['adapter'], 16)]
 assert call(d['pool'], 'get_leaf_count') == [0]
-save(RUN / 'source-snapshot.json', {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
-                                    for p in [*sorted((POOL_CRATE / 'src').rglob('*.cairo')), *sorted((STATEMENT_BUILD / 'account/src').rglob('*.cairo')),
-                                              *sorted((STATEMENT_BUILD / 'bridge/src').rglob('*.cairo'))]})
+# The sources behind the deployed classes, recorded once, when the classes are first recorded: a
+# resumed run must not overwrite them with later sources (implementation review IC-9).
+if not (RUN / 'source-snapshot.json').exists():
+    save(RUN / 'source-snapshot.json', {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
+                                        for p in [*sorted((POOL_CRATE / 'src').rglob('*.cairo')), *sorted((STATEMENT_BUILD / 'account/src').rglob('*.cairo')),
+                                                  *sorted((STATEMENT_BUILD / 'bridge/src').rglob('*.cairo'))]})
 print('deployment ready', json.dumps(d), flush=True)

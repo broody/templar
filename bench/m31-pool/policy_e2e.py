@@ -146,9 +146,9 @@ def main():
     # After both settlements: deposits (0, 1), A's two notes (2, 3), B's refund (4).
     after = leaves + [pub_a['commitments'][0], pub_a['commitments'][1], pub_b['commitments'][0]]
     published += [(2, after[2], ct0), (3, after[3], ct1), (4, after[4], r['refund_ciphertext'])]
-    mine = pw.find_notes(ben, published, TOKEN)
+    mine = pw.find_notes(ben, CHAIN, POOL, published, TOKEN)
     assert sorted((n['index'], n['amount']) for n in mine) == [(2, 600), (3, 400)]
-    refund = pw.find_notes(dep, published, TOKEN)
+    refund = pw.find_notes(dep, CHAIN, POOL, published, TOKEN)
     assert [(n['index'], n['amount']) for n in refund] == [(4, AMOUNT_B)]
     # The beneficiary spends both notes normally (R0), into one note of its own.
     change_ct = wallet.ciphertext('beneficiary')

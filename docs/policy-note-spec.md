@@ -1,7 +1,7 @@
 # Policy notes — bounded policy-controlled private assets
 
-Status: **design reviewed (GO); implemented experimentally, implementation review pending**
-(ADR-0025, Proposed). Revision 3, after the design reviews and re-reviews in
+Status: **design reviewed (GO); implemented experimentally; implementation reviewed, findings
+addressed** (ADR-0025, Proposed). Revision 3, after the design reviews and re-reviews in
 `bench/m31-pool/reviews/policy-note-design-{math,protocol}-review.md` (finding IDs `PN-*`, `P-*` and
 `N-*` are cited where they changed the text). Implementation: `client-port/src/policy.rs` and
 `cairo-p1`, `bench/m31-pool` (`policy.cairo`, `policy_escrow.cairo`, `policy_note.py`,
@@ -218,10 +218,14 @@ the digests needed to recompute `policy` (`o₀` or `orest`, and the two unselec
    for a missing ciphertext; F-3 math) and
    inactive ones all zero (§4.2); each public commitment and delivery equals the outcome's (zero
    when inactive); the public withdrawal equals the outcome's; conservation (§4.3) holds as
-   integers with R0's carry gadget.
+   integers with R0's carry gadget. The circuit does **not** tie the withdrawal's recipient and
+   amount together; the P1 bridge does (both zero or both nonzero), inside the proven PROOF2
+   execution, and the native reference rejects such outcomes so wallets never create or accept
+   them (implementation review PI-1). An outcome violating it can be proved but never settles.
 8. **Split** (`type = 2`): `active₀ = active₁ = 1`, preimage amounts zero, withdrawal zero;
-   `r = amount − x` computed limb by limb with boolean borrow bits, the final borrow zero (so
-   `x ≤ amount`); `x ≠ 0` and `r`'s zero test by the same gadget: with `σ(v)` the sum of `v`'s
+   `r = amount − x` is a witness of eight range-checked 16-bit limbs, and R0's conservation gadget
+   proves `amount = x + r + 0` as integers, so `x ≤ amount` (implementation review PI-7: the gadget
+   replaces explicit borrow bits); `x ≠ 0` and `r`'s zero test by one gadget: with `σ(v)` the sum of `v`'s
    eight 16-bit limbs (below 2¹⁹, so no wraparound), a witness `z ∈ {0,1}` and inverse `t` satisfy
    `σ·t = z` and `σ·(1 − z) = 0`, so `z = 1` exactly when the value is nonzero (N-6 math); `x`
    requires `z = 1`; `r`'s bit is named `nz_r`. The preimage flag `active₁` stays `1` (it is
@@ -257,7 +261,7 @@ ciphertexts: Span<Span<felt252>>, proof: Span<felt252>)`, under the pool lock:
    shared nullifier map (marked spent). R0 and P1 proofs cannot be exchanged: the adapters pin
    different statement classes, account tags and binding tags, and the bridges pin different
    circuits and statement tags.
-2. `Poseidon(data) == spend.data`. Each supplied ciphertext is ten words and its delivery digest
+2. `data` has at most 256 felts and `Poseidon(data) == spend.data`. Each supplied ciphertext is ten words and its delivery digest
    equals the public delivery; an inactive slot has no ciphertext.
 3. With `b` the current block: `b ≥ not_before`.
 4. **Controller window** (`b ≤ deadline`):
@@ -269,19 +273,24 @@ ciphertexts: Span<Span<felt252>>, proof: Span<felt252>)`, under the pool lock:
      **not** PR #2's `privacy_apply_controlled_transition` (P-5): an upstream-style controller
      trusts that call's arguments as its own privately validated receipt, which these are not.
    - ```
-     authorization = ['TEMPLAR_POLICY_V1', chain, pool, token, policy_id, handle,
+     authorization = ['TEMPLAR_POLICY_V1', chain, pool, token, key(policy_id), handle,
                       outcome index, outcome type, x, key(nullifier), not_before, deadline,
                       key(commitment₀), key(commitment₁), withdrawal recipient, withdrawal amount]
      ```
-     (`key(0) = 0` for an inactive output.)
+     `key(d)` is Poseidon over a digest's nine words, and `key(0) = 0` for an inactive output.
+     Controllers, arbiters and indexers use `key(policy_id)` as the policy's identifier
+     (implementation review IC-1).
 5. **Refund window** (`b > deadline`): outcome index must be `0`; the controller is not called and
    its class is not checked.
-   In both windows the pool also asserts that outcome index `0` has type `1` (defense in depth over
-   §5 step 6, N-5).
+   In both windows the pool also asserts that outcome index `0` has type `1`, publishes a note and
+   has no withdrawal (defense in depth over §5 step 6, N-5 and implementation review IC-5).
 6. Withdrawal recipient ≠ pool. Append new notes with their ciphertexts; pay the withdrawal; emit
    `NotePublished` for each and
-   `PolicySettled { key(nullifier), controller, handle, policy_id, outcome, x, first_index }`
-   (`x` and the note indices let split receivers learn their amounts, P-3).
+   `PolicySettled { key(nullifier), controller, handle, key(policy_id), outcome, x, first_index,
+   by_controller }`. `first_index` is the leaf count before settlement, the first new note's
+   index when the outcome appends any (IC-6); `x` and the indices let split receivers learn their
+   amounts (P-3). Indexers read this event from the pool's address only: a controller can emit a
+   look-alike from its own address (IC-7). `set_policy_verifier` emits `PolicyVerifierSet`.
 
 The pool lock is held throughout; the controller cannot re-enter the pool. Relayer fees are out of
 scope, as for R0 (P-14).
@@ -366,7 +375,10 @@ wallet seed under its own label) and `ctx = chain ‖ pool ‖ ν`:
 - `M31⁹(·)` expands 72 bytes and maps each 8-byte big-endian chunk to `u64 mod (2³¹ − 1)` (bias
   below 2⁻³²); an all-zero result is rejected by drawing a new `ν`.
 - The X25519 scalar is 32 expanded bytes, clamped per RFC 7748.
-- Test vectors pin all of this during implementation (F-1 math, F-4 protocol).
+- Known-answer vectors pin all of this: `bench/m31-pool/vectors/policy-wallet-kat.json`, checked by
+  `bench/m31-pool/test_policy_wallet.py` (F-1 math, F-4 protocol, implementation review IC-2).
+- Two notes share `esk_refund` only if they share a 128-bit `ν`, which a random draw makes
+  negligible (implementation review PI-6).
 
 ```
 cap          = M31⁹(HKDF(s_pol, 'TEMPLAR_POLICY_CAP' ‖ ctx))
@@ -442,7 +454,9 @@ the depositor's incoming key at that receiver index.
 - **Acceptance checklist (PN-5)** for a beneficiary or executor given an opening: recompute `cm`
   and find it in the tree at a root; check the controller class and that it is a non-proxy
   reference controller; check the deadline margin; decrypt and check its own output's ciphertext
-  against the committed delivery; then hand the verified `policy_id` to the controller's approver
+  against the committed delivery; check every felt in the policy is canonical (below the field
+  prime, compared as integers, never modulo p; implementation review PI-2) and every withdrawal
+  pairs a recipient with an amount; then hand the verified `policy_id` to the controller's approver
   (§10), or for a registering controller confirm that it registered this `policy_id` (F-5). A
   depositor's wallet creates only the standard refund (§4.4); the relation guarantees a refund
   creates a private note with a delivery, but a counterparty relying on the refund still checks

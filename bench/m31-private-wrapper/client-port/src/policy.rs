@@ -203,6 +203,11 @@ impl Policy {
     }
 }
 
+/// Whether a `0x` hex felt is below the Starknet prime (and parses).
+pub fn canonical_felt(hex: &str) -> bool {
+    starknet_ff::FieldElement::from_hex_be(hex).is_ok()
+}
+
 fn context_limbs(chain: &str, pool: &str, token: &str) -> Vec<u32> {
     [felt_limbs(chain), felt_limbs(pool), felt_limbs(token)].concat()
 }
@@ -274,6 +279,17 @@ pub fn statement(tree: Tree, chain: &str, pool: &str, token: &str, x: u128, data
         }
     }
     let has_recipient = felt_limbs(&o.withdrawal_recipient).iter().any(|l| *l != 0);
+    // A withdrawal has both a recipient and an amount, or neither (the bridge enforces it for
+    // settlement; the reference rejects such outcomes so wallets never create or accept them).
+    if has_recipient != (o.withdrawal_amount != 0) {
+        return Err("withdrawal recipient and amount".into());
+    }
+    // Every felt is canonical (below the field prime), as the bridge decodes it.
+    let felts = [chain, pool, token, data, &w.header.controller, &w.header.controller_class, &w.header.handle,
+                 &o.withdrawal_recipient, &o.outputs[0].delivery, &o.outputs[1].delivery];
+    if !felts.iter().all(|f| canonical_felt(f)) {
+        return Err("non-canonical felt".into());
+    }
     if split && (has_recipient || o.withdrawal_amount != 0) {
         return Err("split withdrawal".into());
     }
@@ -411,14 +427,34 @@ fn bit<V: IValue>(c: &mut Context<V>, b: bool) -> Var {
 
 /// `z ∈ {0, 1}` with `z = 1` exactly when `sum ≠ 0` (`sum·t = z`, `sum·(1 − z) = 0`); `sum` is a
 /// sum of 16-bit limbs, far below the modulus.
-fn is_nonzero<V: IValue>(c: &mut Context<V>, sum: Var, value: u32) -> Var {
-    let z = bit(c, value != 0);
+fn is_nonzero<V: IValue>(c: &mut Context<V>, sum: Var, value: u32, forced: Option<bool>) -> Var {
+    let z = bit(c, forced.unwrap_or(value != 0));
     let t = guess_m31(c, if value == 0 { 0 } else { M31::from(value).inverse().0 });
     let prod = eval!(c, (sum) * (t));
     eq(c, prod, z);
     let idle = eval!(c, (sum) * ((1) - (z)));
     assert_zero(c, idle);
     z
+}
+
+/// Test-only overrides of hint values the honest builder derives (feature `tamper`), so tests can
+/// show that the constraints, not the hint code, reject a malicious witness. Never read otherwise.
+#[derive(Clone, Debug, Default)]
+pub struct Tamper {
+    pub s: Option<bool>,
+    pub r_value: Option<u128>,
+    pub nz_r: Option<bool>,
+    pub sel: Option<[bool; 4]>,
+    pub active: Option<[bool; 2]>,
+    pub carries: Option<Vec<i64>>,
+}
+
+thread_local! {
+    pub static TAMPER: std::cell::RefCell<Tamper> = std::cell::RefCell::new(Tamper::default());
+}
+
+fn tamper() -> Tamper {
+    if cfg!(feature = "tamper") { TAMPER.with(|t| t.borrow().clone()) } else { Tamper::default() }
 }
 
 /// Builds P1 and returns the 41 output variables (the public statement).
@@ -443,7 +479,8 @@ pub fn build<V: Lanes>(c: &mut Context<V>, tree: Tree, public: &Public, w: &Priv
     // The selected outcome. `s` is the split bit; the type is `1 + s`.
     let o = &w.selected;
     let split = o.kind == SPLIT;
-    let s = bit(c, split);
+    let tp = tamper();
+    let s = bit(c, tp.s.unwrap_or(split));
     let kind = eval!(c, (1) + (s));
     let (not_before, nb_sum) = limbs16(c, o.not_before, 4);
     let mut act = vec![];
@@ -451,8 +488,8 @@ pub fn build<V: Lanes>(c: &mut Context<V>, tree: Tree, public: &Public, w: &Priv
     let mut orho = vec![];
     let mut pamt = vec![];
     let mut dl = vec![];
-    for out in &o.outputs {
-        let a = bit(c, out.active);
+    for (j, out) in o.outputs.iter().enumerate() {
+        let a = bit(c, tp.active.map_or(out.active, |v| v[j]));
         let r = guess_words(c, &out.receiver);
         let q = guess_words(c, &out.rho);
         let (m, m_sum) = amount_unchecked(c, out.amount);
@@ -491,11 +528,11 @@ pub fn build<V: Lanes>(c: &mut Context<V>, tree: Tree, public: &Public, w: &Priv
     let t = eval!(c, (x_sum) * (not_split));
     assert_zero(c, t);
     nonzero_if(c, x_sum, amount_limbs(public.x).iter().sum(), (s, split));
-    let r_value = if split { w.amount.saturating_sub(public.x) } else { 0 };
+    let r_value = tp.r_value.unwrap_or(if split { w.amount.saturating_sub(public.x) } else { 0 });
     let (r, r_sum) = amount_unchecked(c, r_value);
     let t = eval!(c, (r_sum) * (not_split));
     assert_zero(c, t);
-    let nz_r = is_nonzero(c, r_sum, amount_limbs(r_value).iter().sum());
+    let nz_r = is_nonzero(c, r_sum, amount_limbs(r_value).iter().sum(), tp.nz_r);
     // Commitment amounts: the committed ones (fixed) or x and r (split); the other is zero.
     let mut cam = vec![];
     for (j, extra) in [&x, &r].into_iter().enumerate() {
@@ -506,9 +543,11 @@ pub fn build<V: Lanes>(c: &mut Context<V>, tree: Tree, public: &Public, w: &Priv
         cam.push(v);
     }
     let cam_values = if split { [public.x, r_value] } else { [o.outputs[0].amount, o.outputs[1].amount] };
+    payment::CARRIES.with(|cc| *cc.borrow_mut() = tp.carries.clone());
     conservation(c, &[&amt], &[&cam[0], &cam[1], &w_amt], &[w.amount], &[cam_values[0], cam_values[1], o.withdrawal_amount]);
+    payment::CARRIES.with(|cc| *cc.borrow_mut() = None);
     // The selector: one-hot bits, the public index is Σ k·b_k.
-    let sel: Vec<Var> = (0..4).map(|k| bit(c, w.index as usize == k)).collect();
+    let sel: Vec<Var> = (0..4).map(|k| bit(c, tp.sel.map_or(w.index as usize == k, |v| v[k]))).collect();
     let mut sum_sel = c.zero();
     let mut index = c.zero();
     for (k, b) in sel.iter().enumerate() {

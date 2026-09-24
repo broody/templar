@@ -16,6 +16,8 @@ pub const FIXED: u8 = 1;
 pub const SPLIT: u8 = 2;
 /// The controller's required return value.
 pub const POLICY_OK: felt252 = 'TEMPLAR_POLICY_OK';
+/// The most felts of controller data a settlement carries.
+pub const MAX_POLICY_DATA: u32 = 256;
 
 /// A P1 settlement statement, as decoded by the P1 bridge (`client-port/cairo-p1`).
 #[derive(Drop, Serde)]

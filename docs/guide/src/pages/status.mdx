@@ -113,7 +113,7 @@ The design (ADR-0025, `docs/policy-note-spec.md`) was reviewed independently bef
 **Tests:**
 - P1 relation: 7 tests, covering the native reference, tampered witnesses, the refund-slot rules and finalization.
 - P1 bridge on a real proof: 32/32 cases, including every altered statement field and an R0 proof.
-- Pool: 147 tests, of which 37 are policy tests. They cover decoy notes on another escrow, unset approvals, controller revert, re-entry and wrong return, rollback of a failed callback, and replay.
+- Pool: 181 tests, of which 79 are policy tests. They cover decoy notes on another escrow, unset approvals, controller revert, re-entry and wrong return, rollback of a failed callback, and replay.
 
 **Local end to end with real proofs** (`bench/m31-pool/policy_e2e.py`):
 1. A depositor creates two escrow notes by deposit.
@@ -130,8 +130,10 @@ The design (ADR-0025, `docs/policy-note-spec.md`) was reviewed independently bef
 | PROOF2 | 111.0 s, 50.9 GiB | 110.8 s, 51.7 GiB |
 | `apply_policy_spend` | 52.4M L2 gas | 51.5M L2 gas |
 
+The implementation review found no blocking issue in the relation or the contracts; its wallet and defense-in-depth findings are addressed, and both reviewers' tests (33 contract and 11 malicious-witness) are in the repository. The wallet's derivations and encodings are pinned by known-answer vectors.
+
 **Still open:**
-- the review of the implementation;
+- a real-proof split settlement;
 - private creation through an ordinary output, end to end;
 - Sepolia, which is blocked on PROOF2 acceptance at the gateway;
 - a production wallet key scheme: the end to end uses fixture spending and incoming keys.

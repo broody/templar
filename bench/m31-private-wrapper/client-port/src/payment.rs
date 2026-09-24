@@ -561,6 +561,11 @@ pub(crate) fn amount_unchecked<V: IValue>(c: &mut Context<V>, a: u128) -> (Vec<V
     (vars, sum)
 }
 
+thread_local! {
+    /// Test-only carry overrides for [`conservation`] (feature `tamper`); never read otherwise.
+    pub static CARRIES: std::cell::RefCell<Option<Vec<i64>>> = const { std::cell::RefCell::new(None) };
+}
+
 /// `Σ ins = Σ outs` over the integers (two inputs; outputs and withdrawal), limb by limb. Each
 /// limb difference lies in (-3·2^16, 2·2^16), so the signed carries lie in {-2, -1, 0, 1}.
 pub(crate) fn conservation<V: IValue>(c: &mut Context<V>, ins: &[&[Var]], outs: &[&[Var]], in_values: &[u128], out_values: &[u128]) {
@@ -583,7 +588,12 @@ pub(crate) fn conservation<V: IValue>(c: &mut Context<V>, ins: &[&[Var]], outs: 
             dv -= l[k] as i64;
         }
         // An invalid witness gets some carry anyway, and the constraint below fails.
-        let next_value = dv.div_euclid(1 << 16).clamp(-2, 1);
+        let honest = dv.div_euclid(1 << 16).clamp(-2, 1);
+        let next_value = if cfg!(feature = "tamper") {
+            CARRIES.with(|cc| cc.borrow().as_ref().map(|v| v[k.min(v.len() - 1)])).unwrap_or(honest)
+        } else {
+            honest
+        };
         let next = if k + 1 == AMOUNT_LIMBS {
             c.zero()
         } else {

@@ -270,9 +270,10 @@ the accepted local proving architecture is unchanged.
     reference escrow and the wallet's seed-recoverable backup. A local end-to-end
     run with real client proofs and PROOF2 settles an executor's escrow release and
     a seed-only refund
-    ([results](bench/m31-pool/results/policy-e2e.json)). **Pending:** the review of
-    the implementation, private creation through an R0 output end to end, and
-    Sepolia.
+    ([results](bench/m31-pool/results/policy-e2e.json)). Implementation reviewed
+    (math GO; contract conditional GO on wallet test vectors), findings addressed.
+    **Pending:** private creation through an R0 output end to end, a real-proof split
+    settlement, a production wallet key scheme, and Sepolia.
   Open for this route:
   - review of the fork's profile;
   - the hiding question (broody/templar#2), under test per

@@ -9,3 +9,5 @@ mod test_open_note_adversarial;
 mod test_policy;
 mod policy_vectors;
 mod test_policy_e2e;
+mod test_policy_adversarial;
+mod test_policy_e2e_adversarial;
