@@ -73,26 +73,11 @@ deadline only the refund settles, with no controller involved. The depositor can
 opening to an executor, go offline, and still refund from their seed alone. A reference escrow
 controller is included. [Guide: policy notes](docs/guide/src/pages/architecture/policy-notes.mdx).
 
-## Two proving architectures
+## How proving works
 
-Every spend needs a zero-knowledge proof that Starknet can verify natively. Templar has built
-two ways to produce one.
-
-### 1. Full client-side proving (PROOF1)
-
-```text
-wallet: witness ─► Cairo statement ─► virtual OS run ─► S-two recursive ZK prover ─► PROOF1
-                                                                                         │
-Starknet: native proof verification ─► pool checks the proven result ◄───────────────────┘
-```
-
-The wallet runs the whole Cairo pipeline locally and produces a Starknet-native PROOF1, so
-nothing else is involved. This path has run full lifecycles on Sepolia: offline payments,
-viewing, seed recovery, recovered-note spends, withdrawals, and an Ekubo swap into a private
-note. The price is weight: a prover request takes about 19–20 s and 14 GiB, or 23 s under an
-8 GiB cap with bounded-memory proving. That is too heavy for a phone or a browser.
-
-### 2. Split: compact client proof + server wrapping (PROOF2), the direction
+Every spend needs a zero-knowledge proof that Starknet can verify natively. Templar splits the
+work: the wallet proves the payment privately in a compact circuit, and a server with no private
+data wraps that proof into a Starknet-native PROOF2.
 
 ```text
 wallet (browser-class)                   wrapping server (no private data)          Starknet
@@ -121,13 +106,23 @@ forge a spend or learn the witness. Anyone can run one.
 | **R0** | Ordinary spends: 2 inputs, up to 2 outputs, one withdrawal, plus an open-note intent and a shadow-account handle |
 | **P1** | Policy-note settlement: one committed outcome of one policy note |
 
-Status of the split path:
+Status:
 - It runs end to end locally with real client proofs and real PROOF2: ordinary spends, open-note
   swaps, and policy-note release and seed-only refund.
 - On Sepolia, deposits are on chain, and a proof-carrying swap through live Ekubo succeeds in
   simulation. The public gateway does not accept PROOF2 transactions yet.
 - The zero-knowledge argument for the compact proof is under review. One hiding issue was found
   and fixed.
+
+### Future: a faster device-side path
+
+Wrapping takes about 2 minutes. A wallet could skip the server by proving the whole Cairo
+pipeline itself and submitting a Starknet-native PROOF1. Templar's earliest reference did this
+with a felt252 note format, but it is too heavy for a phone or browser, and a felt252 pool would
+split the anonymity set from the M31 pool. The likeliest route is a device-side PROOF1 over the
+same M31 pool once Starknet allows native M31 arithmetic (the `qm31` libfuncs) in contracts. An
+experiment estimates an M31 spend at about 0.5M Cairo steps with native M31 arithmetic
+([`qm31-opcode`](bench/m31-private-wrapper/qm31-opcode/README.md)). It is not implemented.
 
 ## Repository map
 
@@ -136,21 +131,20 @@ Status of the split path:
 | [`docs/guide/`](docs/guide/README.md) | **Developer guide** (Vocs site): architecture, note types, receiving and recovery, privacy, status, code map |
 | [`docs/zk-guide/`](docs/zk-guide/README.md) | ZK fundamentals course: fields to STARKs to client-proof wrapping, with runnable checks |
 | `docs/*-spec.md` | Specifications: [push payments](docs/push-payment-spec.md), [open notes](docs/open-note-spec.md), [policy notes](docs/policy-note-spec.md) |
-| `bench/m31-private-wrapper/client-port/` | Split path, client side: the R0 and P1 relations (Rust), the Cairo bridges and statement accounts, the wallet CLI |
-| `bench/m31-pool/` | Split path, pool: M31 commitment tree, spends, open notes, policy notes, escrow, wallet helpers, end-to-end drivers |
-| `bench/m31-private-wrapper/proof2-large/` | Split path, server: PROOF2 wrapping, bounded-memory server build, memory profiler |
-| `bench/m31-sepolia/` | Split path on Sepolia: deploy and flow scripts, archived evidence |
-| `bench/push-e2e/`, `bench/controlled-push-e2e/`, `bench/return-note-e2e/` | Full client-side path: Sepolia lifecycles with native PROOF1 |
-| `bench/bounded-memory/` | Coefficient-backed proving memory mode (client and server) |
+| `bench/m31-private-wrapper/client-port/` | Client side: the R0 and P1 relations (Rust), the Cairo bridges and statement accounts, the wallet CLI |
+| `bench/m31-pool/` | Pool: M31 commitment tree, spends, open notes, policy notes, escrow, wallet helpers, end-to-end drivers |
+| `bench/m31-private-wrapper/proof2-large/` | Server: PROOF2 wrapping, bounded-memory server build, memory profiler |
+| `bench/m31-sepolia/` | Sepolia: deploy and flow scripts, archived evidence |
 | `packages/` | Earlier package implementation; not yet integrated with the current formats |
 | [`TODO.md`](TODO.md) | Current priorities and open items |
 
-Most other `bench/` directories are measurement and pathfinding records; each has a README.
+Most other `bench/` directories are measurement and pathfinding records, including the earlier
+full client-side PROOF1 references; each has a README.
 
 ## Getting started
 
 **Toolchain.** Scarb 2.18.0 and Starknet Foundry 0.63.0 (`.tool-versions`), and Rust
-`nightly-2026-01-15`. The split path's Rust crates build against a local fork of
+`nightly-2026-01-15`. The Rust crates build against a local fork of
 `starkware-libs/proving` under `target/`.
 
 ```bash
@@ -194,7 +188,7 @@ The [comparison page](docs/guide/src/pages/comparison.mdx) in the guide goes int
 - **No audit.** The relations, contracts and wallet encodings have had internal reviews, not an
   external audit.
 - **Hiding of the compact client proof** is still being qualified.
-- **Wallet keys** in the split-path demos use fixture derivations, not a production key and
+- **Wallet keys** in the demos use fixture derivations, not a production key and
   backup standard.
 - **PROOF2** is not yet accepted by the public Sepolia gateway, and not enabled on mainnet.
 - **Public metadata:** submission, gas funding, RPC access and timing can still correlate
