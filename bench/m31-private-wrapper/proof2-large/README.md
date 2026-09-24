@@ -56,8 +56,9 @@ the systemd cgroup peak line is not meaningful for this wrapper.
 
 ## Bounded memory (2026-09-24)
 
-**The large path now runs at 28 GiB instead of 51 GiB, with byte-identical proofs**: +9% prove
-time, fitting a hard 30 GiB cap (zero swap). This is the client's coefficient-backed PCS mode
+**The large path now runs at 28 GiB instead of 51 GiB, with byte-identical proofs** (+9% prove
+time, fitting a hard 30 GiB cap, zero swap), **and at 22 GiB with streamed commitments** (about
++30%, fitting 24 GiB; below). This is the client's coefficient-backed PCS mode
 (`bench/bounded-memory`, ported to the client fork), applied to both server stages: the Cairo leaf
 proof and the Cairo-verifier circuit proof.
 
