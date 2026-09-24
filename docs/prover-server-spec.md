@@ -69,8 +69,10 @@ client ◄─GET /v1/jobs/{id}──┘                                  └─ 
 
 - **Front end** (tokio, axum): the API, rate limits, the queue, job state. It parses nothing
   expensive itself: pre-checks and jobs run in child processes (§4, §9 isolation).
-- **`templar-prover`** (nightly toolchain): modes `serve`, `check PROOF_DIR` (the pre-checks),
-  `prove JOB_DIR` (the large proof from a PIE, then local verification) and `info`.
+- **`templar-prover`**: modes `serve`, `check JOB_DIR` (the pre-checks: the bridge executed with
+  `scarb execute` on the pinned bridge build) and `info`.
+- **`templar-prove`** (nightly toolchain): `prove JOB_DIR`, the large proof from a PIE, then
+  local verification.
 - **`templar-os-runner`** (the sequencer's toolchain): one mode, `run JOB_DIR`: builds the
   transaction, runs the virtual OS against the RPC endpoint and writes the PIE and the message.
   A separate binary because the sequencer and the proving stack pin different Rust toolchains
@@ -78,36 +80,36 @@ client ◄─GET /v1/jobs/{id}──┘                                  └─ 
 
 ## 4. Pre-checks (before any heavy work)
 
-The pre-checks are a **Rust port of the Cairo bridges** (`verify_payment`, `verify_policy`),
-built from the same trusted manifest constants, so that nothing the bridge would reject reaches
-proving and nothing it accepts is refused (PS-1). A differential test runs every bench proof,
-honest and forged, through both and requires identical accept/reject results.
+The pre-checks **execute the compiled Cairo bridge itself** (`verify_payment` / `verify_policy`
+through the bridge package's standalone `main`, which also compares the decoded statement with
+the submitted one), from the very bridge build the deployed statement account was compiled from.
+Nothing the bridge would reject reaches proving and nothing it accepts is refused, by
+construction (PS-1): the pre-check and the proven execution run the same Cairo. It costs about
+2M Cairo steps, a few seconds, against minutes for the job. (A Rust port was the first plan;
+the Cairo proof encoding has no inverse to a native proof, and executing the bridge is exact.)
 
-They run in a `check` child process under a CPU-time and memory limit, never in the front end
-(PS-4). Parsing is fallible throughout (no panics on malformed input), and allocation is bounded
-by the pinned proof shape. In order, cheapest first:
+Steps 1–4 are cheap and run in the front end with fallible parsing (no panics on malformed
+input) and allocation bounded by the configured sizes; step 5 runs in a `check` child process
+under a CPU-time and memory limit, never in the front end (PS-4). In order, cheapest first:
 
 1. **Size and encoding.** The body is at most a configured size; the relation is `r4` or `p1`;
-   the proof is a length-prefixed span of canonical felts that deserializes exactly (Cairo Serde)
-   to one client proof with no trailing data.
-2. **Pinned proof shape.** The proof's FRI configuration, component log sizes and output count
-   equal the relation's manifest; its preprocessed commitment gives the pinned circuit hash
-   (never one taken from the proof).
-3. **Verification.** The circuit proof verifies, and its outputs decode to the statement:
-   the statement tag and tree format pinned for the relation; 28-bit limbs forming **canonical**
-   felts (below the field prime, as the bridge's `felt_from_limbs`); 16-bit amount limbs; the
-   padding limb zero. The decoded statement must equal the submitted one field for field.
-4. **Bridge rules.** R4: the exit rule, both commitments and deliveries nonzero, nonzero distinct
-   nullifiers, recipient ⇔ amount, identity ⇒ intent, addresses and the asset below 2^251, chain
-   and pool nonzero. P1: the P1 bridge's rules, ported the same way.
-5. **Configuration match.** Chain and pool are the ones this server serves.
-6. **Work deduplication** (PS-2). At most one job per input-0 nullifier may be queued, running
+   the proof is a length-prefixed span of canonical felts no longer than the pinned proof size;
+   the statement's fields are well-formed.
+2. **Configuration match.** Chain and pool are the ones this server serves.
+3. **Work deduplication** (PS-2). At most one job per input-0 nullifier may be queued, running
    or completed within the retention window (a failed job does not count, so a retry after a
    failure is allowed); a second submission for the same nullifier is refused, and repeated
-   refusals for one nullifier back off. A nullifier is input 0's (always a
-   real note), so one note buys at most one proof per window however the dummy input, outputs or
+   refusals for one nullifier back off. The key is input 0's nullifier for
+   R4 (always a real note) and the policy note's for P1, so one note buys at most one proof per window however the dummy input, outputs or
    recipient are varied.
-7. **Chain state** (RPC): the root is known to the pool and neither nullifier is spent.
+4. **Chain state** (RPC): the root is known to the pool and no nullifier is spent.
+5. **The bridge**, in the `check` child process. Execute the relation's bridge on `(statement, proof)`: it deserializes the
+   proof exactly (no trailing data), checks the pinned circuit hash, the proof shape baked into
+   its verifier (FRI configuration, component sizes, output count) and the statement tag,
+   decodes canonical limbs, applies every bridge rule (R4: the exit rule, both outputs, distinct
+   nonzero nullifiers, recipient ⇔ amount, identity ⇒ intent, ranges; P1: its rules), verifies
+   the circuit proof, and requires the decoded statement to equal the submitted one. Its output
+   `[chain, pool, token, binding]` gives the binding used in §5.
 
 The authoritative checks remain in the proven execution and the pool.
 
@@ -150,7 +152,7 @@ Results are kept for a configured time (default one hour), then deleted with the
 ## 7. Limits and abuse
 
 - **Rate limits:** a token bucket per IPv4 address and per IPv6 /64, a cap on queued jobs per
-  address, a global queue cap; per-nullifier deduplication and backoff (§4.6). OHTTP submissions
+  address, a global queue cap; per-nullifier deduplication and backoff (§4.3). OHTTP submissions
   arrive from the relay's address, so they get per-relay buckets sized for many clients, plus an
   optional small proof-of-work stamp per submission so one abuser behind a relay cannot exhaust
   its bucket for everyone (PS-13); per-nullifier deduplication applies regardless of transport.
@@ -194,8 +196,8 @@ result retention; listen address. `info` prints it with the dependency revisions
     moves to the upstream revision and the fork is dropped. It builds with the sequencer's pinned toolchain;
   - `broody/proving` `templar/bounded-server` (`b54ed94f8`, public) for the bounded large-proof
     prover;
-  - `client-port` (path) for the relations' statement layouts, `bridge_checks` and the circuit
-    verifier's pinned-hash checks.
+  - the bridge builds (`build-record.json`, the compiled executable) of the deployed statement
+    accounts, pinned by sha256, and `scarb` 2.18.0 to execute them.
 - `target-cpu=native` gives about 1.7× faster proofs but ties a binary to its CPU. The Docker
   image builds for a stated baseline (x86-64-v3) by default, with a build argument for native.
 - Docker: multi-stage build, a non-root runtime user, read-only root filesystem, dropped
@@ -209,9 +211,10 @@ result retention; listen address. `info` prints it with the dependency revisions
   (`unshare --net`, or the equivalent seccomp and namespace setup in the image); only
   `templar-os-runner` reaches the RPC endpoint. The front end reserves memory outside the jobs'
   groups.
-- Release blocker: the client-port crate currently builds against a non-public proving branch.
-  Before the server is published, the parts it needs (the verifier side) must be available
-  publicly; this does not block private use.
+- The server links no client-prover code: it executes the compiled bridges. (The bridge sources
+  vendor the Cairo verifier of the non-public client-proof branch; publishing the server means
+  publishing the compiled bridge builds, which are already deployed on chain as the statement
+  accounts.)
 
 ## 10. Operation
 
@@ -227,9 +230,10 @@ compose example ships that way.
 
 ## 11. Tests
 
-- Differential: every bench proof, honest and forged, through the Rust pre-checks and the Cairo
-  bridge executable, with identical results; plus malformed encodings (non-canonical felts in
-  delivery, intent and chain, trailing data, wrong proof shape, another circuit).
+- Pre-checks: every bench proof, honest and forged, gets the bridge validator's verdict; plus
+  malformed encodings (non-canonical felts in delivery, intent and chain, trailing data, wrong
+  proof shape, another circuit) are refused without reaching the bridge where the front end can
+  tell, and by the bridge otherwise.
 - Deduplication: resubmitting one note's spend with varied dummies and outputs is refused.
 - Startup: each configuration mismatch (chain, class, adapter field) refuses to start.
 - The worker on a recorded Sepolia job: the same message and facts as the bench flow.
@@ -249,8 +253,8 @@ compose example ships that way.
 
 | Finding | Resolution |
 | --- | --- |
-| PS-1 | §4: a Rust port of both bridges from the manifest constants, canonical felts, pinned tag, format, FRI configuration and component sizes, exact Serde; a differential test (§11) |
-| PS-2 | §4.6 per-nullifier deduplication and backoff; §7 IPv6 /64 buckets |
+| PS-1 | §4: the pre-check executes the compiled bridge itself, so it is equivalent by construction (exact Serde, pinned circuit, shape, tag, canonical limbs, every rule) |
+| PS-2 | §4.3 per-nullifier deduplication and backoff; §7 IPv6 /64 buckets |
 | PS-3 | §5: base block at job start, re-check before proving, `submit_after` and `valid_until` |
 | PS-4 | §4: pre-checks in a limited child process; fallible parsing; bounded allocation |
 | PS-5 | §8: startup checks against chain, classes and adapter storage; `/v1/info` tuple; wallets compare |

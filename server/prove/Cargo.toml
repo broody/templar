@@ -1,0 +1,20 @@
+[package]
+name = "templar-prove"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Proves a virtual-OS PIE through the large-proof path with bounded-memory storage and verifies it (prover-server spec §5.5)"
+
+# starkware-libs/proving plus the bounded-memory patches (public: broody/proving
+# `templar/bounded-server`). Cargo.lock is seeded from that revision's lockfile; build with
+# `--locked` and RUSTFLAGS="-C target-cpu=..." (native is ~1.7x faster than a baseline).
+[dependencies]
+privacy-prove = { git = "https://github.com/broody/proving", rev = "b54ed94f832e4e3537aec783101582cfcd632659" }
+leaf-prover = { git = "https://github.com/broody/proving", rev = "b54ed94f832e4e3537aec783101582cfcd632659" }
+privacy-circuit-verify = { git = "https://github.com/broody/proving", rev = "b54ed94f832e4e3537aec783101582cfcd632659" }
+cairo-vm = { version = "3.2.0", features = ["extensive_hints", "mod_builtin"], default-features = false }
+serde_json = "1.0.142"
+anyhow = "1"
+
+[profile.release]
+debug = false

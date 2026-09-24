@@ -1,10 +1,12 @@
-"""Re-sign a case's proof-carrying `apply_spend` from the relayer (sncast against a local
+"""Re-sign a case's proof-carrying pool call (`apply_spend` by default, or the entry point given
+as the third argument) from the relayer (sncast against a local
 capture server, nothing sent) and simulate it with validation at the latest block. Used to
 price a spend when the gateway does not accept PROOF2."""
 from sepolia import *
 import sys
 
 name, label = sys.argv[1], sys.argv[2]
+FN = sys.argv[3] if len(sys.argv) > 3 else 'apply_spend'
 case = load(RUN / 'cases' / name / 'case.json')
 folder = RUN / 'cases' / name / 'server'
 out = RUN / 'steps' / f'simulate-{name}-{label}'
@@ -37,7 +39,7 @@ if not captured.exists():
     thread.start()
     try:
         sncast(f'simulate-{name}-{label}-sign', ['invoke', '--url', f'http://127.0.0.1:{server.server_port}', '--contract-address', load(RUN / 'deployment.json')['pool'],
-                                                 '--function', 'apply_spend', '--calldata', *[h(x) for x in case['calldata']],
+                                                 '--function', FN, '--calldata', *[h(x) for x in case['calldata']],
                                                  '--proof-file', str(folder / 'proof.base64'), '--proof-facts-file', str(folder / 'proof-facts.txt'),
                                                  *bounds(550_000_000)], HERE, expected_error=True)
     finally:

@@ -1,0 +1,4 @@
+# The sequencer's pinned toolchain (its rust-toolchain.toml at the pinned revision).
+[toolchain]
+channel = "1.95"
+profile = "minimal"

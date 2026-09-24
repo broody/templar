@@ -1,0 +1,23 @@
+[package]
+name = "templar-os-runner"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Runs a Templar statement account's transaction in the pinned virtual Starknet OS and writes the Cairo PIE (prover-server spec §5)"
+
+# The sequencer at the revision the adapters pin, plus one commit making `RpcRunnerFactory::new`
+# public (broody/sequencer `templar/runner-visibility`). Cargo.lock is seeded from that revision's
+# lockfile; build with `--locked`.
+[dependencies]
+starknet_transaction_prover = { git = "https://github.com/broody/sequencer", rev = "625929ac645c399f2481fb2b65ffdd14702aa525" }
+blockifier = { git = "https://github.com/broody/sequencer", rev = "625929ac645c399f2481fb2b65ffdd14702aa525" }
+blockifier_reexecution = { git = "https://github.com/broody/sequencer", rev = "625929ac645c399f2481fb2b65ffdd14702aa525" }
+starknet_api = { git = "https://github.com/broody/sequencer", rev = "625929ac645c399f2481fb2b65ffdd14702aa525" }
+apollo_starknet_os_program = { git = "https://github.com/broody/sequencer", rev = "625929ac645c399f2481fb2b65ffdd14702aa525" }
+anyhow = "1.0.44"
+serde_json = "1.0.116"
+tokio = { version = "1.47.1", features = ["macros", "rt-multi-thread"] }
+url = "2.5.0"
+
+[profile.release]
+debug = false

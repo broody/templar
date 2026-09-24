@@ -1,0 +1,33 @@
+# systemd unit for the Templar prover server (system or user instance).
+# Delegate=yes gives the server its own cgroup v2 subtree: with `cgroup_root = "self"` it moves
+# itself into a `server` leaf and runs every pre-check, OS run and proof in its own sibling group
+# under per-step memory, CPU and PID limits (docs/prover-server-spec.md §9).
+[Unit]
+Description=Templar prover server
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/templar-prover serve /etc/templar/prover.toml
+Delegate=yes
+# One concurrent job needs ~30 GiB; reserve for the front end and leave the rest to the jobs'
+# own limits. MemoryMax here bounds the whole subtree.
+MemoryMax=40G
+MemorySwapMax=0
+Restart=on-failure
+RestartSec=10
+# Hardening. The steps that need no network run in a fresh network namespace
+# (`unshare --user --net`), which needs unprivileged user namespaces.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/var/lib/templar-prover
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=no
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+LockPersonality=yes
+
+[Install]
+WantedBy=multi-user.target
