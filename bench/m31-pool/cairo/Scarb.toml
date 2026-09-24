@@ -8,6 +8,9 @@ description = "Option A measurement pool: R0 spends over an on-chain Poseidon2-M
 starknet = "2.18.0"
 # M31 reductions for the permutation (fork broody/proving, templar/arithmetic-profile).
 stwo_verifier_core = { path = "../../../target/proving-arith/stwo_cairo_verifier/crates/verifier_core" }
+# Test-only ERC721/ERC1155 contracts (src/test_nft.cairo); the pools do not use them.
+openzeppelin_token = "3.0.0"
+openzeppelin_introspection = "3.0.0"
 
 [dev-dependencies]
 snforge_std = "0.63.0"

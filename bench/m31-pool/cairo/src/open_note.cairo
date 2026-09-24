@@ -20,7 +20,7 @@ use core::hash::HashStateTrait;
 use core::poseidon::{PoseidonTrait, poseidon_hash_span};
 use starknet::ContractAddress;
 use crate::hash::{is_zero, read_digest};
-use crate::spend::{Spend, delivery_digest};
+use crate::spend::{Spend, Withdrawal, delivery_digest};
 
 pub const INVOKE: u8 = 0;
 pub const COMPUTE: u8 = 1;
@@ -73,13 +73,18 @@ pub fn selector_of(kind: u8) -> felt252 {
 /// expiry, selector, |calldata|, calldata…, |destinations|, (note_id, token, minimum, inner₉,
 /// delivery digest)…)`.
 pub fn hash_intent(spend: @Spend, intent: @ExecutionIntent) -> felt252 {
+    hash_intent_of(*spend.chain, (*spend.pool).into(), (*spend.token).into(), *spend.withdrawal, intent)
+}
+
+/// [`hash_intent`] over the spend's context: chain, pool, the spent token (R0 V4: the asset on
+/// exit) and the withdrawal (the budget).
+pub fn hash_intent_of(chain: felt252, pool: felt252, token: felt252, w: Withdrawal, intent: @ExecutionIntent) -> felt252 {
     assert(intent.calldata.len() <= MAX_CALLDATA, 'CALLDATA_LIMIT');
     let n = intent.destinations.len();
     assert(n > 0 && n <= MAX_DESTINATIONS, 'OPEN_NOTE_COUNT');
     assert(*intent.nonce == 0, 'EXECUTION_NONCE');
-    let w = *spend.withdrawal;
     let mut data = array![
-        'OPEN_EXEC_V1', *spend.chain, (*spend.pool).into(), (*spend.token).into(), (*intent.kind).into(),
+        'OPEN_EXEC_V1', chain, pool, token, (*intent.kind).into(),
         (*intent.adapter).into(), *intent.nonce, w.recipient.into(), w.amount.into(), (*intent.expiry).into(),
         selector_of(*intent.kind), intent.calldata.len().into(),
     ];

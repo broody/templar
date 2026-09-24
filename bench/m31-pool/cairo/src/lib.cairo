@@ -3,6 +3,7 @@
 //! the reference ordinary pool (`controlled-push-e2e/cairo/src/pool.cairo`): same guards, root
 //! history, nullifier set, delivery digests and events, with the R0 statement and binding.
 pub mod adapter;
+pub mod assets;
 pub mod hash;
 /// Default: the fully unrolled permutation (cheapest to run). Feature `compact_perm`: shared round
 /// code, half the pool's declaration cost for about 4.5% more gas per call.
@@ -20,8 +21,11 @@ pub mod open_note;
 pub mod policy;
 pub mod policy_escrow;
 pub mod pool;
+pub mod pool_v2;
 pub mod spend;
+pub mod spend4;
 pub mod test_adapters;
+pub mod test_nft;
 pub mod test_policy_controllers;
 pub mod test_token;
 pub mod tree;
