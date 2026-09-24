@@ -1,6 +1,6 @@
 # Templar prover server
 
-Status: **design, revision 2, after the design review (`docs/reviews/prover-server-design-review.md`, CONDITIONAL GO; findings `PS-*` cited where they changed the text). Nothing is implemented.** A runnable wrapping server for the
+Status: **design, revision 3, after the design review and its re-review (`docs/reviews/prover-server-design-review.md`, CONDITIONAL GO; findings `PS-*` cited where they changed the text). Nothing is implemented.** A runnable wrapping server for the
 compact client-proof path, replacing the research scripts under `bench/` for serving proofs.
 
 ## 1. Purpose and scope
@@ -50,10 +50,13 @@ It **cannot** submit the transaction itself: that needs the output ciphertexts, 
 intent's preimage or a policy's data, which the client never sends (only their digests are in
 the statement). It can refuse, delay or drop jobs.
 
-**Transport privacy.** The server accepts submissions over oblivious HTTP (OHTTP), with the
-same gateway layer the upstream transaction prover uses (`tower_ohttp`): a client going through
-an OHTTP relay hides its address from the server, and the relay sees no content. Plain HTTPS
-remains available.
+**Transport privacy.** The server accepts every request, submissions and job polling alike,
+over oblivious HTTP (OHTTP), with the same gateway layer the upstream transaction prover uses
+(`tower_ohttp`): a client going through an OHTTP relay hides its address from the server, and the
+relay sees no content. A client that submits over OHTTP must also poll over it, or the poll links
+its address to the job (PS-13). The gateway's key configuration is served at a fixed path and in
+`/v1/info`, rotated on a schedule with the previous key accepted for one rotation period. Plain
+HTTPS remains available.
 
 ## 3. Architecture
 
@@ -64,12 +67,14 @@ client ──POST /v1/jobs──► front end ──► pre-checks ──► que
 client ◄─GET /v1/jobs/{id}──┘                                  └─ local verify, result
 ```
 
-- **Front end** (tokio, axum): the API, per-IP rate limits, pre-checks, the queue, job state.
-- **Worker**: the same binary in `worker` mode, one child process per job, so a crash or an
-  out-of-memory proof never takes the front end down. It runs under a memory cap (cgroup v2 when
-  available: `systemd-run --user` or the container's own limit).
-- **Modes**: `serve`, `worker JOB_DIR` (internal), `check PROOF_DIR` (the pre-checks offline) and
-  `info` (the pinned configuration and circuit hashes).
+- **Front end** (tokio, axum): the API, rate limits, the queue, job state. It parses nothing
+  expensive itself: pre-checks and jobs run in child processes (§4, §9 isolation).
+- **`templar-prover`** (nightly toolchain): modes `serve`, `check PROOF_DIR` (the pre-checks),
+  `prove JOB_DIR` (the large proof from a PIE, then local verification) and `info`.
+- **`templar-os-runner`** (the sequencer's toolchain): one mode, `run JOB_DIR`: builds the
+  transaction, runs the virtual OS against the RPC endpoint and writes the PIE and the message.
+  A separate binary because the sequencer and the proving stack pin different Rust toolchains
+  (PS-11); the PIE file is the boundary.
 
 ## 4. Pre-checks (before any heavy work)
 
@@ -146,7 +151,9 @@ Results are kept for a configured time (default one hour), then deleted with the
 
 - **Rate limits:** a token bucket per IPv4 address and per IPv6 /64, a cap on queued jobs per
   address, a global queue cap; per-nullifier deduplication and backoff (§4.6). OHTTP submissions
-  share one relay-wide bucket unless the relay forwards a client token.
+  arrive from the relay's address, so they get per-relay buckets sized for many clients, plus an
+  optional small proof-of-work stamp per submission so one abuser behind a relay cannot exhaust
+  its bucket for everyone (PS-13); per-nullifier deduplication applies regardless of transport.
 - **Concurrency:** `max_concurrent_jobs`, each needing about 4 cores and 30 GiB; the default is
   one.
 - **Time:** a per-stage timeout (OS run, proof).
@@ -158,7 +165,16 @@ One TOML file per deployment. At startup the server checks it against the chain 
 start on a mismatch (PS-5): the chain id; each statement account's deployed class equals the
 configured class; each adapter's configuration (pool, statement account and class, OS program,
 account tag, maximum proof age, read from its storage or view) equals the server's. `/v1/info`
-publishes that tuple, and wallets compare it with the adapter before using a result. The file holds: network name, chain id, RPC URL (v0.10 API, state reads for the
+publishes that tuple, and wallets compare it with the adapter before using a result. Also at
+startup (PS-12): the OS program hash embedded in `templar-os-runner` equals the configured one
+and the adapters'. Before each job the pool's current verifier addresses (`get_verifier`,
+`get_policy_verifier`) are re-read and must still be the configured adapters, since the pool's
+owner can re-point them.
+
+Per-relation proof-shape constants (FRI configuration, component log sizes, output count,
+statement tag, tree format, circuit hash) are not typed into the config: they are read from the
+trusted bridge build record (`build-record.json` and its manifest) that produced the deployed
+statement account, pinned by its sha256 in the config (PS-12). The file holds: network name, chain id, RPC URL (v0.10 API, state reads for the
 virtual OS), pool address; per relation the statement account, its class, account tag and pinned
 circuit hash; the OS program hash; prover settings (bounded columns, threads, memory cap); limits;
 result retention; listen address. `info` prints it with the dependency revisions.
@@ -168,10 +184,13 @@ result retention; listen address. `info` prints it with the dependency revisions
 - Rust (`nightly-2026-01-15`, as the rest of the stack). `Cargo.lock` is committed and every
   build uses `--locked`; CI checks that every pinned revision can still be fetched (PS-8).
   Pinned dependencies:
-  - `starkware-libs/sequencer` at `e6b6fd2e…` (the revision whose virtual OS the adapters pin), as
-    a git dependency: `starknet_transaction_prover` exports its runner (`pub mod running`) at that
-    revision, so no fork or vendored copy is needed. Its own proving path is the small-proof
-    recursive prover, which is not used;
+  - for `templar-os-runner` only: `starknet_transaction_prover` at sequencer revision `e6b6fd2e…`
+    (the revision whose virtual OS the adapters pin). Its runner module is public, but the
+    runner's constructors are `pub(crate)` and the only public entry point continues into the
+    crate's own small-proof prover (PS-11). The runner therefore builds from **a pinned fork
+    `broody/sequencer`** at `e6b6fd2e…` plus one recorded commit making `RpcRunnerFactory::new`
+    public (`VirtualSnosRunner::run_virtual_os` is already public); the change is also offered
+    upstream. It builds with the sequencer's pinned toolchain;
   - `broody/proving` `templar/bounded-server` (`b54ed94f8`, public) for the bounded large-proof
     prover;
   - `client-port` (path) for the relations' statement layouts, `bridge_checks` and the circuit
@@ -180,11 +199,15 @@ result retention; listen address. `info` prints it with the dependency revisions
   image builds for a stated baseline (x86-64-v3) by default, with a build argument for native.
 - Docker: multi-stage build, a non-root runtime user, read-only root filesystem, dropped
   capabilities, the config mounted read-only, a volume for job directories with a size quota.
-- **Isolation** (PS-6): each job and each pre-check runs in its own cgroup (memory, CPU, PIDs),
-  created by the front end with cgroup delegation (the container needs a delegated subtree,
-  or the host's systemd user manager outside containers); a timed-out or failed job's whole
-  group is killed. The proving worker has no network access; only the OS run reaches the RPC
-  endpoint. The front end reserves its own memory outside the jobs' groups.
+- **Isolation** (PS-6, PS-14): each pre-check, OS run and proof runs in its own cgroup v2 group
+  (memory, CPU, PIDs), and a timed-out or failed step's whole group is killed. The server needs a
+  writable, delegated cgroup v2 subtree: outside containers, the systemd user manager's
+  delegation; in Docker, `--cgroupns=private` with a delegated subtree (the shipped compose
+  file and a startup self-test). **It refuses to start without one** rather than fall back to a
+  shared limit. `prove` and `check` run in a fresh network namespace with no interfaces
+  (`unshare --net`, or the equivalent seccomp and namespace setup in the image); only
+  `templar-os-runner` reaches the RPC endpoint. The front end reserves memory outside the jobs'
+  groups.
 - Release blocker: the client-port crate currently builds against a non-public proving branch.
   Before the server is published, the parts it needs (the verifier side) must be available
   publicly; this does not block private use.
@@ -235,3 +258,7 @@ compose example ships that way.
 | PS-8 | §9: the runner is a public module at the pinned revision; lockfile, `--locked`, fetchability check; PIE boundary (§5) |
 | PS-9 | §5: L2-gas bound 10^9; every adapter-checked fact field |
 | PS-10 | §10: logging and retention rules, proxy guidance |
+| PS-11 | §3, §9: the OS run is a separate binary on the sequencer's toolchain, built from a pinned fork with one recorded visibility commit; the PIE is the boundary |
+| PS-12 | §8: shape constants from the trusted build record; startup OS-program check; verifier addresses re-read per job; §3 and §9 aligned |
+| PS-13 | §2, §7: polling over OHTTP, per-relay buckets with an optional proof-of-work stamp, key publication and rotation |
+| PS-14 | §9: delegated cgroup v2 required (refuse to start otherwise), Docker recipe and self-test, network namespace for proving |

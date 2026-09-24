@@ -419,3 +419,139 @@ execution. As specified, though, it falls short in two places:
 
 Per-job cgroups, killing the whole tree on timeout, disk quotas, no network while proving and
 standard container hardening make it sufficient.
+
+## Re-review of revision 2
+
+Same reviewer, same day. I reviewed revision 2 of `docs/prover-server-spec.md` as committed in
+`e0a1443`. That commit is on `feat/hidden-assets`, like revision 1: `main` still does not contain
+the spec. This is still reasoning only. I checked the PS-8 claim against the sparse checkout of
+the pinned sequencer at `~/development/sequencer-pin` (`HEAD e6b6fd2e9932…`), and changed nothing
+but this file.
+
+### Verdict
+
+**CONDITIONAL GO.** Revision 2 resolves PS-1 to PS-7, PS-9 and PS-10 in substance.
+
+The one condition is a new finding, **PS-11**. The pinned sequencer revision does *not* let
+another crate construct or run the virtual-OS runner. "No fork or vendored copy is needed" (§9)
+is therefore wrong, so PS-8 is only partially resolved.
+
+The other new findings (PS-12 to PS-14) are Low and can be settled during implementation.
+
+### Status of prior findings
+
+| ID | Status | Note |
+|---|---|---|
+| PS-1 | **Resolved** | §4 is now a port of `verify_payment` / `verify_policy`: exact Cairo Serde with no trailing data; pinned FRI configuration, component sizes, output count and circuit hash; canonical felts; tag and tree format; padding; every bridge rule, for P1 too. §11 adds the differential test against the Cairo executable, including non-canonical deliveries, intents and chain. One consistency gap is left for PS-12: the §8 file does not say where the manifest constants come from, and §9 still describes `client-port` as supplying "`bridge_checks`". |
+| PS-2 | **Resolved** | One job per input-0 nullifier (the single nullifier for P1) queued, running or completed within retention, with backoff and /64 buckets. That limits an attacker to one proof per owned note per retention window. Deduplication state held only in memory is lost on restart. It is worth persisting it with the job directories, but this is not required. |
+| PS-3 | **Resolved** | The base block is `latest` at job start, the root and nullifiers are re-checked before proving, and the result carries `submit_after` and `valid_until`. `valid_until` is an upper bound only. The root can leave the pool's 256-root history or a nullifier can be spent earlier, and the wallet guidance should say so in one line. |
+| PS-4 | **Resolved** | The pre-checks run in a `check` child with CPU-time and memory limits, parsing is fallible, and allocation is bounded by the pinned shape. |
+| PS-5 | **Resolved** (startup) | Startup checks cover the chain id, the account classes and the adapter's storage, and the tuple is in `/v1/info` for wallets to compare. See PS-12 for what the check still misses. |
+| PS-6 | **Resolved in design**, feasibility to confirm | Per-job and per-pre-check cgroups, whole-group kill, no network while proving, front-end reservation and container hardening. See PS-14. |
+| PS-7 | **Resolved** | §2 now says the server cannot submit, learns exit and execution effects early (the front-running risk), and links jobs. OHTTP is added for transport privacy; see PS-13. |
+| PS-8 | **Partially resolved** | The lockfile, `--locked`, the fetchability check and the PIE file boundary are all in. The dependency mechanism is not: see PS-11. |
+| PS-9 | **Resolved** | L2-gas bound 10^9 and every fact field the adapter checks. |
+| PS-10 | **Resolved** | Rules for logs, counters, job-directory log retention and the proxy. |
+
+### New findings
+
+#### PS-11: Medium (the condition). The pinned runner cannot be constructed from outside the crate
+
+**Location:** spec §9 first sub-bullet, §5.4;
+`sequencer-pin/crates/starknet_transaction_prover/src/running/runner.rs`.
+
+**Problem.** It is true that `lib.rs:23` has `pub mod running` and `running.rs` has
+`pub mod runner`. But at `e6b6fd2e` the pieces needed to use the runner are all crate-private:
+
+- `RpcRunnerFactory::new` is `pub(crate)` (runner.rs:399);
+- `create_runner` is private (:409);
+- `Runner` and `Runner::new` are `pub(crate)` (:138, :159);
+- the providers it needs are also `pub(crate) fn new`:
+  - `RpcStorageProofsProvider` (`storage_proofs.rs:213`);
+  - the virtual block executors (`virtual_block_executor.rs:97, 413`).
+
+The only public way in is `VirtualSnosProver::new(&ProverConfig)`
+(`proving/virtual_snos_prover.rs:77`). It holds the factory privately, and its only public
+operation, `prove_transaction`, always continues into the crate's own small-proof prover. Without
+the `stwo_proving` feature, that step is `unimplemented!()` (:284-296). There is no public call
+that returns a `RunnerOutput` (the PIE) for the large prover.
+
+This is exactly why the bench's `capture.rs` compiles these files by `#[path]`: inside its own
+crate, `pub(crate)` becomes reachable.
+
+**Failure scenario.** An implementation that follows §9 as written cannot create the runner, and
+the build fails. The likely workaround is an ad-hoc `#[path]` copy or a local patch that is
+unpinned and unhashed. That recreates the unrebuildable state §1 describes.
+
+**Required spec change.** Name the mechanism.
+
+- **(a)** A fork of `starkware-libs/sequencer` at `e6b6fd2e` with a minimal diff that makes
+  `RpcRunnerFactory::new` public. The trait method
+  `VirtualSnosRunner::run_virtual_os(&self, block_id, txs)` is already public and does the rest.
+  Pin the fork by revision, record the diff in the repository, and have CI check that the fork
+  differs from upstream only by that diff.
+- **(b)** Alternatively, a vendored copy of the `running` modules with a sha256 manifest checked
+  at build time, as the bridge build record already does for `circuit_air`.
+
+Either way, the virtual OS program must stay byte-identical to the pinned one. Add a startup
+check of the runner's OS program hash (PS-12).
+
+Also confirm that the sequencer builds on `nightly-2026-01-15`. The pinned sequencer's
+`rust-toolchain.toml` says `1.95`, and that nightly is a 1.95 pre-release. Features stabilized
+later in the 1.95 cycle would not be available. If the build fails, the runner step can be a
+separate binary on the sequencer's toolchain, because the PIE boundary already separates it from
+the prover.
+
+#### PS-12: Low. The configuration pinning has four gaps
+
+**Location:** spec §8, §4, §9, §3.
+
+1. **Where the manifest constants come from.** The §4 port depends on the trusted manifest (FRI
+   configuration, component sizes, statement tag and tree format), but the §8 file lists only
+   the circuit hash per relation. Add, per relation, the manifest path and its sha256, the tree
+   format and the statement tag, and have `info` print them.
+2. **The runner's OS program.** The startup checks compare the adapter's `os_program` with the
+   *configuration*, but not with the OS program the runner actually embeds. Today a mismatch is
+   found only after a full proof, at the §5.6 facts check. Hash the embedded program at startup.
+3. **Re-reading the adapters.** The pool owner can re-point `set_verifier` or
+   `set_policy_verifier`, while a running server keeps the adapter tuple it checked at start.
+   Re-read the pool's verifier addresses, and on change their storage, at job start. That costs
+   one RPC call.
+4. **Stale text.** §3 still says the front end runs the pre-checks and that the worker's cap is
+   "`systemd-run --user` or the container's own limit". §9 still says `client-port` supplies
+   `bridge_checks`. Align both with §4 and §9's isolation paragraph.
+
+#### PS-13: Low. OHTTP gaps: polling, a shared bucket and the key configuration
+
+**Location:** spec §2 (transport privacy), §7.
+
+1. **Polling.** Address hiding holds only if **every** request goes through the relay, including
+   `GET /v1/jobs/{id}` polling. A client that submits through OHTTP but polls directly links its
+   address to the job id, and so to the statement. State that clients use the relay for all
+   requests.
+2. **The shared bucket.** All OHTTP clients share "one relay-wide bucket". So one abuser behind
+   the relay throttles every privacy-seeking user, and per-nullifier deduplication is the only
+   real limiter for them. Size that bucket for it, or accept per-client tokens (for example
+   Privacy Pass) forwarded by the relay.
+3. **The key configuration.** Specify how the gateway's HPKE key configuration is published and
+   rotated (in `/v1/info`, for instance), and that `tower_ohttp` comes from the same pinned
+   sequencer revision.
+
+#### PS-14: Low. The Docker isolation plan needs a stated, tested deployment recipe
+
+**Location:** spec §9 (Isolation, Docker).
+
+**Problem.** Per-job cgroups inside the container need a *writable, delegated* cgroup v2 subtree.
+A default unprivileged Docker container, and especially one with a read-only root filesystem and
+all capabilities dropped, mounts `/sys/fs/cgroup` read-only. The design then either fails to
+start jobs or quietly falls back to one shared limit, which PS-6 was about.
+
+"The proving worker has no network access" also needs a mechanism: a network namespace, or a
+seccomp filter denying `socket` and `connect` in `worker` mode. Otherwise it is only a convention.
+
+**Required change.**
+- Ship one supported recipe: for example Podman or systemd with `Delegate=yes`, or Docker with
+  `--cgroupns=private` and an rw cgroup mount.
+- Have the server **refuse to start** if it cannot create a job cgroup, instead of falling back.
+- Say how the prove stage's lack of network is enforced.
+- Add both to the §11 startup tests.
