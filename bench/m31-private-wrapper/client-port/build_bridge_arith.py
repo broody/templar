@@ -26,10 +26,11 @@ def main():
     work = Path(sys.argv[2]).resolve()
     assert not work.exists(), 'fresh work directory required'
     m = json.loads(manifest_path.read_text())
-    # Membership (8 outputs), R0 payment (32) or P1 policy (41): template and message tag per purpose.
+    # Membership (8 outputs), R0 V3 or V4 payment (32) or P1 policy (41): template and message tag per purpose.
     template, tag, n_outputs = {
         'tmpzsa-client-membership': ('cairo-arith', 'TMPZSA01_MEMBERSHIP_V1', 8),
         'tmpzr0-client-payment': ('cairo-r0', 'TMPZR0_PAYMENT_V3', 32),
+        'tmpzr4-client-payment': ('cairo-r4', 'TMPZR0_PAYMENT_V4', 32),
         'tmpzp1-client-policy': ('cairo-p1', 'TMPZP1_POLICY_V1', 41),
     }[m['purpose']]
     assert m['n_outputs'] == n_outputs
@@ -57,7 +58,7 @@ def main():
         'use core::box::BoxImpl;\nuse stwo_verifier_core::Hash;\n'
         'use stwo_verifier_core::vcs::blake2s_hasher::Blake2sHash;\n'
         'pub fn circuit_hash() -> Hash {\n    Blake2sHash { hash: BoxImpl::new([' + ', '.join(map(str, h)) + ']) }\n}\n')
-    if template in ('cairo-r0', 'cairo-p1'):
+    if template in ('cairo-r0', 'cairo-r4', 'cairo-p1'):
         # The statement tag (relation and tree format), from the trusted manifest (binding review L1).
         statement_tag = m['statement_tag_u32']
         assert len(statement_tag) == 2 and all(0 < t < 2**31 - 1 for t in statement_tag)

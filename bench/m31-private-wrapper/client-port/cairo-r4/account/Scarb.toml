@@ -1,0 +1,12 @@
+[package]
+name = "templar_membership_account"
+version = "0.1.0"
+edition = "2024_07"
+
+[[target.starknet-contract]]
+sierra = true
+casm = true
+
+[dependencies]
+templar_membership_bridge = { path = "../bridge" }
+starknet = "2.18.0"

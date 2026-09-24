@@ -1,0 +1,405 @@
+{
+  "scope": "standalone Cairo execution of the R0 V4 payment bridge (fork circuit_air); no OS, no large proof",
+  "executable_sha256": "15efbdf3d6b5532d34250145bbc53e7fc180aeb7ddd944e4595bf4f1c3785fde",
+  "cases": [
+    {
+      "name": "transfer-valid",
+      "expected_accept": true,
+      "passed": true,
+      "steps": 2049443,
+      "reason": null
+    },
+    {
+      "name": "transfer-claimed-token-out",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+    },
+    {
+      "name": "single-valid",
+      "expected_accept": true,
+      "passed": true,
+      "steps": 2039123,
+      "reason": null
+    },
+    {
+      "name": "single-claimed-token-out",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+    },
+    {
+      "name": "one-out-valid",
+      "expected_accept": true,
+      "passed": true,
+      "steps": 1988125,
+      "reason": null
+    },
+    {
+      "name": "one-out-claimed-token-out",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+    },
+    {
+      "name": "partial-valid",
+      "expected_accept": true,
+      "passed": true,
+      "steps": 1991227,
+      "reason": null
+    },
+    {
+      "name": "partial-claimed-token-out",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+    },
+    {
+      "name": "full-valid",
+      "expected_accept": true,
+      "passed": true,
+      "steps": 2029967,
+      "reason": null
+    },
+    {
+      "name": "full-claimed-token-out",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+    },
+    {
+      "name": "invoke-valid",
+      "expected_accept": true,
+      "passed": true,
+      "steps": 2016628,
+      "reason": null
+    },
+    {
+      "name": "invoke-claimed-token-out",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+    },
+    {
+      "name": "shadow-valid",
+      "expected_accept": true,
+      "passed": true,
+      "steps": 2019562,
+      "reason": null
+    },
+    {
+      "name": "shadow-claimed-token-out",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+    },
+    {
+      "name": "nft-valid",
+      "expected_accept": true,
+      "passed": true,
+      "steps": 2068449,
+      "reason": null
+    },
+    {
+      "name": "nft-claimed-token-out",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+    },
+    {
+      "name": "transfer-tag",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"statement tag\\\".\"}"
+    },
+    {
+      "name": "transfer-token-out-output",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"exit rule\\\".\"}"
+    },
+    {
+      "name": "transfer-nullifier-output",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+    },
+    {
+      "name": "transfer-commitment-output",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+    },
+    {
+      "name": "transfer-absent-claimed-sum",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"absent component claims a nonzero sum\\\".\"}"
+    },
+    {
+      "name": "transfer-proof-body",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Merkle Verification Error: Root Mismatch\\\".\"}"
+    },
+    {
+      "name": "transfer-wrong-chain",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+    },
+    {
+      "name": "transfer-wrong-pool",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+    },
+    {
+      "name": "transfer-wrong-root",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"root\\\".\"}"
+    },
+    {
+      "name": "transfer-wrong-nullifier",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"nullifiers\\\".\"}"
+    },
+    {
+      "name": "transfer-swapped-outputs",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"commitments\\\".\"}"
+    },
+    {
+      "name": "transfer-wrong-delivery",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"deliveries\\\".\"}"
+    },
+    {
+      "name": "transfer-wrong-withdrawal-recipient",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"withdrawal\\\".\"}"
+    },
+    {
+      "name": "transfer-wrong-withdrawal-amount",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"withdrawal\\\".\"}"
+    },
+    {
+      "name": "transfer-wrong-intent",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"intent or identity\\\".\"}"
+    },
+    {
+      "name": "transfer-wrong-identity",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"intent or identity\\\".\"}"
+    },
+    {
+      "name": "transfer-trailing",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"trailing proof data\\\".\"}"
+    },
+    {
+      "name": "transfer-truncated",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with 0x494e56414c49445f50524f4f465f454e434f44494e47 ('INVALID_PROOF_ENCODING').\"}"
+    },
+    {
+      "name": "partial-tag",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"statement tag\\\".\"}"
+    },
+    {
+      "name": "partial-token-out-output",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+    },
+    {
+      "name": "partial-nullifier-output",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+    },
+    {
+      "name": "partial-commitment-output",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+    },
+    {
+      "name": "partial-absent-claimed-sum",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"absent component claims a nonzero sum\\\".\"}"
+    },
+    {
+      "name": "partial-proof-body",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Merkle Verification Error: Root Mismatch\\\".\"}"
+    },
+    {
+      "name": "partial-wrong-chain",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+    },
+    {
+      "name": "partial-wrong-pool",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+    },
+    {
+      "name": "partial-wrong-root",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"root\\\".\"}"
+    },
+    {
+      "name": "partial-wrong-nullifier",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"nullifiers\\\".\"}"
+    },
+    {
+      "name": "partial-swapped-outputs",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"commitments\\\".\"}"
+    },
+    {
+      "name": "partial-wrong-delivery",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"deliveries\\\".\"}"
+    },
+    {
+      "name": "partial-wrong-withdrawal-recipient",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"withdrawal\\\".\"}"
+    },
+    {
+      "name": "partial-wrong-withdrawal-amount",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"withdrawal\\\".\"}"
+    },
+    {
+      "name": "partial-wrong-intent",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"intent or identity\\\".\"}"
+    },
+    {
+      "name": "partial-wrong-identity",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"intent or identity\\\".\"}"
+    },
+    {
+      "name": "partial-trailing",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"trailing proof data\\\".\"}"
+    },
+    {
+      "name": "partial-truncated",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with 0x494e56414c49445f50524f4f465f454e434f44494e47 ('INVALID_PROOF_ENCODING').\"}"
+    },
+    {
+      "name": "forge-voluntary-reveal",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"exit rule\\\".\"}"
+    },
+    {
+      "name": "forge-zero-delivery",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"delivery\\\".\"}"
+    },
+    {
+      "name": "forge-recipient-only",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"withdrawal\\\".\"}"
+    },
+    {
+      "name": "forge-identity-no-intent",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"identity intent\\\".\"}"
+    },
+    {
+      "name": "forge-duplicate-nullifier",
+      "expected_accept": false,
+      "passed": true,
+      "steps": null,
+      "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"duplicate nullifier\\\".\"}"
+    }
+  ]
+}

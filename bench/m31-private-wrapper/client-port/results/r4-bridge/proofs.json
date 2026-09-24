@@ -1,0 +1,119 @@
+{
+  "forge-duplicate-nullifier": {
+    "shape": "Transfer",
+    "forged": "duplicate-nullifier",
+    "trace_log_size": 18,
+    "proving_seconds": 0.253472654,
+    "proof_felts": 29478,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1707
+  },
+  "forge-identity-no-intent": {
+    "shape": "Transfer",
+    "forged": "identity-no-intent",
+    "trace_log_size": 18,
+    "proving_seconds": 0.229296359,
+    "proof_felts": 30202,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1752
+  },
+  "forge-recipient-only": {
+    "shape": "Transfer",
+    "forged": "recipient-only",
+    "trace_log_size": 18,
+    "proving_seconds": 0.23055086,
+    "proof_felts": 29722,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1752
+  },
+  "forge-voluntary-reveal": {
+    "shape": "Transfer",
+    "forged": "voluntary-reveal",
+    "trace_log_size": 18,
+    "proving_seconds": 0.386147008,
+    "proof_felts": 29042,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1662
+  },
+  "forge-zero-delivery": {
+    "shape": "Transfer",
+    "forged": "zero-delivery",
+    "trace_log_size": 18,
+    "proving_seconds": 0.238215571,
+    "proof_felts": 29354,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1692
+  },
+  "full": {
+    "shape": "Full",
+    "forged": null,
+    "trace_log_size": 18,
+    "proving_seconds": 0.247046006,
+    "proof_felts": 29878,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1767
+  },
+  "invoke": {
+    "shape": "Invoke",
+    "forged": null,
+    "trace_log_size": 18,
+    "proving_seconds": 0.309851061,
+    "proof_felts": 30038,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1737
+  },
+  "nft": {
+    "shape": "Nft",
+    "forged": null,
+    "trace_log_size": 18,
+    "proving_seconds": 0.233711356,
+    "proof_felts": 31014,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1797
+  },
+  "one-out": {
+    "shape": "OneOut",
+    "forged": null,
+    "trace_log_size": 18,
+    "proving_seconds": 0.225613173,
+    "proof_felts": 29334,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1707
+  },
+  "partial": {
+    "shape": "Partial",
+    "forged": null,
+    "trace_log_size": 18,
+    "proving_seconds": 0.322990446,
+    "proof_felts": 29566,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1707
+  },
+  "shadow": {
+    "shape": "Shadow",
+    "forged": null,
+    "trace_log_size": 18,
+    "proving_seconds": 0.234702412,
+    "proof_felts": 29914,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1752
+  },
+  "single": {
+    "shape": "Single",
+    "forged": null,
+    "trace_log_size": 18,
+    "proving_seconds": 0.292483105,
+    "proof_felts": 30374,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1767
+  },
+  "transfer": {
+    "shape": "Transfer",
+    "forged": null,
+    "trace_log_size": 18,
+    "proving_seconds": 0.28188035,
+    "proof_felts": 30474,
+    "blinding_rows": 2390,
+    "revealed_fri_values": 1782
+  }
+}

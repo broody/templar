@@ -1,0 +1,17 @@
+[package]
+name = "templar_membership_bridge"
+version = "0.1.0"
+edition = "2024_07"
+description = "Verifies an arithmetic-profile R0 V4 payment client proof and decodes its statement"
+
+[lib]
+
+[[target.executable]]
+
+[dependencies]
+stwo_circuit_air = { path = "../vendor/circuit_air", features = ["arithmetic_profile"] }
+stwo_verifier_core = { path = "../vendor/verifier_core" }
+cairo_execute = "2.18.0"
+
+[dev-dependencies]
+cairo_test = "2.18.0"
