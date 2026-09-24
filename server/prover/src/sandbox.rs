@@ -44,19 +44,40 @@ fn group(root: &Path, name: &str, limits: &Limits) -> Result<PathBuf> {
     Ok(dir)
 }
 
-fn remove(dir: &Path) {
+/// Kills a step's group and removes it. Runs off the async workers (PI-8).
+fn remove(dir: PathBuf) {
     let _ = std::fs::write(dir.join("cgroup.kill"), "1");
-    for _ in 0..50 {
-        if std::fs::remove_dir(dir).is_ok() {
-            return;
+    let reap = move || {
+        for _ in 0..100 {
+            if std::fs::remove_dir(&dir).is_ok() {
+                return;
+            }
+            std::thread::sleep(Duration::from_millis(100));
         }
-        std::thread::sleep(Duration::from_millis(100));
+    };
+    match tokio::runtime::Handle::try_current() {
+        Ok(h) => {
+            h.spawn_blocking(reap);
+        }
+        Err(_) => reap(),
+    }
+}
+
+/// Removes the group however the step ends, including when its future is dropped (PI-2).
+struct GroupGuard(Option<PathBuf>);
+
+impl Drop for GroupGuard {
+    fn drop(&mut self) {
+        if let Some(dir) = self.0.take() {
+            remove(dir);
+        }
     }
 }
 
 /// Runs `program args` in its own group with `limits`.
 pub async fn run(cfg: &Sandbox, name: &str, program: &Path, args: &[String], envs: &[(&str, String)], limits: Limits) -> Result<Outcome> {
     let dir = group(&cfg.cgroup_root, name, &limits)?;
+    let _guard = GroupGuard(Some(dir.clone()));
     let procs = dir.join("cgroup.procs");
     let (bin, mut argv): (PathBuf, Vec<String>) = if limits.network {
         (program.to_path_buf(), vec![])
@@ -88,13 +109,9 @@ pub async fn run(cfg: &Sandbox, name: &str, program: &Path, args: &[String], env
     let peak = std::fs::read_to_string(dir.join("memory.peak")).ok().and_then(|s| s.trim().parse().ok());
     let outcome = match result {
         Ok(Ok(out)) => Outcome { success: out.status.success(), stdout: out.stdout, stderr: out.stderr, seconds, peak_memory_bytes: peak, timed_out: false },
-        Ok(Err(e)) => {
-            remove(&dir);
-            return Err(e).context("waiting for the step");
-        }
+        Ok(Err(e)) => return Err(e).context("waiting for the step"),
         Err(_) => Outcome { success: false, stdout: vec![], stderr: b"timed out".to_vec(), seconds, peak_memory_bytes: peak, timed_out: true },
     };
-    remove(&dir);
     Ok(outcome)
 }
 
@@ -145,8 +162,31 @@ pub fn prepare_root(cfg: &mut Sandbox) -> Result<()> {
         write(&leaf.join("cgroup.procs"), "0")?;
     }
     write(&root.join("cgroup.subtree_control"), "+memory +cpu +pids")?;
+    // Reserve memory for the front end, so jobs under memory pressure reclaim from each other and
+    // not from the server (PI-10).
+    let _ = std::fs::write(root.join("server/memory.min"), "256M");
     cfg.cgroup_root = root;
     Ok(())
+}
+
+/// Kills and removes step groups left by a previous run (PI-8).
+pub fn purge(cfg: &Sandbox) -> Result<usize> {
+    let mut n = 0;
+    for entry in std::fs::read_dir(&cfg.cgroup_root)? {
+        let path = entry?.path();
+        let name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+        if path.is_dir() && ["check-", "os-", "prove-", "selftest-"].iter().any(|p| name.starts_with(p)) {
+            let _ = std::fs::write(path.join("cgroup.kill"), "1");
+            for _ in 0..50 {
+                if std::fs::remove_dir(&path).is_ok() {
+                    n += 1;
+                    break;
+                }
+                std::thread::sleep(Duration::from_millis(100));
+            }
+        }
+    }
+    Ok(n)
 }
 
 /// Startup self-test: a group can be created with a memory limit, a process joins it, and the

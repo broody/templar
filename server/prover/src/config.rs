@@ -42,6 +42,9 @@ pub struct Server {
     pub max_proof_felts: usize,
     #[serde(default = "d_one")]
     pub max_concurrent_jobs: usize,
+    /// Pre-checks (bridge executions) at once; submissions beyond it are refused, not queued.
+    #[serde(default = "d_two")]
+    pub max_concurrent_checks: usize,
     #[serde(default = "d_queue")]
     pub queue_capacity: usize,
     /// Take the client address from `X-Forwarded-For` (only behind a trusted proxy).
@@ -84,6 +87,9 @@ pub struct RelationConfig {
     /// The bridge build the statement account was compiled from (with `build-record.json`).
     pub bridge_dir: PathBuf,
     pub bridge_record_sha256: String,
+    /// sha256 of the compiled bridge (`target/dev/templar_membership_bridge.executable.json`),
+    /// the program the pre-check executes (PI-6).
+    pub bridge_executable_sha256: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -140,7 +146,7 @@ fn d_two() -> usize { 2 }
 fn d_relay_per_hour() -> u32 { 400 }
 fn d_backoff() -> u64 { 60 }
 fn d_job_memory() -> String { "32G".into() }
-fn d_check_memory() -> String { "4G".into() }
+fn d_check_memory() -> String { "2G".into() }
 fn d_cpus() -> u32 { 4 }
 fn d_check_secs() -> u64 { 120 }
 fn d_os_secs() -> u64 { 600 }

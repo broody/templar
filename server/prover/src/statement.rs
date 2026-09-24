@@ -62,8 +62,10 @@ fn f(v: &Value, key: &str) -> Result<Felt> {
 /// A decimal or JSON integer below `2^bits` (`bits` ≤ 128).
 fn int(v: &Value, key: &str, bits: u32) -> Result<Felt> {
     let x = v.get(key).with_context(|| format!("statement.{key}"))?;
+    // JSON numbers are kept exact (serde_json `arbitrary_precision`): u128 amounts above 2^64 are
+    // honest (PI-3).
     let n: u128 = match x {
-        Value::Number(n) => n.as_u64().with_context(|| format!("statement.{key}: integer"))? as u128,
+        Value::Number(n) => n.to_string().parse().with_context(|| format!("statement.{key}: integer"))?,
         Value::String(s) => s.parse().with_context(|| format!("statement.{key}: integer"))?,
         _ => bail!("statement.{key}: integer"),
     };
@@ -179,5 +181,57 @@ impl Submission {
     /// The bridge's full argument list.
     pub fn bridge_args(&self) -> Vec<Felt> {
         [self.statement_args.clone(), self.proof.clone()].concat()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    fn r4(amount: Value, proof: Vec<&str>) -> SubmissionJson {
+        let d = json!([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        SubmissionJson {
+            relation: "r4".into(),
+            proof: proof.into_iter().map(String::from).collect(),
+            statement: json!({"chain": "0x534e5f5345504f4c4941", "pool": "0x1", "token_out": "0x0", "root": d,
+                "nullifiers": [d, d], "commitments": [d, d], "deliveries": ["0x1", "0x2"],
+                "withdrawal_recipient": "0x0", "withdrawal_amount": amount, "intent": "0x0", "identity": d}),
+        }
+    }
+
+    #[test]
+    fn parses_and_encodes() {
+        let s = Submission::parse(r4(json!(0), vec!["0x2", "0x5", "0x6"]), 10).unwrap();
+        assert_eq!(s.proof.len(), 3);
+        // chain, pool, token_out, root span(10), nullifiers span(19), commitments span(19),
+        // deliveries span(3), recipient, amount, intent, identity span(10), then the proof.
+        assert_eq!(s.statement_args.len(), 3 + 10 + 19 + 19 + 3 + 3 + 10);
+        assert_eq!(s.bridge_args().len(), s.statement_args.len() + 3);
+    }
+
+    #[test]
+    fn u128_amounts_above_2_64() {
+        let big: Value = serde_json::from_str("1180591620717411303424").unwrap(); // 2^70
+        assert!(Submission::parse(r4(big, vec!["0x0"]), 10).is_ok());
+        let too_big: Value = serde_json::from_str("340282366920938463463374607431768211456").unwrap(); // 2^128
+        assert!(Submission::parse(r4(too_big, vec!["0x0"]), 10).is_err());
+        assert!(Submission::parse(r4(json!("1180591620717411303424"), vec!["0x0"]), 10).is_ok());
+    }
+
+    #[test]
+    fn refuses_malformed() {
+        assert!(Submission::parse(r4(json!(0), vec!["0x2", "0x5"]), 10).is_err(), "length prefix");
+        assert!(Submission::parse(r4(json!(0), vec![]), 10).is_err(), "empty");
+        assert!(Submission::parse(r4(json!(0), vec!["0x0"; 11]), 10).is_err(), "too long");
+        assert!(Submission::parse(r4(json!(0), vec!["0xzz"]), 10).is_err(), "bad hex");
+        let p = "0x800000000000011000000000000000000000000000000000000000000000001";
+        assert!(Submission::parse(r4(json!(0), vec![p]), 10).is_err(), "non-canonical felt");
+        let mut j = r4(json!(0), vec!["0x0"]);
+        j.statement["root"] = json!([2147483647, 0, 0, 0, 0, 0, 0, 0, 0]);
+        assert!(Submission::parse(j, 10).is_err(), "non-canonical M31 word");
+        let mut j = r4(json!(0), vec!["0x0"]);
+        j.relation = "r0".into();
+        assert!(Submission::parse(j, 10).is_err(), "relation");
     }
 }

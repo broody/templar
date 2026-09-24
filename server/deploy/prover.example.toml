@@ -6,6 +6,7 @@ listen = "0.0.0.0:8480"
 data_dir = "/var/lib/templar-prover/jobs"   # job directories, deleted after retention
 retention_secs = 3600
 max_concurrent_jobs = 1                      # each job needs ~4 cores and ~30 GiB
+max_concurrent_checks = 2                    # pre-checks at once; more are refused (503)
 queue_capacity = 16
 trust_forwarded_for = false                  # true only behind a trusted reverse proxy
 
@@ -30,6 +31,7 @@ account_tag = "TMPZR0_PAYMENT_V4"
 adapter = "0x031ca0ad5bb55c5502b0443decdd1711942e2a1cc39763f44edd7d326e5185fd"
 bridge_dir = "/opt/templar/bridges/r4"       # the bridge build the account was compiled from
 bridge_record_sha256 = "<sha256 of bridge_dir/build-record.json>"
+bridge_executable_sha256 = "<sha256 of bridge_dir/target/dev/templar_membership_bridge.executable.json>"
 
 [[relation]]
 name = "p1"
@@ -39,6 +41,7 @@ account_tag = "TMPZP1_POLICY_V1"
 adapter = "0x021c760cf44c96f2a017ef6c78c5c672dfe0bb3d132902b879cd5195a4b84409"
 bridge_dir = "/opt/templar/bridges/p1"
 bridge_record_sha256 = "<sha256 of bridge_dir/build-record.json>"
+bridge_executable_sha256 = "<sha256 of bridge_dir/target/dev/templar_membership_bridge.executable.json>"
 
 [binaries]
 os_runner = "/usr/local/bin/templar-os-runner"
@@ -48,7 +51,7 @@ scarb = "/usr/local/bin/scarb"                # 2.18.0
 [sandbox]
 cgroup_root = "self"                          # the unit's delegated cgroup (Delegate=yes)
 job_memory = "32G"
-check_memory = "4G"
+check_memory = "2G"
 check_seconds = 120
 os_seconds = 600
 prove_seconds = 1800

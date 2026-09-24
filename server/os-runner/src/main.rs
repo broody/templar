@@ -25,9 +25,10 @@ async fn main() -> Result<()> {
     match args.get(1).map(String::as_str) {
         Some("run") if args.len() == 3 => run(Path::new(&args[2])).await,
         Some("version") => {
-            // The pinned revision's recorded program hash (upstream tests that the compiled
-            // program matches it).
-            let virtual_os = apollo_starknet_os_program::PROGRAM_HASHES.virtual_os;
+            // The hash of the virtual OS program this binary embeds, computed from the program
+            // itself (not the recorded constant), so the server's startup check covers the build.
+            let virtual_os = apollo_starknet_os_program::program_hash::compute_virtual_os_program_hash()
+                .map_err(|e| anyhow::anyhow!("hashing the embedded virtual OS: {e:?}"))?;
             println!("{}", json!({"binary": "templar-os-runner", "version": env!("CARGO_PKG_VERSION"),
                                  "sequencer": "broody/sequencer@625929ac645c399f2481fb2b65ffdd14702aa525",
                                  "virtual_os_program": format!("{:#x}", virtual_os)}));

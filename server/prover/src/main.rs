@@ -2,8 +2,8 @@
 //!
 //! - `templar-prover serve CONFIG`: startup checks against the chain, the sandbox self-test, then
 //!   the HTTP API.
-//! - `templar-prover check CONFIG SUBMISSION_JSON`: the pre-checks on one submission, offline
-//!   from the queue (still reads chain state and runs the bridge).
+//! - `templar-prover check CONFIG SUBMISSION_JSON [--skip-chain-state]`: the pre-checks on one
+//!   submission, outside the queue (reads chain state unless skipped, and runs the bridge).
 //! - `templar-prover info CONFIG`: the startup checks and the published configuration.
 mod api;
 mod config;
@@ -58,6 +58,13 @@ async fn startup(cfg: &Config, rpc: &Rpc) -> Result<Value> {
         if sha != rel.bridge_record_sha256 {
             bail!("{}: the bridge build record's sha256 is {sha}", rel.name);
         }
+        // The compiled bridge the pre-check executes (PI-6).
+        let exe = std::fs::read(rel.bridge_dir.join("target/dev/templar_membership_bridge.executable.json"))
+            .context("the compiled bridge")?;
+        let exe_sha = format!("{:x}", Sha256::digest(&exe));
+        if exe_sha != rel.bridge_executable_sha256 {
+            bail!("{}: the compiled bridge's sha256 is {exe_sha}", rel.name);
+        }
         let record: Value = serde_json::from_slice(&record)?;
         if record["message_tag"].as_str() != Some(rel.account_tag.as_str()) {
             bail!("{}: the bridge build is for another account tag", rel.name);
@@ -65,7 +72,7 @@ async fn startup(cfg: &Config, rpc: &Rpc) -> Result<Value> {
         relations.push(json!({
             "name": rel.name, "statement_account": rel.statement_account, "statement_class": rel.statement_class,
             "account_tag": rel.account_tag, "adapter": rel.adapter, "circuit_hash_u32_le": record["circuit_hash_u32_le"],
-            "bridge_record_sha256": rel.bridge_record_sha256,
+            "bridge_record_sha256": rel.bridge_record_sha256, "bridge_executable_sha256": rel.bridge_executable_sha256,
         }));
     }
     let version = |bin: &Path| -> Result<Value> {
@@ -104,10 +111,14 @@ async fn main() -> Result<()> {
             let body: statement::SubmissionJson = serde_json::from_slice(&std::fs::read(args.get(3).context("SUBMISSION_JSON")?)?)?;
             let sub = statement::Submission::parse(body, cfg.server.max_proof_felts)?;
             let rel = cfg.relation(sub.relation.name()).context("relation not served")?;
-            pipeline::chain_state(&rpc, &cfg, &sub).await?;
-            let dir = cfg.server.data_dir.join(format!("check-{}", std::process::id()));
+            // Tests on proofs for other pools skip the chain-state check; the bridge still runs.
+            if !args.iter().any(|a| a == "--skip-chain-state") {
+                pipeline::chain_state(&rpc, &cfg, &sub).await?;
+            }
+            let tag = format!("cli-{:016x}", rand::random::<u64>());
+            let dir = cfg.server.data_dir.join(&tag);
             std::fs::create_dir_all(&dir)?;
-            let out = pipeline::check(&cfg, rel, &sub, &dir, "cli").await;
+            let out = pipeline::check(&cfg, rel, &sub, &dir, &tag).await;
             let _ = std::fs::remove_dir_all(&dir);
             let out = out?;
             println!("{}", json!({"accepted": true, "binding": hex(&out.binding), "asset": hex(&out.token), "steps": out.steps, "seconds": out.seconds}));
@@ -115,6 +126,14 @@ async fn main() -> Result<()> {
         "serve" => {
             let mut cfg = cfg;
             sandbox::prepare_root(&mut cfg.sandbox).context("preparing the cgroup subtree")?;
+            let purged = sandbox::purge(&cfg.sandbox)?;
+            // Job directories from a previous run hold statements and cannot be resumed (PI-8).
+            if cfg.server.data_dir.exists() {
+                for e in std::fs::read_dir(&cfg.server.data_dir)? {
+                    let _ = std::fs::remove_dir_all(e?.path());
+                }
+            }
+            tracing::info!(purged, "cleared state from a previous run");
             sandbox::self_test(&cfg.sandbox).await.context("the sandbox self-test (spec §9): a delegated cgroup v2 subtree is required")?;
             let info = startup(&cfg, &rpc).await?;
             std::fs::create_dir_all(&cfg.server.data_dir)?;
@@ -131,11 +150,23 @@ async fn main() -> Result<()> {
                 Some(o) => json!({"enabled": true, "keys_path": "/ohttp-keys", "key_config_hex": hex::encode(o.gateway.encoded_config())}),
                 None => json!({"enabled": false}),
             };
+            let cfg_root = cfg.sandbox.clone();
             let state = api::start(cfg, rpc, info);
             let app = api::router(state, ohttp).into_make_service_with_connect_info::<SocketAddr>();
             let listener = tokio::net::TcpListener::bind(listen).await?;
             tracing::info!(%listen, "serving");
-            axum::serve(listener, app).await?;
+            let root = cfg_root;
+            axum::serve(listener, app)
+                .with_graceful_shutdown(async move {
+                    let mut term = tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate()).expect("SIGTERM handler");
+                    tokio::select! {
+                        _ = term.recv() => {}
+                        _ = tokio::signal::ctrl_c() => {}
+                    }
+                    tracing::info!("shutting down: killing running steps");
+                    let _ = sandbox::purge(&root);
+                })
+                .await?;
         }
         other => bail!("unknown mode {other}"),
     }

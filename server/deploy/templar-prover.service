@@ -8,11 +8,13 @@ After=network-online.target
 
 [Service]
 Type=simple
+User=templar
+Group=templar
 ExecStart=/usr/local/bin/templar-prover serve /etc/templar/prover.toml
 Delegate=yes
-# One concurrent job needs ~30 GiB; reserve for the front end and leave the rest to the jobs'
-# own limits. MemoryMax here bounds the whole subtree.
-MemoryMax=40G
+# The whole subtree: one job (32G) plus two pre-checks (2G each) plus the front end; the server
+# reserves memory for itself (memory.min) so jobs reclaim from each other first.
+MemoryMax=38G
 MemorySwapMax=0
 Restart=on-failure
 RestartSec=10
@@ -22,6 +24,7 @@ NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=read-only
 ReadWritePaths=/var/lib/templar-prover
+StateDirectory=templar-prover
 PrivateTmp=yes
 ProtectKernelTunables=yes
 ProtectKernelModules=yes

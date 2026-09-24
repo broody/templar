@@ -68,19 +68,25 @@ systemctl enable --now templar-prover
 **Docker:**
 
 ```bash
-docker run -d --name templar-prover --network host --cgroupns=private --cap-add SYS_ADMIN \
-  --memory 40g --memory-swap 40g \
+docker run -d --name templar-prover --network host --init --read-only --tmpfs /tmp \
+  --cgroupns=private --cap-drop ALL --cap-add SYS_ADMIN --security-opt no-new-privileges \
+  --memory 38g --memory-swap 38g \
   -v /etc/templar/prover.toml:/etc/templar/prover.toml:ro \
   -v /opt/templar/bridges:/opt/templar/bridges:ro \
   -v templar-jobs:/var/lib/templar-prover templar-prover
 ```
 
-`SYS_ADMIN` is used only by the entrypoint to make the container's private cgroup namespace
-writable and hand it to the unprivileged `templar` user; every capability is dropped before the
-server starts.
+`SYS_ADMIN` is used only by the entrypoint, to make the container's private cgroup namespace
+writable and hand it to the unprivileged `templar` user; the server itself runs with no
+capabilities and `no_new_privs`. The capability does stay in the container's bounding set, so
+anything started with `docker exec` as root could use it: for a public server prefer the systemd
+unit, which needs no capability at all. `--init` reaps the steps' processes and forwards SIGTERM;
+on SIGTERM the server stops accepting work and kills running steps.
 
 `templar-prover check CONFIG SUBMISSION_JSON` runs the pre-checks on one submission without the
-queue.
+queue. `tests/check_bench_proofs.sh CONFIG PROOFS_DIR` runs every R0 V4 bench proof, honest and
+forged, through it and checks each verdict; `cargo test` in `prover/` covers parsing and address
+handling.
 
 ## API
 
