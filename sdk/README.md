@@ -42,6 +42,9 @@ await spend.wrap(tpl.prover({ url }), { url });        // the server's large pro
 const { transactionHash, linkable } = await spend.submit(relayerAccount);
 ```
 
+The core needs WebAssembly with 128-bit SIMD (Chrome and Edge 91+, Firefox 89+, Safari 16.4+, Node);
+`loadCore()` refuses other runtimes with `unsupported_browser`. There is no scalar fallback build.
+
 Submission uses a signer-backed starknet.js `Account`; its address is public and linked to the
 spend (`linkable: true` in v1: use a relayer's account for unlinkability). Browser-extension
 wallets are not supported as submitters in v1.

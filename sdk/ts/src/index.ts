@@ -4,5 +4,5 @@ export { ProverClient, type ProverOptions, type OhttpConfig, type ServerInfo, ty
 export { MemoryKV, IndexedDBKV, FileKV, WalletStore, type KV } from './store.js';
 export { SEPOLIA, activePool, pinsOf, canon, type NetworkConstants, type PoolConstants, type TokenInfo, type ProverServer } from './network.js';
 export { TemplarError } from './errors.js';
-export { loadCore, type Plan, type Proved, type OwnedNote, type AssetKind, type SpendRequest, type Window } from './core.js';
+export { loadCore, checkRuntime, type Plan, type Proved, type OwnedNote, type AssetKind, type SpendRequest, type Window } from './core.js';
 export { boundsFrom, AMOUNT_MARGIN_NUM, AMOUNT_MARGIN_DEN, PRICE_MARGIN } from './submit.js';

@@ -9,7 +9,7 @@ import { beforeAll, describe, expect, test } from 'vitest';
 
 import * as wasm from '../wasm/templar.js';
 import initTest, * as twasm from '../wasm-test/templar_test.js';
-import { FileKV, IndexedDBKV, MemoryKV, SEPOLIA, Templar, TemplarError, boundsFrom, loadCore, pinsOf, activePool, type NetworkConstants } from '../dist/index.js';
+import { FileKV, IndexedDBKV, MemoryKV, SEPOLIA, Templar, TemplarError, boundsFrom, checkRuntime, loadCore, pinsOf, activePool, type NetworkConstants } from '../dist/index.js';
 import { MockChain, MockProver, SEL } from './mockchain.js';
 
 const TOKEN = '0x39f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8';
@@ -398,6 +398,12 @@ describe('deposits, withdrawals and keys', () => {
     const ivk = a.exportViewingKey(0, false);
     expect(JSON.parse(wasm.viewing_key_import(ivk, addr.address)).full).toBe(false);
     expect(() => wasm.address_decode(ivk)).toThrow(/wrong prefix/);
+  });
+
+  test('a runtime without WebAssembly SIMD is refused with a clear error', () => {
+    expect(() => checkRuntime()).not.toThrow();
+    expect(() => checkRuntime({ validate: () => false })).toThrow(/unsupported_browser.*SIMD/);
+    expect(() => checkRuntime({} as any)).toThrow(/unsupported_browser/);
   });
 
   test('fee bounds are a fixed function of the raw estimate', () => {
