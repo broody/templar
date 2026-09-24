@@ -3,7 +3,7 @@
 
 [server]
 listen = "0.0.0.0:8480"
-data_dir = "/var/lib/templar-prover/jobs"   # job directories, deleted after retention
+data_dir = "/var/lib/templar-prover/jobs"   # server-owned: jobs, staged bridges; use a dedicated directory
 retention_secs = 3600
 max_concurrent_jobs = 1                      # each job needs ~4 cores and ~30 GiB
 max_concurrent_checks = 2                    # pre-checks at once; more are refused (503)
@@ -70,3 +70,6 @@ threads = 4
 [ohttp]
 key_file = "/etc/templar/ohttp.key"
 submissions_per_hour_per_relay = 400
+# Only these relays get relay limits; an envelope from any other address is limited like a
+# direct client. Addresses or CIDR blocks; behind a trusted proxy, matched against its entry.
+relays = []

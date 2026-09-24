@@ -27,6 +27,10 @@ pub struct Ohttp {
     /// Submissions per relay address per hour (all of a relay's clients share it).
     #[serde(default = "d_relay_per_hour")]
     pub submissions_per_hour_per_relay: u32,
+    /// Relay addresses or CIDR blocks that get relay limits (PI-12). An OHTTP envelope from any
+    /// other address is limited like a direct client.
+    #[serde(default)]
+    pub relays: Vec<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

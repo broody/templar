@@ -14,6 +14,7 @@ use axum::http::{HeaderMap, StatusCode};
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use serde_json::{json, Value};
+use sha2::Digest;
 use tokio::sync::{mpsc, Semaphore};
 
 use crate::config::Config;
@@ -49,6 +50,8 @@ struct Job {
     result: Option<Value>,
     error: Option<String>,
     dedup_key: String,
+    /// sha256 of the submission body: an identical resubmission gets the same job (PI-13).
+    body_hash: [u8; 32],
     address_key: String,
     dir: PathBuf,
 }
@@ -102,6 +105,32 @@ pub fn address_key(ip: IpAddr) -> String {
     }
 }
 
+/// Whether `ip` is the address or inside the CIDR block `block` (`a.b.c.d`, `a.b.c.d/n`, IPv6 alike).
+pub fn in_block(ip: IpAddr, block: &str) -> bool {
+    let (addr, bits) = match block.split_once('/') {
+        Some((a, n)) => (a, n.parse::<u32>().ok()),
+        None => (block, None),
+    };
+    let Ok(net) = addr.trim().parse::<IpAddr>() else { return false };
+    let ip = match ip {
+        IpAddr::V6(v6) => v6.to_ipv4_mapped().map(IpAddr::V4).unwrap_or(ip),
+        v4 => v4,
+    };
+    match (ip, net) {
+        (IpAddr::V4(a), IpAddr::V4(b)) => {
+            let n = bits.unwrap_or(32).min(32);
+            let mask = if n == 0 { 0 } else { u32::MAX << (32 - n) };
+            u32::from(a) & mask == u32::from(b) & mask
+        }
+        (IpAddr::V6(a), IpAddr::V6(b)) => {
+            let n = bits.unwrap_or(128).min(128);
+            let mask = if n == 0 { 0 } else { u128::MAX << (128 - n) };
+            u128::from(a) & mask == u128::from(b) & mask
+        }
+        _ => false,
+    }
+}
+
 /// The client address. Behind a trusted proxy, the proxy appends the address it saw as the last
 /// `X-Forwarded-For` entry; anything to its left came from the client and is ignored (PI-4).
 pub fn client_ip(trust_forwarded_for: bool, peer: SocketAddr, headers: &HeaderMap) -> IpAddr {
@@ -144,12 +173,12 @@ async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectIn
                 ohttp: Option<axum::Extension<crate::ohttp::Ohttp>>, headers: HeaderMap, body: axum::body::Bytes) -> Reply {
     // Over OHTTP the peer is the relay: its clients share one larger bucket and no per-address
     // queue cap (spec §7); per-note deduplication applies regardless.
-    let via_relay = ohttp.is_some();
-    let key = if via_relay {
-        format!("relay:{}", address_key(peer.ip()))
-    } else {
-        address_key(client_ip(state.config.server.trust_forwarded_for, peer, &headers))
-    };
+    // Relay treatment only for configured relays (PI-12); behind a proxy, the relay's address is
+    // the proxy's entry.
+    let ip = client_ip(state.config.server.trust_forwarded_for, peer, &headers);
+    let via_relay = ohttp.is_some() && state.config.ohttp.as_ref().is_some_and(|o| o.relays.iter().any(|r| in_block(ip, r)));
+    let key = if via_relay { format!("relay:{}", address_key(ip)) } else { address_key(ip) };
+    let body_hash: [u8; 32] = sha2::Sha256::digest(&body).into();
     {
         let rate = match (&state.config.ohttp, via_relay) {
             (Some(o), true) => o.submissions_per_hour_per_relay as f64,
@@ -200,7 +229,13 @@ async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectIn
         if reg.refusals.get(&dkey).is_some_and(|r| now < r.until) {
             return err(StatusCode::TOO_MANY_REQUESTS, "this note was submitted recently; retry later");
         }
-        if reg.dedup.contains_key(&dkey) {
+        if let Some(existing) = reg.dedup.get(&dkey) {
+            // An identical resubmission (a client that lost the admission reply) gets its job back.
+            if reg.jobs.get(existing).is_some_and(|j| j.body_hash == body_hash) {
+                let id = existing.clone();
+                let position = reg.order.iter().position(|x| *x == id);
+                return (StatusCode::ACCEPTED, Json(json!({"id": id, "position": position})));
+            }
             let backoff = state.config.limits.duplicate_backoff_secs;
             let r = reg.refusals.entry(dkey.clone()).or_insert(Refusal { count: 0, until: now });
             r.count += 1;
@@ -235,7 +270,7 @@ async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectIn
                     let _ = std::fs::remove_dir_all(&dir);
                     return;
                 }
-                Ok(bridge) => admit(&state, id, sub, bridge, dkey, key, dir),
+                Ok(bridge) => admit(&state, id, sub, bridge, dkey, body_hash, key, dir),
                 Err(e) => {
                     let _ = std::fs::remove_dir_all(&dir);
                     Err(err(StatusCode::BAD_REQUEST, format!("{e:#}")))
@@ -252,8 +287,9 @@ async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectIn
 }
 
 /// Records an accepted submission and queues it; on any refusal, removes what it created (PI-8).
-fn admit(state: &Arc<AppState>, id: String, sub: Submission, bridge: BridgeOutput, dkey: String, key: String, dir: PathBuf)
-         -> Result<usize, Reply> {
+#[allow(clippy::too_many_arguments)]
+fn admit(state: &Arc<AppState>, id: String, sub: Submission, bridge: BridgeOutput, dkey: String, body_hash: [u8; 32], key: String,
+         dir: PathBuf) -> Result<usize, Reply> {
     let mut reg = state.registry.lock().unwrap();
     if reg.dedup.contains_key(&dkey) {
         let _ = std::fs::remove_dir_all(&dir);
@@ -266,7 +302,7 @@ fn admit(state: &Arc<AppState>, id: String, sub: Submission, bridge: BridgeOutpu
     reg.dedup.insert(dkey.clone(), id.clone());
     reg.jobs.insert(id.clone(), Job {
         status: Status::Queued, stage: "queued".into(), finished: None, submission: Some(sub),
-        bridge: Some(bridge), result: None, error: None, dedup_key: dkey, address_key: key, dir,
+        bridge: Some(bridge), result: None, error: None, dedup_key: dkey, body_hash, address_key: key, dir,
     });
     reg.order.push_back(id.clone());
     tracing::info!(job = %id, "admitted");
@@ -396,6 +432,16 @@ mod tests {
         assert_ne!(address_key("::ffff:1.2.3.4".parse().unwrap()), address_key("::ffff:1.2.3.5".parse().unwrap()));
         assert_eq!(address_key("2001:db8:1:2:3:4:5:6".parse().unwrap()), "2001:db8:1:2::/64");
         assert_eq!(address_key("2001:db8:1:2:ffff::1".parse().unwrap()), address_key("2001:db8:1:2::9".parse().unwrap()));
+    }
+
+    #[test]
+    fn relay_blocks() {
+        assert!(in_block("10.1.2.3".parse().unwrap(), "10.1.0.0/16"));
+        assert!(!in_block("10.2.2.3".parse().unwrap(), "10.1.0.0/16"));
+        assert!(in_block("::ffff:10.1.2.3".parse().unwrap(), "10.1.2.3"));
+        assert!(in_block("2001:db8::5".parse().unwrap(), "2001:db8::/32"));
+        assert!(!in_block("2001:db9::5".parse().unwrap(), "2001:db8::/32"));
+        assert!(!in_block("1.2.3.4".parse().unwrap(), "not-an-ip"));
     }
 
     #[test]

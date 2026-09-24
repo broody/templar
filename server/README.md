@@ -99,7 +99,8 @@ handling.
 - `POST /v1/jobs` — `{"relation": "r4" | "p1", "proof": [...], "statement": {...}}`, where `proof`
   is the wallet's `cairo-arguments.json` (a length-prefixed felt span) and `statement` its
   `public.json`. Returns `202 {"id", "position"}`, or `400` (a pre-check failed, with the reason),
-  `409` (the root is unknown, a nullifier is spent, or this note already has a job), `429` (rate
+  `409` (the root is unknown, a nullifier is spent, or this note already has a job for a different
+  submission; resending the identical submission returns the existing job), `429` (rate
   limited) or `503` (queue full).
 - `GET /v1/jobs/{id}` — `{"status": "queued" | "running" | "done" | "failed", "stage", "position",
   "result", "error"}`. A result carries `proof` (base64), `proof_facts`, `base_block`,
@@ -122,6 +123,7 @@ prover's for the same PIE.
 **Oblivious HTTP.** With an `[ohttp]` key configured, every endpoint is also reachable inside an
 OHTTP envelope (`POST` any path with `content-type: message/ohttp-req`; the key configuration is
 at `GET /ohttp-keys` and in `/v1/info`), so a client going through an OHTTP relay hides its address
-from the server. Submit and poll through the relay alike. Relayed submissions are rate-limited per
-relay. `examples/ohttp_client.rs` is a minimal client. The optional proof-of-work stamp for relayed
+from the server. Submit and poll through the relay alike. Submissions from the relays listed in
+`[ohttp] relays` are rate-limited per relay; an envelope from any other address is limited like a
+direct client. `examples/ohttp_client.rs` is a minimal client. The optional proof-of-work stamp for relayed
 submissions (spec §7) is not implemented; per-note deduplication applies to every submission.

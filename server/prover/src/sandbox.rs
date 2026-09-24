@@ -40,6 +40,8 @@ fn group(root: &Path, name: &str, limits: &Limits) -> Result<PathBuf> {
     write(&dir.join("memory.max"), &limits.memory)?;
     write(&dir.join("memory.swap.max"), "0")?;
     write(&dir.join("pids.max"), "512")?;
+    // An out-of-memory kill takes the whole step, not one of its processes (PI-10).
+    write(&dir.join("memory.oom.group"), "1")?;
     write(&dir.join("cpu.max"), &format!("{} 100000", limits.cpus as u64 * 100_000))?;
     Ok(dir)
 }

@@ -363,3 +363,115 @@ the reserve.
   persist on disk (PI-2, PI-8).
 - **Missing against the spec.** OHTTP and its limits, the §11 tests (PI-7), the front-end memory
   reservation (PI-10) and the fetchability CI check.
+
+## Re-review of the fixes
+
+Same reviewer, same day. This covers `87894e9` (OHTTP), `97f06c2` (PI-1 to PI-10) and `8d1d0b4`
+(the Docker recipe and bridge staging) on `feat/hidden-assets`. I modified only this file. I did
+not run `serve`, submit jobs or run Docker. Scratch output went under
+`~/.local/share/templar/runs/pi-review`.
+
+**What I ran:**
+- `cargo test --release --locked` in `server/prover`: **5 passed** (address keys,
+  `X-Forwarded-For`, parsing and encoding, u128 amounts above 2^64, malformed input) (**D**).
+- `server/tests/check_bench_proofs.sh sepolia.toml ~/.local/share/templar/runs/r4-proofs`, with
+  `TMPDIR` in the runs directory: **16/16 ok** (**D**).
+  - All 8 honest shapes accepted: transfer, single, one-out, partial, full, invoke, shadow, nft.
+  - All 8 forged statements rejected, each with the bridge's own reason: exit rule, delivery,
+    withdrawal, identity intent, duplicate nullifier, address range twice, zero context.
+- `templar-prover info` at `8d1d0b4`: passes. The OS-runner's program hash is now computed from
+  the embedded program, and the staged bridge executables' sha256 equal the configured ones
+  (**D**).
+
+The operator's end-to-end runs (container, systemd unit, OHTTP client) are evidence I did not
+reproduce.
+
+### Verdict
+
+**CONDITIONAL GO.** PI-1 to PI-6 and PI-8 are resolved, and OHTTP (PS-13) is implemented.
+
+Two new Medium findings are the conditions:
+- **PI-12:** anyone can get the relay's larger limits, with no per-address cap, by sending an
+  OHTTP envelope directly.
+- **PI-14:** the startup purge deletes *everything* in `data_dir`.
+
+Both are small fixes. PI-7, PI-9 and PI-10 remain partial or open at Low. With OHTTP disabled
+and a dedicated data directory, the systemd deployment is fine to run now.
+
+### Status
+
+| ID | Status | Note |
+|---|---|---|
+| PI-1 | **Resolved** | All job state is behind one `Mutex<Registry>` (`api.rs:61-68, 79`). The bucket lock is never held together with it (`:158`, `:383` after the registry scope). No lock is held across an `await`. I found no remaining nesting. No concurrency test (PI-7). |
+| PI-2 | **Resolved** | The check runs in a spawned task that owns the permit (`api.rs:218-246`). `GroupGuard` kills and removes the group however the step ends (`sandbox.rs:66-76, 80`). The directory is removed on rejection and when the client has gone (`:234-241`). `--init` reaps orphans in Docker. |
+| PI-3 | **Resolved** | serde_json `arbitrary_precision`; `int` parses the literal (`statement.rs:62-74`). **D**: 2^70 accepted, 2^128 rejected. |
+| PI-4 | **Resolved** | Takes the last `X-Forwarded-For` header and its last entry (`api.rs:105-121`); IPv4-mapped addresses are normalized (`:92-103`). **D** tests. For the OHTTP path, see PI-12. |
+| PI-5 | **Resolved** (Docker residual documented) | The unit runs as `User=templar` with `StateDirectory`, and `MemoryMax=38G` matches 32G + 2×2G + reserve. SIGTERM kills running steps (`main.rs:201-211`). The Docker recipe adds `--init --read-only --cap-drop ALL`, `no-new-privileges` and `apparmor=unconfined` (needed for the remount). The README states that the added capabilities stay in the container's bounding set and recommends the unit for public servers. Accepted. |
+| PI-6 | **Resolved** | The compiled executable is pinned by `bridge_executable_sha256`. The bridge build is copied into the server's own directory and the *copy* is hashed and executed (`main.rs:31-62, 98-104`). `version` computes the virtual OS program hash (`os-runner/src/main.rs:28-31`). Residual (Low): the Dockerfile still downloads scarb and installs `cairo-lang` without hash pinning. The runtime OS-program check now catches a wrong `cairo-lang`; a tampered scarb would only affect the pre-check. |
+| PI-7 | **Partial** | New tests: unit tests for parsing and address keys, plus the R4 bench-proof script (**D** 16/16). Still missing from §11: admission and deduplication tests (duplicate note, refusal backoff, failed-job retry), a concurrency test, startup-mismatch tests, and a P1 corpus in the script (the `sub-s3*` files would do). |
+| PI-8 | **Resolved** | `admit` rolls back on queue-send failure (`api.rs:255-274`). Leftover step groups and job directories are removed at startup (`main.rs:170-178`, `sandbox.rs` `purge`), but see PI-14. `remove` reaps off the async workers. CLI checks use unique `cli-<random>` names. Residual (Info): the `check` CLI does not resolve `cgroup_root = "self"`, so use a concrete path for CLI checks. |
+| PI-9 | **Open** (Low) | Not addressed and not documented. It now also covers the staged bridge copy: steps run as the server's user, so a compromised step could replace the staged executable used by later pre-checks, which is hashed only at startup. Harmless to users (the proven bridge is the deployed class), but document it, or bind-mount the staged bridges read-only into the check step. |
+| PI-10 | **Partial** | `memory.min = 256M` on the `server` leaf (`sandbox.rs:165-167`), and the parent is sized. Steps still lack `memory.oom.group = 1`, so an OOM inside a step can kill one process of it (for example `scarb` but not `scarb-execute`) instead of the whole step. Info. |
+| PI-11 | **Mostly resolved** | OHTTP is implemented. The check limit is configurable, with `try_acquire` and 503 when saturated (`api.rs:218-220`). Still missing: the CI fetchability check, and the optional per-submission proof-of-work behind a relay (spec §7). |
+| PS-13 | **Implemented** | RFC 9458 gateway from the pinned `tower_ohttp`. `/ohttp-keys` is cached for an hour, and the key configuration is also in `/v1/info`. Errors after decapsulation are encapsulated. Decapsulated requests are routed through the inner router with the relay's `ConnectInfo` and an `Ohttp` marker. The envelope body is bounded (`max_body_bytes + 4096`). Nested envelopes are not re-decapsulated, because the middleware wraps only the outer router. Key rotation by restart is documented. See PI-12. |
+
+### New findings
+
+#### PI-12: Medium. Any client gets relay treatment by sending an envelope directly
+
+**Location:** `api.rs:145-176`; `ohttp.rs:40-67`.
+
+**Problem.**
+- **The server grants relay treatment to any envelope.** It treats every request that arrives
+  in an OHTTP envelope as coming from a relay. The key becomes `relay:<peer>`, with
+  `submissions_per_hour_per_relay` (400 by default instead of 20) and **no per-address
+  queued-job cap**.
+- **Anyone can send an envelope.** Encapsulating needs only the public key configuration, and
+  the bundled `examples/ohttp_client.rs` does exactly that, posting straight to the server.
+- **Behind a reverse proxy, all relays collapse into one bucket.** With `trust_forwarded_for`,
+  the relay's identity is the proxy's address (`peer.ip()`), so every relay shares one bucket.
+
+**Failure scenario.**
+1. A single host owning a few notes posts envelopes directly.
+2. It gets 20× the submission budget, and the two-jobs-per-address cap no longer applies.
+3. It can keep the global queue (`queue_capacity = 16`) full of one-per-note jobs and starve
+   honest users.
+
+Per-note deduplication still bounds it to one proof per note per retention window.
+
+**Required change.**
+- Configure the accepted relays (`[ohttp] relays = [addresses or CIDRs]`), and give relay
+  treatment only to envelopes from those peers. Envelopes from other peers get the plain
+  per-address limits and cap, or are refused.
+- Behind a proxy, derive the relay identity with `client_ip` (the proxy's appended entry).
+- Add a test for each case.
+
+#### PI-13: Low. A lost admission reply locks the note out for the retention window
+
+**Location:** `api.rs:233-251, 255-274`.
+
+**Problem.** If the client's connection drops *after* `admit` (the `tx.is_closed()` check at
+:234 has already passed), the job is admitted and runs, but the client never learns its id.
+Every resubmission of the same note then gets 409 until retention expires, which is an hour
+after the proof finishes. So the owner can neither collect the result nor re-prove. Nobody but
+the owner can produce a proof for that nullifier.
+
+**Required change.** On a duplicate whose submission is byte-identical to the admitted job's
+(same proof and statement, compared by hash), return the existing job's id instead of 409. Only
+a holder of that proof can make that request, so this reveals nothing to anyone else.
+
+#### PI-14: Medium. The startup purge deletes every entry of `data_dir`
+
+**Location:** `main.rs:172-177`, and `main.rs:142-144` (staging goes into `data_dir`'s parent).
+
+**Problem.** `serve` removes *every* file and directory under `data_dir` at startup. A
+misconfigured `data_dir` destroys unrelated data irreversibly, for example a home directory, `/var/lib`, or a shared
+volume root. The same pattern applies to `data_dir.parent()/bridges`, which is replaced on every
+start. The unit's `ProtectSystem=strict` confines this to `/var/lib/templar-prover`, but the
+container and manual runs have no such guard.
+
+**Required change.**
+- Delete only entries the server creates: 32-hex job ids, `cli-*`, and a staging directory it
+  owns inside `data_dir`, not its parent.
+- Or refuse to start unless `data_dir` contains a marker file the server created itself.
+- Stage bridges under `data_dir/.bridges`, not the parent.

@@ -139,8 +139,8 @@ async fn main() -> Result<()> {
     let args: Vec<String> = std::env::args().collect();
     let cfg_path = args.get(2).context("usage: templar-prover serve|check|info CONFIG ...")?;
     let mut cfg = Config::load(Path::new(cfg_path))?;
-    let staging = cfg.server.data_dir.parent().map(Path::to_path_buf).unwrap_or_else(|| cfg.server.data_dir.clone())
-        .join(if args[1] == "serve" { "bridges".to_string() } else { format!("bridges-{}", std::process::id()) });
+    // Staged inside data_dir, which only the server writes (PI-14).
+    let staging = cfg.server.data_dir.join(if args[1] == "serve" { "bridges".to_string() } else { format!("bridges-cli-{:016x}", rand::random::<u64>()) });
     stage_bridges(&mut cfg, &staging).context("staging the bridge builds")?;
     let rpc = Rpc::new(&cfg.network.rpc_url);
     match args[1].as_str() {
@@ -169,10 +169,16 @@ async fn main() -> Result<()> {
         "serve" => {
             sandbox::prepare_root(&mut cfg.sandbox).context("preparing the cgroup subtree")?;
             let purged = sandbox::purge(&cfg.sandbox)?;
-            // Job directories from a previous run hold statements and cannot be resumed (PI-8).
+            // Job directories from a previous run hold statements and cannot be resumed (PI-8). Only
+            // entries the server creates are removed: job ids (32 hex) and CLI scratch (PI-14).
             if cfg.server.data_dir.exists() {
                 for e in std::fs::read_dir(&cfg.server.data_dir)? {
-                    let _ = std::fs::remove_dir_all(e?.path());
+                    let e = e?;
+                    let name = e.file_name().to_string_lossy().to_string();
+                    let job = name.len() == 32 && name.chars().all(|c| c.is_ascii_hexdigit());
+                    if e.path().is_dir() && (job || name.starts_with("cli-") || name.starts_with("bridges-cli-")) {
+                        let _ = std::fs::remove_dir_all(e.path());
+                    }
                 }
             }
             tracing::info!(purged, "cleared state from a previous run");
