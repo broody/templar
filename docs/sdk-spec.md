@@ -538,7 +538,8 @@ under `kstore` (§3.2) with a random nonce, in the core (`store_seal`), with ass
 so a record cannot be swapped for another or moved between keys (SDK-M18). Record names are opaque:
 `HMAC-SHA256(kid, len ‖ type ‖ len ‖ key)` under a separate key
 `kid = HKDF-Expand(PRK, "TEMPLAR_STORE_ID_V1" ‖ felt₃₂(chain) ‖ felt₃₂(pool), 32)` (SDK-P19, SDK-IM11). Rolling back the whole
-store to an older copy is not detected; the documentation says so. The store has a schema
+store to an older copy is not detected; the documentation says so. After the first release, any change to
+record naming or encoding bumps the schema version and migrates (review N2). The store has a schema
 version with migrations, and takes a lock per chain and pool (Web Locks in browsers, a lock file
 in Node) so two tabs never sync or submit at once. An in-memory store is provided for tests.
 

@@ -233,3 +233,69 @@ length-prefixed encoding of `ad()`.
 - In the bench only: `support::native_verify` and `negatives` still honour `TEMPLAR_FRI`, while
   the library prover ignores it. `wallet` with `TEMPLAR_FRI` set now fails in the negatives
   step. Drop the override from `support`, or document it.
+
+## Re-review (5bd6ac6)
+
+- **Date:** 2026-09-24. **Commit:** `5bd6ac6` (`Client SDK: implementation review fixes`),
+  reviewed as `git diff 9fbdd6a 5bd6ac6 -- sdk bench docs/sdk-spec.md`.
+- **Checks run:**
+  - `cargo test --release -p templar-core --features test-rng`: 20 of 20 pass. New:
+    `address_rejections`, `scan_rules`, `blocked_ephemeral_key_does_not_open` and `spend_rules`.
+  - `python3 sdk/vectors/check_keys.py`: all vectors match.
+  - `vitest -t "every WASM export"`: passes.
+  - A stricter sweep of my own, in scratch, over the built release `.wasm`: 100 malformed or
+    hostile calls, including a non-canonical companion, `inner` equal to `p`, a `u64::MAX` proof
+    age and a hostile scan request. Every call threw a JSON string error; none trapped.
+
+### Verdict: GO
+
+Every finding is resolved. SDK-IM8 and SDK-IM9 are resolved only in part; the residue is Info
+and accepted. I found no new issue above Low.
+
+### Status of SDK-IM1 to SDK-IM12
+
+| Finding | Status | Evidence |
+| --- | --- | --- |
+| IM1 | Resolved | `witness` rebuilds chain, pool, asset, recipient and deliveries with `to_hex` before `Private`, `statement` and `bridge_checks`, so every string reaching the relation is canonical. The 64-digit case in `spend_rules` passes. |
+| IM2 | Resolved | `note_for` takes chain and pool and returns `wrong_pool` on a mismatch (`wasm/lib.rs:113-119`). `deposit` passes them (`wallet.ts:553`), and a TS test covers it. |
+| IM3 | Resolved | New tests cover every §4.1 rejection (all seven blocked `pk` classes via 0, 1, `p − 1` and `≥ p`), the uppercase full viewing key, an unclamped `ivk`, and every §6 rule including all PS01 cases and a forged registration. Also new: opening with a blocked `epk`, and the TS export sweep. See N1 for the sweep's weak assertion. |
+| IM4 | Resolved | `plan` takes `spent`. It refuses a spent input (its nullifier recomputed after the ownership check) and a spent reused companion (`companion_spent`). TS passes every synced nullifier. `prove` rechecks the companion. |
+| IM5 | Resolved | `Spend.prove` compares `circuit_hash` with the pin before the record is marked `left` (`wallet.ts:840-841`), and a test covers it. |
+| IM6 | Resolved | Consolidation takes the smallest same-account pair over all accounts, with overflow checked. |
+| IM7 | Resolved | `u128_of` accepts canonical decimals only, used in the core and in WASM. The zero check now runs after selection on every path, re-plans included. |
+| IM8 | Resolved in part | An output to the spending account must open under its `ivk` and match asset, receiver, `rho` and amount exactly. It must also be `M301`; a PS01 plaintext is refused. A payee's output is still unchecked. The plan sits in the AEAD store and JS already holds the seed, so this is accepted (Info). |
+| IM9 | Resolved in part | `ScanKey` is `ZeroizeOnDrop`. The HKDF PRK, `payment4::Private` and the mnemonic string are not; this is hygiene only (SDK-M14), accepted. |
+| IM10 | Resolved | The prefix is routed on the lowercased string; a test covers it. |
+| IM11 | Resolved | A separate `kid` under `TEMPLAR_STORE_ID_V1` with a length-prefixed HMAC input. The HKDF `info` strings stay distinct by length (80, 83, 84 and 87 bytes for store, id, spend and incoming). Spec §10.3 is updated. |
+| IM12 | Resolved | `seal_with` is behind `cfg(any(test, feature = "test-rng"))`, and `vectors_keys` requires that feature. The window additions use `checked_add`. The bench `TEMPLAR_FRI` note was advisory and is unchanged. |
+
+I also checked that the new exports are sound. `pool_commitment` equals the pool's `H(NOTE, …)`
+on a range-checked `inner`, with fallible limbs. `test_expected_facts` is test-only under
+`test-rng`, which the release build check covers.
+
+### New items
+
+#### N1: Low: the WASM sweep does not detect a trap
+
+**Where:** `sdk/ts/test/wallet.test.ts:376-385`.
+
+**Problem.** The sweep accepts any thrown value whose `String(...)` is truthy. A `panic = "abort"`
+trap throws `RuntimeError: unreachable`, which passes that check, so the test cannot tell a trap
+from an error.
+
+My stricter scratch sweep found no traps today.
+
+**Required change.** Assert `typeof threw === 'string'` and a parsable `{code}`. Add at least one
+hostile but well-formed input per JSON export: the IM1 plan with 64-digit felts through
+`prove_spend`, and non-canonical digests.
+
+#### N2: Info: record ids changed without a schema bump
+
+**Where:** `store.rs:53-62`, `SCHEMA = 1`.
+
+**Problem.** Stores written before `5bd6ac6` become unreachable under the new names. A lost live
+record or companion would re-open its notes for selection. That is harmless before any release,
+since nothing has shipped.
+
+**Required change.** None before the first release. After it, any change to naming or encoding
+must bump `SCHEMA` and migrate.

@@ -367,6 +367,11 @@ describe('deposits, withdrawals and keys', () => {
       fns.push(['plan_spend', () => wasm.plan_spend(alice, s, new wasm.Tree())]);
       fns.push(['store_open', () => wasm.store_open(alice, s, s, s, s, new Uint8Array(3))]);
     }
+    // Hostile but well-formed: a stored plan with 64-digit felt text and a wrong root.
+    const vec = JSON.parse(readFileSync(new URL('../../vectors/determinism.json', import.meta.url), 'utf8'));
+    const pad = (h: string) => '0x' + h.slice(2).padStart(64, '0');
+    const hostile = { ...vec.plan, chain: pad(vec.plan.chain), pool: pad(vec.plan.pool), asset: pad(vec.plan.asset), root: vec.plan.root.map((w: number) => (w + 1) % 2147483647) };
+    fns.push(['prove_spend (hostile plan)', () => wasm.prove_spend(new Uint8Array(32).fill(0xa1), JSON.stringify(hostile))]);
     for (const b of bytes) {
       fns.push(['mnemonic_from_seed', () => wasm.mnemonic_from_seed(b)]);
       fns.push(['account', () => wasm.account(b, SEPOLIA.chainId, '0x1', 0, 0)]);
@@ -379,8 +384,9 @@ describe('deposits, withdrawals and keys', () => {
       } catch (e) {
         threw = e;
       }
-      expect(threw, name).toBeDefined();
-      expect(typeof threw === 'string' ? JSON.parse(threw).code : String(threw), name).toBeTruthy();
+      // A trap throws a RuntimeError; only a JSON {code, message} string is an error (review N1).
+      expect(typeof threw, name).toBe('string');
+      expect(JSON.parse(threw as string).code, name).toMatch(/^[a-z_]+$/);
     }
     expect(JSON.parse(wasm.account(alice, SEPOLIA.chainId, '0x1', 0, 0)).address).toMatch(/^templarsep1/);
     expect(new TemplarError('x', 'y').code).toBe('x');
