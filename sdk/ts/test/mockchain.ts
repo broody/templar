@@ -34,6 +34,15 @@ export class MockChain {
   blocks: Block[] = [];
   fork = 0;
   calls: { method: string; args: unknown[] }[] = [];
+  /** Rewrites the next `getEvents` page once (drops or tampers events; SDK-IP2 tests). */
+  onceEvents?: (events: (Ev & { block_number: number })[]) => (Ev & { block_number: number })[];
+  /** `supports_interface` answers for recipients (withdrawal checks). */
+  supports = new Map<string, boolean>();
+  /** Sent transactions (mock account). */
+  sent: { calls?: unknown; signed?: unknown }[] = [];
+  registered = new Set<string>();
+  /** The account's STRK balance for fee checks. */
+  strk = 10n ** 20n;
   /** Leaves in order with the block they were published in. */
   constructor() {
     this.mine(1);
@@ -78,7 +87,55 @@ export class MockChain {
     return this.newBlock(events);
   }
 
-  /** `k` leaves nobody can open (well-formed words, correct digests). */
+  /** `k` insertions of two leaves each (as spends append), one block each. */
+  noise2(k: number): void {
+    for (let i = 0; i < k; i++) {
+      const evs: Ev[] = [];
+      for (let j = 0; j < 2; j++) {
+        const n = this.leafCount() + j;
+        const words = Array.from({ length: 10 }, (_, w) => hx(BigInt(n * 16 + w + 1)));
+        const cm = Array.from({ length: 9 }, (_, w) => (n * 9 + w + 7) % 2147483647);
+        evs.push(this.noteEvent(n, cm, wasm.delivery_digest(JSON.stringify(words)), words));
+      }
+      this.newBlock(evs);
+    }
+  }
+
+  registerAsset(asset: string, standard: number, contract: string, idLow: bigint): void {
+    this.newBlock([{ from_address: this.pool.pool, keys: [SEL.AssetRegistered], data: [asset, hx(standard), contract, hx(idLow), '0x0'] }]);
+  }
+
+  /** A signer-backed account stub: deposits land on this chain; proof transactions are recorded. */
+  account(address = '0xacc'): any {
+    const provider = this.provider();
+    return {
+      address,
+      provider,
+      execute: async (calls: { contractAddress: string; entrypoint: string; calldata: string[] }[]) => {
+        this.sent.push({ calls });
+        const dep = calls.find((c) => c.entrypoint === 'deposit' || c.entrypoint === 'safe_transfer_from');
+        if (dep) {
+          const d = dep.calldata;
+          const at = dep.entrypoint === 'deposit' ? 3 : d.length - 19;
+          const inner = d.slice(at, at + 9).map((x) => Number(BigInt(x)));
+          const words = d.slice(at + (dep.entrypoint === 'deposit' ? 10 : 9), at + (dep.entrypoint === 'deposit' ? 20 : 19)).map((x) => hx(x));
+          const erc1155 = dep.entrypoint === 'safe_transfer_from' && d.length === 26;
+          const asset =
+            dep.entrypoint === 'deposit' ? hx(d[0]!) : wasm.asset_id(erc1155 ? 1155 : 721, dep.contractAddress, BigInt(d[2]!).toString(), BigInt(d[3]!).toString());
+          const amount = dep.entrypoint === 'deposit' ? d[1]! : erc1155 ? BigInt(d[4]!).toString() : '1';
+          if (dep.entrypoint !== 'deposit' && !this.registered.has(asset)) {
+            this.registered.add(asset);
+            this.registerAsset(asset, erc1155 ? 1155 : 721, dep.contractAddress, BigInt(d[2]!));
+          }
+          const cm = JSON.parse(wasm.pool_commitment(SEPOLIA.chainId, pool(this), asset, amount, JSON.stringify(inner)));
+          this.deposit({ commitment: cm, ciphertext: words, delivery: wasm.delivery_digest(JSON.stringify(words)) }, asset, BigInt(amount));
+        }
+        return { transaction_hash: hx(this.sent.length) };
+      },
+      accountInvocationsFactory: async (inv: unknown, details: unknown) => (this.sent.push({ calls: { factory: details } }), [{ inv, details }]),
+      getSignedTransaction: async (calls: unknown, details: unknown) => ({ type: 'INVOKE', version: '0x3', nonce: '0x7', calls, details }),
+    };
+  }
   noise(k: number): void {
     for (let i = 0; i < k; i++) {
       const words = Array.from({ length: 10 }, (_, w) => hx(BigInt(this.leafCount() * 16 + w + 1)));
@@ -125,6 +182,14 @@ export class MockChain {
     return {
       channel: {
         getSpecVersion: async () => (trace('specVersion', []), '0.10.1'),
+        getEstimateFee: async (inv: unknown, opts: unknown) => (
+          trace('estimate', [inv, opts]),
+          [{ l1_gas_consumed: '0x0', l1_gas_price: '0x10', l1_data_gas_consumed: '0x80', l1_data_gas_price: '0x3', l2_gas_consumed: '0x8000000', l2_gas_price: '0x2', overall_fee: '0x10000000' }]
+        ),
+        fetch: async (method: string, params: unknown) => (
+          trace('fetch', [method, params]),
+          { json: async () => ({ result: [{ transaction_trace: { execute_invocation: {} } }] }) }
+        ),
       },
       getChainId: async () => (trace('getChainId', []), SEPOLIA.chainId),
       getClassHashAt: async (a: string) => {
@@ -139,6 +204,8 @@ export class MockChain {
       },
       callContract: async (c: { contractAddress: string; entrypoint: string; calldata: string[] }, id?: unknown) => {
         trace('callContract', [c.contractAddress, c.entrypoint, c.calldata, id]);
+        if (c.entrypoint === 'balance_of') return [hx(this.strk & ((1n << 128n) - 1n)), hx(this.strk >> 128n)];
+        if (c.entrypoint === 'supports_interface') return [this.supports.get(hx(c.contractAddress)) === false ? '0x0' : '0x1'];
         if (BigInt(c.contractAddress) !== BigInt(pool.pool)) return ['0x1'];
         switch (c.entrypoint) {
           case 'get_verifier':
@@ -150,6 +217,9 @@ export class MockChain {
         }
         throw new Error(`unexpected entrypoint ${c.entrypoint}`);
       },
+      waitForTransaction: async () => ({ execution_status: 'SUCCEEDED' }),
+      getClassAt: async () => ({ sierra_program: ['0x1', '0x7', '0x0'] }),
+      invokeSignedTx: async (tx: unknown) => (trace('invokeSignedTx', [tx]), this.sent.push({ signed: tx }), { transaction_hash: '0xbeef' }),
       getBlockLatestAccepted: async () => (trace('getBlockLatestAccepted', []), { block_number: this.latest, block_hash: this.blocks[this.blocks.length - 1]!.hash }),
       getBlockWithTxHashes: async (id: number) => {
         trace('getBlockWithTxHashes', [id]);
@@ -166,11 +236,60 @@ export class MockChain {
           }
         }
         const start = Number(f.continuation_token ?? 0);
-        const page = all.slice(start, start + f.chunk_size);
+        let page = all.slice(start, start + f.chunk_size);
+        if (this.onceEvents) {
+          page = this.onceEvents(page);
+          this.onceEvents = undefined;
+        }
         return { events: page, ...(start + f.chunk_size < all.length ? { continuation_token: String(start + f.chunk_size) } : {}) };
       },
     };
   }
+}
+
+const pool = (c: MockChain) => (c as unknown as { pool: { pool: string } }).pool.pool;
+
+/** A prover server stub over `fetch`: info from the pins, jobs that finish at once with honest facts. */
+export class MockProver {
+  bodies: string[] = [];
+  jobs = new Map<string, { status: string; body: string; result?: unknown }>();
+  /** What the next status call returns for a job (to simulate failures). */
+  failNext = false;
+  base = 0;
+  binding = '';
+  constructor(private chain: MockChain, private facts: (binding: string, base: number, hash: string) => string[]) {}
+
+  fetch = async (url: string | URL, init?: { method?: string; body?: string }): Promise<Response> => {
+    const u = new URL(String(url));
+    const p = this.chain.pool;
+    const reply = (status: number, v: unknown) => new Response(JSON.stringify(v), { status });
+    if (u.pathname === '/v1/info') {
+      return reply(200, {
+        network: { chain_id: 'SN_SEPOLIA', pool: p.pool, os_program: p.osProgram, max_proof_age: p.maxProofAge },
+        relations: [{ name: 'r4', statement_account: p.statement, statement_class: p.statementClass, account_tag: p.accountTag, adapter: p.adapter, circuit_hash_u32_le: p.circuitHash }],
+        limits: { retention_secs: 3600 },
+      });
+    }
+    if (u.pathname === '/v1/jobs' && init?.method === 'POST') {
+      this.bodies.push(init.body!);
+      const id = String(this.jobs.size + 1).padStart(32, '0');
+      this.jobs.set(id, { status: 'done', body: init.body! });
+      return reply(202, { id, position: 0 });
+    }
+    const m = /^\/v1\/jobs\/(.+)$/.exec(u.pathname);
+    if (m) {
+      const j = this.jobs.get(m[1]!);
+      if (!j) return reply(404, { error: 'no such job' });
+      if (this.failNext) {
+        this.failNext = false;
+        return reply(200, { status: 'failed', stage: 'os', error: 'boom' });
+      }
+      const base = this.chain.latest - 1;
+      const hash = this.chain.blocks[base - this.chain.base]!.hash;
+      return reply(200, { status: 'done', result: { proof: 'AAAA', proof_facts: this.facts(this.binding, base, hash), base_block: base, binding: this.binding } });
+    }
+    return reply(404, {});
+  };
 }
 
 export { SEL };

@@ -72,13 +72,18 @@ if (progress.stage === 'deposited') {
 }
 
 async function run(spend, name) {
+  // A re-plan at the same server is refused (409) until the first job's window passes; the
+  // withdrawal stage can use a second server (PROVER_URL_2), or the same one after a restart.
+  const url = name === 'withdraw' ? (process.env.PROVER_URL_2 ?? proverUrl) : proverUrl;
   const t0 = Date.now();
   const proved = await spend.prove();
   const proveMs = Date.now() - t0;
-  const ohttp = process.env.OHTTP_KEY_HEX ? { relayUrl: proverUrl, keyConfig: Uint8Array.from(Buffer.from(process.env.OHTTP_KEY_HEX, 'hex')) } : undefined;
-  const prover = tpl.prover({ url: proverUrl, ohttp });
+  // Without a real relay, OHTTP_RELAY_URL may point at the server's own gateway (it accepts
+  // envelopes on any path): that tests encapsulation, not the relay hop.
+  const ohttp = process.env.OHTTP_KEY_HEX ? { relayUrl: process.env.OHTTP_RELAY_URL ?? url, keyConfig: Uint8Array.from(Buffer.from(process.env.OHTTP_KEY_HEX, 'hex')) } : undefined;
+  const prover = tpl.prover({ url, ohttp });
   const t1 = Date.now();
-  const window = await spend.wrap(prover, { url: proverUrl, onStatus: (s) => console.log(name, s.status, s.stage ?? '') });
+  const window = await spend.wrap(prover, { url, onStatus: (s) => console.log(name, s.status, s.stage ?? '') });
   const wrapMs = Date.now() - t1;
   let latest = (await provider.getBlockLatestAccepted()).block_number;
   while (latest < window.submit_after) {
@@ -87,18 +92,19 @@ async function run(spend, name) {
   }
   let outcome;
   try {
-    const s = await spend.submit(relayer, { confirmFee: (max, expected) => (console.log(name, 'max fee', max, 'expected', expected), true) });
-    outcome = { included: 'sent', tx: s.transactionHash, maxFee: s.prepared.maxFee, expectedFee: s.prepared.expectedFee, linkable: s.linkable };
+    const s = await spend.submit(relayer, { confirmFee: (max, expected, warnings) => (console.log(name, 'max fee', max, 'expected', expected, warnings), true) });
+    outcome = { included: 'sent', tx: s.transactionHash, maxFee: s.prepared.maxFee, expectedFee: s.prepared.expectedFee, linkable: s.linkable, warnings: s.warnings };
   } catch (e) {
     // A rejection after a passing simulation is the gateway's (PROOF_VERSION_NOT_ALLOWED today).
-    outcome = { error: String(e.message ?? e).slice(0, 600), record_stage: spend.record.stage, tx: spend.record.tx };
+    const rec = await spend.record();
+    outcome = { error: String(e.message ?? e).slice(0, 600), record_stage: rec.stage, tx: rec.tx && { hash: rec.tx.hash, nonce: rec.tx.nonce, maxFee: rec.tx.maxFee } };
   }
   await log(name, { prove_ms: proveMs, wrap_ms: wrapMs, window, token_out: proved.statement.token_out, outcome });
 }
 
 if (progress.stage === 'synced') {
   const spend = await alice.transfer(TOKEN, 60n, bobAddr.address);
-  await save('record-id.json', { id: spend.record.id });
+  await save('record-id.json', { id: spend.id });
   await run(spend, 'transfer');
 }
 

@@ -48,13 +48,15 @@ pub fn open(seed: &Seed, chain: &Felt32, pool: &Felt32, record_type: &str, recor
         .map_err(|_| Error::new("store_corrupt", "record does not authenticate"))
 }
 
-/// The opaque name a record is stored under: `HMAC-SHA256(store key, type ‖ 0 ‖ key)`, hex.
+/// The opaque name a record is stored under: `HMAC-SHA256(id key, len ‖ type ‖ len ‖ key)`, hex,
+/// with its own key and a length-prefixed (injective) encoding (SDK-IM11).
 pub fn record_id(seed: &Seed, chain: &Felt32, pool: &Felt32, record_type: &str, record_key: &str) -> String {
-    let key = seed.store_key(chain, pool);
+    let key = seed.store_id_key(chain, pool);
     let mut m = <Hmac<Sha256> as Mac>::new_from_slice(key.as_ref()).expect("any key length");
-    m.update(record_type.as_bytes());
-    m.update(&[0]);
-    m.update(record_key.as_bytes());
+    for part in [record_type, record_key] {
+        m.update(&(part.len() as u32).to_be_bytes());
+        m.update(part.as_bytes());
+    }
     hex::encode(m.finalize().into_bytes())
 }
 

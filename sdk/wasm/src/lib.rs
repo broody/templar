@@ -42,7 +42,7 @@ fn seed_of(b: &[u8]) -> Out<Seed> {
 }
 
 fn u128_of(s: &str) -> Out<u128> {
-    s.parse().map_err(|_| bad("not a decimal u128"))
+    spend::u128_of(s).map_err(err)
 }
 
 // ---------------------------------------------------------------- seed and keys
@@ -110,11 +110,16 @@ pub fn asset_id(standard: u16, contract: &str, id_low: &str, id_high: &str) -> O
 /// A deposit's note for `address`: `{inner, ciphertext, delivery, commitment}` (the pool's
 /// `inner₉`, `ct₁₀`, the digest it will record and the leaf it will publish).
 #[wasm_bindgen]
-pub fn note_for(address: &str, asset: &str, amount: &str) -> Out<String> {
+pub fn note_for(address: &str, asset: &str, amount: &str, chain: &str, pool: &str) -> Out<String> {
     let to = Address::decode(address).map_err(err)?;
+    // A note for another pool's receiver is never found by its owner: the funds would be stranded
+    // (SDK-IM2).
+    if to.chain != f(chain)? || to.pool != f(pool)? {
+        return Err(err(Error::new("wrong_pool", "the address is for another chain or pool")));
+    }
     let asset = f(asset)?;
     felt::check_address(&asset, "asset").map_err(err)?;
-    let amount = u128_of(amount)?;
+    let amount = spend::u128_of(amount).map_err(err)?;
     if amount == 0 {
         return Err(bad("amount: zero"));
     }
@@ -128,6 +133,13 @@ pub fn note_for(address: &str, asset: &str, amount: &str) -> Out<String> {
         "delivery": felt::to_hex(&sealbox::delivery(&words)),
         "commitment": cm,
     }))
+}
+
+/// The commitment the pool computes for a deposit from its `inner` (checks and test doubles).
+#[wasm_bindgen]
+pub fn pool_commitment(chain: &str, pool: &str, asset: &str, amount: &str, inner: &str) -> Out<String> {
+    let inner: Digest = parse(inner, "inner")?;
+    to_json(&note::commitment_of_inner(&f(chain)?, &f(pool)?, &f(asset)?, u128_of(amount)?, &inner).map_err(err)?)
 }
 
 /// `Poseidon('CTRL_DELIVERY_V1', 304, words)` of ten ciphertext words (what the pool records).
@@ -290,6 +302,9 @@ struct PlanRequest {
     #[serde(default)]
     companions: Vec<(u64, Companion)>,
     required_inputs: Option<Vec<u64>>,
+    /// Every nullifier the pool has marked spent.
+    #[serde(default)]
+    spent: Vec<Digest>,
 }
 
 fn plan_with(seed: &[u8], request: &str, tree: &Tree, rng: &mut (impl rand_core::RngCore + rand_core::CryptoRng)) -> Out<String> {
@@ -304,6 +319,7 @@ fn plan_with(seed: &[u8], request: &str, tree: &Tree, rng: &mut (impl rand_core:
             notes: &r.notes,
             companions: &r.companions,
             required_inputs: r.required_inputs.as_deref(),
+            spent: &r.spent,
             tree: &tree.0,
         },
         rng,
@@ -318,12 +334,17 @@ pub fn plan_spend(seed: &[u8], request: &str, tree: &Tree) -> Out<String> {
     plan_with(seed, request, tree, &mut OsRng)
 }
 
+/// The proved spend, plus its statement as its own JSON string. Serialized directly, never through
+/// `serde_json::Value`, which cannot hold a u128 above `u64::MAX` (SDK-IP3).
+#[derive(Serialize)]
+struct ProvedOut<'a> {
+    #[serde(flatten)]
+    proved: &'a spend::Proved,
+    statement_json: String,
+}
+
 fn proved_json(p: &spend::Proved) -> Out<String> {
-    // The statement also goes out as its own JSON string: its u128 amount must reach the server
-    // exactly, and a JavaScript number cannot hold it.
-    let mut v = serde_json::to_value(p).map_err(|e| err(Error::new("internal", e.to_string())))?;
-    v["statement_json"] = Value::String(to_json(&p.statement)?);
-    to_json(&v)
+    to_json(&ProvedOut { proved: p, statement_json: to_json(&p.statement)? })
 }
 
 /// Proves a plan (run in a worker): `{proof, statement, statement_json, binding, calldata,
@@ -411,9 +432,39 @@ pub fn test_prove_spend_seeded(seed: &[u8], plan: &str, rng_seed: u64) -> Out<St
     proved_json(&spend::prove_plan(&seed_of(seed)?, &plan, &mut rng).map_err(err)?)
 }
 
+/// The nine proof facts an honest server returns for `binding` (mock servers in tests only).
+#[cfg(feature = "test-rng")]
+#[wasm_bindgen]
+pub fn test_expected_facts(pins: &str, binding: &str, base_block: u64, base_hash: &str) -> Out<String> {
+    let p: Pins = parse(pins, "pins")?;
+    let mh = result::message_hash(&p, &f(binding)?).map_err(err)?;
+    let s = |x: &str| felt::from_short_string(x).map(|v| felt::to_hex(&v)).map_err(err);
+    to_json(&vec![s("PROOF2")?, s("VIRTUAL_SNOS")?, p.os_program.clone(), s("VIRTUAL_SNOS0")?, format!("0x{base_block:x}"),
+                  base_hash.to_string(), p.config_hash.clone(), "0x1".into(), felt::to_hex(&mh)])
+}
+
 #[cfg(feature = "test-rng")]
 #[wasm_bindgen]
 pub fn test_plan_spend_seeded(seed: &[u8], request: &str, tree: &Tree, rng_seed: u64) -> Out<String> {
     use rand_core::SeedableRng;
     plan_with(seed, request, tree, &mut rand_chacha::ChaCha20Rng::seed_from_u64(rng_seed))
+}
+
+#[cfg(test)]
+mod tests {
+    /// A u128 withdrawal above `u64::MAX` survives serialization exactly (SDK-IP3).
+    #[test]
+    fn large_withdrawal_serializes() {
+        let v: serde_json::Value = serde_json::from_slice(&std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../vectors/sepolia-s1.json")).unwrap()).unwrap();
+        let mut statement: templar_core::spend::Proved = serde_json::from_value(serde_json::json!({
+            "proof": ["0x1"], "statement": v["public"], "binding": "0x1", "calldata": [], "circuit_hash": [0, 0, 0, 0, 0, 0, 0, 0],
+            "nullifiers": [v["public"]["nullifiers"][0], v["public"]["nullifiers"][1]],
+        }))
+        .unwrap();
+        statement.statement.withdrawal_amount = 1u128 << 100;
+        let out = super::proved_json(&statement).unwrap();
+        assert!(out.contains(&(1u128 << 100).to_string()));
+        let inner: String = serde_json::from_str::<serde_json::Map<String, serde_json::Value>>(&out).map(|m| m["statement_json"].as_str().unwrap().to_string()).unwrap_or_default();
+        assert!(inner.contains("\"withdrawal_amount\":1267650600228229401496703205376"));
+    }
 }

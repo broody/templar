@@ -16,6 +16,7 @@ pub const SALT: &[u8] = b"TEMPLAR_WALLET_V1";
 pub const SPEND: &[u8] = b"TEMPLAR_SPEND_V1";
 pub const INCOMING: &[u8] = b"TEMPLAR_INCOMING_V1";
 pub const STORE: &[u8] = b"TEMPLAR_STORE_V1";
+pub const STORE_ID: &[u8] = b"TEMPLAR_STORE_ID_V1";
 
 #[derive(Clone, Zeroize, ZeroizeOnDrop)]
 pub struct Seed([u8; 32]);
@@ -76,6 +77,13 @@ impl Seed {
     pub fn store_key(&self, chain: &Felt32, pool: &Felt32) -> Zeroizing<[u8; 32]> {
         let mut k = Zeroizing::new([0u8; 32]);
         self.expand(STORE, &[chain.as_slice(), pool.as_slice()].concat(), k.as_mut());
+        k
+    }
+
+    /// The key naming a pool's store records, separate from the encryption key (SDK-IM11).
+    pub fn store_id_key(&self, chain: &Felt32, pool: &Felt32) -> Zeroizing<[u8; 32]> {
+        let mut k = Zeroizing::new([0u8; 32]);
+        self.expand(STORE_ID, &[chain.as_slice(), pool.as_slice()].concat(), k.as_mut());
         k
     }
 }

@@ -69,10 +69,12 @@ export function parseEvent(keys: string[], data: string[], block: number): PoolE
     switch (BigInt(keys[0]!)) {
       case BigInt(SELECTORS.NotePublished): {
         if (n(1) !== 9 || n(12) !== 10 || d.length !== 23) return undefined;
+        // Commitment words are M31 elements; anything else is malformed, never a throw (SDK-IP10).
+        if (d.slice(2, 11).some((x) => BigInt(x) >= 2147483647n)) return undefined;
         return { kind: 'note', block, index: n(0), commitment: digestOf(d.slice(2, 11)), digest: canon(d[11]!), words: d.slice(13, 23).map(canon) };
       }
       case BigInt(SELECTORS.NullifierSpent):
-        if (n(0) !== 9 || d.length !== 10) return undefined;
+        if (n(0) !== 9 || d.length !== 10 || d.slice(1, 10).some((x) => BigInt(x) >= 2147483647n)) return undefined;
         return { kind: 'nullifier', block, nullifier: digestOf(d.slice(1, 10)) };
       case BigInt(SELECTORS.AssetRegistered):
         if (d.length !== 5) return undefined;

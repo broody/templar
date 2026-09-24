@@ -101,6 +101,7 @@ fn deposit_transfer_scan_withdraw_nft() {
             notes: &notes,
             companions: &[],
             required_inputs: None,
+            spent: &[],
             tree: &tree,
         },
         &mut rng,
@@ -135,6 +136,7 @@ fn deposit_transfer_scan_withdraw_nft() {
             notes: &notes[..1],
             companions: std::slice::from_ref(&companion),
             required_inputs: Some(&[notes[0].index]),
+            spent: &[],
             tree: &tree,
         },
         &mut rng,
@@ -154,6 +156,7 @@ fn deposit_transfer_scan_withdraw_nft() {
             notes: &nft_notes,
             companions: &[],
             required_inputs: None,
+            spent: &[],
             tree: &tree,
         },
         &mut rng,
@@ -166,7 +169,8 @@ fn deposit_transfer_scan_withdraw_nft() {
     // Refusals before proving.
     let plan_err = |request: Request, notes: &[NoteRef]| {
         spend::plan(
-            PlanInput { seed: &alice, chain: chain(), pool: pool(), request, notes, companions: &[], required_inputs: None, tree: &tree },
+            PlanInput { seed: &alice, chain: chain(), pool: pool(), request, notes, companions: &[], required_inputs: None,
+            spent: &[], tree: &tree },
             &mut ChaCha20Rng::seed_from_u64(1),
         )
         .unwrap_err()
@@ -178,4 +182,79 @@ fn deposit_transfer_scan_withdraw_nft() {
     assert_eq!(plan_err(Request::Transfer { asset: t.clone(), amount: "1".into(), to: other_pool.encode().unwrap() }, &notes), "wrong_pool");
     // Bob's note is not Alice's.
     assert_eq!(plan_err(Request::Transfer { asset: t, amount: "1".into(), to: b_addr.encode().unwrap() }, &refs(&bob_found[..1])), "not_ours");
+}
+
+/// The review fixes on planning and witnesses (SDK-IM1, IM4, IM6, IM7, IM8).
+#[test]
+fn spend_rules() {
+    let mut rng = ChaCha20Rng::seed_from_u64(9);
+    let alice = Seed::from_bytes(&[0xa1; 32]).unwrap();
+    let a0 = Address::of(&chain(), &pool(), &alice.account(&chain(), &pool(), 0).unwrap());
+    let a1 = Address::of(&chain(), &pool(), &alice.account(&chain(), &pool(), 1).unwrap());
+    let token = felt::parse("0x39f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8").unwrap();
+    let mut tree = Tree::new();
+    let mut published = vec![];
+    // Account 0 holds 1 (alone); account 1 holds 5 and 6.
+    for (to, amount) in [(&a0, 1u128), (&a1, 5), (&a1, 6)] {
+        let (cm, digest, words) = deposit(to, &token, amount, &mut rng);
+        published.push(Published { index: tree.len(), commitment: cm, digest, words });
+        tree.append(&[cm]).unwrap();
+    }
+    let registry = HashMap::new();
+    let ctx = Context { chain: chain(), pool: pool(), registry: &registry, registry_complete: true, settlements: &[] };
+    let a = alice.account(&chain(), &pool(), 0).unwrap();
+    let b = alice.account(&chain(), &pool(), 1).unwrap();
+    let keys = vec![
+        ScanKey { index: 0, receiver: a.receiver, ivk: a.ivk, nk: Some(a.nk) },
+        ScanKey { index: 1, receiver: b.receiver, ivk: b.ivk, nk: Some(b.nk) },
+    ];
+    let owned = scan::scan(&ctx, &keys, &published).unwrap().owned;
+    let notes = refs(&owned);
+    let t = felt::to_hex(&token);
+    let plan = |request: Request, spent: &[templar_core::Digest], required: Option<&[u64]>| {
+        spend::plan(
+            PlanInput { seed: &alice, chain: chain(), pool: pool(), request, notes: &notes, companions: &[], required_inputs: required, spent, tree: &tree },
+            &mut ChaCha20Rng::seed_from_u64(1),
+        )
+    };
+    // IM6: account 0's lone note does not block consolidating account 1's pair.
+    let c = plan(Request::Consolidate { asset: t.clone() }, &[], None).unwrap();
+    assert_eq!(c.inputs.iter().map(|n| n.account).collect::<Vec<_>>(), vec![1, 1]);
+    // IM7: zero, signed and zero-padded amounts are refused, re-plans included.
+    for amount in ["0", "+5", "05", "", "1e3"] {
+        let to = a0.encode().unwrap();
+        assert!(plan(Request::Transfer { asset: t.clone(), amount: amount.into(), to: to.clone() }, &[], None).is_err(), "{amount}");
+        assert!(plan(Request::Transfer { asset: t.clone(), amount: amount.into(), to }, &[], Some(&[1])).is_err(), "re-plan {amount}");
+    }
+    // IM4: a spent input is refused in the core.
+    let nf = owned.iter().find(|o| o.index == 2).unwrap().nullifier.unwrap();
+    assert_eq!(plan(Request::Transfer { asset: t.clone(), amount: "6".into(), to: a0.encode().unwrap() }, &[nf], None).unwrap_err().code, "spent");
+    // IM4: a spent companion is refused.
+    let single = plan(Request::Transfer { asset: t.clone(), amount: "6".into(), to: a0.encode().unwrap() }, &[], None).unwrap();
+    let comp = single.companion.clone().unwrap();
+    let cnf = comp.nullifier(&chain(), &pool(), &token).unwrap();
+    let err = spend::plan(
+        PlanInput {
+            seed: &alice, chain: chain(), pool: pool(),
+            request: Request::Transfer { asset: t.clone(), amount: "6".into(), to: a0.encode().unwrap() },
+            notes: &notes, companions: &[(single.inputs[0].index, comp)], required_inputs: None, spent: &[cnf], tree: &tree,
+        },
+        &mut ChaCha20Rng::seed_from_u64(2),
+    )
+    .unwrap_err();
+    assert_eq!(err.code, "companion_spent");
+    // IM1: 64-digit felt text in a stored plan is normalized, never a panic.
+    let mut p = single.clone();
+    p.chain = format!("0x{:0>64}", p.chain.trim_start_matches("0x"));
+    p.asset = format!("0x{:0>64}", p.asset.trim_start_matches("0x"));
+    p.withdrawal_recipient = format!("0x{:0>64}", "0");
+    assert!(spend::witness(&alice, &p).is_ok());
+    // IM8: the change to the spending account must decrypt to exactly its note. Changing its rho
+    // keeps conservation, so only the decryption check can catch it.
+    let with_change = plan(Request::Transfer { asset: t.clone(), amount: "4".into(), to: a0.encode().unwrap() }, &[], None).unwrap();
+    assert!(spend::witness(&alice, &with_change).is_ok());
+    let mut p = with_change.clone();
+    let own = p.outputs.iter().position(|o| o.receiver == b.receiver).expect("change to account 1");
+    p.outputs[own].rho[0] = (p.outputs[own].rho[0] + 1) % templar_core::P;
+    assert_eq!(spend::witness(&alice, &p).unwrap_err().message, "an output to this account does not decrypt to its note");
 }

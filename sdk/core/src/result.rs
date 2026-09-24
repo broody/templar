@@ -89,5 +89,7 @@ pub fn check(pins: &Pins, binding: &str, r: &ServerResult, latest_block: u64) ->
     if proof.is_empty() || proof.len() > MAX_PROOF_BYTES {
         return Err(bad("proof size"));
     }
-    Ok(Window { submit_after: r.base_block + SUBMIT_DELAY, valid_until: r.base_block + pins.max_proof_age })
+    let submit_after = r.base_block.checked_add(SUBMIT_DELAY).ok_or_else(|| bad("base block"))?;
+    let valid_until = r.base_block.checked_add(pins.max_proof_age).ok_or_else(|| bad("base block"))?;
+    Ok(Window { submit_after, valid_until })
 }

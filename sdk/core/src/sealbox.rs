@@ -38,11 +38,17 @@ fn box_key(secret: &StaticSecret, public: &[u8; 32]) -> Option<XSalsa20Poly1305>
 /// `epk ‖ tag ‖ ciphertext` of `message` to `pk`, with a fresh ephemeral key.
 pub fn seal(pk: &[u8; 32], message: &[u8], rng: &mut (impl RngCore + CryptoRng)) -> Result<Vec<u8>> {
     let esk = StaticSecret::random_from_rng(&mut *rng);
-    seal_with(pk, message, &esk)
+    seal_ephemeral(pk, message, &esk)
 }
 
-/// A sealed box with a given ephemeral secret (tests and known-answer vectors).
+/// A sealed box with a given ephemeral secret: known-answer vectors only, never a wallet path
+/// (SDK-IM12).
+#[cfg(any(test, feature = "test-rng"))]
 pub fn seal_with(pk: &[u8; 32], message: &[u8], esk: &StaticSecret) -> Result<Vec<u8>> {
+    seal_ephemeral(pk, message, esk)
+}
+
+fn seal_ephemeral(pk: &[u8; 32], message: &[u8], esk: &StaticSecret) -> Result<Vec<u8>> {
     let epk = PublicKey::from(esk).to_bytes();
     let cipher = box_key(esk, pk).ok_or_else(|| Error::input("sealing to a low-order key"))?;
     let mut body = message.to_vec();
@@ -172,6 +178,17 @@ mod tests {
         let mut bad = words;
         bad[9][6] = 1;
         assert!(from_words(&bad).is_err());
+    }
+
+    /// A box whose ephemeral key is blocked does not open (the all-zero shared secret, SDK-IM3).
+    #[test]
+    fn blocked_ephemeral_key_does_not_open() {
+        let ivk = clamp([7u8; 32]);
+        for k in BLOCKED {
+            let mut sealed = vec![0u8; SEALED];
+            sealed[..32].copy_from_slice(&k);
+            assert!(open(&ivk, &sealed).is_none());
+        }
     }
 
     #[test]

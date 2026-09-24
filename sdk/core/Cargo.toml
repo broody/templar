@@ -38,3 +38,7 @@ test-rng = ["dep:rand_chacha"]
 
 [dev-dependencies]
 rand_chacha = "0.3"
+
+[[test]]
+name = "vectors_keys"
+required-features = ["test-rng"]

@@ -1,6 +1,7 @@
 # Templar client SDK
 
-Status: **design, revision 3, after the design reviews (`docs/reviews/sdk-design-math-review.md`,
+Status: **revision 3, implemented on branch `feat/sdk`; implementation reviews in
+`docs/reviews/sdk-impl-{math,protocol}-review.md`. Design, after the design reviews (`docs/reviews/sdk-design-math-review.md`,
 `docs/reviews/sdk-design-protocol-review.md`: both CONDITIONAL GO on revision 1; on revision 2,
 math GO and protocol CONDITIONAL GO, whose items revision 3 resolves). Finding IDs
 `SDK-M*` and `SDK-P*` are cited where they changed the text; §16 lists every resolution. Nothing is
@@ -262,8 +263,8 @@ nullifiers. The SDK never calls `get_nullifier_spent` or any other per-note quer
 
 **Metadata (SDK-P5).** ERC20 assets are identified by address and checked against the pinned
 token list in the network constants; others are shown by address and flagged unverified. Token
-metadata (`symbol`, `decimals`) comes from the pinned list, or is read for every ERC20 that has
-ever been deposited into the pool (from bulk `Deposited` events), never only for assets the
+metadata (`symbol`, `decimals`) comes from the pinned list only in v1 (reading it for every ERC20
+ever deposited, from bulk `Deposited` events, is a later option), never read only for assets the
 wallet holds. NFT `token_uri` resolution is off by default; when enabled it goes through an
 application-supplied proxy.
 
@@ -496,6 +497,7 @@ strings; bytes as `Uint8Array`. Errors are returned as `{code, message}` (never 
 | `address_decode(address)` | `{chain, pool, receiver, pk, fingerprint}` |
 | `viewing_key_export(seed, chain, pool, i, kind)` / `viewing_key_import(key, expected_address)` | string / opaque key JSON |
 | `asset_id(standard, contract, id)` | felt |
+| `pool_commitment(chain, pool, asset, amount, inner)`, `delivery_digest(words)` | what the pool computes and records (checks and test doubles) |
 | `note_for(address, asset, amount, chain, pool)` | `{inner, ciphertext, commitment}` (a deposit's note) |
 | `Tree.new()`, `.append(leaves)`, `.truncate(n)`, `.root()`, `.len()`, `.paths(positions)` | handle |
 | `scan(keys, chain, pool, indexes, notes, registry, settlements)` | owned notes with nullifiers (spending or full viewing) |
@@ -533,9 +535,9 @@ are equivalent to a full viewing key, and records hold statements, so the shippe
 (IndexedDB in browsers, a file in Node) **encrypts every record by default**: XChaCha20-Poly1305
 under `kstore` (§3.2) with a random nonce, in the core (`store_seal`), with associated data
 `"TEMPLAR_STORE_V1" ‖ schema version ‖ felt₃₂(chain) ‖ felt₃₂(pool) ‖ record type ‖ record key`,
-so a record cannot be swapped for another or moved between keys (SDK-M18). Record keys stored in
-IndexedDB are opaque (`HMAC-SHA256(kstore, record key)`), so the key names reveal nothing
-(SDK-P19). Rolling back the whole
+so a record cannot be swapped for another or moved between keys (SDK-M18). Record names are opaque:
+`HMAC-SHA256(kid, len ‖ type ‖ len ‖ key)` under a separate key
+`kid = HKDF-Expand(PRK, "TEMPLAR_STORE_ID_V1" ‖ felt₃₂(chain) ‖ felt₃₂(pool), 32)` (SDK-P19, SDK-IM11). Rolling back the whole
 store to an older copy is not detected; the documentation says so. The store has a schema
 version with migrations, and takes a lock per chain and pool (Web Locks in browsers, a lock file
 in Node) so two tabs never sync or submit at once. An in-memory store is provided for tests.
@@ -574,8 +576,8 @@ recovery tries every derivation version (§3.1).
    or 429; window expiry; root eviction before submission; an OHTTP key mismatch; an attempt to
    re-plan a live record with different inputs is refused, including after a `REJECTED` or
    `REVERTED` attempt, until the record's root is evicted (SDK-P16); fee bounds are the same under
-   two different starknet.js overhead settings (SDK-P17, SDK-P21); 256 two-output spends after a
-   record's root do not yet release its notes, and 512 leaves do (SDK-P20).
+   two different starknet.js overhead settings (SDK-P17, SDK-P21); 255 two-output spends after a
+   record's root do not yet release its notes, and 256 (512 leaves) do once buried (SDK-P20).
 7. **End to end on Sepolia, with the SDK only** (no `sncast`): a deposit (live, with the user's
    confirmation), sync and recovery in a fresh process, a hidden transfer and an NFT withdrawal
    proved in WASM, wrapped by the prover server (directly and through an OHTTP relay), and
@@ -585,7 +587,8 @@ recovery tries every derivation version (§3.1).
 ## 13. Dependencies, supply chain and release (SDK-P11)
 
 - The client proof needs the arithmetic-profile fork of `proving` (`templar/arithmetic-profile`,
-  commit `4de7408a6`), which also carries an unreleased prover fix. It exists only in the local checkout
+  commit `250cc9c1e`, which also drops `stwo_cairo_prover` from the circuit prover so it builds for
+  wasm32), which also carries an unreleased prover fix. It exists only in the local checkout
   (`target/proving-arith`). It is pushed to the **private** `broody/proving-private` and pinned by
   commit; a check script verifies the checkout. It must not go to the public fork.
 - **Release gate.** A public npm or WASM release would reveal that fix by binary diffing. No public
@@ -594,7 +597,7 @@ recovery tries every derivation version (§3.1).
   `bench/m31-private-blake` sources the relation includes, the `stwo-cairo-prover` and `cairo-vm`
   chain and every other crate (through the SDK workspace's own committed `Cargo.lock`, built with
   `--locked`), the toolchain (`nightly-2026-01-15`, from the fork),
-  `wasm-bindgen` and `wasm-bindgen-cli` at the same version, and `wasm-opt`. The build recipe is
+  `wasm-bindgen` and `wasm-bindgen-cli` at the same version (`wasm-opt` is not used in v1). The build recipe is
   reproducible and publishes the `.wasm` sha256; npm provenance is enabled when releases are
   public.
 - TypeScript runtime dependencies: none besides the peer dependency `starknet`.

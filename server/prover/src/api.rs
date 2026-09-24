@@ -179,6 +179,12 @@ async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectIn
     let via_relay = ohttp.is_some() && state.config.ohttp.as_ref().is_some_and(|o| o.relays.iter().any(|r| in_block(ip, r)));
     let key = if via_relay { format!("relay:{}", address_key(ip)) } else { address_key(ip) };
     let body_hash: [u8; 32] = sha2::Sha256::digest(&body).into();
+    // An identical resubmission (a client that lost the admission reply, or re-wrapping after its
+    // result's window passed) is answered before any rate or queue check spends anything
+    // (docs/sdk-spec.md §8, SDK-P3, SDK-IP15).
+    if let Some(reply) = existing_job(&state, &body_hash).await {
+        return reply;
+    }
     {
         let rate = match (&state.config.ohttp, via_relay) {
             (Some(o), true) => o.submissions_per_hour_per_relay as f64,
@@ -245,15 +251,6 @@ async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectIn
     {
         let mut reg = state.registry.lock().unwrap();
         let now = Instant::now();
-        // An identical resubmission (a client that lost the admission reply) gets its job back,
-        // even while the note is in backoff (SDK-P3).
-        if let Some(existing) = reg.dedup.get(&dkey) {
-            if reg.jobs.get(existing).is_some_and(|j| j.body_hash == body_hash) {
-                let id = existing.clone();
-                let position = reg.order.iter().position(|x| *x == id);
-                return (StatusCode::ACCEPTED, Json(json!({"id": id, "position": position})));
-            }
-        }
         if reg.refusals.get(&dkey).is_some_and(|r| now < r.until) {
             return err(StatusCode::TOO_MANY_REQUESTS, "this note was submitted recently; retry later");
         }
@@ -341,6 +338,32 @@ async fn status(State(state): State<Arc<AppState>>, Path(id): Path<String>) -> R
         "id": id, "status": j.status.name(), "stage": j.stage, "position": position,
         "result": j.result, "error": j.error,
     })))
+}
+
+/// The job an identical submission already holds, unless it is a finished job whose proof is past
+/// its `valid_until`: that one releases its note, and the submission is admitted afresh.
+async fn existing_job(state: &Arc<AppState>, body_hash: &[u8; 32]) -> Option<Reply> {
+    let found = {
+        let reg = state.registry.lock().unwrap();
+        reg.jobs.iter().find(|(id, j)| j.body_hash == *body_hash && reg.dedup.get(&j.dedup_key) == Some(*id)).map(|(id, j)| {
+            let until = matches!(j.status, Status::Done).then(|| j.result.as_ref()?.get("valid_until")?.as_u64()).flatten();
+            (id.clone(), j.dedup_key.clone(), until)
+        })
+    }?;
+    let (id, dkey, until) = found;
+    if let Some(until) = until {
+        if state.rpc.block_number().await.is_ok_and(|latest| latest > until) {
+            let mut reg = state.registry.lock().unwrap();
+            if reg.dedup.get(&dkey) == Some(&id) {
+                reg.dedup.remove(&dkey);
+                reg.refusals.remove(&dkey);
+            }
+            return None;
+        }
+    }
+    let reg = state.registry.lock().unwrap();
+    let position = reg.order.iter().position(|x| *x == id);
+    Some((StatusCode::ACCEPTED, Json(json!({"id": id, "position": position}))))
 }
 
 /// Creates the state, the worker pool and the retention sweeper.
@@ -445,6 +468,52 @@ fn sweep(state: &Arc<AppState>) {
 mod tests {
     use super::*;
     use axum::http::HeaderValue;
+
+    /// A state with one job holding `body` for note key `dkey`, and an RPC stub at `latest`.
+    async fn state_with_job(status: Status, valid_until: u64, latest: u64) -> (Arc<AppState>, String, [u8; 32]) {
+        let rpc = axum::Router::new().route("/", axum::routing::post(move || async move {
+            Json(json!({"jsonrpc": "2.0", "id": 1, "result": latest}))
+        }));
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let url = format!("http://{}/", listener.local_addr().unwrap());
+        tokio::spawn(async move { axum::serve(listener, rpc).await.unwrap() });
+        let cfg = Config::load(std::path::Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../deploy/prover.example.toml"))).unwrap();
+        let state = start(cfg, Rpc::new(&url), json!({}));
+        let body_hash = [7u8; 32];
+        let id = "0123456789abcdef0123456789abcdef".to_string();
+        let mut reg = state.registry.lock().unwrap();
+        reg.jobs.insert(id.clone(), Job {
+            status, stage: "done".into(), finished: None, submission: None, bridge: None,
+            result: Some(json!({"valid_until": valid_until})), error: None, dedup_key: "note".into(), body_hash,
+            address_key: "1.2.3.4".into(), dir: std::env::temp_dir(),
+        });
+        reg.dedup.insert("note".into(), id.clone());
+        // The note is in backoff.
+        reg.refusals.insert("note".into(), Refusal { count: 3, until: Instant::now() + Duration::from_secs(600) });
+        drop(reg);
+        (state, id, body_hash)
+    }
+
+    /// An identical resubmission gets its job back even in backoff (SDK-P3, SDK-IP15).
+    #[tokio::test]
+    async fn identical_resubmission_gets_its_job() {
+        let (state, id, body) = state_with_job(Status::Queued, 0, 10).await;
+        let (code, Json(v)) = existing_job(&state, &body).await.expect("its job");
+        assert_eq!(code, StatusCode::ACCEPTED);
+        assert_eq!(v["id"], id);
+        assert!(existing_job(&state, &[8u8; 32]).await.is_none(), "another body is not matched");
+        let (state, id, body) = state_with_job(Status::Done, 100, 100).await;
+        assert_eq!(existing_job(&state, &body).await.expect("still valid").1 .0["id"], id);
+    }
+
+    /// A finished job past `valid_until` releases its note and its backoff (SDK-P3).
+    #[tokio::test]
+    async fn finished_job_past_its_window_releases_the_note() {
+        let (state, _, body) = state_with_job(Status::Done, 100, 101).await;
+        assert!(existing_job(&state, &body).await.is_none());
+        let reg = state.registry.lock().unwrap();
+        assert!(!reg.dedup.contains_key("note") && !reg.refusals.contains_key("note"));
+    }
 
     #[test]
     fn address_keys() {

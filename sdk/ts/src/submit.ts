@@ -54,7 +54,8 @@ export async function prepare(account: Account, call: Call, proof: string, proof
   const provider = account.provider as unknown as { channel: { getEstimateFee: Function; fetch: Function } };
   const invocations = await account.accountInvocationsFactory(
     [{ type: TransactionType.INVOKE, payload: [call] }],
-    { versions: [ETransactionVersion3.V3], skipValidate: false, tip: 0, proof, proofFacts },
+    // The query version: the estimate is never a valid V3 transaction (SDK-IP9).
+    { versions: [ETransactionVersion3.F3], skipValidate: false, tip: 0, proof, proofFacts },
   );
   const estimates = (await provider.channel.getEstimateFee(invocations, { skipValidate: false, blockIdentifier: 'pre_confirmed' })) as RawEstimate[];
   const raw = estimates[0];

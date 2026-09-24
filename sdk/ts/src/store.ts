@@ -97,10 +97,38 @@ export class FileKV implements KV {
     const fs = await this.fs();
     await fs.rm(`${this.dir}/${id}`, { force: true });
   }
+  private held = new Map<string, Promise<unknown>>();
+
+  /**
+   * An exclusive lock file holding the owner's pid; a lock left by a process that no longer exists
+   * is taken over (SDK-IP11). Within this process, callers are serialized through a promise chain.
+   */
   async lock<T>(name: string, f: () => Promise<T>): Promise<T> {
+    const prev = this.held.get(name) ?? Promise.resolve();
+    const run = prev.then(() => this.lockFile(name, f), () => this.lockFile(name, f));
+    this.held.set(name, run.catch(() => undefined));
+    return run;
+  }
+
+  private async lockFile<T>(name: string, f: () => Promise<T>): Promise<T> {
     const fs = await this.fs();
     const path = `${this.dir}/.lock-${name.replace(/[^a-z0-9]/gi, '')}`;
-    const h = await fs.open(path, 'wx').catch(() => fail('locked', `another process holds ${path}`));
+    const take = () => fs.open(path, 'wx');
+    let h = await take().catch(() => undefined);
+    if (!h) {
+      const pid = Number((await fs.readFile(path, 'utf8').catch(() => '')).trim());
+      const alive = (() => {
+        try {
+          return pid > 0 && (process.kill(pid, 0), true);
+        } catch {
+          return false;
+        }
+      })();
+      if (alive) fail('locked', `process ${pid} holds ${path}`);
+      await fs.rm(path, { force: true });
+      h = await take().catch(() => fail('locked', `another process took ${path}`));
+    }
+    await h.writeFile(String(process.pid));
     try {
       return await f();
     } finally {

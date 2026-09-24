@@ -97,7 +97,11 @@ pub struct Plan {
     pub withdrawal_amount: String,
 }
 
-fn u128_of(s: &str) -> Result<u128> {
+/// A canonical decimal u128: digits only, no sign, no leading zeros (SDK-IM7).
+pub fn u128_of(s: &str) -> Result<u128> {
+    if s.is_empty() || !s.bytes().all(|b| b.is_ascii_digit()) || (s.len() > 1 && s.starts_with('0')) {
+        return Err(Error::input("amount: not a canonical decimal u128"));
+    }
     s.parse::<u128>().map_err(|_| Error::input("amount: not a decimal u128"))
 }
 
@@ -176,6 +180,9 @@ pub struct PlanInput<'a> {
     pub companions: &'a [(u64, Companion)],
     /// A live record's inputs, which a re-plan must reuse exactly (spec §9.1).
     pub required_inputs: Option<&'a [u64]>,
+    /// Every nullifier the pool has marked spent (from the synced `NullifierSpent` events): no
+    /// input and no companion may be spent (SDK-IM4).
+    pub spent: &'a [Digest],
     pub tree: &'a Tree,
 }
 
@@ -197,20 +204,29 @@ pub fn plan(p: PlanInput, rng: &mut (impl RngCore + CryptoRng)) -> Result<Plan> 
             chosen
         }
         (Request::Consolidate { .. }, None) => {
-            let mut by_amount = candidates.clone();
-            by_amount.sort_by_key(|n| u128_of(&n.amount).unwrap_or(u128::MAX));
-            let first = by_amount.first().ok_or_else(|| Error::new("insufficient_notes", "nothing to consolidate"))?.clone();
-            let second = by_amount.iter().skip(1).find(|n| n.account == first.account).cloned()
-                .ok_or_else(|| Error::new("insufficient_notes", "consolidation needs two notes of one account"))?;
-            vec![first, second]
-        }
-        (_, None) => {
-            if want == 0 {
-                return Err(Error::input("amount: zero"));
+            // The two smallest notes of whichever account gives the smallest pair (SDK-IM6).
+            let mut best: Option<(u128, NoteRef, NoteRef)> = None;
+            for i in 0..candidates.len() {
+                for j in i + 1..candidates.len() {
+                    let (a, b) = (&candidates[i], &candidates[j]);
+                    if a.account != b.account {
+                        continue;
+                    }
+                    let Some(total) = u128_of(&a.amount)?.checked_add(u128_of(&b.amount)?) else { continue };
+                    if best.as_ref().is_none_or(|(t, ..)| total < *t) {
+                        best = Some((total, a.clone(), b.clone()));
+                    }
+                }
             }
-            select(&candidates, want)?
+            let (_, a, b) = best.ok_or_else(|| Error::new("insufficient_notes", "consolidation needs two notes of one account"))?;
+            vec![a, b]
         }
+        (_, None) => select(&candidates, want)?,
     };
+    // Every transfer and withdrawal moves a nonzero amount, re-plans included (SDK-IM7).
+    if !matches!(p.request, Request::Consolidate { .. }) && want == 0 {
+        return Err(Error::input("amount: zero"));
+    }
     let account_index = inputs[0].account;
     if inputs.iter().any(|n| n.account != account_index) {
         return Err(Error::new("one_account", "a spend's inputs come from one account"));
@@ -224,6 +240,12 @@ pub fn plan(p: PlanInput, rng: &mut (impl RngCore + CryptoRng)) -> Result<Plan> 
             return Err(Error::new("not_ours", format!("note {} is not this account's leaf", n.index)));
         }
         total = total.checked_add(amount).ok_or_else(|| Error::input("amount overflow"))?;
+    }
+    for n in &inputs {
+        let position = u32::try_from(n.index).map_err(|_| Error::input("position"))?;
+        if p.spent.contains(&note::nullifier(&account.nk, &n.commitment, position)) {
+            return Err(Error::new("spent", format!("note {} is already spent", n.index)));
+        }
     }
     let paths = inputs.iter().map(|n| p.tree.path(n.index)).collect::<Result<Vec<_>>>()?;
     let change = total.checked_sub(want).ok_or_else(|| Error::new("insufficient_notes", "the inputs do not cover the amount"))?;
@@ -258,7 +280,12 @@ pub fn plan(p: PlanInput, rng: &mut (impl RngCore + CryptoRng)) -> Result<Plan> 
     }
     let (companion, companion_is_new) = if inputs.len() == 1 {
         match p.companions.iter().find(|(i, _)| *i == inputs[0].index) {
-            Some((_, c)) => (Some(c.clone()), false),
+            Some((_, c)) => {
+                if p.spent.contains(&c.nullifier(&p.chain, &p.pool, &asset)?) {
+                    return Err(Error::new("companion_spent", "the note's companion dummy was already spent"));
+                }
+                (Some(c.clone()), false)
+            }
             None => (Some(Companion::fresh(rng)), true),
         }
     } else {
@@ -294,6 +321,9 @@ pub fn witness(seed: &Seed, plan: &Plan) -> Result<(Public, Private)> {
     if chain != felt::from_short_string("SN_SEPOLIA")? && chain != felt::from_short_string("SN_MAIN")? {
         return Err(Error::input("chain"));
     }
+    // The relation's own encoders panic on non-canonical text (64 hex digits), so every felt it
+    // parses is rebuilt from its parsed value (SDK-IM1).
+    let (chain_s, pool_s, asset_s) = (felt::to_hex(&chain), felt::to_hex(&pool), felt::to_hex(&asset));
     let account = seed.account(&chain, &pool, plan.account)?;
     if plan.inputs.is_empty() || plan.inputs.len() > 2 || plan.paths.len() != plan.inputs.len() {
         return Err(Error::input("one or two inputs"));
@@ -322,22 +352,34 @@ pub fn witness(seed: &Seed, plan: &Plan) -> Result<(Public, Private)> {
         let words: Vec<Felt32> = o.ciphertext.iter().map(|w| felt::parse(w)).collect::<Result<_>>()?;
         let words: [Felt32; 10] = words.try_into().map_err(|_| Error::input("ciphertext: not ten words"))?;
         sealbox::from_words(&words)?;
-        if felt::to_hex(&sealbox::delivery(&words)) != o.delivery {
+        let delivery = sealbox::delivery(&words);
+        if Ok(delivery) != felt::parse(&o.delivery) {
             return Err(Error::input("delivery digest"));
         }
         if !digest_ok(&o.receiver) || !digest_ok(&o.rho) {
             return Err(Error::input("output encoding"));
         }
         outputs.push(Output { receiver: o.receiver, rho: o.rho, amount: u128_of(&o.amount)? });
-        deliveries.push(o.delivery.clone());
+        deliveries.push(felt::to_hex(&delivery));
+        // An output to this account must decrypt to exactly what it commits to, so a corrupted
+        // plan cannot strand the change (SDK-IM8). A payee's output cannot be checked here.
+        if o.receiver == account.receiver {
+            let sealed = sealbox::from_words(&words)?;
+            let pt = sealbox::open(&account.ivk, &sealed).and_then(|x| note::parse(&x));
+            let amount = u128_of(&o.amount)?;
+            if pt.is_none_or(|pt| pt.side.is_some() || pt.asset != asset || pt.receiver != o.receiver || pt.rho != o.rho || pt.amount != amount) {
+                return Err(Error::input("an output to this account does not decrypt to its note"));
+            }
+        }
     }
     let recipient = felt::parse(&plan.withdrawal_recipient)?;
     let w_amount = u128_of(&plan.withdrawal_amount)?;
     if !felt::below_2_251(&recipient) {
         return Err(Error::input("recipient"));
     }
+    let recipient_s = felt::to_hex(&recipient);
     let private = Private {
-        token: plan.asset.clone(),
+        token: asset_s.clone(),
         inputs: [inputs[0].clone(), inputs[1].clone()],
         dummy,
         outputs: [outputs[0].clone(), outputs[1].clone()],
@@ -345,10 +387,10 @@ pub fn witness(seed: &Seed, plan: &Plan) -> Result<(Public, Private)> {
     };
     let public = payment4::statement(
         TREE,
-        &plan.chain,
-        &plan.pool,
+        &chain_s,
+        &pool_s,
         [deliveries[0].clone(), deliveries[1].clone()],
-        (plan.withdrawal_recipient.clone(), w_amount),
+        (recipient_s, w_amount),
         "0x0",
         &private,
     )

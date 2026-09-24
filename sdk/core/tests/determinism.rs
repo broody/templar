@@ -46,6 +46,7 @@ fn seeded_plan_and_proof_are_fixed() {
             notes: &notes,
             companions: &[],
             required_inputs: None,
+            spent: &[],
             tree: &tree,
         },
         &mut ChaCha20Rng::seed_from_u64(7),

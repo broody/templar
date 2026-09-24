@@ -49,6 +49,15 @@ pub fn commitment(chain: &Felt32, pool: &Felt32, asset: &Felt32, amount: u128, r
     Ok(payment::commitment(&context, amount, receiver, rho))
 }
 
+/// What the pool computes on a deposit: `H(NOTE, chain₉ ‖ pool₉ ‖ asset₉ ‖ amount₈ ‖ inner)`.
+pub fn commitment_of_inner(chain: &Felt32, pool: &Felt32, asset: &Felt32, amount: u128, inner: &Digest) -> Result<Digest> {
+    if inner.iter().any(|w| *w >= crate::P) {
+        return Err(Error::input("inner: not canonical"));
+    }
+    let context = [felt::limbs(chain)?, felt::limbs(pool)?, felt::limbs(asset)?].concat();
+    Ok(h(templar_client_verifier_circuit::payment::NOTE, 0, &[context, payment::amount_limbs(amount).to_vec(), inner.to_vec()].concat()))
+}
+
 /// `nf = H(NF, nk ‖ cm ‖ pos_lo ‖ pos_hi)`.
 pub fn nullifier(nk: &Digest, cm: &Digest, position: u32) -> Digest {
     payment::nullifier(nk, cm, position)

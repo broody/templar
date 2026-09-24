@@ -195,7 +195,7 @@ impl ViewingKey {
     /// Decodes a viewing key and checks it against the independently authenticated address it is
     /// claimed to view (spec §4.2).
     pub fn import(s: &str, expected: &Address) -> Result<ViewingKey> {
-        let full = s.starts_with("templarfvk");
+        let full = s.to_ascii_lowercase().starts_with("templarfvk");
         let (network, body) = decode(if full { Kind::Full } else { Kind::Incoming }, s, if full { 168 } else { 132 })?;
         let (chain, pool) = context(&body, network)?;
         let (receiver, nk, ivk) = if full {
@@ -249,6 +249,74 @@ mod tests {
         assert!(Address::decode(&ivk).is_err());
         assert!(ViewingKey::import(&s, &addr).is_err());
         assert_eq!(addr.fingerprint().len(), 24);
+    }
+
+    /// Encodes raw data bytes (version, type, body) with an HRP, as `encode` does.
+    fn raw(hrp_s: &str, data: &[u8], pad: Option<&[u8]>) -> String {
+        let mut d = data.to_vec();
+        let mut p = [0u8; 16];
+        p[..hrp_s.len()].copy_from_slice(hrp_s.as_bytes());
+        d.extend_from_slice(pad.unwrap_or(&p));
+        bech32::encode::<Bech32m>(Hrp::parse(hrp_s).unwrap(), &f4jumble::f4jumble(&d).unwrap()).unwrap()
+    }
+
+    /// Every decoding rejection of spec §4.1 and §4.2 (SDK-IM3).
+    #[test]
+    fn address_rejections() {
+        let (chain, pool, a) = setup();
+        let addr = Address::of(&chain, &pool, &a);
+        let body = addr.body();
+        let good = [&[VERSION, 1][..], &body].concat();
+        assert_eq!(Address::decode(&raw("templarsep", &good, None)).unwrap(), addr);
+        let with = |f: &dyn Fn(&mut Vec<u8>)| {
+            let mut d = good.clone();
+            f(&mut d);
+            d
+        };
+        let reject = |name: &str, s: String| assert!(Address::decode(&s).is_err(), "{name} accepted");
+        reject("version", raw("templarsep", &with(&|d| d[0] = 2), None));
+        reject("type", raw("templarsep", &with(&|d| d[1] = 2), None));
+        reject("hrp for another chain", raw("templar", &good, None));
+        reject("unknown hrp", raw("templarx", &good, None));
+        reject("zero pool", raw("templarsep", &with(&|d| d[34..66].fill(0)), None));
+        reject("pool at 2^251", raw("templarsep", &with(&|d| d[34] = 0x08), None));
+        reject("receiver word = p", raw("templarsep", &with(&|d| d[66..70].copy_from_slice(&0x7fff_ffffu32.to_be_bytes())), None));
+        reject("zero receiver", raw("templarsep", &with(&|d| d[66..102].fill(0)), None));
+        reject("pk bit 255", raw("templarsep", &with(&|d| d[133] |= 0x80), None));
+        reject("pk = p - 1", raw("templarsep", &with(&|d| {
+            d[102] = 0xec;
+            d[103..133].fill(0xff);
+            d[133] = 0x7f;
+        }), None));
+        reject("pk >= p", raw("templarsep", &with(&|d| {
+            d[102] = 0xee;
+            d[103..133].fill(0xff);
+            d[133] = 0x7f;
+        }), None));
+        reject("pk zero", raw("templarsep", &with(&|d| d[102..134].fill(0)), None));
+        reject("pk one", raw("templarsep", &with(&|d| {
+            d[102..134].fill(0);
+            d[102] = 1;
+        }), None));
+        reject("short", raw("templarsep", &good[..good.len() - 1], None));
+        reject("long", raw("templarsep", &[&good[..], &[0]].concat(), None));
+        reject("padding", raw("templarsep", &good, Some(&[0u8; 16])));
+        let s = addr.encode().unwrap();
+        let mixed: String = s.chars().enumerate().map(|(i, c)| if i % 2 == 0 { c.to_ascii_uppercase() } else { c }).collect();
+        reject("mixed case", mixed);
+        let bech32 = bech32::encode::<bech32::Bech32>(Hrp::parse("templarsep").unwrap(), &f4jumble::f4jumble(&[&good[..], b"templarsep\0\0\0\0\0\0"].concat()).unwrap()).unwrap();
+        reject("bech32 checksum", bech32);
+        reject("too long", format!("templarsep1{}", "q".repeat(1100)));
+        // Viewing keys: an unclamped ivk, and a key for another address.
+        let ivk_body = [&[VERSION, 2][..], &chain, &pool, &digest_bytes(&a.receiver), &{
+            let mut k = a.ivk;
+            k[0] |= 1;
+            k
+        }]
+        .concat();
+        assert!(ViewingKey::import(&raw("templarivksep", &ivk_body, None), &addr).is_err(), "unclamped ivk accepted");
+        let upper = ViewingKey::of(&chain, &pool, &a, true).encode().unwrap().to_ascii_uppercase();
+        assert!(ViewingKey::import(&upper, &addr).is_ok(), "uppercase full viewing key");
     }
 
     #[test]
