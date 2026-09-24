@@ -93,6 +93,8 @@ def main():
     p2 = json.loads((run_dir / 'proof2/summary.json').read_text())
     assert p2['verified']
     t['proof2'] = {k: p2[k] for k in ('prove_seconds', 'proof_bytes', 'verified')}
+    rss = [l for l in (run_dir / 'proof2/run.log').read_text().splitlines() if 'Maximum resident' in l]
+    t['proof2']['max_rss_gib'] = int(rss[-1].split()[-1]) / 2**20 if rss else None
     preimage = json.loads((run_dir / 'proof2/output-preimage.json').read_text())
     facts = [int.from_bytes(b'PROOF2', 'big'), int.from_bytes(b'VIRTUAL_SNOS', 'big'), *[int(x, 16) for x in preimage]]
     fixture = json.loads((run_dir / 'os/state-fixture.json').read_text())
