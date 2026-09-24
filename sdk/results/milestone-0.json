@@ -50,5 +50,34 @@
  "not_measured": [
   "grinding share of proof time",
   "a mobile browser"
- ]
+ ],
+ "simd128_default_2026-09-25": {
+  "note": "the default build since 2026-09-25 (sdk/.cargo/config.toml): -C target-feature=+simd128",
+  "node_prove_seconds": 6.05,
+  "chrome": {
+   "browser": "chromium 153.0.8010.47",
+   "runs": [
+    {
+     "prove_ms": 6173,
+     "linear_memory_mib": 256.125,
+     "identical": true
+    },
+    {
+     "prove_ms": 6121.79999999702,
+     "linear_memory_mib": 256.125,
+     "identical": true
+    },
+    {
+     "prove_ms": 6142.69999999553,
+     "linear_memory_mib": 256.125,
+     "identical": true
+    }
+   ]
+  },
+  "native_seeded_test_seconds": {
+   "1_thread": 5.31,
+   "4_threads": 1.71,
+   "36_threads": 1.03
+  }
+ }
 }

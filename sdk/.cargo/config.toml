@@ -1,3 +1,6 @@
-# getrandom 0.3 (hpke, stwo's rand 0.9) needs its backend selected for wasm32 (spec §2, SDK-P11).
+# wasm32 builds (spec §2, §7.3):
+# - getrandom 0.3 (hpke, stwo's rand 0.9) needs its backend selected (SDK-P11);
+# - 128-bit SIMD: the prover's vectorized field arithmetic, about 3x faster than scalar
+#   (19 s → 6.3 s per proof in Node). Every current browser and Node supports it (Safari ≥ 16.4).
 [target.wasm32-unknown-unknown]
-rustflags = ["--cfg", 'getrandom_backend="wasm_js"']
+rustflags = ["--cfg", 'getrandom_backend="wasm_js"', "-C", "target-feature=+simd128"]

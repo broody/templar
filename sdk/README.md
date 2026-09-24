@@ -37,7 +37,7 @@ const { address, fingerprint } = await wallet.address(0);
 await wallet.sync();                                   // { complete, block, balances, problems }
 await wallet.deposit(account, { asset: { standard: 20, contract: token }, amount: 1000n });
 const spend = await wallet.transfer(token, 600n, bobAddress);
-await spend.prove();                                   // client proof in a worker (~20 s in WASM)
+await spend.prove();                                   // client proof in a worker (~6 s in WASM)
 await spend.wrap(tpl.prover({ url }), { url });        // the server's large proof and facts, checked
 const { transactionHash, linkable } = await spend.submit(relayerAccount);
 ```
@@ -51,7 +51,7 @@ wallets are not supported as submitters in v1.
 | | Result |
 | --- | --- |
 | WASM build | 48 s release build, 7.8 MB `.wasm` (circuit prover without `stwo_cairo_prover`, fork `250cc9c`) |
-| Client proof in WASM | Byte-identical to native (`vectors/determinism.json`); Node 20.3 s / 332 MiB RSS; Chrome 153 18.1 s / 257 MiB linear memory, three runs ([`results/milestone-0.json`](results/milestone-0.json)) |
+| Client proof in WASM | Byte-identical to native (`vectors/determinism.json`); with 128-bit SIMD (the default build): Node 6.1 s, Chrome 153 6.1 s / 256 MiB linear memory, three runs; without SIMD it was 19–20 s. Native: 5.3 s on one thread, 1.0 s on 36 ([`results/milestone-0.json`](results/milestone-0.json)) |
 | Deployed bridge | WASM- and core-made proofs pass `templar-prover check` against the deployed R4 bridge build |
 | Sepolia S1 known answers | Binding, all 90 calldata felts, message hash and facts reproduce the real S1 spend (`vectors/sepolia-s1.json`) |
 | Independent reference | `vectors/check_keys.py` recomputes every key, address, viewing key, fingerprint, store key and sealed box (libsodium) |

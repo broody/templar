@@ -124,7 +124,7 @@ The server receives the client proof and its public statement only. It must be b
 
 ## Client SDK
 
-The wallet side is a Rust core in WebAssembly and a TypeScript package over starknet.js ([Client SDK](/architecture/sdk)). The R0 V4 client proof runs in a browser worker in about 18 seconds with 257 MiB of memory (Chrome 153), byte-identical to the native proof, and the deployed bridge build accepts it. On Sepolia, with the SDK alone, a live deposit was received and recovered from the seed, and a hidden transfer and a withdrawal were proved in WebAssembly, wrapped by the prover server (one through OHTTP) and sent with starknet.js. Both transactions pass simulation with validation at about 3.4 STRK; the gateway refuses them only because it does not yet accept large proofs.
+The wallet side is a Rust core in WebAssembly and a TypeScript package over starknet.js ([Client SDK](/architecture/sdk)). The R0 V4 client proof runs in a browser worker in about 6 seconds with 256 MiB of memory (Chrome 153, 128-bit SIMD), byte-identical to the native proof, and the deployed bridge build accepts it. On Sepolia, with the SDK alone, a live deposit was received and recovered from the seed, and a hidden transfer and a withdrawal were proved in WebAssembly, wrapped by the prover server (one through OHTTP) and sent with starknet.js. Both transactions pass simulation with validation at about 3.4 STRK; the gateway refuses them only because it does not yet accept large proofs.
 
 ## Client proof and privacy
 

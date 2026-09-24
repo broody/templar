@@ -12,7 +12,7 @@ A wallet or app uses Templar through one package, `@templar/sdk`. Every format, 
 
 <Flow steps={[
   { title: 'Sync', detail: 'Download the pool’s events in bulk, rebuild the tree, decrypt the wallet’s notes, check the root.' },
-  { title: 'Prove', detail: 'Plan the spend and prove it in a worker: about 20 seconds in a browser.' },
+  { title: 'Prove', detail: 'Plan the spend and prove it in a worker: about 6 seconds in a browser.' },
   { title: 'Wrap', detail: 'A prover server turns the client proof into a large proof, directly or through an OHTTP relay.' },
   { title: 'Submit', detail: 'Estimate, sign, simulate and send the exact transaction with its proof attached.' },
 ]} caption="A spend from a browser or Node. Keys never leave the core; the server sees what the chain later sees." />
@@ -31,7 +31,7 @@ A sync is **complete** only when the leaves are contiguous, their count and root
 
 ## Spending
 
-The core picks one or two notes of the asset, adds change and dummies, shuffles the outputs and builds the spend's statement, then proves it in a worker. The proof takes about 18 seconds in Chrome and 20 in Node, with under 350 MiB of memory, and is byte-identical to the native one. The prover server checks it before any heavy work. The wallet checks the server's result against constants pinned in the package, not against what the server says about itself.
+The core picks one or two notes of the asset, adds change and dummies, shuffles the outputs and builds the spend's statement, then proves it in a worker. The proof takes about 6 seconds in Chrome or Node (single-threaded, with WebAssembly's 128-bit SIMD), with about 256 MiB of memory, and is byte-identical to the native one. The prover server checks it before any heavy work. The wallet checks the server's result against constants pinned in the package, not against what the server says about itself.
 
 Submission builds the exact transaction, simulates it with validation, and sends that same signed object. The fee bounds are a fixed function of the node's raw estimate, identical in every wallet, with a zero tip. The submitting account is public and linked to the spend; for unlinkability it should be a relayer's account.
 

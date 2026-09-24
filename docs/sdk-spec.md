@@ -351,7 +351,8 @@ bench examples then call (SDK-P1):
   bench).
 
 Proving runs in a Web Worker (browsers) or `worker_threads` (Node), single-threaded (rayon's
-wasm32 fallback), in a fresh instance per proof. Multi-threaded WASM (`wasm-bindgen-rayon`,
+wasm32 fallback), in a fresh instance per proof, built with WebAssembly's 128-bit SIMD
+(`+simd128`: about 3x faster than scalar; every current browser and Node, Safari from 16.4). Multi-threaded WASM (`wasm-bindgen-rayon`,
 cross-origin isolation) is a later option. Native cost today: log 18, ~0.6 s at four threads.
 
 **Milestone 0 (gating, SDK-P1).** Before the rest of the core: build R4 proving for
