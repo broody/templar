@@ -10,9 +10,9 @@ import { Flow } from '../components/Flow'
 
 # Private value. Public verification.
 
-<p className="guide-lead">Templar is a private token pool on Starknet with push payments to reusable cloaked receiving addresses. Share a cloaked address, receive while offline, and prove spends locally without publishing your private note data.</p>
+<p className="guide-lead">Templar is a private token pool on Starknet with push payments to reusable cloaked receiving addresses. Share a cloaked address, receive while offline, use public DeFi without revealing which notes you spend, and prove spends on your own device.</p>
 
-Templar is based on [StarkWare's starknet-privacy](https://github.com/starkware-libs/starknet-privacy), with its auditor and deposit-screening roles removed and proving moved to the user's device. No central proving operator needs to receive users' secrets. The [trust model](/architecture/privacy#trusted-roles-removed) explains these boundaries and the remaining authority of optional note controllers and pool configuration.
+Templar is based on [StarkWare's starknet-privacy](https://github.com/starkware-libs/starknet-privacy), with its auditor and deposit-screening roles removed and private validity proved on the user's device. No proving operator ever receives users' secrets. The [trust model](/architecture/privacy#trusted-roles-removed) explains these boundaries and the remaining authority of pool configuration.
 
 The [Starknet Privacy comparison](/comparison) shows how the two architectures differ in trust, note handling, supported flows, and client responsibilities.
 
@@ -37,6 +37,18 @@ To pay someone, a holder consumes existing notes and creates fresh encrypted not
 
 These concepts are similar to consuming and creating outputs in a UTXO system. The additional work is proving which hidden inputs are valid without disclosing their openings or their positions in the tree.
 
+## Three kinds of note
+
+| Note | What it is | Spent by |
+| --- | --- | --- |
+| [Ordinary note](/architecture/notes) | A private claim on an amount of one token, owned by a receiving key | The owner's spending secret |
+| [Open note](/architecture/open-notes) | A destination for the proceeds of an external call (a swap, a vault), funded in the same transaction | Becomes an ordinary note once funded |
+| [Policy note](/architecture/policy-notes) | Funds that may only move into outcomes committed at creation, approved by an on-chain controller, refundable after a deadline | Anyone holding its capability, only as the policy allows |
+
+## Two proving architectures
+
+In **full client-side proving**, the device proves the whole Cairo statement and produces a Starknet-native PROOF1 itself. In the **split architecture**, the direction Templar is taking, the device proves only the payment rules in a small, browser-class circuit, and a wrapping server that never sees private data turns that proof into a PROOF2. [Proving architectures](/architecture/proving) compares them.
+
 ## Explore the architecture
 
 <div className="guide-grid">
@@ -45,11 +57,14 @@ These concepts are similar to consuming and creating outputs in a UTXO system. T
   <a className="guide-card" href="/architecture/receiving"><strong>Receiving & recovery →</strong><span>Offline receipt, optional viewing keys, and restoration from a wallet backup.</span></a>
   <a className="guide-card" href="/architecture/privacy"><strong>Privacy & trust →</strong><span>What an address reveals, what is public, and which dependencies remain.</span></a>
   <a className="guide-card" href="/architecture/lifecycle"><strong>Transaction lifecycle →</strong><span>Follow a deposit, payment, recipient spend, and withdrawal.</span></a>
-  <a className="guide-card" href="/architecture/proofs"><strong>Proofs & verification →</strong><span>What S-two proves and what the pool must still check.</span></a>
+  <a className="guide-card" href="/architecture/proving"><strong>Proving architectures →</strong><span>Full client-side PROOF1, or a compact client proof wrapped into PROOF2.</span></a>
+  <a className="guide-card" href="/architecture/proofs"><strong>Proofs & verification →</strong><span>What a spend proves and what the pool must still check.</span></a>
+  <a className="guide-card" href="/architecture/open-notes"><strong>Open notes →</strong><span>Private DeFi: fund notes from a public call, and keep positions in shadow accounts.</span></a>
+  <a className="guide-card" href="/architecture/policy-notes"><strong>Policy notes →</strong><span>Escrow, vesting and conditional payments without a trusted signer.</span></a>
 </div>
 
 ## Scope
 
-This guide explains the architecture and its security boundaries. The proving path uses S-two's recursive zero-knowledge privacy pipeline with the PROOF1 format and Starknet's native proof verification. The current reference supports up to four inputs, four outputs, and two withdrawals for one public token. Larger native statements are evaluated separately on the [status page](/status#spend-capacity-pathfinding).
+This guide explains the architecture and its security boundaries. Everything described is experimental and unaudited.
 
-Ordinary and controlled push payments, watch-only balances, seed recovery, recovered-note spends, and withdrawals have been demonstrated through isolated Sepolia deployments. On the compact client-proof path, [open notes](/architecture/open-notes) and [policy notes](/architecture/policy-notes) have been demonstrated locally with real proofs. Production integration, independent review and desktop qualification remain open. The [implementation status](/status) page identifies what is demonstrated and what remains unqualified.
+With full client-side proving, push payments, watch-only balances, seed recovery, recovered-note spends, withdrawals and an Ekubo swap into a private note have run on Sepolia. With the split architecture, ordinary spends, open-note swaps and policy-note escrow run end to end locally with real client proofs and real PROOF2; Sepolia awaits the gateway's acceptance of PROOF2. Production integration, independent review and device qualification remain open. The [implementation status](/status) page identifies what is demonstrated and what remains unqualified.

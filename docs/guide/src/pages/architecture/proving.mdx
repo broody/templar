@@ -1,0 +1,91 @@
+---
+showAskAi: false
+title: Proving architectures
+description: Full client-side proving with PROOF1, and the split architecture where a compact client proof is wrapped by a server into PROOF2.
+---
+
+import { Flow } from '../../components/Flow'
+
+# Proving architectures
+
+Every spend needs a zero-knowledge proof that Starknet can verify natively, and the private
+witness (keys, notes, amounts, membership paths) must never leave the user's device. Templar has
+built two ways to meet both requirements. They share the note model, receiving and recovery; they
+differ in what the device proves and who produces the final Starknet proof.
+
+| | Full client-side proving | Split architecture (the direction) |
+| --- | --- | --- |
+| Device proves | The whole Cairo statement, virtual OS execution and recursion | A purpose-built arithmetic relation for the payment rules |
+| Final proof | PROOF1, produced on the device | PROOF2, produced by a wrapping server |
+| Device cost | About 19–20 s and 14 GiB, or 23 s within 8 GiB in bounded-memory mode | About 2–5 s and 0.3 GiB natively; browser-class |
+| Server | None | Sees only the proof and public data; about 2 minutes and 28 GiB per proof |
+| Note hashing | felt252 Poseidon | Poseidon2 over M31 (nine-word digests) |
+| Status | Full lifecycles on Sepolia | End to end locally with real proofs; Sepolia pending PROOF2 gateway acceptance |
+
+## Full client-side proving (PROOF1)
+
+<Flow steps={[
+  { title: 'Device', detail: 'Witness → Cairo spend statement → virtual Starknet OS execution.' },
+  { title: 'Device', detail: 'S-two recursive zero-knowledge pipeline → native PROOF1 proof.' },
+  { title: 'Starknet', detail: 'Native verification → adapter checks the proven message → pool applies the spend.' },
+]} caption="Everything that touches the witness runs on the holder's device; nothing else is involved." />
+
+The wallet executes a Cairo statement account in a virtual Starknet OS and proves that execution
+with S-two's recursive privacy pipeline. The resulting PROOF1 is attached to the public
+transaction, and a verifier adapter binds its facts to the exact spend.
+
+This is the simplest trust model: no second party exists. It has run complete lifecycles on
+Sepolia: offline payments, viewing, seed recovery, recovered-note spends, withdrawals and an Ekubo
+swap into a private note. Its cost is the problem: proving a general machine (Cairo instructions,
+felt252 arithmetic, lookup tables, OS state and recursion) needs gigabytes of memory, which is too
+much for phones and browsers.
+
+## Split architecture: compact client proof, server wrapping (PROOF2)
+
+<Flow steps={[
+  { title: 'Device', detail: 'Witness → compact relation (R0 or P1) → blinded client proof + public statement.' },
+  { title: 'Wrapping server', detail: 'Bridge verifies the client proof in Cairo → statement account → virtual OS → PROOF2.' },
+  { title: 'Starknet', detail: 'Native verification → adapter checks the account message → pool rebuilds the statement and applies it.' },
+]} caption="The privacy boundary is the client proof: it is zero-knowledge before it leaves the device." />
+
+The device proves only what matters for validity, in a small arithmetic circuit built with
+stwo-circuits: ownership, membership, nullifiers, amount ranges and conservation, output
+commitments, and the bound public data. The proof is blinded, so it hides the witness before it is
+uploaded.
+
+The server receives the client proof and the public statement, never the witness. Inside a Cairo
+**statement account**, a **bridge** verifies the client proof, checks it is a proof of the pinned
+circuit, decodes the statement and emits a binding digest as a message. The server runs that
+account in the virtual OS and proves the execution as **PROOF2** through Starknet's large-proof
+path. On chain, the adapter checks the proof facts carry that message, and the pool recomputes the
+binding from the transaction's own data.
+
+| Relation | What it proves |
+| --- | --- |
+| **R0** | Ordinary spends: two inputs, up to two outputs, one withdrawal, one token; optionally an [open-note](/architecture/open-notes) execution intent and a shadow-account identity handle |
+| **P1** | [Policy-note](/architecture/policy-notes) settlement: one committed outcome of one policy note |
+
+**What the server can and cannot do.** It can refuse, delay or overcharge. It cannot make an
+invalid spend valid, change the bound outputs or withdrawals, or learn the witness: all validity
+rules live in the client proof, and the pool checks the binding itself. Anyone can run a wrapping
+server; availability is an operational concern, not a privacy one. Network metadata (IP address,
+timing) still needs separate protection.
+
+**Server cost.** PROOF2's smallest large-path leaf is a Cairo trace of 2²⁵ rows, so each wrap
+costs about 2 minutes. Bounded-memory storage (commitment trees kept as coefficients, rebuilt for
+openings, FRI in batches) brings the peak from about 51 GiB to about 28 GiB with byte-identical
+proofs; an optional streamed mode reaches 22 GiB for about 20% more time.
+
+## Why the split architecture is the direction
+
+- **Device cost.** The client proof is small enough for browsers and phones. The general-machine
+  cost moves to a server that never sees private data.
+- **No trusted prover.** Unlike a hosted proving service that receives the witness, the server
+  wraps an already-private proof.
+- **One code line.** Client proof, bridge and PROOF2 wrapping build on StarkWare's current proving
+  stack.
+
+What still gates production: the hiding argument for the compact client proof (one issue was
+found and fixed; the argument is still being qualified), independent review of the relations and
+bridges, public PROOF2 acceptance on Starknet (the Sepolia gateway does not accept PROOF2
+transactions yet), and final formats. See the [status page](/status).

@@ -21,6 +21,7 @@ export default defineConfig({
       text: 'Architecture',
       items: [
         { text: 'System & boundaries', link: '/architecture/system' },
+        { text: 'Proving architectures', link: '/architecture/proving' },
         { text: 'Notes & ownership', link: '/architecture/notes' },
         { text: 'Receiving & recovery', link: '/architecture/receiving' },
         { text: 'Pool state', link: '/architecture/state' },

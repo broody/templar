@@ -1,75 +1,77 @@
 ---
 showAskAi: false
 title: Code map
-description: Find the executable push-payment reference, recovery client, and native proof integration.
+description: "Where each part of Templar lives: the split-architecture client, bridge, pool and server, and the full client-side reference."
 ---
 
 # Code map
 
-The executable controlled and ordinary push-payment reference is in `bench/controlled-push-e2e/`. The separate ordinary-only evidence remains in `bench/push-e2e/`. Paths below are relative to the repository root. They identify source responsibilities rather than installation steps. The primary packages have not yet adopted this format.
+Paths are relative to the repository root. They identify source responsibilities rather than
+installation steps; the repository README has the commands to build and test them. The primary
+packages under `packages/` have not yet adopted these formats.
 
-## Keys, delivery, and recovery
+## Split architecture: client side
+
+| Path | Responsibility | Read alongside |
+| --- | --- | --- |
+| `bench/m31-private-wrapper/client-port/src/payment.rs` | The R0 relation: note, tree and nullifier hashing, native reference, circuit (ordinary spends, open-note intent, identity handle) | [Proofs & verification](/architecture/proofs) |
+| `bench/m31-private-wrapper/client-port/src/policy.rs` | The P1 relation: policy, outcome and `policy_id` hashes, native reference, circuit | [Policy notes](/architecture/policy-notes) |
+| `bench/m31-private-wrapper/client-port/examples/wallet.rs` | Wallet CLI: keys, commitments, R0 and P1 proofs from a spend description | [Notes & ownership](/architecture/notes) |
+| `bench/m31-private-wrapper/client-port/tests/` | Relation tests against the native references, and malicious-witness tests (`--features tamper`) | |
+
+## Split architecture: server side
+
+| Path | Responsibility |
+| --- | --- |
+| `bench/m31-private-wrapper/client-port/cairo-r0/`, `cairo-p1/` | Bridges (verify a client proof against the pinned circuit, decode and range-check the statement, compute the binding) and statement accounts (emit the message) for R0 and P1 |
+| `bench/m31-private-wrapper/client-port/build_bridge_arith.py`, `validate_bridge_r0.py`, `validate_bridge_p1.py` | Build a bridge from a trusted circuit manifest; validate it on a real proof against altered statements |
+| `bench/m31-private-wrapper/client-port/capture_os.py` | Run a statement account in the virtual OS and check its exact message |
+| `bench/m31-private-wrapper/proof2-large/` | PROOF2 wrapping on the large path, the bounded-memory server build (`bounded/`) and a per-stage memory profiler |
+
+## Split architecture: pool and wallet
+
+| Path | Responsibility |
+| --- | --- |
+| `bench/m31-pool/cairo/src/pool.cairo` | Deposits, `apply_spend`, `apply_spend_with_invoke` (open notes), `apply_policy_spend` (policy notes), nullifiers, root history, owner configuration |
+| `bench/m31-pool/cairo/src/tree.cairo`, `hash.cairo`, `perm_*.cairo` | Depth-32 Poseidon2-M31 tree, the client's sponge and note hashing, the permutation |
+| `bench/m31-pool/cairo/src/spend.cairo`, `adapter.cairo` | Spend encoding and binding; the PROOF2 verifier adapter |
+| `bench/m31-pool/cairo/src/open_note.cairo` | Execution intents, destinations and the identity commitment |
+| `bench/m31-pool/cairo/src/policy.cairo`, `policy_escrow.cairo` | Policy settlement statement, controller authorization and call; the reference escrow |
+| `bench/m31-pool/open_note.py`, `policy_note.py`, `policy_wallet.py` | Wallet helpers: intents, policies, spend encodings, seed derivations, plaintexts, sealed boxes, seed-only recovery |
+| `bench/m31-pool/open_note_e2e.py`, `policy_e2e.py` | Local end to end: wallet → client proof → bridge → virtual OS → PROOF2 → settlement |
+| `bench/m31-pool/cairo/src/tests/` | Pool tests, including adversarial suites and settlements with real PROOF2 facts |
+| `bench/m31-sepolia/` | Sepolia deployment and flows, with archived evidence |
+
+## Full client-side proving
+
+The executable ordinary push-payment reference, with viewing and recovery, is in
+`bench/controlled-push-e2e/` (which also contains the superseded controlled-note experiment); the
+separate ordinary-only evidence is in `bench/push-e2e/`.
 
 | Path | Responsibility | Read alongside |
 | --- | --- | --- |
 | `bench/controlled-push-e2e/protocol.py` | Receiving and viewing keys, seed derivation, note encoding, sealed-box encryption, commitment and nullifier reference | [Notes & ownership](/architecture/notes) |
 | `bench/controlled-push-e2e/encoding.py` | Canonical ciphertext words and public calldata | [Proofs & verification](/architecture/proofs) |
-| `bench/controlled-push-e2e/sync.py` | Pinned-block RPC checks, event retrieval, payload verification, and spent-status reads | [Receiving & recovery](/architecture/receiving) |
-| `bench/controlled-push-e2e/restore.py` | Fresh-process seed restoration and full-view imports | [Receiving & recovery](/architecture/receiving) |
-| `bench/push-e2e/recovery_drills.py` | Missing, corrupted, reordered, and stale history checks against public data | [Implementation status](/status) |
+| `bench/controlled-push-e2e/sync.py`, `restore.py` | Pinned-block RPC checks, payload verification, spent-status reads; fresh-process seed restoration and full-view imports | [Receiving & recovery](/architecture/receiving) |
+| `bench/push-e2e/recovery_drills.py` | Missing, corrupted, reordered and stale history checks against public data | [Implementation status](/status) |
+| `bench/controlled-push-e2e/cairo/src/` | `pool.cairo`, `spend.cairo`, `tree.cairo`, `statement.cairo`, `statement_account.cairo`, `proof_adapter.cairo`: deposits and spends, binding, tree, the private statement, the virtual entry point and the PROOF1 adapter | [Proofs & verification](/architecture/proofs) |
+| `bench/controlled-push-e2e/flow.py` | Funded offline-payment, viewing, restore, spend and withdrawal lifecycle | |
+| `bench/return-note-e2e/` | The first open-note implementation (`ReturnNote`), with unchanged upstream Ekubo and Vesu adapters | [Open notes](/architecture/open-notes) |
+| `bench/bounded-memory/` | Coefficient-backed proving memory for the device pipeline | |
 
-## Pool and native proving
+## Specifications
 
-| Path | Responsibility |
-| --- | --- |
-| `bench/controlled-push-e2e/cairo/src/pool.cairo` | Funded deposits, spends, atomic encrypted publication, nullifier checks, withdrawals, fees, and owner configuration |
-| `bench/controlled-push-e2e/cairo/src/spend.cairo` | Public bundle types, ciphertext digest, counted/padded operation binding, and verifier interface |
-| `bench/controlled-push-e2e/cairo/src/tree.cairo` | Depth-32 commitment tree and root history |
-| `bench/controlled-push-e2e/cairo/src/statement.cairo` | Ownership, membership, nullifier, amount, output, and binding checks |
-| `bench/controlled-push-e2e/cairo/src/statement_account.cairo` | Virtual execution entry point and public message |
-| `bench/controlled-push-e2e/cairo/src/proof_adapter.cairo` | Native proof-fact checks and exact public-result binding |
-| `bench/controlled-push-e2e/flow.py` | Funded offline-payment, viewing, restore, spend, and withdrawal lifecycle |
-| `bench/controlled-push-e2e/results/` | Public receipts, proofs, measurements, source hashes, and recovery evidence |
-
-The tree is reused from the pool package. The push note, delivery, spend ABI, and binding must be read together in this reference; substituting similarly named modules from another package does not preserve those semantics.
-
-## Controller approval
-
-`bench/controlled-push-e2e/authorization.py` checks a scoped policy request and signs its canonical transition. `cairo/src/controller.cairo` in that experiment verifies the real Stark signature. The statement recomputes the approved transition from the actual notes, and the pool enforces approval and expiry.
-
-## Production integration boundary
-
-`packages/pool/` contains the existing package implementation and controller-oriented modules. It is not a production implementation of the receiving format described in this guide. `packages/circuit/` is not the selected native S-two statement. Their integration status is tracked separately from successful experimental transactions.
-
-Within this workspace, `docs/push-payment-spec.md` and `docs/adr/0021-push-only-payments.md` record Templar's accepted architecture and first-release scope.
-
-`docs/adr/0024-compact-client-proofs-and-server-wrapping.md` records a **Proposed**
-alternative proving split. Its private membership reference and evidence live
-in `bench/m31-private-e2e/`. See the [pathfinding status](/status#proposed-compact-client-architecture)
-for demonstrated results and the remaining adoption criteria.
+`docs/push-payment-spec.md` (receiving, delivery and recovery), `docs/open-note-spec.md` and
+`docs/policy-note-spec.md`. Review reports live next to their code in `reviews/` directories.
 
 ## A useful reading order
 
-Start with `protocol.py` for keys and notes. Read `spend.cairo` and `statement.cairo` together to compare the pool's public encoding with its private checks. Then inspect `pool.cairo`, `proof_adapter.cairo`, and `sync.py` to trace settlement and recovery.
+For the split architecture, start with `payment.rs` for the note and spend rules, read the R0
+bridge next to it to see how the public statement is decoded and bound, then `pool.cairo` and
+`adapter.cairo` for settlement, and `policy_e2e.py` for a complete run. For full client-side
+proving, start with `protocol.py`, then `spend.cairo` with `statement.cairo`, then `pool.cairo`,
+`proof_adapter.cairo` and `sync.py`.
 
-A check made only by a client is not a pool invariant. A valid proof matters only if the adapter selects the intended statement and the pool applies exactly its bound operation. A recovery result also depends on complete encrypted history and a trustworthy canonical checkpoint.
-
-## Open notes and upstream adapters
-
-`bench/return-note-e2e/cairo/src/return_note.cairo` defines `ReturnNote`, `ExecutionIntent` and the external `OpenNoteDeposit` response. Its `pool.cairo` validates execution, funding and atomic publication. `protocol.py` and `encoding.py` define return recovery and intent encoding. The Scarb manifest pins unchanged upstream Ekubo and Vesu adapter sources. `flow.py` exercises native Ekubo settlement and fresh recovery; Vesu mock-vault tests have a separate qualification scope.
-
-That is the first reference, where the destination is called `ReturnNote`. On the compact path, the client relation (R0 V3: execution intent and identity handle) is in `bench/m31-private-wrapper/client-port/src/payment.rs`. The pool's `apply_spend_with_invoke` is in `bench/m31-pool/cairo/src/pool.cairo` with `open_note.cairo`, and the wallet helpers in `bench/m31-pool/open_note.py`. The architecture and interface are specified in `docs/open-note-spec.md` and `docs/adr/0023-return-notes-and-adapter-compatibility.md`. See [open notes](/architecture/open-notes) and [implementation status](/status#open-notes-on-the-compact-path).
-
-## Policy notes
-
-| Path | Responsibility |
-| --- | --- |
-| `bench/m31-private-wrapper/client-port/src/policy.rs` | The P1 settlement relation: note, policy and outcome hashes, native reference and circuit |
-| `bench/m31-private-wrapper/client-port/cairo-p1/` | P1 bridge (statement decoding, `TMP1_BIND_V1`) and statement account (`TMPZP1_POLICY_V1`) |
-| `bench/m31-pool/cairo/src/policy.cairo` | `PolicySpend`, binding, controller authorization and call |
-| `bench/m31-pool/cairo/src/pool.cairo` | `apply_policy_spend`: windows, controller call, publication |
-| `bench/m31-pool/cairo/src/policy_escrow.cairo` | Reference escrow controller |
-| `bench/m31-pool/policy_note.py`, `policy_wallet.py` | Policies and spends; seed derivations, plaintexts, sealed boxes, seed-only recovery |
-| `bench/m31-pool/policy_e2e.py` | Local end to end with real client proofs and PROOF2 |
-
-Specified in `docs/policy-note-spec.md` and `docs/adr/0025-policy-notes.md`. See [policy notes](/architecture/policy-notes) and [implementation status](/status#policy-notes).
+A check made only by a client is not a pool invariant. A valid proof matters only if the adapter
+selects the intended statement and the pool applies exactly its bound operation. A recovery result
+also depends on complete encrypted history and a trustworthy canonical checkpoint.

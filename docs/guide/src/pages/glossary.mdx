@@ -8,25 +8,32 @@ description: The cryptographic and system terms used in the Templar architecture
 
 | Term | Meaning in this guide |
 | --- | --- |
-| Base block | The chain snapshot used by local virtual execution. |
+| Base block | The chain snapshot used by virtual execution. |
+| Bridge | Split architecture: the Cairo code in a statement account that verifies a client proof against its pinned circuit, decodes the public statement and computes its binding. |
 | Checkpoint | A canonical block identity and pool state against which a wallet verifies history and reports a balance. |
 | Ciphertext | Encrypted note data published with a funded output so its recipient can recover it. |
+| Client proof | Split architecture: the compact, blinded zero-knowledge proof of the payment rules produced on the user's device. |
 | Commitment | A hash that binds a note's fields while concealing its private contents; also the tree leaf. |
 | Capability | A policy note's per-note spending secret. Every holder derives the same nullifier and can cause only the note's committed outcomes. |
-| Controller | The contract a policy note names; it approves a settlement before the note's deadline. (In the earlier controlled notes, an off-chain signer whose approval was required alongside the owner's proof.) |
+| Controller | The contract a policy note names; it approves a settlement before the note's deadline. |
 | Delivery digest | A hash of canonical ciphertext bytes, bound to the spend and recorded with the output position. |
-| felt252 | A value in Starknet's prime field, used by Cairo and the protocol's Poseidon hashes. |
+| felt252 | A value in Starknet's prime field, used by Cairo and the full client-side note hashes. |
+| Full client-side proving | The architecture in which the device proves the whole Cairo statement and produces a native PROOF1. |
 | Full viewing key | A sensitive read-only capability that decrypts receipts and derives their nullifiers to determine spent status. |
 | Incoming viewing key | A capability that decrypts receipts but cannot by itself determine which are spent. |
+| M31 | The prime field 2³¹ − 1 used by S-two; the split architecture's notes and tree hash over it. |
 | Merkle path | Sibling hashes and a position used to recompute a tree root from one leaf. |
 | Note | A private claim on an amount of one token held by the pool. |
 | Nullifier | A secret-derived public identifier that records consumption once, without directly naming the input leaf. |
 | Opening | Data that reconstructs a commitment. An output's payer knows its opening but lacks the recipient's spending authority. |
-| Poseidon | The hash function used for receiving identity, commitments, nullifiers, the tree, and binding. |
-| PROOF1 | The native proof format used by the recursive privacy-proving integration. |
+| P1 | The split architecture's policy-note settlement relation. |
+| Poseidon | The hash family behind receiving identities, commitments, nullifiers and the tree: felt252 Poseidon (full client-side) or Poseidon2 over M31 (split). Bindings use felt252 Poseidon. |
+| PROOF1 | A Starknet native proof format; produced on the device in full client-side proving. |
+| PROOF2 | Starknet's newer native proof format, whose large-proof path accepts big Cairo traces; produced by the wrapping server in the split architecture. |
 | Proof facts | Public results exposed by native verification; the adapter must interpret and bind them. |
 | Public inputs | Values visible to verification and settlement, in contrast to the private witness. |
 | Push payment | A sender-created payment to a reusable receiving address that does not require a per-payment recipient response. |
+| R0 | The split architecture's spend relation: ordinary spends, with an optional open-note intent and identity handle. |
 | Cloaked receiving address | Shareable payment information derived locally by the recipient's wallet: a receiving identity and encryption public key, scoped to a chain and pool. It is not a Starknet account address and requires no onchain registration or deployment. Also called a cloaked address. |
 | Open note | A transaction-local destination for proceeds of an external call. Verified funding creates an ordinary spendable note. Called `ReturnNote` in the first reference. |
 | Policy note | A note spent with a capability into one of the outcomes committed at creation, approved by a controller before a deadline and refundable after it. |
@@ -36,12 +43,15 @@ description: The cryptographic and system terms used in the Templar architecture
 | OpenNoteDeposit | The upstream-compatible adapter response containing a destination identifier, token and actual amount. |
 | Execution intent | The proof-bound adapter, exact call, input budget, expiry and open-note destinations. |
 | Spending secret | The private authority the statement requires to prove ownership and consume a note. |
-| S-two / STWO | The prover technology used by the selected recursive zero-knowledge privacy pipeline. |
+| S-two / STWO | StarkWare's circle-STARK prover over M31, behind both proving architectures. |
 | Soundness | The property that a false claim cannot feasibly pass verification. |
+| Split architecture | The architecture in which the device produces a compact client proof and a wrapping server turns it into a PROOF2. |
 | Statement | The program and public claim whose correctness is established by a proof. |
+| Statement account | The account contract whose virtual execution the final proof covers; it emits the public result as a message. |
 | Statement binding | The hash connecting the public proof result to the exact bundle, including ciphertexts and withdrawals. |
 | Virtual execution | Local execution against a chain context whose result is proven rather than directly applied to public state. |
 | Witness | Private input supplied to the statement, including spending secrets, note data, and membership paths. |
+| Wrapping server | Split architecture: the service that verifies a client proof inside a statement account and proves that execution as PROOF2; it never receives the witness. |
 | Zero knowledge | The property that a proof reveals no additional private witness information beyond its public claim. |
 
-For the relationships between these terms, see [notes and ownership](/architecture/notes), [receiving and recovery](/architecture/receiving), and [proofs and verification](/architecture/proofs).
+For the relationships between these terms, see [notes and ownership](/architecture/notes), [receiving and recovery](/architecture/receiving), [proving architectures](/architecture/proving), and [proofs and verification](/architecture/proofs).

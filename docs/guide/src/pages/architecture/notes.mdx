@@ -8,7 +8,7 @@ description: Locally derived cloaked receiving addresses, private ownership, and
 
 Templar supports push payments to reusable **cloaked receiving addresses**, or **cloaked addresses** for short. A payer chooses an amount and creates a fresh note for the recipient. The recipient can be offline and does not need to prepare anything for that particular payment.
 
-A note describes a token, amount, receiving identity, fresh randomness, and optional controller and policy within a particular chain and pool. Its **commitment** is the hash stored as a leaf in the pool's tree. Spending requires both the note data and the owner's spending authority.
+A note describes a token, an amount, a receiving identity and fresh randomness within a particular chain and pool. Its **commitment** is the hash stored as a leaf in the pool's tree. Spending requires both the note data and the owner's spending authority.
 
 ## A cloaked receiving address is shareable payment information
 
@@ -22,19 +22,27 @@ Wallets must authenticate addresses through the contact exchange or another trus
 
 ## Ownership, commitment, and nullifier
 
-The reference construction separates spending authority from the material needed to watch receipts and spent status:
+The construction separates spending authority from the material needed to watch receipts and spent status:
 
 ```text
-ak       = H(AUTHORITY_DOMAIN, spending_secret)
-nk       = H(NULLIFIER_KEY_DOMAIN, spending_secret)
-receiver = H(OWNER_DOMAIN, ak, nk)
-inner    = H(INNER_DOMAIN, receiver, fresh_randomness)
-commitment = H(NOTE_DOMAIN,
-               chain, pool, token, amount, controller, policy, inner)
-nullifier  = H(NULLIFIER_DOMAIN, nk, commitment, leaf_index)
+ak         = H(AUTH, spending_secret)
+nk         = H(NK, spending_secret)
+receiver   = H(OWNER, ak ‖ nk)
+inner      = H(INNER, receiver ‖ fresh_randomness)
+commitment = H(NOTE, chain ‖ pool ‖ token ‖ amount ‖ inner)
+nullifier  = H(NF, nk ‖ commitment ‖ leaf_index)
 ```
 
-Here `H` is Starknet Poseidon over canonical felt252 values. Each domain is a distinct versioned tag. Ordinary notes fix controller and policy to zero. On the compact path, a [policy note](/architecture/policy-notes) is an ordinary-format leaf whose receiver commits to a per-note capability and a policy instead of an owner. Format qualifications are recorded on the [status page](/status).
+Each domain is a distinct versioned tag. The two [proving architectures](/architecture/proving) use the same structure with different hash encodings:
+
+| | Full client-side proving | Split architecture |
+| --- | --- | --- |
+| Hash `H` | Starknet Poseidon over canonical felt252 values | A framed Poseidon2 sponge over M31, with nine-word (279-bit) digests |
+| Felts (chain, pool, token) | One field element each | Nine 28-bit limbs |
+| Amount | u128 | Eight 16-bit limbs, range-checked |
+| Extra commitment fields | Controller and policy (zero for ordinary notes) | None |
+
+The formats are not interchangeable; each pool accepts one. A [policy note](/architecture/policy-notes) is an ordinary-format leaf whose receiver commits to a per-note capability and a policy instead of an owner. Format qualifications are recorded on the [status page](/status).
 
 | Material | Who needs it | What it enables |
 | --- | --- | --- |
@@ -50,7 +58,7 @@ Here `H` is Starknet Poseidon over canonical felt252 values. Each domain is a di
 
 Alice has Bob's receiving address and wants to send 600 units. Her wallet chooses fresh randomness, constructs a note for Bob, and encrypts its contents to his encryption key. It includes that output and any change in her spend.
 
-The pool publishes the funded commitment and encrypted payload together. Bob later downloads the public history, decrypts the payload, validates its context, and recomputes its commitment. Once those checks match a canonical leaf, his wallet records the note and its position. He can spend it to another receiving address or withdraw publicly, subject to any controller approval attached to the note.
+The pool publishes the funded commitment and encrypted payload together. Bob later downloads the public history, decrypts the payload, validates its context, and recomputes its commitment. Once those checks match a canonical leaf, his wallet records the note and its position. He can spend it to another receiving address or withdraw publicly.
 
 Bob's wallet reports the actual token and amount received. Neither the address nor the proof says what an off-chain agreement required Alice to pay.
 

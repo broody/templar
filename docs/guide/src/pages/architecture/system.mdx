@@ -1,7 +1,7 @@
 ---
 showAskAi: false
 title: System & boundaries
-description: The responsibilities of the holder, local prover, Starknet, verifier adapter, and pool.
+description: The responsibilities of the holder, client prover, wrapping server, Starknet, verifier adapter, and pool.
 ---
 
 import { Flow } from '../../components/Flow'
@@ -15,30 +15,32 @@ Templar separates secret-dependent computation from public settlement. The holde
 | Component | Responsibility |
 | --- | --- |
 | Note client | Derives receiving and viewing keys, creates encrypted outputs, discovers receipts, restores history, and assembles a spend witness. |
-| Local prover | Executes the Cairo spend statement in a virtual Starknet environment and produces the privacy proof. |
-| Statement account | The virtual execution entry point. Checks the spend and emits the public result that the proof commits to. |
+| Client prover | Proves the spend on the holder's device: the whole Cairo statement with PROOF1 (full client-side proving), or the compact R0/P1 relation (split architecture). |
+| Wrapping server | Split architecture only. Verifies the client proof inside the statement account and proves that execution as PROOF2. Receives the proof and public data, never the witness. |
+| Statement account | The virtual execution entry point. Checks the spend (PROOF1) or verifies the client proof through its bridge (PROOF2), and emits the public result that the final proof commits to. |
 | Transaction sender | Signs and submits the public proof-bearing transaction. It can be a different role from the note owner. |
 | Starknet native verifier | Verifies the cryptographic proof and exposes the resulting proof facts to contract execution. |
 | Native verifier adapter | Checks that those facts describe the approved statement, intended pool and chain, and expected public result. |
-| Pool contract | Enforces root freshness, double-spend protection, exact bundle binding, encrypted publication, fees, and token transfers. |
+| Pool contract | Enforces root freshness, double-spend protection, exact bundle binding, encrypted publication, fees where configured, and token transfers. |
 | External application adapter | Executes the exact proof-authorized public call and provides funding instructions for open notes. |
+| Policy controller | Approves a policy-note settlement before its deadline, from its own on-chain state. |
 | Public history source | Serves commitments, encrypted payloads, and spent data for verification against a canonical checkpoint. |
 
 “Note client” describes a responsibility, not a released wallet or SDK. The current end-to-end harness performs that role programmatically.
 
 <Flow steps={[
-  { title: 'Holder device', detail: 'Secrets + membership paths → statement execution → privacy proof.' },
+  { title: 'Holder device', detail: 'Secrets + membership paths → spend proof (PROOF1, or a client proof a server wraps into PROOF2).' },
   { title: 'Public transaction', detail: 'Proof + public inputs + action list + transaction signature.' },
   { title: 'Starknet', detail: 'Native verification → adapter binding checks → pool state changes.' },
 ]} caption="The privacy boundary is crossed by the proof and public effects, not by the private witness." />
 
 ## Local execution is not a public transaction
 
-The prover runs a **virtual** execution against a selected Starknet base block. This gives the computation a chain context and lets it read the state it needs. The private witness is supplied to this local execution.
+The final proof covers a **virtual** execution against a selected Starknet base block: on the device with full client-side proving, on the wrapping server with the split architecture. This gives the computation a chain context and lets it read the state it needs. The private witness is supplied to this local execution.
 
-The statement account produces a virtual message containing its class hash and the public spend statement. That message is an output committed to by the proof. It does not send the witness to Starknet, and it is not a real bridge withdrawal.
+The statement account produces a virtual message containing its class hash and the public spend statement. That message is an output committed to by the proof. It does not send the witness to Starknet, and it is not a real bridge withdrawal. With the split architecture, the witness never reaches that execution at all: the account sees only the client proof and its public statement.
 
-The holder then attaches the proof to a public transaction that calls the pool. This transaction performs the actual state changes and ERC20 transfers.
+The proof is then attached to a public transaction that calls the pool. This transaction performs the actual state changes and ERC20 transfers.
 
 ## Three different forms of authority
 
@@ -56,6 +58,8 @@ Historical ciphertext availability is required for recovery. A seed regenerates 
 
 The token contract controls ERC20 behavior. The pool relies on token transfers behaving as expected; a proof cannot make an incompatible or malicious token safe.
 
-The pool owner can change verifier and fee configuration. That authority is part of the [trust model](/architecture/privacy#configuration-authority), even when proof generation is entirely local.
+The pool owner can change the verifiers and, depending on the pool, fee settings or the allowlist of shadow-account anonymizers. That authority is part of the [trust model](/architecture/privacy#configuration-authority), even when proof generation is entirely local.
+
+A wrapping server can refuse or delay a proof. Clients can use another server or run their own; this affects availability, not privacy or validity.
 
 [Open-note settlement](/architecture/open-notes) binds external execution and verifies actual incoming funding. The native proof authorizes the call; public execution determines the return amount.

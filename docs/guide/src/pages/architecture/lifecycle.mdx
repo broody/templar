@@ -12,7 +12,7 @@ Templar has two entry paths for value changes: a public deposit and a proof-auth
 
 ## Deposit: fund a note
 
-A deposit supplies a token, amount, controller and policy, inner commitment, and encrypted note payload. The pool computes the commitment using its own chain/pool context, the actual token and amount, supplied controller and policy fields, and the supplied inner value. It transfers the tokens from the caller and publishes the ciphertext with the new leaf.
+A deposit supplies a token, amount, inner commitment, and encrypted note payload. The pool computes the commitment using its own chain/pool context, the actual token and amount, and the supplied inner value. It transfers the tokens from the caller and publishes the ciphertext with the new leaf. A deposit can also create a [policy note](/architecture/policy-notes): its inner value simply commits to a policy receiver instead of an owner.
 
 No zero-knowledge proof is needed for this operation. The token, amount, funding account, and supplied inner value are public. The receiving identity and note randomness remain hidden inside the inner commitment and encrypted payload.
 
@@ -28,7 +28,7 @@ The deposit caller and eventual note owner can differ. The caller supplies funds
 
 The holder selects an accepted root and prepares input membership paths. For each output, their wallet uses the recipient's address, chooses fresh randomness, and encrypts the note. Change uses their own receiving address.
 
-The local prover produces a proof of the spend statement's public result. The transaction carries that proof and the public bundle: token, nullifiers, output commitments and ciphertexts, and withdrawal destinations and amounts.
+The holder's device proves the spend: all the way to a PROOF1, or as a compact client proof that a wrapping server turns into a PROOF2 (see [proving architectures](/architecture/proving)). The transaction carries the final proof and the public bundle: token, nullifiers, output commitments and ciphertexts, and withdrawal destinations and amounts.
 
 Starknet verifies the proof. The adapter checks that the verified facts match the approved statement and intended spend. The pool recomputes the binding from actual transaction data, checks the root and nullifiers, and applies the changes atomically.
 
@@ -44,7 +44,7 @@ For clarity, this example omits separately funded fees.
 | Bob restores and spends | Bob: 600 and 250 | Dave: 500; Bob change: 310 | 40 leaves the pool |
 | Bob restores and withdraws | Bob: 310 | None | 310 leaves the pool |
 
-Both payers use the same Bob receiving address independently. Bob can recover the 850 while holding only his backup and public history. After his final withdrawal, the pool holds 1,150 backing Alice's 400, Carol's 250, and Dave's 500. This is the lifecycle exercised by the [Sepolia integration](/status#demonstrated-behavior).
+Both payers use the same Bob receiving address independently. Bob can recover the 850 while holding only his backup and public history. After his final withdrawal, the pool holds 1,150 backing Alice's 400, Carol's 250, and Dave's 500. This is the lifecycle exercised by the [Sepolia integration](/status#ordinary-push-payments).
 
 A private payment does not move ERC20 tokens between public accounts. It changes who can spend the value represented by notes inside the pool. Spending leaves the original commitments in the tree; their nullifiers record consumption.
 
@@ -60,17 +60,26 @@ Counts and ordering are bound to the proof. Changing a ciphertext, adding an out
 
 ## Bundle boundaries and fees
 
-A bundle supports at most **4 inputs, 4 outputs, and 2 withdrawals** for one public token. It requires at least one input and at least one output or withdrawal. Each note amount is a nonzero u128 value. Ordinary notes have zero controller and policy. The earlier controlled notes required a controller signature and preserved that controller across every input and output; [policy notes](/architecture/policy-notes) replace them on the compact path.
+Each spend covers one public token. Every note amount is a nonzero u128, and a spend needs at least one output or withdrawal. The shape depends on the proving architecture:
+
+| | Full client-side proving | Split architecture (R0) |
+| --- | --- | --- |
+| Inputs | 1–4 | exactly 2 |
+| Outputs | up to 4 | up to 2 |
+| Withdrawals | up to 2 | up to 1 |
+| Pool fee | configurable, paid by the caller | none |
+
+R0 always consumes two real notes; a wallet holding a single note cannot yet spend it alone on the split path. [Policy notes](/architecture/policy-notes) settle through their own relation, P1, with one policy input.
 
 ```text
 sum(input note amounts) = sum(output note amounts) + sum(withdrawals)
 ```
 
-The configurable **pool fee** is paid separately by the public transaction caller, outside this private equation. Starknet's **network fee** is another charge. A relayer can submit the transaction without owning its private notes, but needs funds and permissions for these fees.
+Where a pool fee is configured, the public transaction caller pays it separately, outside this private equation. Starknet's **network fee** is another charge. A relayer can submit the transaction without owning its private notes, but needs funds and permissions for these fees. The wrapping server's cost, on the split path, is a service matter between client and server.
 
 Pool changes and token transfers revert together on failure. Network gas for a reverted transaction remains payable.
 
-The 4/4/2 limit is the current reference format’s cap. Native proving supports larger measured synthetic statements; [capacity pathfinding](/status#spend-capacity-pathfinding) separates those results from funded settlement and desktop qualification.
+These are the reference formats' caps. Larger synthetic statements have been measured for full client-side proving; [capacity pathfinding](/status#spend-capacity-pathfinding) separates those results from funded settlement and device qualification.
 
 ## External execution and returns
 

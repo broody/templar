@@ -16,7 +16,7 @@ Templar is based on [StarkWare's starknet-privacy](https://github.com/starkware-
 | --- | --- |
 | Mandatory auditor | No global auditor key or mandatory viewing-key disclosure. Incoming and full viewing capabilities are shared only by the user. |
 | Deposit screener | No screener key or screening-signature requirement. Deposits use the pool's funding and state checks. |
-| Proving operator entrusted with private inputs | The holder proves locally. No central service needs the private witness. |
+| Proving operator entrusted with private inputs | The holder proves on their own device. With the split architecture, an optional wrapping server receives only an already zero-knowledge proof and public data, never the witness. |
 
 Ordinary notes need no auditor, screener, or controller approval. Starknet verification, token behavior, and pool configuration remain part of the trust model. The [upstream comparison](/comparison) explains the corresponding hosted services and contract roles.
 
@@ -36,12 +36,13 @@ People who receive the same address off-chain can compare it and recognize the s
 | Commitments, delivery digests, ciphertexts, and leaf positions at creation | Yes | Anyone can download them | Yes |
 | Nullifiers at spend | Owner can derive them | Full viewers can derive them for received notes | Yes |
 | Spend token, root, and bundle shape | Yes | Anyone can observe them | Yes |
+| Client proof and its public statement (split architecture) | Created on the device | The wrapping server receives them, with the client's network metadata | The statement's fields appear in the transaction |
 | Deposit token, amount, and funding account | Yes | Anyone can observe them | Yes |
 | External call, return token and amount, and linked return deposit | Yes | Anyone can observe them | Yes |
 | Withdrawal token, amount, and destination | Yes | Anyone can observe them | Yes |
 | Transaction sender, fees, ordering, and timing | Yes | Anyone can observe them | Yes |
 
-The ordinary spend ABI exposes the token even when there is no withdrawal. Amounts of ordinary private-payment outputs remain inside the witness and encrypted payloads. Return-note funding amounts are public. Public movements and surrounding activity can still reveal or suggest those amounts.
+The ordinary spend ABI exposes the token even when there is no withdrawal. Amounts of ordinary private-payment outputs remain inside the witness and encrypted payloads. Open-note funding amounts are public. Public movements and surrounding activity can still reveal or suggest those amounts.
 
 ## Viewing keys are sensitive capabilities
 
@@ -53,7 +54,7 @@ A compromise of the long-lived decryption key exposes historical ciphertexts enc
 
 The payer already knows the payment it made, and the recipient learns its contents. Either can disclose that information. The selected proof pipeline protects private witness information from public verification; it does not make counterparties forget what they know.
 
-The wallet must protect secrets at rest and keep witnesses local. Sending a plaintext witness to a remote prover exposes it to that service even if the resulting proof is zero knowledge.
+The wallet must protect secrets at rest and keep witnesses local. Sending a plaintext witness to a remote prover exposes it to that service even if the resulting proof is zero knowledge. The split architecture therefore requires the client proof itself to be zero knowledge before upload: recursion or wrapping cannot hide what the uploaded proof already leaks. That hiding argument is still being qualified; one issue has been found and fixed.
 
 Payload integrity is checked against pool state, but correct encryption is not proved. A malformed intended payment must not be credited merely because a transaction succeeded. Sealed-box encryption also does not authenticate sender identity.
 
@@ -67,9 +68,9 @@ A root obtained from an untrusted source does not establish its own canonical st
 
 ## Configuration authority
 
-The push pool owner can change the verifier and fee configuration. A verifier that accepts false claims could compromise the pool, so local proving alone does not make a deployment immutable or fully trustless.
+The pool owner can change the verifiers and, depending on the pool, fee settings or the allowlist of shadow-account anonymizers. A verifier that accepts false claims could compromise the pool, so local proving alone does not make a deployment immutable or fully trustless.
 
-Correct statement code, the recursive privacy pipeline, Starknet consensus and native verification, compatible tokens, secure keys, and available encrypted history remain necessary. The native verifier cannot repair a missing application invariant. The [status page](/status) records the remaining qualification work.
+Correct statement and relation code, the proving pipelines, Starknet consensus and native verification, compatible tokens, secure keys, and available encrypted history remain necessary. The native verifier cannot repair a missing application invariant. The [status page](/status) records the remaining qualification work.
 
 ## Policy-note disclosure
 
