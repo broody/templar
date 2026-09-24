@@ -1,6 +1,6 @@
 # Templar prover server
 
-Status: **design, awaiting review. Nothing is implemented.** A runnable wrapping server for the
+Status: **design, revision 2, after the design review (`docs/reviews/prover-server-design-review.md`, CONDITIONAL GO; findings `PS-*` cited where they changed the text). Nothing is implemented.** A runnable wrapping server for the
 compact client-proof path, replacing the research scripts under `bench/` for serving proofs.
 
 ## 1. Purpose and scope
@@ -39,12 +39,21 @@ account's bridge re-checks it inside the proven execution, and the pool recomput
 It does learn, as any relay would:
 
 - the client's network address and timing, and the statement (nullifiers included) before it is
-  public;
-- enough to submit the finished transaction itself; that settles the spend exactly as its owner
-  authorized, because the binding fixes every effect.
+  public; the pre-checks also send the nullifiers and root to the configured RPC node, so a local
+  node matters for privacy as well as speed;
+- the effects of an exit before settlement: a withdrawal's asset, amount and recipient, or an
+  execution's intent digest and budget. An operator could trade ahead of a swap within the
+  user's slippage bound (PS-7);
+- links between one client's jobs by address and timing, including pure in-pool transfers.
 
-It can refuse, delay or drop jobs. Hiding the client from the server (transport privacy) is out
-of scope; wallets that need it use a relay or several servers.
+It **cannot** submit the transaction itself: that needs the output ciphertexts, the execution
+intent's preimage or a policy's data, which the client never sends (only their digests are in
+the statement). It can refuse, delay or drop jobs.
+
+**Transport privacy.** The server accepts submissions over oblivious HTTP (OHTTP), with the
+same gateway layer the upstream transaction prover uses (`tower_ohttp`): a client going through
+an OHTTP relay hides its address from the server, and the relay sees no content. Plain HTTPS
+remains available.
 
 ## 3. Architecture
 
@@ -64,42 +73,63 @@ client ◄─GET /v1/jobs/{id}──┘                                  └─ 
 
 ## 4. Pre-checks (before any heavy work)
 
-In order, cheapest first; any failure rejects the submission with a stable error code:
+The pre-checks are a **Rust port of the Cairo bridges** (`verify_payment`, `verify_policy`),
+built from the same trusted manifest constants, so that nothing the bridge would reject reaches
+proving and nothing it accepts is refused (PS-1). A differential test runs every bench proof,
+honest and forged, through both and requires identical accept/reject results.
 
-1. **Size and encoding.** The body is at most a configured size; the proof is a span of felts
-   below the field prime with its length prefix; the relation is `r4` or `p1`.
-2. **Configuration match.** The statement's chain and pool are the ones this server serves.
-3. **Client-proof verification, natively.** Deserialize the client proof and verify it with the
-   circuit verifier against the **pinned** circuit hash of the relation (never one taken from the
-   proof), exactly as the bridge does. The claimed outputs must equal the submitted statement's
-   limbs.
-4. **Bridge rules.** R4: `payment4::bridge_checks` (the exit rule, both outputs present, nonzero
-   distinct nullifiers, recipient ⇔ amount, identity ⇒ intent, ranges). P1: the P1 bridge's
-   statement checks. These mirror the Cairo bridges rule for rule.
-5. **Chain state** (one RPC round trip each): the root is known to the pool; neither nullifier is
-   spent. Stale or replayed work is rejected before it costs anything.
+They run in a `check` child process under a CPU-time and memory limit, never in the front end
+(PS-4). Parsing is fallible throughout (no panics on malformed input), and allocation is bounded
+by the pinned proof shape. In order, cheapest first:
 
-The authoritative checks remain in the proven execution (the Cairo bridge) and the pool; the
-pre-checks exist to refuse bad input cheaply.
+1. **Size and encoding.** The body is at most a configured size; the relation is `r4` or `p1`;
+   the proof is a length-prefixed span of canonical felts that deserializes exactly (Cairo Serde)
+   to one client proof with no trailing data.
+2. **Pinned proof shape.** The proof's FRI configuration, component log sizes and output count
+   equal the relation's manifest; its preprocessed commitment gives the pinned circuit hash
+   (never one taken from the proof).
+3. **Verification.** The circuit proof verifies, and its outputs decode to the statement:
+   the statement tag and tree format pinned for the relation; 28-bit limbs forming **canonical**
+   felts (below the field prime, as the bridge's `felt_from_limbs`); 16-bit amount limbs; the
+   padding limb zero. The decoded statement must equal the submitted one field for field.
+4. **Bridge rules.** R4: the exit rule, both commitments and deliveries nonzero, nonzero distinct
+   nullifiers, recipient ⇔ amount, identity ⇒ intent, addresses and the asset below 2^251, chain
+   and pool nonzero. P1: the P1 bridge's rules, ported the same way.
+5. **Configuration match.** Chain and pool are the ones this server serves.
+6. **Work deduplication** (PS-2). At most one job per input-0 nullifier may be queued, running
+   or completed within the retention window (a failed job does not count, so a retry after a
+   failure is allowed); a second submission for the same nullifier is refused, and repeated
+   refusals for one nullifier back off. A nullifier is input 0's (always a
+   real note), so one note buys at most one proof per window however the dummy input, outputs or
+   recipient are varied.
+7. **Chain state** (RPC): the root is known to the pool and neither nullifier is spent.
+
+The authoritative checks remain in the proven execution and the pool.
 
 ## 5. The job
 
-1. **Base block.** The latest block at which the root is known; recorded.
-2. **Transaction.** An `INVOKE_V3` from the relation's pinned statement account, calldata = the
-   client proof, zero fees and tip (the account's `__validate__` requires them), nonce read at the
-   base block.
-3. **Virtual OS.** The upstream runner (`starknet_transaction_prover`'s `RpcRunnerFactory`,
-   `run_virtual_os`) against the configured RPC endpoint, at the pinned OS program. The single
-   L2→L1 message must equal `[statement class, account tag, chain, pool, binding]` for the
+1. **Re-check** the root and nullifiers (the job may have queued for a while).
+2. **Base block**: the latest block at job start (PS-3). The statement account reads nothing
+   from the pool; the root is checked by the pool at settlement, against its 256-root history.
+3. **Transaction.** An `INVOKE_V3` from the relation's pinned statement account, calldata = the
+   client proof, zero tip and zero prices (the account's `__validate__` requires them), an L2-gas
+   bound of 10^9 (as the bench), nonce read at the base block.
+4. **Virtual OS.** The upstream runner (`starknet_transaction_prover::running::runner`,
+   `RpcRunnerFactory::run_virtual_os`) against the configured RPC endpoint, with the chain id
+   from configuration (not hard-coded). Its output crosses to the prover as a PIE file, keeping
+   the runner and the prover in separate steps (PS-8). The single L2→L1 message must be from the
+   statement account and equal `[statement class, account tag, chain, pool, binding]` for the
    binding recomputed from the statement.
-4. **Large proof.** The bounded-memory prover (whole-tree commitments, FRI batches of 16 columns),
-   then a local verification of the proof.
-5. **Facts.** `['PROOF2', 'VIRTUAL_SNOS', os_program, 'VIRTUAL_SNOS0', base_block, base_hash, _,
-   1, message_hash]`, checked against the expected message hash.
-6. **Result.** `{proof (base64), proof_facts, base_block, binding, message_hash, timings}`.
+5. **Large proof.** The bounded-memory prover, then local verification.
+6. **Facts** (PS-9). Every field the adapter checks: `'PROOF2'`, `'VIRTUAL_SNOS'`, the pinned OS
+   program, `'VIRTUAL_SNOS0'`, the base block and its hash as returned by the node, the message
+   count 1, and the message hash `Poseidon(statement account, 0, 5, payload)`.
+7. **Result.** `{proof (base64), proof_facts, base_block, submit_after, valid_until, binding,
+   message_hash, timings}`, where `submit_after = base_block + 11` (the sequencer accepts only
+   base blocks it can already hash) and `valid_until = base_block + max_proof_age` (the adapter's
+   bound). Wallets submit in that window.
 
-A job that fails reports which stage failed; the client can resubmit (the server keeps no state
-that would make a retry unsafe).
+A failed job reports its stage; resubmission is safe.
 
 ## 6. API
 
@@ -114,8 +144,9 @@ Results are kept for a configured time (default one hour), then deleted with the
 
 ## 7. Limits and abuse
 
-- **Rate limits:** per-IP token bucket for submissions, a cap on queued jobs per IP, a global
-  queue cap; the pre-checks run before a job is admitted.
+- **Rate limits:** a token bucket per IPv4 address and per IPv6 /64, a cap on queued jobs per
+  address, a global queue cap; per-nullifier deduplication and backoff (§4.6). OHTTP submissions
+  share one relay-wide bucket unless the relay forwards a client token.
 - **Concurrency:** `max_concurrent_jobs`, each needing about 4 cores and 30 GiB; the default is
   one.
 - **Time:** a per-stage timeout (OS run, proof).
@@ -123,22 +154,37 @@ Results are kept for a configured time (default one hour), then deleted with the
 
 ## 8. Configuration
 
-One TOML file per deployment: network name, chain id, RPC URL (v0.10 API, state reads for the
+One TOML file per deployment. At startup the server checks it against the chain and refuses to
+start on a mismatch (PS-5): the chain id; each statement account's deployed class equals the
+configured class; each adapter's configuration (pool, statement account and class, OS program,
+account tag, maximum proof age, read from its storage or view) equals the server's. `/v1/info`
+publishes that tuple, and wallets compare it with the adapter before using a result. The file holds: network name, chain id, RPC URL (v0.10 API, state reads for the
 virtual OS), pool address; per relation the statement account, its class, account tag and pinned
 circuit hash; the OS program hash; prover settings (bounded columns, threads, memory cap); limits;
 result retention; listen address. `info` prints it with the dependency revisions.
 
 ## 9. Build and distribution
 
-- Rust (`nightly-2026-01-15`, as the rest of the stack). Pinned dependencies:
-  - the sequencer at the revision the adapters pin (`e6b6fd2e…`), for the virtual-OS runner;
-  - `broody/proving` `templar/bounded-server` (`b54ed94f8`) for the bounded large-proof prover;
+- Rust (`nightly-2026-01-15`, as the rest of the stack). `Cargo.lock` is committed and every
+  build uses `--locked`; CI checks that every pinned revision can still be fetched (PS-8).
+  Pinned dependencies:
+  - `starkware-libs/sequencer` at `e6b6fd2e…` (the revision whose virtual OS the adapters pin), as
+    a git dependency: `starknet_transaction_prover` exports its runner (`pub mod running`) at that
+    revision, so no fork or vendored copy is needed. Its own proving path is the small-proof
+    recursive prover, which is not used;
+  - `broody/proving` `templar/bounded-server` (`b54ed94f8`, public) for the bounded large-proof
+    prover;
   - `client-port` (path) for the relations' statement layouts, `bridge_checks` and the circuit
     verifier's pinned-hash checks.
 - `target-cpu=native` gives about 1.7× faster proofs but ties a binary to its CPU. The Docker
   image builds for a stated baseline (x86-64-v3) by default, with a build argument for native.
-- Docker: multi-stage build, a non-root runtime user, the config mounted read-only, a volume for
-  job directories.
+- Docker: multi-stage build, a non-root runtime user, read-only root filesystem, dropped
+  capabilities, the config mounted read-only, a volume for job directories with a size quota.
+- **Isolation** (PS-6): each job and each pre-check runs in its own cgroup (memory, CPU, PIDs),
+  created by the front end with cgroup delegation (the container needs a delegated subtree,
+  or the host's systemd user manager outside containers); a timed-out or failed job's whole
+  group is killed. The proving worker has no network access; only the OS run reaches the RPC
+  endpoint. The front end reserves its own memory outside the jobs' groups.
 - Release blocker: the client-port crate currently builds against a non-public proving branch.
   Before the server is published, the parts it needs (the verifier side) must be available
   publicly; this does not block private use.
@@ -146,15 +192,22 @@ result retention; listen address. `info` prints it with the dependency revisions
 ## 10. Operation
 
 Hardware per concurrent job: 4 cores, 32 GiB RAM; an RPC node serving the v0.10 API with state
-reads (a local node is recommended: the virtual OS makes many reads). Logs record job ids,
-stages and timings; client addresses are not logged by default. Operators should read §2.
+reads (a local node is recommended: the virtual OS makes many reads). Operators should read §2.
+
+**Logging and retention** (PS-10): job ids, stages, timings and failure codes are logged; client
+addresses, nullifiers and statements are not, by default. The in-memory address-to-job map used
+for rate limiting holds only counters and expires with the window. Worker and runner logs go to
+the job directory and are deleted with it at the end of retention. A reverse proxy in front of
+the server must be configured not to keep access logs with client addresses; the Docker
+compose example ships that way.
 
 ## 11. Tests
 
-- Pre-checks against the bench's real proofs: every honest shape accepted; each forged statement
-  (voluntary reveal, zero delivery, recipient without amount, identity without intent, duplicate
-  nullifier, range violations, zero chain) rejected with its code; a proof for another circuit
-  rejected.
+- Differential: every bench proof, honest and forged, through the Rust pre-checks and the Cairo
+  bridge executable, with identical results; plus malformed encodings (non-canonical felts in
+  delivery, intent and chain, trailing data, wrong proof shape, another circuit).
+- Deduplication: resubmitting one note's spend with varied dummies and outputs is refused.
+- Startup: each configuration mismatch (chain, class, adapter field) refuses to start.
 - The worker on a recorded Sepolia job: the same message and facts as the bench flow.
 - The Sepolia flow calls the server instead of the bench tools.
 
@@ -167,3 +220,18 @@ stages and timings; client addresses are not logged by default. Operators should
   queue flooding, a statement that passes pre-checks but fails the OS run)?
 - **S4.** Is running the worker in a child process under a cgroup cap enough isolation, given
   the input is untrusted?
+
+## 13. Review resolutions
+
+| Finding | Resolution |
+| --- | --- |
+| PS-1 | §4: a Rust port of both bridges from the manifest constants, canonical felts, pinned tag, format, FRI configuration and component sizes, exact Serde; a differential test (§11) |
+| PS-2 | §4.6 per-nullifier deduplication and backoff; §7 IPv6 /64 buckets |
+| PS-3 | §5: base block at job start, re-check before proving, `submit_after` and `valid_until` |
+| PS-4 | §4: pre-checks in a limited child process; fallible parsing; bounded allocation |
+| PS-5 | §8: startup checks against chain, classes and adapter storage; `/v1/info` tuple; wallets compare |
+| PS-6 | §9: a cgroup per job and pre-check, whole-group kill, no network while proving, container hardening |
+| PS-7 | §2 corrected: cannot submit; learns exit effects early (front-running risk) and can link jobs |
+| PS-8 | §9: the runner is a public module at the pinned revision; lockfile, `--locked`, fetchability check; PIE boundary (§5) |
+| PS-9 | §5: L2-gas bound 10^9; every adapter-checked fact field |
+| PS-10 | §10: logging and retention rules, proxy guidance |
