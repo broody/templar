@@ -41,4 +41,4 @@ Once a spend's statement has left the wallet, anyone holding it could settle it:
 
 ## Status
 
-The SDK is not yet released. It passes against a mock pool (receiving, a hidden transfer, reorgs, conflicting events, record locking) and read-only against Sepolia, where it verifies its pinned constants and syncs the pool to the same root. Its proofs pass the deployed bridge's checks. A funded end-to-end run on Sepolia is next; large proofs are still not accepted by the network. Details are in `sdk/README.md` and `docs/sdk-spec.md`.
+The SDK is not yet released. It passes against a mock pool (receiving, a hidden transfer, reorgs, conflicting events, record locking) and read-only against Sepolia, where it verifies its pinned constants and syncs the pool to the same root. Its proofs pass the deployed bridge's checks. A funded run on Sepolia with the SDK alone received a deposit, recovered it from the seed, and proved, wrapped and sent a hidden transfer and a withdrawal; both pass simulation with validation, and the gateway refuses them only because it does not yet accept large proofs. Details are in `sdk/README.md` and `docs/sdk-spec.md`.

@@ -10,7 +10,9 @@
 // read from the sncast accounts file at run time and never written anywhere.
 import { mkdir, readFile, writeFile, chmod } from 'node:fs/promises';
 import { Account, RpcProvider } from 'starknet';
-import { FileKV, SEPOLIA, Templar } from '../dist/index.js';
+import { FileKV, SEPOLIA, Templar, loadCore } from '../dist/index.js';
+
+await loadCore();
 
 const [runDir] = process.argv.slice(2);
 if (!runDir) throw new Error('usage: sepolia-e2e.mjs RUN_DIR');
@@ -35,7 +37,8 @@ const seeds = await load('private-seeds.json', null);
 const seed = (name) => Uint8Array.from(Buffer.from(seeds[name], 'hex'));
 if (!seeds) {
   await save('private-seeds.json', { alice: Buffer.from(Templar.generateSeed()).toString('hex'), bob: Buffer.from(Templar.generateSeed()).toString('hex') });
-  process.exit(0 + console.log('seeds created; run again') ?? 0);
+  console.log('seeds created; run again');
+  process.exit(0);
 }
 
 const provider = new RpcProvider({ nodeUrl });
@@ -106,6 +109,11 @@ if (progress.stage === 'synced') {
   const spend = await alice.transfer(TOKEN, 60n, bobAddr.address);
   await save('record-id.json', { id: spend.id });
   await run(spend, 'transfer');
+}
+
+if (process.env.STOP_AFTER && process.env.STOP_AFTER === progress.stage) {
+  console.log('stopping after', progress.stage);
+  process.exit(0);
 }
 
 if (progress.stage === 'transfer') {

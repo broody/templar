@@ -1,7 +1,7 @@
 # Templar client SDK
 
 Status: **revision 3, implemented on branch `feat/sdk`; implementation reviewed (math GO,
-protocol GO: `docs/reviews/sdk-impl-{math,protocol}-review.md`); a funded Sepolia run is pending. Design, after the design reviews (`docs/reviews/sdk-design-math-review.md`,
+protocol GO: `docs/reviews/sdk-impl-{math,protocol}-review.md`); funded Sepolia run done (`sdk/results/sepolia-e2e.json`). Design, after the design reviews (`docs/reviews/sdk-design-math-review.md`,
 `docs/reviews/sdk-design-protocol-review.md`: both CONDITIONAL GO on revision 1; on revision 2,
 math GO and protocol CONDITIONAL GO, whose items revision 3 resolves). Finding IDs
 `SDK-M*` and `SDK-P*` are cited where they changed the text; §16 lists every resolution. Nothing is

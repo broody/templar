@@ -1,0 +1,111 @@
+{
+ "date": "2026-09-25",
+ "what": "Funded end to end on Sepolia with the SDK alone (docs/sdk-spec.md \u00a712.7): no sncast. Pool V2, prover server (templar-prover, systemd delegated unit, 16 threads).",
+ "deposit": {
+  "tx": "0x606897331e11a4b9679f1eddf12801e4ffd0996ff61a78d101c1bf6d7e74d6b",
+  "asset": "test token A",
+  "amount": 100,
+  "note": "ERC20 approve+deposit multicall from the relayer account to Alice's account 0"
+ },
+ "sync": {
+  "complete": true,
+  "problems": [],
+  "balances": [
+   {
+    "asset": "0x39f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8",
+    "kind": "Erc20",
+    "unspent": "100",
+    "spendable": "100",
+    "notes": 1
+   }
+  ]
+ },
+ "recovery": {
+  "fresh_store_seed_only": [
+   {
+    "asset": "0x39f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8",
+    "kind": "Erc20",
+    "unspent": "100",
+    "spendable": "100",
+    "notes": 1
+   }
+  ],
+  "complete": true
+ },
+ "transfer_hidden": {
+  "prove_ms_wasm_node": 31106,
+  "wrap_ms": 99568,
+  "window": {
+   "submit_after": 15586934,
+   "valid_until": 15591019
+  },
+  "token_out": "0x0",
+  "fee_confirmation": "max fee shown and confirmed before sending",
+  "gateway": {
+   "code": 63,
+   "data": "Proof version 88314448135730 (PROOF2) is not accepted by this gateway.",
+   "message": "An unexpected error occurred"
+  },
+  "simulation_with_validation": {
+   "reverted": null,
+   "total_l2_gas": 135076960,
+   "l1_data_gas": 4992,
+   "pool_call_l2_gas": 52238355,
+   "fee_STRK": 3.3603358678223447
+  },
+  "proof_bytes": 253396,
+  "proof_facts": [
+   "0x50524f4f4632",
+   "0x5649525455414c5f534e4f53",
+   "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+   "0x5649525455414c5f534e4f5330",
+   "0xedd66b",
+   "0x62fef19a47a940eef40c92dc439c5b3b4cc2cef64535e1fa26bff11ce8681a4",
+   "0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57",
+   "0x1",
+   "0x4d5bd9498c92c8ca66a4d528b9066238ca934773258521618a4434fea8e97c4"
+  ],
+  "wrapped_via": "OHTTP (envelopes sent to the server's own gateway; no third-party relay)"
+ },
+ "withdraw_replan": {
+  "prove_ms_wasm_node": 95155,
+  "wrap_ms": 99738,
+  "window": {
+   "submit_after": 15587095,
+   "valid_until": 15591180
+  },
+  "token_out": "0x39f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8",
+  "fee_confirmation": "max fee shown and confirmed before sending",
+  "gateway": {
+   "code": 63,
+   "data": "Proof version 88314448135730 (PROOF2) is not accepted by this gateway.",
+   "message": "An unexpected error occurred"
+  },
+  "simulation_with_validation": {
+   "reverted": null,
+   "total_l2_gas": 136120210,
+   "l1_data_gas": 5248,
+   "pool_call_l2_gas": 53081605,
+   "fee_STRK": 3.38521402854254
+  },
+  "proof_bytes": 251483,
+  "proof_facts": [
+   "0x50524f4f4632",
+   "0x5649525455414c5f534e4f53",
+   "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+   "0x5649525455414c5f534e4f5330",
+   "0xedd70c",
+   "0x1fe5fe017b3ca5f0f4da18b62f2f939a8e861c5aa86c66ab64ad1ba74f755ed",
+   "0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57",
+   "0x1",
+   "0x36263c275f2a612bc26c1beb7b251efc702dee6f29859cc20d49d034b2320ec"
+  ],
+  "wrapped_via": "direct HTTP",
+  "note": "a re-plan of the transfer record's note (same input and companion); the server was restarted to clear its per-note deduplication"
+ },
+ "confirmed": [
+  "the query-version (F3) fee estimate is accepted by a real account (SDK-IP9)",
+  "the exact signed transactions pass simulation with validation at pre_confirmed and again at latest",
+  "the gateway refuses both: code 63, \"Proof version 88314448135730 (PROOF2) is not accepted by this gateway.\""
+ ]
+}
