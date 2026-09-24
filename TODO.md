@@ -452,6 +452,13 @@ qualification gates the default wallet batch size.
   submission. Carry over golden vectors and adversarial tests into CI.
   **Done when:** a reproducible end-to-end flow uses maintained packages rather
   than benchmark-only implementations, with compatible versioned artifacts.
+  **Progress 2026-09-24:** the [client SDK](sdk/README.md) ([spec](docs/sdk-spec.md), design
+  reviewed) is one Rust core in WebAssembly plus `@templar/sdk` over starknet.js: production keys,
+  addresses and viewing keys, receiving with completeness and reorg handling, R0 V4 spends proved
+  in a browser worker (byte-identical to native, ~18 s in Chrome), the prover-server client and
+  exact-transaction submission, in-flight records. It shares the relation and prover with the
+  bench (`client-port/src/prove.rs`). Open: a funded Sepolia run with the SDK alone; policy notes
+  and open notes in the SDK; bridges, pool ABI and adapters as maintained packages.
 
 - [ ] **5. Make transaction submission reliable.** Exercise the intended wallet
   transport, proof attachment, fee estimation, and gas funding. Handle stale

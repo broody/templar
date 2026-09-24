@@ -19,6 +19,9 @@ packages under `packages/` have not yet adopted these formats.
 | `bench/m31-private-wrapper/client-port/src/policy.rs` | The P1 relation: policy, outcome and `policy_id` hashes, native reference, circuit | [Policy notes](/architecture/policy-notes) |
 | `bench/m31-private-wrapper/client-port/examples/wallet.rs` | Wallet CLI: keys, commitments, R0 and P1 proofs from a spend description | [Notes & ownership](/architecture/notes) |
 | `bench/m31-private-wrapper/client-port/tests/` | Relation tests against the native references, and malicious-witness tests (`--features tamper`) | |
+| `sdk/core/` | The client SDK's Rust core: keys, addresses and viewing keys, sealed boxes, notes, scanning, the tree, spend planning, result checks, store encryption, OHTTP | [Client SDK](/architecture/sdk) |
+| `sdk/wasm/`, `sdk/ts/` | The WebAssembly façade and `@templar/sdk` over starknet.js: sync, records, prover client, submission | [Client SDK](/architecture/sdk) |
+| `bench/m31-private-wrapper/client-port/src/prove.rs` | The client prover as a library (fixed bridge FRI, hiding budget, self-verification), shared by the bench wallet and the SDK | [Proving](/architecture/proving) |
 
 ## Server side
 

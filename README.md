@@ -145,7 +145,9 @@ implemented.
 |---|---|
 | [`docs/guide/`](docs/guide/README.md) | **Developer guide** (Vocs site): architecture, note types, receiving and recovery, privacy, status, code map |
 | [`docs/zk-guide/`](docs/zk-guide/README.md) | ZK fundamentals course: fields to STARKs to client-proof wrapping, with runnable checks |
-| `docs/*-spec.md` | Specifications: [push payments](docs/push-payment-spec.md), [open notes](docs/open-note-spec.md), [policy notes](docs/policy-note-spec.md), [hidden assets and NFTs](docs/hidden-asset-spec.md) |
+| `docs/*-spec.md` | Specifications: [push payments](docs/push-payment-spec.md), [open notes](docs/open-note-spec.md), [policy notes](docs/policy-note-spec.md), [hidden assets and NFTs](docs/hidden-asset-spec.md), [prover server](docs/prover-server-spec.md), [client SDK](docs/sdk-spec.md) |
+| [`sdk/`](sdk/README.md) | **Client SDK**: a Rust core in WebAssembly and `@templar/sdk` over starknet.js (keys, addresses, receiving, hidden-asset spends, submission) |
+| [`server/`](server/README.md) | **Prover server**: turns a wallet's client proof into a large proof; HTTP API, sandboxed steps, OHTTP |
 | `bench/m31-private-wrapper/client-port/` | Client side: the R0 and P1 relations (Rust), the Cairo bridges and statement accounts, the wallet CLI |
 | `bench/m31-pool/` | Pool: M31 commitment tree, spends, assets and NFT deposits (pool V2), open notes, policy notes, escrow, wallet helpers, end-to-end drivers |
 | `bench/m31-private-wrapper/proof2-large/` | Server: large-proof wrapping, bounded-memory server build, memory profiler |
@@ -174,6 +176,10 @@ RUSTUP_TOOLCHAIN=nightly-2026-01-15 cargo test --release --features tamper --tes
 
 # Wallet encodings for policy notes and hidden assets
 cd bench/m31-pool && python3 test_policy_wallet.py && python3 test_hidden_asset.py
+
+# Client SDK: core tests, the independent reference, TypeScript tests against a mock pool
+cd sdk && cargo test --release -p templar-core && python3 vectors/check_keys.py
+scripts/build-wasm.sh && cd ts && npm ci && npx tsc -p tsconfig.json && npx vitest run
 
 # Developer guide, locally
 cd docs/guide && npm ci && npm run dev

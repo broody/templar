@@ -1,0 +1,44 @@
+---
+showAskAi: false
+title: Client SDK
+description: The wallet side as a Rust core in WebAssembly and a TypeScript package over starknet.js.
+---
+
+import { Flow } from '../../components/Flow'
+
+# Client SDK
+
+A wallet or app uses Templar through one package, `@templar/sdk`. Every format, key, hash, encryption and the client proof live in one Rust core, compiled to WebAssembly and shared with the native tools. The TypeScript layer only moves data: it syncs from a Starknet RPC node, stores state, talks to a prover server and submits transactions with [starknet.js](https://github.com/starknet-io/starknet.js).
+
+<Flow steps={[
+  { title: 'Sync', detail: 'Download the pool’s events in bulk, rebuild the tree, decrypt the wallet’s notes, check the root.' },
+  { title: 'Prove', detail: 'Plan the spend and prove it in a worker: about 20 seconds in a browser.' },
+  { title: 'Wrap', detail: 'A prover server turns the client proof into a large proof, directly or through an OHTTP relay.' },
+  { title: 'Submit', detail: 'Estimate, sign, simulate and send the exact transaction with its proof attached.' },
+]} caption="A spend from a browser or Node. Keys never leave the core; the server sees what the chain later sees." />
+
+## Keys and addresses
+
+A wallet is a 32-byte seed with a 24-word backup. For each pool and account the core derives a spending key, an incoming decryption key and a key that encrypts the wallet's local storage. Keys are unrelated across pools and chains, and they never leave the core: the application holds only the seed.
+
+A receiving address encodes the chain, the pool, the receiving identity and the encryption key, jumbled so every character depends on every field. It starts `templarsep1` on Sepolia and is about 255 characters long. Payers should compare its fingerprint, five groups of four hex digits, through a channel they trust. Incoming and full viewing keys use the same encoding under their own prefixes, and each decoder accepts one kind only, so a secret key never reads as an address.
+
+## Receiving
+
+The wallet downloads every event of the pool by address and event type. It never asks about a particular note, nullifier or asset, so its RPC provider learns only that it follows the pool. It decrypts each new ciphertext with its keys and credits a note only after recomputing the commitment from the decrypted fields. A hostile ciphertext cannot stop the scan.
+
+A sync is **complete** only when the leaves are contiguous, their count and root equal the pool's at the same block, and every delivery digest matches. An incomplete sync is reported as such, and the wallet does not spend on it. Checkpoints every 1,000 blocks let it undo a reorganization of any depth. A note becomes spendable 10 blocks after it lands.
+
+## Spending
+
+The core picks one or two notes of the asset, adds change and dummies, shuffles the outputs and builds the spend's statement, then proves it in a worker. The proof takes about 18 seconds in Chrome and 20 in Node, with under 350 MiB of memory, and is byte-identical to the native one. The prover server checks it before any heavy work. The wallet checks the server's result against constants pinned in the package, not against what the server says about itself.
+
+Submission builds the exact transaction, simulates it with validation, and sends that same signed object. The fee bounds are a fixed function of the node's raw estimate, identical in every wallet, with a zero tip. The submitting account is public and linked to the spend; for unlinkability it should be a relayer's account.
+
+## Spends in flight
+
+Once a spend's statement has left the wallet, anyone holding it could settle it: the prover server, the RPC node, or anyone reading a published failed transaction. The wallet therefore keeps each spend as a record until it settles or can no longer settle. Until then, a retry must reuse the same input notes and the same dummy input, so at most one attempt pays. A record can no longer settle once the pool has evicted the root it used, which the wallet counts from its own sync.
+
+## Status
+
+The SDK is not yet released. It passes against a mock pool (receiving, a hidden transfer, reorgs, conflicting events, record locking) and read-only against Sepolia, where it verifies its pinned constants and syncs the pool to the same root. Its proofs pass the deployed bridge's checks. A funded end-to-end run on Sepolia is next; large proofs are still not accepted by the network. Details are in `sdk/README.md` and `docs/sdk-spec.md`.

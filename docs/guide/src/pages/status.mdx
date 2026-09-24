@@ -122,6 +122,10 @@ The large-proof flow's smallest leaf is a Cairo trace of 2²⁵ rows, so each wr
 
 The server receives the client proof and its public statement only. It must be built with native CPU features for these times. Evidence is in `bench/m31-private-wrapper/proof2-large/`.
 
+## Client SDK
+
+The wallet side is a Rust core in WebAssembly and a TypeScript package over starknet.js ([Client SDK](/architecture/sdk)). The R0 V4 client proof runs in a browser worker in about 18 seconds with 257 MiB of memory (Chrome 153), byte-identical to the native proof, and the deployed bridge build accepts it. Against Sepolia, read-only, the SDK verifies its pinned constants on chain and syncs pool V2 to the pool's own root. A funded run with the SDK alone is next.
+
 ## Client proof and privacy
 
 The client proofs are blinded stwo-circuits proofs in an arithmetic-only component profile: no lookup tables, so range checks use bits and no lookup multiplicities can leak. Their zero-knowledge argument is still being qualified: one hiding issue was found and fixed in Templar's prover build, and the full argument has not been independently confirmed. Real value is gated on it.
@@ -148,7 +152,7 @@ Missing payloads produce incomplete results rather than complete zero balances. 
 
 Each relation has its own adapter, pinned to the large-proof format, the virtual OS program, its statement account and class, and its account tag. The experimental maximum proof age is **4,096 blocks**, separate from the **256-root** pool history. The owner can change the R0 and P1 verifiers and the shadow-anonymizer allowlist. No pool fee is charged.
 
-Submission uses sncast signing and the official Sepolia gateway for proof-bearing transactions, with explicit fee bounds. Proof-aware estimation and proof preservation through the intended wallet/RPC path remain unqualified.
+The bench submits with sncast signing and the official Sepolia gateway, with explicit fee bounds. The SDK submits through starknet.js: the raw fee estimate, the exact signed transaction simulated with validation, then sent. That path has not yet carried a funded spend.
 
 ## Work still needed
 
@@ -157,8 +161,8 @@ Submission uses sncast signing and the official Sepolia gateway for proof-bearin
 | Client privacy | Complete and independently confirm the compact client proof's zero-knowledge argument |
 | Network support | Public acceptance of large-proof transactions on Starknet (Sepolia gateway, then mainnet) |
 | Relations | Larger shapes, spends of several assets at once, NFTs in open-note executions, private creation of policy notes end to end, a real-proof split-outcome settlement |
-| Production integration | Bring the relations, bridges, pool ABI, delivery, recovery and adapters into the maintained packages |
-| Cryptography and formats | Independent review; finalize addresses, derivation, backups, exports and version handling |
+| Production integration | The client SDK covers keys, addresses, receiving, R0 V4 spends and submission; bring policy notes, open notes, bridges, pool ABI and adapters into maintained packages |
+| Cryptography and formats | Addresses, derivation, backups and exports are specified and design-reviewed (SDK spec); implementation review, then freezing formats |
 | Device qualification | Complete payments on physical target devices and in browsers |
 | Wrapping service | Availability, pricing, and protection of client network metadata |
 | Synchronization | Authenticated bulk history, private spent-status queries, historical availability and scale testing |

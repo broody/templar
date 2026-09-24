@@ -585,11 +585,11 @@ recovery tries every derivation version (§3.1).
 ## 13. Dependencies, supply chain and release (SDK-P11)
 
 - The client proof needs the arithmetic-profile fork of `proving` (`templar/arithmetic-profile`,
-  commit `4de7408a6`), which also carries the H2 hiding fix. It exists only in the local checkout
+  commit `4de7408a6`), which also carries an unreleased prover fix. It exists only in the local checkout
   (`target/proving-arith`). It is pushed to the **private** `broody/proving-private` and pinned by
   commit; a check script verifies the checkout. It must not go to the public fork.
-- **Release gate.** A public npm or WASM release would disclose the H2 fix by binary diffing. No
-  public package ships before the H2 disclosure is resolved; until then builds are private.
+- **Release gate.** A public npm or WASM release would reveal that fix by binary diffing. No public
+  package ships before the owner releases it; until then builds are private.
 - Every other build input is pinned by commit or sha256 and checked by the same script: the
   `bench/m31-private-blake` sources the relation includes, the `stwo-cairo-prover` and `cairo-vm`
   chain and every other crate (through the SDK workspace's own committed `Cargo.lock`, built with

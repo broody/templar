@@ -30,6 +30,7 @@ export default defineConfig({
         { text: 'Assets & hidden transfers', link: '/architecture/assets' },
         { text: 'Open notes', link: '/architecture/open-notes' },
         { text: 'Policy notes', link: '/architecture/policy-notes' },
+        { text: 'Client SDK', link: '/architecture/sdk' },
         { text: 'Privacy & trust', link: '/architecture/privacy' },
       ],
     },
