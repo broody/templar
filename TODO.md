@@ -260,7 +260,10 @@ the accepted local proving architecture is unchanged.
     [open-note-spec.md](docs/open-note-spec.md). **Pending:** the math review
     and adversarial tests (deferred until after implementation, per the
     user), a shadow-account end-to-end with upstream's unchanged anonymizer,
-    and Sepolia (still blocked on PROOF2 gateway acceptance).
+    and inclusion on Sepolia (blocked on PROOF2 gateway acceptance). Sepolia
+    2026-09-24: deposits on chain; the proof-carrying Ekubo swap into an open
+    note succeeds in simulation (299 B funded, 3.80 STRK); the gateway rejects
+    PROOF2 ([evidence](bench/m31-sepolia/results/v3-open-note/)).
   Open for this route:
   - review of the fork's profile;
   - the hiding question (broody/templar#2), under test per
