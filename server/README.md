@@ -65,23 +65,29 @@ templar-prover info /etc/templar/prover.toml     # the startup checks, then the 
 systemctl enable --now templar-prover
 ```
 
-**Docker:**
+**Docker** (tested 2026-09-24 with Docker 26 on an AppArmor host, cgroup v2):
 
 ```bash
 docker run -d --name templar-prover --network host --init --read-only --tmpfs /tmp \
-  --cgroupns=private --cap-drop ALL --cap-add SYS_ADMIN --security-opt no-new-privileges \
+  --cgroupns=private --cap-drop ALL --cap-add SYS_ADMIN --cap-add CHOWN --cap-add SETUID --cap-add SETGID \
+  --security-opt no-new-privileges --security-opt apparmor=unconfined \
   --memory 38g --memory-swap 38g \
   -v /etc/templar/prover.toml:/etc/templar/prover.toml:ro \
+  -v /etc/templar/ohttp.key:/etc/templar/ohttp.key:ro \
   -v /opt/templar/bridges:/opt/templar/bridges:ro \
   -v templar-jobs:/var/lib/templar-prover templar-prover
 ```
 
-`SYS_ADMIN` is used only by the entrypoint, to make the container's private cgroup namespace
-writable and hand it to the unprivileged `templar` user; the server itself runs with no
-capabilities and `no_new_privs`. The capability does stay in the container's bounding set, so
-anything started with `docker exec` as root could use it: for a public server prefer the systemd
-unit, which needs no capability at all. `--init` reaps the steps' processes and forwards SIGTERM;
-on SIGTERM the server stops accepting work and kills running steps.
+The added capabilities (and, on AppArmor hosts, the unconfined profile, since Docker's default
+profile forbids the remount) are used only by the entrypoint: it remounts the container's private
+cgroup namespace writable, moves every process into a `server` leaf, hands the subtree to the
+unprivileged `templar` user (uid 999 in the image) and switches to it with every capability
+dropped and `no_new_privs`. They stay in the container's bounding set, so anything started with
+`docker exec` as root could use them: for a public server prefer the systemd unit, which needs
+none. Mounted files must be readable by uid 999 (the OHTTP key: mode 0400, owner 999). Bridge
+builds may be mounted read-only; the server copies what it executes into its data directory at
+startup and hashes the copy. `--init` reaps step processes and forwards SIGTERM; on SIGTERM the
+server stops accepting work and kills running steps.
 
 `templar-prover check CONFIG SUBMISSION_JSON` runs the pre-checks on one submission without the
 queue. `tests/check_bench_proofs.sh CONFIG PROOFS_DIR` runs every R0 V4 bench proof, honest and
@@ -107,7 +113,8 @@ handling.
 ## Status
 
 Tested end to end on Sepolia (2026-09-24): an R0 V4 hidden-asset transfer and a P1 ERC1155 escrow
-release, each through the API (pre-check, OS run on live state, large proof, facts) and then
+release, each through the API (as a systemd unit with a delegated cgroup; the R0 V4 job also in
+the hardened container) (pre-check, OS run on live state, large proof, facts) and then
 simulated with validation as the signed pool transaction: both succeed, with the same gas as the
 bench-produced proofs. The large proof from `templar-prove` is byte-identical to the bench
 prover's for the same PIE.

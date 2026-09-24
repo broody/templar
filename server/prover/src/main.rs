@@ -24,6 +24,43 @@ use sha2::{Digest, Sha256};
 use crate::config::Config;
 use crate::rpc::{felt, hex, short_string, sn_keccak, Rpc};
 
+/// Copies each relation's bridge build into `into/<relation>` and points the configuration at the
+/// copy: `scarb execute` takes a lock file in the build directory, so it needs a writable copy the
+/// server owns, and the startup checks then hash exactly what the pre-check will execute. Only the
+/// workspace manifests, lock file, sources, build record and compiled executable are copied.
+fn stage_bridges(cfg: &mut Config, into: &Path) -> Result<()> {
+    fn copy(from: &Path, to: &Path) -> Result<()> {
+        if from.is_dir() {
+            std::fs::create_dir_all(to)?;
+            for e in std::fs::read_dir(from)? {
+                let e = e?;
+                if e.file_name() == "target" {
+                    continue;
+                }
+                copy(&e.path(), &to.join(e.file_name()))?;
+            }
+        } else {
+            std::fs::copy(from, to).with_context(|| format!("copying {}", from.display()))?;
+        }
+        Ok(())
+    }
+    for rel in &mut cfg.relations {
+        let dst = into.join(&rel.name);
+        let _ = std::fs::remove_dir_all(&dst);
+        std::fs::create_dir_all(&dst)?;
+        for part in ["Scarb.toml", "Scarb.lock", "build-record.json", "bridge", "account", "vendor"] {
+            if rel.bridge_dir.join(part).exists() {
+                copy(&rel.bridge_dir.join(part), &dst.join(part))?;
+            }
+        }
+        let exe = "target/dev/templar_membership_bridge.executable.json";
+        std::fs::create_dir_all(dst.join("target/dev"))?;
+        std::fs::copy(rel.bridge_dir.join(exe), dst.join(exe)).context("copying the compiled bridge")?;
+        rel.bridge_dir = dst;
+    }
+    Ok(())
+}
+
 /// Checks the configuration against the chain and the local artifacts (spec §8, PS-5, PS-12) and
 /// returns the published information.
 async fn startup(cfg: &Config, rpc: &Rpc) -> Result<Value> {
@@ -101,11 +138,16 @@ async fn main() -> Result<()> {
     tracing_subscriber::fmt().with_env_filter(tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "info".into())).init();
     let args: Vec<String> = std::env::args().collect();
     let cfg_path = args.get(2).context("usage: templar-prover serve|check|info CONFIG ...")?;
-    let cfg = Config::load(Path::new(cfg_path))?;
+    let mut cfg = Config::load(Path::new(cfg_path))?;
+    let staging = cfg.server.data_dir.parent().map(Path::to_path_buf).unwrap_or_else(|| cfg.server.data_dir.clone())
+        .join(if args[1] == "serve" { "bridges".to_string() } else { format!("bridges-{}", std::process::id()) });
+    stage_bridges(&mut cfg, &staging).context("staging the bridge builds")?;
     let rpc = Rpc::new(&cfg.network.rpc_url);
     match args[1].as_str() {
         "info" => {
-            println!("{}", serde_json::to_string_pretty(&startup(&cfg, &rpc).await?)?);
+            let out = startup(&cfg, &rpc).await;
+            let _ = std::fs::remove_dir_all(&staging);
+            println!("{}", serde_json::to_string_pretty(&out?)?);
         }
         "check" => {
             let body: statement::SubmissionJson = serde_json::from_slice(&std::fs::read(args.get(3).context("SUBMISSION_JSON")?)?)?;
@@ -120,11 +162,11 @@ async fn main() -> Result<()> {
             std::fs::create_dir_all(&dir)?;
             let out = pipeline::check(&cfg, rel, &sub, &dir, &tag).await;
             let _ = std::fs::remove_dir_all(&dir);
+            let _ = std::fs::remove_dir_all(&staging);
             let out = out?;
             println!("{}", json!({"accepted": true, "binding": hex(&out.binding), "asset": hex(&out.token), "steps": out.steps, "seconds": out.seconds}));
         }
         "serve" => {
-            let mut cfg = cfg;
             sandbox::prepare_root(&mut cfg.sandbox).context("preparing the cgroup subtree")?;
             let purged = sandbox::purge(&cfg.sandbox)?;
             // Job directories from a previous run hold statements and cannot be resumed (PI-8).
