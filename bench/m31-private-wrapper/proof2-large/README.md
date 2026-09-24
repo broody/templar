@@ -10,6 +10,26 @@ This is the public hash-batch bridge, not the complete private-client
 verifier. The PIE comes from a synthetic local fixture, so its facts are not
 submittable to Sepolia. No network transaction was sent.
 
+## Build
+
+Always build the prover with native CPU features. A default release build of the same source is
+about 1.7x slower (193 s instead of 112 s on the policy-note PIE), with identical memory and
+proofs:
+
+```bash
+# Bounded server build (what run.sh uses): branch templar/bounded-server, patches in bounded/
+cd target/proving-server
+RUSTFLAGS="-C target-cpu=native" CARGO_TARGET_DIR=../proving-server-target \
+  cargo build --release -p privacy-prove --example prove_large
+
+# Original proving@2b495a3 build (TEMPLAR_PROOF2_BIN=... to use it)
+cd target/proof2-large/proving
+RUSTFLAGS="-C target-cpu=native" cargo build --release -p privacy-prove --example prove_large
+```
+
+The resulting binary is tuned to this host's CPU and is a benchmark setting, not a portable
+shipping build. Compare timings only between builds made with the same flags.
+
 ## Results
 
 Both runs used `proving@2b495a3` (the commit linked from the
@@ -87,8 +107,8 @@ size-sorted order, and feed them to the Blake2s leaf builder, which already abso
 tested column-provider Merkle API for this. We estimate it would remove roughly 6–10 GiB per
 commitment, giving a floor near the retained ~20 GiB; this is not measured.
 
-**Build note:** the prover must be built with `RUSTFLAGS="-C target-cpu=native"`. A default build
-of the same source proves in about 193 s instead of 112 s, with identical per-stage memory.
+**Build note:** see [Build](#build): without `-C target-cpu=native` the same source proves in
+about 193 s instead of 112 s, with identical per-stage memory.
 
 ## What PROOF2 is
 
