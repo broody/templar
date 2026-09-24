@@ -208,10 +208,6 @@ fn forged(tree: Tree, kind: &str, mut public: Public, mut private: Private) -> (
         other => panic!("unknown forgery {other}"),
     }
     let forged = public_from_circuit(tree, &public, &private);
-    assert!(
-        payment4::statement(tree, &forged.chain, &forged.pool, forged.deliveries.clone(),
-            (forged.withdrawal_recipient.clone(), forged.withdrawal_amount), &forged.intent, &private).map_or(true, |p| p != forged),
-        "the native reference must not produce the forged statement",
-    );
+    assert!(payment4::bridge_checks(&forged).is_err(), "the forged statement must fail the bridge checks");
     (forged, private)
 }

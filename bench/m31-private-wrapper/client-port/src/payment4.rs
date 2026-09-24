@@ -112,7 +112,11 @@ pub fn statement_limbs(tree: Tree, p: &Public) -> Vec<u32> {
 
 // ---------------------------------------------------------------- native reference
 
-/// The public statement a valid witness proves, or an error naming the first broken rule.
+/// The public statement the circuit proves for a witness, or an error naming the first witness
+/// rule the circuit rejects. The circuit also admits statements the bridge rejects (duplicate
+/// nullifiers, zero delivery digests, a recipient without an amount, an identity without an
+/// intent, a voluntary asset reveal, out-of-range addresses): a spend is valid only if
+/// [`bridge_checks`] also accepts its statement.
 pub fn statement(
     tree: Tree,
     chain: &str,
@@ -149,27 +153,15 @@ pub fn statement(
     } else if roots[0] != roots[1] {
         return Err("inputs under different roots".into());
     }
-    if nullifiers[0] == nullifiers[1] {
-        return Err("duplicate input".into());
-    }
     let mut commitments = vec![];
-    for (o, d) in w.outputs.iter().zip(&deliveries) {
+    for o in &w.outputs {
         if !nonzero(&o.receiver) || !nonzero(&o.rho) || !canonical(&o.receiver) || !canonical(&o.rho) {
             return Err("output encoding".into());
         }
-        if is_zero_felt(d) {
-            return Err("zero delivery".into());
-        }
         commitments.push(commitment(&context, o.amount, &o.receiver, &o.rho));
     }
-    let (recipient, w_amount) = &withdrawal;
-    if !is_zero_felt(recipient) != (*w_amount != 0) {
-        return Err("withdrawal recipient and amount".into());
-    }
+    let w_amount = &withdrawal.1;
     let has_intent = !is_zero_felt(intent);
-    if w.identity.active && !has_intent {
-        return Err("identity without an intent".into());
-    }
     if !canonical(&w.identity.scope) {
         return Err("identity encoding".into());
     }
@@ -195,6 +187,49 @@ pub fn statement(
         intent: intent.into(),
         identity,
     })
+}
+
+/// A `0x` hex felt below 2^251.
+fn below_2_251(hex: &str) -> bool {
+    let digits = hex.trim_start_matches("0x").trim_start_matches('0');
+    digits.len() < 63 || (digits.len() == 63 && digits.chars().next().unwrap().to_digit(16).unwrap() < 8)
+}
+
+/// The R0 V4 bridge's own checks on a decoded statement (spec §4.5), which the circuit does not
+/// enforce: nonzero context, addresses and the asset below 2^251, nonzero distinct nullifiers,
+/// nonzero commitments and delivery digests, recipient ⇔ amount, the exit rule (no voluntary
+/// reveal) and identity ⇒ intent. Mirrors `cairo-r4/bridge/src/lib.cairo`.
+pub fn bridge_checks(p: &Public) -> Result<(), String> {
+    let nonzero = |d: &Digest| d.iter().any(|v| *v != 0);
+    if is_zero_felt(&p.chain) || is_zero_felt(&p.pool) {
+        return Err("zero context".into());
+    }
+    if !below_2_251(&p.pool) || !below_2_251(&p.token_out) || !below_2_251(&p.withdrawal_recipient) {
+        return Err("address range".into());
+    }
+    if !nonzero(&p.nullifiers[0]) || !nonzero(&p.nullifiers[1]) {
+        return Err("zero digest".into());
+    }
+    if p.nullifiers[0] == p.nullifiers[1] {
+        return Err("duplicate nullifier".into());
+    }
+    if !nonzero(&p.commitments[0]) || !nonzero(&p.commitments[1]) {
+        return Err("zero commitment".into());
+    }
+    if p.deliveries.iter().any(|d| is_zero_felt(d)) {
+        return Err("delivery".into());
+    }
+    if !is_zero_felt(&p.withdrawal_recipient) != (p.withdrawal_amount != 0) {
+        return Err("withdrawal".into());
+    }
+    let exits = p.withdrawal_amount != 0 || !is_zero_felt(&p.intent);
+    if !is_zero_felt(&p.token_out) != exits {
+        return Err("exit rule".into());
+    }
+    if nonzero(&p.identity) && is_zero_felt(&p.intent) {
+        return Err("identity intent".into());
+    }
+    Ok(())
 }
 
 /// What a fresh test spend looks like.
@@ -329,6 +364,7 @@ pub fn fresh_shape(tree: Tree, shape: Shape, rng: &mut impl RngCore) -> (Public,
         _ => "0x0".to_string(),
     };
     let public = statement(tree, chain, &pool, deliveries, withdrawal, &intent, &private).expect("fresh witness is valid");
+    bridge_checks(&public).expect("fresh statement passes the bridge");
     (public, private)
 }
 

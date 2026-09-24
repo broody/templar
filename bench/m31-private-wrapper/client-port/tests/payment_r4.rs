@@ -132,9 +132,75 @@ fn asset_just_below_2_251() {
     assert_eq!(limbs, statement_limbs(tree, &public));
 }
 
-/// Each broken witness either fails the circuit or proves a different statement.
+/// Re-plants the real inputs' leaves (input 0, and input 1 unless it is a dummy) under the
+/// witness's current asset and amounts, so only the rule under test can fail.
+fn replant(tree: Tree, public: &Public, mut p: Private, seed: u64) -> Private {
+    let context = [felt_limbs(&public.chain), felt_limbs(&public.pool), felt_limbs(&p.token)].concat();
+    let real = if p.dummy { 1 } else { 2 };
+    let leaves: Vec<(u32, Digest)> = p.inputs[..real]
+        .iter()
+        .map(|i| (i.position, commitment(&context, i.amount, &receiver_of(&i.sk).0, &i.rho)))
+        .collect();
+    let (_, siblings) = sparse_paths(tree, &leaves, &mut StdRng::seed_from_u64(seed));
+    for (i, s) in p.inputs.iter_mut().zip(siblings) {
+        i.siblings = s;
+    }
+    p
+}
+
+/// Mutations an attacker wants proved: each must make the circuit invalid, not merely change the
+/// statement (implementation review HA-IM1).
 #[test]
-fn broken_witnesses_are_rejected() {
+fn attacker_mutations_fail_the_circuit() {
+    for tree in TREES {
+        for shape in SHAPES {
+            let (public, private) = fresh_shape(tree, shape, &mut StdRng::seed_from_u64(8));
+            assert!(outputs(tree, &public, &private).1, "{tree:?} {shape:?}: control");
+            let invalid = |name: &str, p: Private| {
+                let (_, valid) = outputs(tree, &public, &p);
+                assert!(!valid, "{tree:?} {shape:?}: {name} satisfies the circuit");
+            };
+            let mut p = private.clone();
+            p.outputs[0].amount += 1;
+            invalid("conservation +1", p);
+            if private.outputs[0].amount > 0 {
+                let mut p = private.clone();
+                p.outputs[0].amount -= 1;
+                invalid("conservation -1", p);
+            }
+            let mut p = private.clone();
+            p.outputs[1].receiver = [0; 9];
+            invalid("zero output receiver", p);
+            let mut p = private.clone();
+            p.outputs[0].rho = [0; 9];
+            invalid("zero output rho", p);
+            if private.dummy {
+                // A dummy that carries value would mint it.
+                let mut p = private.clone();
+                p.inputs[1].amount = 5;
+                p.outputs[0].amount += 5;
+                invalid("dummy input with value", p);
+                // Enabling the dummy requires its random path to reach the root.
+                let mut p = private.clone();
+                p.dummy = false;
+                invalid("enabled input off the tree", p);
+            } else {
+                let mut p = private.clone();
+                p.inputs[1].siblings[9][3] ^= 1;
+                invalid("wrong sibling of an enabled input 1", p);
+                // Disabling a real input 1 forces its (nonzero) amount to zero.
+                let mut p = private.clone();
+                p.dummy = true;
+                invalid("real input disabled", p);
+            }
+        }
+    }
+}
+
+/// Mutations that change what is proved: the circuit either fails or publishes a different
+/// statement, which the pool then rejects (an unknown root, another asset's notes).
+#[test]
+fn other_mutations_change_the_statement() {
     for tree in TREES {
         for shape in SHAPES {
             let (public, private) = fresh_shape(tree, shape, &mut StdRng::seed_from_u64(8));
@@ -147,46 +213,95 @@ fn broken_witnesses_are_rejected() {
             p.inputs[0].siblings[5][0] ^= 1;
             check("wrong sibling of input 0", p);
             let mut p = private.clone();
-            p.inputs[0].amount = 0;
-            check("zero input 0", p);
-            let mut p = private.clone();
-            p.token = "0x0".into();
-            check("zero asset", p);
-            let mut p = private.clone();
             p.token = "0x1234".into();
             check("other asset", p);
-            let mut p = private.clone();
-            p.outputs[0].amount += 1;
-            check("conservation +1", p);
-            let mut p = private.clone();
-            if p.outputs[0].amount > 0 {
-                p.outputs[0].amount -= 1;
-                check("conservation -1", p);
-            }
-            let mut p = private.clone();
-            p.outputs[1].receiver = [0; 9];
-            check("zero output receiver", p);
-            if private.dummy {
-                // A dummy that carries value mints it.
-                let mut p = private.clone();
-                p.inputs[1].amount = 5;
-                p.outputs[0].amount += 5;
-                check("dummy input with value", p);
-                // Enabling the dummy requires its random path to reach the root.
-                let mut p = private.clone();
-                p.dummy = false;
-                check("enabled input off the tree", p);
-            } else {
-                let mut p = private.clone();
-                p.inputs[1].siblings[9][3] ^= 1;
-                check("wrong sibling of input 1", p);
-                // Disabling a real input 1 forces its (nonzero) amount to zero.
-                let mut p = private.clone();
-                p.dummy = true;
-                check("real input disabled", p);
-            }
         }
     }
+}
+
+/// amount₀ = 0 on a consistent tree fails only the real-input nonzero check; amount₀ = 1 passes.
+#[test]
+fn zero_real_input_fails_on_a_consistent_tree() {
+    for tree in TREES {
+        let (public, private) = fresh_shape(tree, Shape::Single, &mut StdRng::seed_from_u64(16));
+        let mut p = private.clone();
+        p.inputs[0].amount = 1;
+        p.outputs[0].amount = 1;
+        p.outputs[1].amount = 0;
+        let control = replant(tree, &public, p.clone(), 17);
+        assert!(outputs(tree, &public, &control).1, "{tree:?}: control amount₀ = 1");
+        p.inputs[0].amount = 0;
+        p.outputs[0].amount = 0;
+        let zero = replant(tree, &public, p, 17);
+        assert!(!outputs(tree, &public, &zero).1, "{tree:?}: amount₀ = 0 accepted");
+    }
+}
+
+/// A zero asset on a consistent tree fails only the asset nonzero check; a small asset passes.
+#[test]
+fn zero_asset_fails_on_a_consistent_tree() {
+    for tree in TREES {
+        let (public, private) = fresh_shape(tree, Shape::Transfer, &mut StdRng::seed_from_u64(18));
+        let mut p = private.clone();
+        p.token = "0x5".into();
+        let control = replant(tree, &public, p.clone(), 19);
+        assert!(outputs(tree, &public, &control).1, "{tree:?}: control asset 0x5");
+        p.token = "0x0".into();
+        let zero = replant(tree, &public, p, 19);
+        assert!(!outputs(tree, &public, &zero).1, "{tree:?}: zero asset accepted");
+    }
+}
+
+/// Outputs cannot be committed under another asset than the inputs: every NOTE hash reads the
+/// single `token` witness, so the test interface cannot even express it (HA-IM2). What can be
+/// checked is that the published output commitments use the spend's asset.
+#[test]
+fn outputs_use_the_inputs_asset() {
+    let tree = Tree::Compress;
+    let (public, private) = fresh_shape(tree, Shape::Transfer, &mut StdRng::seed_from_u64(20));
+    let context = [felt_limbs(&public.chain), felt_limbs(&public.pool), felt_limbs(&private.token)].concat();
+    for j in 0..2 {
+        let o = &private.outputs[j];
+        let inner_cm = commitment(&context, o.amount, &o.receiver, &o.rho);
+        assert_eq!(public.commitments[j], inner_cm);
+    }
+}
+
+/// Statements the circuit proves but the bridge must reject (HA-IM3): the circuit accepts each,
+/// and `bridge_checks` names the rule.
+#[test]
+fn bridge_only_rules() {
+    let tree = Tree::Compress;
+    let (public, private) = fresh_shape(tree, Shape::Transfer, &mut StdRng::seed_from_u64(21));
+    let proved = |pb: &Public, p: &Private| -> Public {
+        let (limbs, valid) = outputs(tree, pb, p);
+        assert!(valid, "the circuit admits it");
+        let mut q = pb.clone();
+        q.nullifiers = [limbs[38..47].try_into().unwrap(), limbs[47..56].try_into().unwrap()];
+        q.identity = limbs[118..127].try_into().unwrap();
+        q
+    };
+    let mut pb = public.clone();
+    pb.deliveries[1] = "0x0".into();
+    assert_eq!(payment4::bridge_checks(&proved(&pb, &private)), Err("delivery".into()));
+    let mut pb = public.clone();
+    pb.withdrawal_recipient = "0x1234".into();
+    assert_eq!(payment4::bridge_checks(&proved(&pb, &private)), Err("withdrawal".into()));
+    let mut p = private.clone();
+    p.identity = payment::Identity { active: true, scope: [7; 9] };
+    assert_eq!(payment4::bridge_checks(&proved(&public, &p)), Err("identity intent".into()));
+    let mut p = private.clone();
+    p.inputs[1] = p.inputs[0].clone();
+    let total = 2 * p.inputs[0].amount;
+    p.outputs[0].amount = 1;
+    p.outputs[1].amount = total - 1;
+    assert_eq!(payment4::bridge_checks(&proved(&public, &p)), Err("duplicate nullifier".into()));
+    let mut pb = public.clone();
+    pb.token_out = private.token.clone();
+    assert_eq!(payment4::bridge_checks(&pb), Err("exit rule".into()));
+    let mut pb = public.clone();
+    pb.pool = format!("0x8{}", "0".repeat(62));
+    assert_eq!(payment4::bridge_checks(&pb), Err("address range".into()));
 }
 
 /// Input 1 committed under a different asset than input 0 cannot be spent with it.
@@ -222,9 +337,11 @@ fn same_leaf_twice_publishes_equal_nullifiers() {
     let total = 2 * p.inputs[0].amount;
     p.outputs[0].amount = 1;
     p.outputs[1].amount = total - 1;
-    assert!(redo(tree, &public, &p).is_err(), "native reference rejects the duplicate");
+    let native = redo(tree, &public, &p).expect("the circuit rules admit it");
+    assert_eq!(payment4::bridge_checks(&native), Err("duplicate nullifier".into()));
     let mut c = Context::<QM31>::new(N_OUTPUTS);
     let out = build(&mut c, tree, &public, &p);
+    assert!(c.is_circuit_valid(), "the circuit admits it; the bridge and pool reject it");
     let limbs: Vec<u32> = out.iter().flat_map(|v| c.get(*v).to_m31_array().map(|m| m.0)).collect();
     // Layout: tag 2, chain 9, pool 9, token_out 9, root 9, nf₀ 9, nf₁ 9.
     assert_eq!(limbs[38..47], limbs[47..56]);

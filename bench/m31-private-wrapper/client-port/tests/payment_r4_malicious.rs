@@ -4,9 +4,9 @@
 use circuits::context::Context;
 use rand::{SeedableRng, rngs::StdRng};
 use stwo::core::fields::qm31::QM31;
-use templar_client_verifier_circuit::payment::{Tree, felt_limbs};
+use templar_client_verifier_circuit::payment::{Digest, Tree, commitment, felt_limbs, receiver_of};
 use templar_client_verifier_circuit::payment4::{
-    N_OUTPUTS, Private, Public, Shape, TAMPER, Tamper, build, fresh_shape, statement_limbs,
+    N_OUTPUTS, Private, Public, Shape, TAMPER, Tamper, build, fresh_shape, sparse_paths, statement_limbs,
 };
 
 const TREES: [Tree; 2] = [Tree::Sponge, Tree::Compress];
@@ -34,6 +34,36 @@ fn e1_non_boolean() {
     for tree in TREES {
         rejected("e1 = 2 on a dummy", tree, Shape::Single, Tamper { e1: Some(2), ..Default::default() });
         rejected("e1 = 2 on a real input", tree, Shape::Transfer, Tamper { e1: Some(2), ..Default::default() });
+    }
+}
+
+/// e₁ = 2 on an enabled zero-value member input: the amount and membership rules both hold for
+/// any e₁, so only booleanity can reject it (implementation review HA-IM2).
+#[test]
+fn e1_non_boolean_isolated() {
+    for tree in TREES {
+        let (public, mut private) = fresh_shape(tree, Shape::Transfer, &mut StdRng::seed_from_u64(33));
+        // Input 1 becomes a real, enabled member note of amount 0.
+        let total = private.inputs[0].amount;
+        private.inputs[1].amount = 0;
+        private.outputs[0].amount = 1;
+        private.outputs[1].amount = total - 1;
+        let context = [felt_limbs(&public.chain), felt_limbs(&public.pool), felt_limbs(&private.token)].concat();
+        let leaves: Vec<(u32, Digest)> = private
+            .inputs
+            .iter()
+            .map(|i| (i.position, commitment(&context, i.amount, &receiver_of(&i.sk).0, &i.rho)))
+            .collect();
+        let (_, siblings) = sparse_paths(tree, &leaves, &mut StdRng::seed_from_u64(34));
+        for (i, s) in private.inputs.iter_mut().zip(siblings) {
+            i.siblings = s;
+        }
+        let (_, control) = run(tree, &public, &private, Tamper { e1: Some(1), ..Default::default() });
+        assert!(control, "{tree:?}: control e1 = 1");
+        let (_, zero) = run(tree, &public, &private, Tamper { e1: Some(0), ..Default::default() });
+        assert!(zero, "{tree:?}: e1 = 0 is also consistent for a zero-value input");
+        let (_, two) = run(tree, &public, &private, Tamper { e1: Some(2), ..Default::default() });
+        assert!(!two, "{tree:?}: e1 = 2 accepted");
     }
 }
 
