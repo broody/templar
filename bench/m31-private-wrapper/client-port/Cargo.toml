@@ -21,12 +21,15 @@ serde_json = "1"
 num-traits = "0.2.19"
 blake2 = "=0.10.6"
 rand = "=0.8.8"
-templar-private-membership = { path = "oracle" }
+templar-private-membership = { path = "oracle", optional = true }
 anyhow = "1"
 starknet-ff = "0.3"
 stwo-cairo-serialize = { path = "../../../target/proving-arith/crates/cairo-serialize" }
 
 [features]
+default = ["oracle"]
+# The unchanged TMPZK002 client as a native verification oracle (bench tests only; not built for wasm32).
+oracle = ["dep:templar-private-membership"]
 # Test-only hint overrides (`policy::TAMPER`, `payment4::TAMPER`, `payment::CARRIES`) for malicious-witness tests.
 # Production builds never read them.
 tamper = []

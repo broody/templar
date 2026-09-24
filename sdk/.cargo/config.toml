@@ -1,0 +1,3 @@
+# getrandom 0.3 (hpke, stwo's rand 0.9) needs its backend selected for wasm32 (spec §2, SDK-P11).
+[target.wasm32-unknown-unknown]
+rustflags = ["--cfg", 'getrandom_backend="wasm_js"']

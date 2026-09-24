@@ -1,0 +1,399 @@
+//! `templar-wasm`: the WebAssembly façade over `templar-core` (spec §10.1). JSON strings and byte
+//! arrays in and out; every error is thrown as a JSON `{code, message}` string, never a trap.
+//! Secrets derived from the seed stay inside; only the explicit viewing-key export returns one.
+use std::collections::HashMap;
+
+use rand_core::OsRng;
+use serde::{Deserialize, Serialize};
+use serde_json::{Value, json};
+use templar_core::address::{Address, ViewingKey};
+use templar_core::felt::{self, Felt32};
+use templar_core::keys::{self, Seed};
+use templar_core::result::{self, Pins, ServerResult};
+use templar_core::scan::{self, Context, Published, Registered, ScanKey, Settlement};
+use templar_core::spend::{self, Companion, NoteRef, Plan, PlanInput, Request};
+use templar_core::{Digest, Error, note, sealbox, store};
+use wasm_bindgen::prelude::*;
+
+type Out<T> = Result<T, JsValue>;
+
+fn err(e: Error) -> JsValue {
+    JsValue::from_str(&serde_json::to_string(&e).unwrap_or_default())
+}
+
+fn bad(m: &str) -> JsValue {
+    err(Error::input(m))
+}
+
+fn parse<T: for<'a> Deserialize<'a>>(s: &str, what: &str) -> Out<T> {
+    serde_json::from_str(s).map_err(|e| bad(&format!("{what}: {e}")))
+}
+
+fn to_json(v: &impl Serialize) -> Out<String> {
+    serde_json::to_string(v).map_err(|e| err(Error::new("internal", e.to_string())))
+}
+
+fn f(s: &str) -> Out<Felt32> {
+    felt::parse(s).map_err(err)
+}
+
+fn seed_of(b: &[u8]) -> Out<Seed> {
+    Seed::from_bytes(b).map_err(err)
+}
+
+fn u128_of(s: &str) -> Out<u128> {
+    s.parse().map_err(|_| bad("not a decimal u128"))
+}
+
+// ---------------------------------------------------------------- seed and keys
+
+#[wasm_bindgen]
+pub fn seed_generate() -> Vec<u8> {
+    Seed::generate(&mut OsRng).bytes().to_vec()
+}
+
+#[wasm_bindgen]
+pub fn seed_from_mnemonic(words: &str) -> Out<Vec<u8>> {
+    Ok(Seed::from_mnemonic(words).map_err(err)?.bytes().to_vec())
+}
+
+#[wasm_bindgen]
+pub fn mnemonic_from_seed(seed: &[u8]) -> Out<String> {
+    Ok(seed_of(seed)?.mnemonic())
+}
+
+/// `{address, receiver, fingerprint}` of account `i`; refuses indexes past the gap limit.
+#[wasm_bindgen]
+pub fn account(seed: &[u8], chain: &str, pool: &str, i: u32, highest_used: u32) -> Out<String> {
+    keys::check_index(i, highest_used).map_err(err)?;
+    let (c, p) = (f(chain)?, f(pool)?);
+    let a = seed_of(seed)?.account(&c, &p, i).map_err(err)?;
+    let addr = Address::of(&c, &p, &a);
+    to_json(&json!({"address": addr.encode().map_err(err)?, "receiver": a.receiver, "fingerprint": addr.fingerprint()}))
+}
+
+#[wasm_bindgen]
+pub fn address_decode(address: &str) -> Out<String> {
+    let a = Address::decode(address).map_err(err)?;
+    to_json(&json!({
+        "chain": felt::to_hex(&a.chain), "pool": felt::to_hex(&a.pool), "receiver": a.receiver,
+        "pk": hex_bytes(&a.pk), "fingerprint": a.fingerprint(),
+    }))
+}
+
+fn hex_bytes(b: &[u8]) -> String {
+    b.iter().map(|x| format!("{x:02x}")).collect()
+}
+
+#[wasm_bindgen]
+pub fn viewing_key_export(seed: &[u8], chain: &str, pool: &str, i: u32, full: bool) -> Out<String> {
+    let (c, p) = (f(chain)?, f(pool)?);
+    let a = seed_of(seed)?.account(&c, &p, i).map_err(err)?;
+    ViewingKey::of(&c, &p, &a, full).encode().map_err(err)
+}
+
+/// Checks a viewing key against the expected address: `{full, chain, pool, receiver}`.
+#[wasm_bindgen]
+pub fn viewing_key_import(key: &str, expected_address: &str) -> Out<String> {
+    let expected = Address::decode(expected_address).map_err(err)?;
+    let k = ViewingKey::import(key, &expected).map_err(err)?;
+    to_json(&json!({"full": k.nk.is_some(), "chain": felt::to_hex(&k.chain), "pool": felt::to_hex(&k.pool), "receiver": k.receiver}))
+}
+
+// ---------------------------------------------------------------- notes and deposits
+
+#[wasm_bindgen]
+pub fn asset_id(standard: u16, contract: &str, id_low: &str, id_high: &str) -> Out<String> {
+    Ok(felt::to_hex(&note::asset_id(standard, &f(contract)?, (u128_of(id_low)?, u128_of(id_high)?)).map_err(err)?))
+}
+
+/// A deposit's note for `address`: `{inner, ciphertext, commitment}` (the pool's `inner₉`,
+/// `ct₁₀` and the leaf it will publish).
+#[wasm_bindgen]
+pub fn note_for(address: &str, asset: &str, amount: &str) -> Out<String> {
+    let to = Address::decode(address).map_err(err)?;
+    let asset = f(asset)?;
+    felt::check_address(&asset, "asset").map_err(err)?;
+    let amount = u128_of(amount)?;
+    if amount == 0 {
+        return Err(bad("amount: zero"));
+    }
+    let rho = templar_core::random_digest(&mut OsRng);
+    let sealed = sealbox::seal(&to.pk, &note::m301(&asset, &to.receiver, &rho, amount), &mut OsRng).map_err(err)?;
+    let words = sealbox::to_words(&sealed).map_err(err)?;
+    let cm = note::commitment(&to.chain, &to.pool, &asset, amount, &to.receiver, &rho).map_err(err)?;
+    to_json(&json!({
+        "inner": note::inner(&to.receiver, &rho),
+        "ciphertext": words.iter().map(felt::to_hex).collect::<Vec<_>>(),
+        "commitment": cm,
+    }))
+}
+
+// ---------------------------------------------------------------- the tree
+
+#[wasm_bindgen]
+pub struct Tree(templar_core::tree::Tree);
+
+#[wasm_bindgen]
+impl Tree {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> Tree {
+        Tree(templar_core::tree::Tree::new())
+    }
+
+    /// Appends leaves given as a JSON array of nine-word digests.
+    pub fn append(&mut self, leaves: &str) -> Out<()> {
+        let leaves: Vec<Digest> = parse(leaves, "leaves")?;
+        if leaves.iter().any(|d| d.iter().any(|w| *w >= templar_core::P)) {
+            return Err(bad("leaf word not below p"));
+        }
+        self.0.append(&leaves).map_err(err)
+    }
+
+    pub fn truncate(&mut self, n: u64) {
+        self.0.truncate(n)
+    }
+
+    pub fn root(&self) -> Out<String> {
+        to_json(&self.0.root())
+    }
+
+    pub fn len(&self) -> u64 {
+        self.0.len()
+    }
+}
+
+impl Default for Tree {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+// ---------------------------------------------------------------- scanning
+
+#[derive(Deserialize)]
+struct ScanNote {
+    index: u64,
+    commitment: Digest,
+    digest: String,
+    words: Vec<String>,
+}
+
+#[derive(Deserialize)]
+struct ScanRegistered {
+    asset: String,
+    standard: u16,
+    contract: String,
+    id_low: String,
+    id_high: String,
+}
+
+#[derive(Deserialize)]
+struct ScanSettlement {
+    first_index: u64,
+    x: String,
+}
+
+#[derive(Deserialize)]
+struct ScanRequest {
+    chain: String,
+    pool: String,
+    /// Account indexes to scan with the seed (when scanning with the seed).
+    #[serde(default)]
+    accounts: Vec<u32>,
+    /// Or a viewing key and the address it was checked against.
+    viewing_key: Option<String>,
+    expected_address: Option<String>,
+    notes: Vec<ScanNote>,
+    #[serde(default)]
+    registry: Vec<ScanRegistered>,
+    registry_complete: bool,
+    #[serde(default)]
+    settlements: Vec<ScanSettlement>,
+}
+
+/// Trial decryption of published notes (spec §6): `{owned, bad_digests}`. Pass the seed with
+/// `accounts`, or an empty seed with `viewing_key` and `expected_address`.
+#[wasm_bindgen]
+pub fn scan(seed: &[u8], request: &str) -> Out<String> {
+    let r: ScanRequest = parse(request, "scan request")?;
+    let (chain, pool) = (f(&r.chain)?, f(&r.pool)?);
+    let keys: Vec<ScanKey> = match (&r.viewing_key, &r.expected_address) {
+        (Some(vk), Some(addr)) => {
+            let k = ViewingKey::import(vk, &Address::decode(addr).map_err(err)?).map_err(err)?;
+            vec![ScanKey { index: 0, receiver: k.receiver, ivk: k.ivk, nk: k.nk.map(|(_, nk)| nk) }]
+        }
+        (None, None) => {
+            let s = seed_of(seed)?;
+            r.accounts
+                .iter()
+                .map(|i| {
+                    let a = s.account(&chain, &pool, *i)?;
+                    Ok(ScanKey { index: *i, receiver: a.receiver, ivk: a.ivk, nk: Some(a.nk) })
+                })
+                .collect::<Result<_, Error>>()
+                .map_err(err)?
+        }
+        _ => return Err(bad("a viewing key needs its expected address")),
+    };
+    let mut registry = HashMap::new();
+    for g in &r.registry {
+        registry.insert(f(&g.asset)?, Registered { standard: g.standard, contract: f(&g.contract)?, id: (u128_of(&g.id_low)?, u128_of(&g.id_high)?) });
+    }
+    let settlements: Vec<Settlement> =
+        r.settlements.iter().map(|s| Ok(Settlement { first_index: s.first_index, x: u128_of(&s.x)? })).collect::<Out<_>>()?;
+    // Malformed words are "not ours" (and a digest mismatch), never an error.
+    let notes: Vec<Published> = r
+        .notes
+        .iter()
+        .map(|n| Published {
+            index: n.index,
+            commitment: n.commitment,
+            digest: felt::parse(&n.digest).unwrap_or([0xff; 32]),
+            words: n.words.iter().map(|w| felt::parse(w).unwrap_or([0xff; 32])).collect(),
+        })
+        .collect();
+    let ctx = Context { chain, pool, registry: &registry, registry_complete: r.registry_complete, settlements: &settlements };
+    let out = scan::scan(&ctx, &keys, &notes).map_err(err)?;
+    let owned: Vec<Value> = out
+        .owned
+        .iter()
+        .map(|o| {
+            json!({
+                "index": o.index, "account": o.account, "commitment": o.commitment, "asset": felt::to_hex(&o.asset),
+                "kind": o.kind, "amount": o.amount.to_string(), "rho": o.rho, "nullifier": o.nullifier,
+            })
+        })
+        .collect();
+    to_json(&json!({"owned": owned, "bad_digests": out.bad_digests}))
+}
+
+// ---------------------------------------------------------------- spends
+
+#[derive(Deserialize)]
+struct PlanRequest {
+    chain: String,
+    pool: String,
+    request: Request,
+    notes: Vec<NoteRef>,
+    #[serde(default)]
+    companions: Vec<(u64, Companion)>,
+    required_inputs: Option<Vec<u64>>,
+}
+
+fn plan_with(seed: &[u8], request: &str, tree: &Tree, rng: &mut (impl rand_core::RngCore + rand_core::CryptoRng)) -> Out<String> {
+    let r: PlanRequest = parse(request, "plan request")?;
+    let s = seed_of(seed)?;
+    let plan = spend::plan(
+        PlanInput {
+            seed: &s,
+            chain: f(&r.chain)?,
+            pool: f(&r.pool)?,
+            request: r.request,
+            notes: &r.notes,
+            companions: &r.companions,
+            required_inputs: r.required_inputs.as_deref(),
+            tree: &tree.0,
+        },
+        rng,
+    )
+    .map_err(err)?;
+    to_json(&plan)
+}
+
+/// A checked spend plan (spec §7.2): selection, ordering, sealed outputs and the companion.
+#[wasm_bindgen]
+pub fn plan_spend(seed: &[u8], request: &str, tree: &Tree) -> Out<String> {
+    plan_with(seed, request, tree, &mut OsRng)
+}
+
+/// Proves a plan (run in a worker): `{proof, statement, binding, calldata, circuit_hash, nullifiers}`.
+#[wasm_bindgen]
+pub fn prove_spend(seed: &[u8], plan: &str) -> Out<String> {
+    let plan: Plan = parse(plan, "plan")?;
+    to_json(&spend::prove_plan(&seed_of(seed)?, &plan, &mut OsRng).map_err(err)?)
+}
+
+/// The companion's nullifier, which the wallet checks is unspent before proving (SDK-M17).
+#[wasm_bindgen]
+pub fn companion_nullifier(companion: &str, chain: &str, pool: &str, asset: &str) -> Out<String> {
+    let c: Companion = parse(companion, "companion")?;
+    to_json(&c.nullifier(&f(chain)?, &f(pool)?, &f(asset)?).map_err(err)?)
+}
+
+/// Checks a server result against the pins; returns the locally computed `{submit_after, valid_until}`.
+#[wasm_bindgen]
+pub fn check_result(pins: &str, binding: &str, server_result: &str, latest_block: u64) -> Out<String> {
+    let pins: Pins = parse(pins, "pins")?;
+    let r: ServerResult = parse(server_result, "result")?;
+    to_json(&result::check(&pins, binding, &r, latest_block).map_err(err)?)
+}
+
+// ---------------------------------------------------------------- the store
+
+#[wasm_bindgen]
+pub fn store_seal(seed: &[u8], chain: &str, pool: &str, record_type: &str, record_key: &str, plaintext: &[u8]) -> Out<Vec<u8>> {
+    store::seal(&seed_of(seed)?, &f(chain)?, &f(pool)?, record_type, record_key, plaintext, &mut OsRng).map_err(err)
+}
+
+#[wasm_bindgen]
+pub fn store_open(seed: &[u8], chain: &str, pool: &str, record_type: &str, record_key: &str, sealed: &[u8]) -> Out<Vec<u8>> {
+    store::open(&seed_of(seed)?, &f(chain)?, &f(pool)?, record_type, record_key, sealed).map_err(err)
+}
+
+#[wasm_bindgen]
+pub fn store_record_id(seed: &[u8], chain: &str, pool: &str, record_type: &str, record_key: &str) -> Out<String> {
+    Ok(store::record_id(&seed_of(seed)?, &f(chain)?, &f(pool)?, record_type, record_key))
+}
+
+// ---------------------------------------------------------------- OHTTP
+
+#[wasm_bindgen]
+pub struct OhttpRequest {
+    envelope: Vec<u8>,
+    context: Option<ohttp_ctx::Context>,
+}
+
+mod ohttp_ctx {
+    pub type Context = templar_core::ohttp::Pending;
+}
+
+#[wasm_bindgen]
+impl OhttpRequest {
+    /// Encapsulates `method path` with a JSON body under the pinned key configuration list.
+    #[wasm_bindgen(constructor)]
+    pub fn new(config: &[u8], method: &str, path: &str, body: &[u8]) -> Out<OhttpRequest> {
+        let p = templar_core::ohttp::encapsulate(config, method, path, body).map_err(err)?;
+        Ok(OhttpRequest { envelope: p.envelope.clone(), context: Some(p) })
+    }
+
+    pub fn envelope(&self) -> Vec<u8> {
+        self.envelope.clone()
+    }
+
+    /// Opens the response (once): `{status, body}` with the body as a byte array.
+    pub fn open(&mut self, response: &[u8]) -> Out<String> {
+        let p = self.context.take().ok_or_else(|| bad("response already opened"))?;
+        let (status, body) = templar_core::ohttp::decapsulate(p.context, response).map_err(err)?;
+        to_json(&json!({"status": status, "body": body}))
+    }
+}
+
+// ---------------------------------------------------------------- tests only
+
+/// Seeded planning and proving for reproducibility tests; absent from release artifacts (SDK-M13).
+#[cfg(feature = "test-rng")]
+#[wasm_bindgen]
+pub fn test_prove_spend_seeded(seed: &[u8], plan: &str, rng_seed: u64) -> Out<String> {
+    use rand_core::SeedableRng;
+    let plan: Plan = parse(plan, "plan")?;
+    let mut rng = rand_chacha::ChaCha20Rng::seed_from_u64(rng_seed);
+    to_json(&spend::prove_plan(&seed_of(seed)?, &plan, &mut rng).map_err(err)?)
+}
+
+#[cfg(feature = "test-rng")]
+#[wasm_bindgen]
+pub fn test_plan_spend_seeded(seed: &[u8], request: &str, tree: &Tree, rng_seed: u64) -> Out<String> {
+    use rand_core::SeedableRng;
+    plan_with(seed, request, tree, &mut rand_chacha::ChaCha20Rng::seed_from_u64(rng_seed))
+}

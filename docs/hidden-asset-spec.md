@@ -366,7 +366,13 @@ let its owner replace the code holding all funds. So:
   vector), like real secrets (HA-M10).
 - **Dummy inputs** (HA-M6). Input 1's `sk`, `rho` and position are drawn fresh from a CSPRNG for
   every proof, independent of seed-derived counters, and never reused, including when a spend is
-  re-proved after a failed submission. The wallet stores nothing for them.
+  re-proved after a failed submission. The wallet stores nothing for them. **Amendment
+  (`docs/sdk-spec.md` §3.3, SDK-M10, SDK-M17):** a note's dummy input is sticky. The first time a
+  statement naming the note as a single real input leaves the wallet (to a prover server or the
+  chain), its dummy witness becomes the note's companion and is reused by every later
+  single-input statement naming that note until the note is spent, since the real nullifier may
+  then be seen again and a fresh dummy beside it would single it out. A companion is never used
+  with another note.
 - **Dummy outputs** (HA-P9, HA-M7d). A zero-value note to a fresh CSPRNG receiver and `rho`. Its
   ciphertext MUST be produced by the same libsodium `crypto_box_seal` call as real outputs, with a
   freshly generated X25519 key pair and a CSPRNG 256-byte plaintext. 304 random bytes are

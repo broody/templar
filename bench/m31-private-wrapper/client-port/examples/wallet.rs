@@ -26,22 +26,13 @@
 use std::{fs, path::Path, time::Instant};
 #[path = "support/mod.rs"]
 mod support;
-use circuit_cairo_serialize::prepare_circuit_proof_for_cairo_verifier;
-use circuit_common::finalize::{Profile, add_zk_blinding_for, pad_context_for};
-use circuit_common::preprocessed::PreprocessedCircuit;
-use circuit_prover::prover::{BaseColumnPool, SimdBackend, prove_circuit_assignment_bounded};
-use circuit_verifier::statement::{all_circuit_components, circuit_component_log_sizes};
-use circuits::context::{Context, FinalizedContext};
-use circuits::ivalue::{NoValue, qm31_from_u32s};
 use serde::Deserialize;
 use serde_json::json;
-use stwo::core::fields::qm31::QM31;
-use templar_client_verifier_circuit::membership::Lanes;
 use templar_client_verifier_circuit::payment::{
     self, Digest, INNER, Identity, Input, NOTE, Output, Private, Public, Tree, amount_limbs, felt_limbs, h, receiver_of,
     tree_paths,
 };
-use templar_client_verifier_circuit::{payment4, policy};
+use templar_client_verifier_circuit::{payment4, policy, prove};
 
 const TREE: Tree = Tree::Compress;
 
@@ -94,22 +85,6 @@ enum Relation {
 }
 
 impl Relation {
-    fn n_outputs(&self) -> usize {
-        match self {
-            Relation::R0(..) => payment::N_OUTPUTS,
-            Relation::R4(..) => payment4::N_OUTPUTS,
-            Relation::P1(..) => policy::N_OUTPUTS,
-        }
-    }
-
-    fn limbs(&self) -> Vec<u32> {
-        match self {
-            Relation::R0(p, _) => payment::statement_limbs(TREE, p),
-            Relation::R4(p, _) => payment4::statement_limbs(TREE, p),
-            Relation::P1(p, _) => policy::statement_limbs(TREE, p),
-        }
-    }
-
     fn purpose(&self) -> &'static str {
         match self {
             Relation::R0(..) => "tmpzr0-client-payment",
@@ -133,20 +108,6 @@ impl Relation {
             Relation::P1(p, _) => serde_json::to_vec_pretty(p).unwrap(),
         }
     }
-}
-
-fn circuit<V: Lanes>(rel: &Relation, seed: [u8; 32], blinding: usize) -> FinalizedContext<V> {
-    let mut c = Context::<V>::new(rel.n_outputs());
-    let outputs = match rel {
-        Relation::R0(public, private) => payment::build(&mut c, TREE, public, private),
-        Relation::R4(public, private) => payment4::build(&mut c, TREE, public, private),
-        Relation::P1(public, private) => policy::build(&mut c, TREE, public, private),
-    };
-    c.set_outputs(&outputs);
-    let mut c = c.finalize(true);
-    add_zk_blinding_for(&mut c, seed, blinding, Profile::Arithmetic);
-    pad_context_for(&mut c, Profile::Arithmetic);
-    c
 }
 
 fn prove(spec: SpendJson, out: &Path, max_fri_columns: Option<usize>) {
@@ -328,59 +289,36 @@ fn prove_relation(rel: Relation, out: &Path, max_fri_columns: Option<usize>) {
     let mut seed = [0u8; 32];
     rand::RngCore::fill_bytes(&mut rand::rngs::OsRng, &mut seed);
     let started = Instant::now();
-    let mut blinding = 0;
-    let (topology, pp) = loop {
-        let topology = circuit::<NoValue>(&rel, [0; 32], blinding);
-        let pp = PreprocessedCircuit::from_finalized_circuit(topology.circuit());
-        let need = support::blinding_budget(pp.trace_log_size());
-        if blinding >= need {
-            break (topology, pp);
-        }
-        blinding = need;
+    // The library prover (`prove::prove`): blinding budget, proof, hiding-budget check and native
+    // verification, the same path the SDK runs.
+    let proved = match &rel {
+        Relation::R0(p, w) => prove::prove(&prove::R0(p, w), seed, max_fri_columns),
+        Relation::R4(p, w) => prove::prove(&prove::R4(p, w), seed, max_fri_columns),
+        Relation::P1(p, w) => prove::prove(&prove::P1(p, w), seed, max_fri_columns),
     };
-    let context = circuit::<QM31>(&rel, seed, blinding);
-    assert!(topology.circuit() == context.circuit());
-    context.validate_circuit();
-    drop(topology);
-    let cfg = support::config(pp.trace_log_size());
-    let pp_root = pp.preprocessed_root(cfg.fri_config.log_blowup_factor);
-    let circuit_hash = support::circuit_hash_of(&pp, &cfg, pp_root);
-    let wanted: Vec<QM31> =
-        rel.limbs().chunks_exact(4).map(|q| qm31_from_u32s(q[0], q[1], q[2], q[3])).collect();
-    let t = Instant::now();
-    let mut proof = prove_circuit_assignment_bounded::<support::MC>(
-        context.values(), &pp, &BaseColumnPool::<SimdBackend>::new(), cfg, max_fri_columns,
-    )
-    .unwrap();
-    let proving_seconds = t.elapsed().as_secs_f64();
-    let revealed = support::revealed_fri_values(&proof);
-    assert!(revealed + support::NON_QUERY_INFO_LEAK <= blinding);
-    drop(context);
-    support::native_verify(&proof, &pp, pp_root, &wanted);
-    let negatives = support::negatives(&mut proof, &pp, pp_root, &wanted);
-    let log_sizes = circuit_component_log_sizes(&all_circuit_components::<NoValue>(), &pp.preprocessed_trace.log_sizes());
-    let felts = prepare_circuit_proof_for_cairo_verifier(proof, &log_sizes);
+    let mut proved = proved.unwrap_or_else(|e| panic!("{e}"));
+    let proving_seconds = started.elapsed().as_secs_f64();
+    let negatives = support::negatives(&mut proved.proof, &proved.pp, proved.pp_root, &proved.wanted);
     support::write(&out.join("trusted-config.json"), &support::manifest(
-        rel.purpose(), &pp, &cfg, pp_root, circuit_hash,
+        rel.purpose(), &proved.pp, &proved.cfg, proved.pp_root, proved.circuit_hash,
         json!({
             "stack": "broody/proving templar/arithmetic-profile (on starkware-libs/proving@5a7c5ed), arithmetic profile, bridge FRI",
             "statement_tag_u32": rel.statement_tag(),
-            "blinding_rows": blinding,
+            "blinding_rows": proved.blinding,
             "tree_nodes": "Compress",
         }),
     ));
-    let mut arguments = vec![format!("0x{:x}", felts.len())];
-    arguments.extend(felts.iter().map(|f| format!("{f:#x}")));
+    let (trace_log_size, blinding, revealed) = (proved.pp.trace_log_size(), proved.blinding, proved.revealed);
+    let arguments = prove::cairo_arguments(proved);
     fs::write(out.join("cairo-arguments.json"), serde_json::to_vec(&arguments).unwrap()).unwrap();
     fs::write(out.join("public.json"), rel.public_json()).unwrap();
     let report = json!({
         "scope": format!("{} wallet proof (Tree::Compress)", rel.purpose()),
-        "trace_log_size": pp.trace_log_size(),
+        "trace_log_size": trace_log_size,
         "blinding_rows": blinding,
         "revealed_fri_values": revealed,
-        "build_seconds": started.elapsed().as_secs_f64() - proving_seconds,
         "proving_seconds": proving_seconds,
-        "proof_felts": felts.len(),
+        "proof_felts": arguments.len() - 1,
         "native_negatives": negatives,
     });
     support::write(&out.join("report.json"), &report);

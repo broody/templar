@@ -1,0 +1,4 @@
+# The proving fork's toolchain (stwo needs nightly features), pinned (docs/sdk-spec.md §13).
+[toolchain]
+channel = "nightly-2026-01-15"
+targets = ["wasm32-unknown-unknown"]

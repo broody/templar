@@ -1,0 +1,29 @@
+{
+  "name": "@templar/sdk",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Templar client SDK: keys, receiving, hidden-asset spends and submission over starknet.js (docs/sdk-spec.md)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./worker": { "types": "./dist/worker.d.ts", "import": "./dist/worker.js" }
+  },
+  "files": ["dist", "wasm"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "engines": { "node": ">=20" },
+  "peerDependencies": {
+    "starknet": ">=10.5.0 <11"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "fake-indexeddb": "^6.0.0",
+    "starknet": "10.8.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}
