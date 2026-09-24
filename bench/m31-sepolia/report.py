@@ -2,9 +2,10 @@
 states, negatives, receipts, gateway responses, proof facts and benchmarks. Never wallet
 secrets, spend witnesses, client inputs or signed requests."""
 from sepolia import *
-import hashlib, shutil
+import hashlib, shutil, sys
 
-OUT = HERE / 'results'
+# `report.py [SUBDIR]`: archive under results/SUBDIR (each run keeps its own evidence).
+OUT = HERE / 'results' / (sys.argv[1] if len(sys.argv) > 1 else '')
 OUT.mkdir(exist_ok=True)
 
 

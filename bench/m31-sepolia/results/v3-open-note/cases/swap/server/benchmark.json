@@ -1,0 +1,51 @@
+{
+  "base_block": 15538430,
+  "binding": "0x3ec160c16f4570970a2cbcb333b683f5d0e9a43fbe3731876576e596441cf5d",
+  "message_hash": "0xa75dbd019e82067f151f8bfc69b6eb58ddf1cbc9693538021f2ce20e80944b",
+  "facts": [
+    "0x50524f4f4632",
+    "0x5649525455414c5f534e4f53",
+    "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+    "0x5649525455414c5f534e4f5330",
+    "0xed18fe",
+    "0x73aeadacdee7c75e1b6feb626b8f61c49311bdf6758db54f6fc6624827dd6a0",
+    "0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57",
+    "0x1",
+    "0xa75dbd019e82067f151f8bfc69b6eb58ddf1cbc9693538021f2ce20e80944b"
+  ],
+  "capture_seconds": 11.7794894259996,
+  "os_resources": {
+    "builtin_instance_counter": {
+      "add_mod_builtin": 0,
+      "bitwise_builtin": 0,
+      "ec_op_builtin": 0,
+      "ecdsa_builtin": 0,
+      "keccak_builtin": 0,
+      "mul_mod_builtin": 0,
+      "output_builtin": 6,
+      "pedersen_builtin": 52,
+      "poseidon_builtin": 15226,
+      "range_check96_builtin": 0,
+      "range_check_builtin": 344477
+    },
+    "n_memory_holes": 142185,
+    "n_steps": 3408013
+  },
+  "proof2_wall_seconds": 116.10338346299977,
+  "proof2": {
+    "gateway_max_proof_size": 480000,
+    "leaf_verifier_trace_log_size": 25,
+    "output_preimage_len": 7,
+    "proof_bytes": 253592,
+    "prove_seconds": 113.769954016,
+    "rejects_changed_output": true,
+    "rejects_flipped_proof_byte": true,
+    "rejects_truncated_proof": true,
+    "verified": true,
+    "verify_seconds": 0.102610279
+  },
+  "proof2_max_rss_gib": 52.99695587158203,
+  "proof_bytes": 253592,
+  "proof_sha256": "b42c8cf7933555726b61273a37b1c8d14a2bece9f97ec80405ffba59a37ad414",
+  "pie_sha256": "1f8e8fdf41a52fcff31f0b2c026e19556490646d2ee149758419ca538a98a326"
+}

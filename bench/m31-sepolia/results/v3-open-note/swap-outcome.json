@@ -1,0 +1,23 @@
+{
+  "included": false,
+  "gateway": {
+    "code": "StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED",
+    "message": "Proof version 88314448135730 (PROOF2) is not accepted by this gateway."
+  },
+  "error": "gateway rejected swap: {\"code\": \"StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED\", \"message\": \"Proof version 88314448135730 (PROOF2) is not accepted by this gateway.\"}",
+  "simulation": {
+    "result": "SUCCEEDED (with validation, latest block)",
+    "total_l2_gas": 150280600,
+    "l1_data_gas": 5536,
+    "apply_spend_with_invoke_l2_gas": 68631035,
+    "fee_STRK": 3.8007303227140388,
+    "open_note_funded": [
+      [
+        11776628046462915087,
+        3,
+        1428832039008617000195820088556908623791563621072455733433048352489604685892,
+        299
+      ]
+    ]
+  }
+}

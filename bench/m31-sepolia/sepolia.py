@@ -29,7 +29,7 @@ CHAIN = int.from_bytes(b'SN_SEPOLIA', 'big')
 # class felt (Sierra + CASM): about 3.5-3.7B L2 gas for the pool and the statement account.
 # Actual fees are charged at the block's price, below the bound.
 MAX_FEE_FRI = 25 * 10**18
-MAX_DECLARE_FEE_FRI = 170 * 10**18
+MAX_DECLARE_FEE_FRI = 200 * 10**18
 L2_PRICE_BOUND = 40_000_000_000
 
 

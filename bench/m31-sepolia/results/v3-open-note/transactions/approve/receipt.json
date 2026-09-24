@@ -1,0 +1,40 @@
+{
+  "actual_fee": {
+    "amount": "0x94315632b7e8a2",
+    "unit": "FRI"
+  },
+  "block_hash": "0x5353790415d37340e88188d973f0792caac615d99bced5fe08b411e11e41544",
+  "block_number": 15538410,
+  "events": [
+    {
+      "data": [],
+      "from_address": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+      "keys": [
+        "0x1dcde06aabdbca2f80aa51392b345d7549d7757aa855f7e37f5d335ac8243b1",
+        "0x71a8e9a512e52241601d50568c4a4ea00ef18daefd33b6c125e247f7d30214"
+      ]
+    },
+    {
+      "data": [
+        "0x94315632b7e8a2",
+        "0x0"
+      ],
+      "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+      "keys": [
+        "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8"
+      ]
+    }
+  ],
+  "execution_resources": {
+    "l1_data_gas": 288,
+    "l1_gas": 0,
+    "l2_gas": 1808395
+  },
+  "execution_status": "SUCCEEDED",
+  "finality_status": "ACCEPTED_ON_L2",
+  "messages_sent": [],
+  "transaction_hash": "0x71a8e9a512e52241601d50568c4a4ea00ef18daefd33b6c125e247f7d30214",
+  "type": "INVOKE"
+}

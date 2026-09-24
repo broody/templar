@@ -1,5 +1,34 @@
 # Sepolia run: option-A pool with R0 client proofs wrapped in PROOF2
 
+## Open notes on Sepolia (2026-09-24, R0 V3)
+
+**The V3 relayer transaction swaps through live Ekubo into an open note; it succeeds in
+simulation.** The gateway still rejects PROOF2, so nothing proof-carrying was included.
+
+Deployment ([`open_note_flow.py`](open_note_flow.py), [`deploy.py`](deploy.py)):
+- the V3 pool (`0x0063357…d786`), V3 statement account (`0x0355de6…a22e`) and V3 Proof2Adapter
+  (`0x0176012…4d07`); declarations cost 177.2 test STRK (pool 88.2, statement 85.6, adapter 3.3);
+- reused from the return-note run: synthetic token A (the pool token) and token B, upstream's
+  unchanged `EkuboSwapAnonymizer`, and the Ekubo pair.
+
+| Stage | Result |
+| --- | --- |
+| 2 deposits of A (on chain, relayer Argent 0.5.0) | 2.08 and 1.47 STRK; commitments equal the wallet's |
+| Wallet proof from the pool's events: 700 A change, plus 300 A budget and an Ekubo intent into an open note of B (minimum 280) | R0 V3, bounded |
+| Virtual OS on live state, base block 15,538,430 | 11.8 s, exact message |
+| PROOF2 | 116.1 s, 253,592 bytes, verified |
+| Gateway | `PROOF_VERSION_NOT_ALLOWED` |
+| Exact signed relayer transaction, simulated with validation at the latest block | **succeeds**: 300 A through the live Ekubo router gives **299 B**, funding the open note at index 3 (`OpenNoteFunded`); the change is published |
+| Cost (simulated) | 150.3M L2 gas in total, of which `apply_spend_with_invoke` is 68.6M including the swap; 3.80 STRK |
+
+Evidence is under [`results/v3-open-note/`](results/v3-open-note/): `swap-outcome.json`,
+`swap-simulation.json`, `cases/swap/` (client report, server benchmark, PROOF2 log and facts), the
+deployment, and every receipt and gateway response. `results/` top level is the 2026-09-23 V2 run. Recovery and spending of
+the funded note need inclusion. The math review and adversarial tests are pending
+([ADR-0023 amendment](../../docs/adr/0023-return-notes-and-adapter-compatibility.md)).
+
+## Earlier run (2026-09-23, R0 V2 transfer)
+
 ## Outcome (2026-09-23): the Sepolia gateway rejects PROOF2
 
 Everything up to submission ran live on Sepolia. The gateway then refused the transaction on

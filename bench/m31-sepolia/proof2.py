@@ -2,23 +2,16 @@
 the pinned virtual OS against real Sepolia state (the local node), prove the PIE through the
 PROOF2 large path, and write the transaction's `proof.base64` and `proof-facts.txt`."""
 from sepolia import *
-import base64, hashlib, importlib.util
+import base64, hashlib, importlib.util, sys
 
 CAPTURE = ROOT / 'target/m31-private-wrapper/capacity-capture-build-v3/capture'
 PROVE = ROOT / 'bench/m31-private-wrapper/proof2-large/run.sh'
-TAG = int.from_bytes(b'TMPZR0_PAYMENT_V2', 'big')
+TAG = int.from_bytes(b'TMPZR0_PAYMENT_V3', 'big')
 _spec = importlib.util.spec_from_file_location('ref_poseidon', ROOT / 'bench/adr8/ref_poseidon.py')
 ref = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(ref)
-
-
-def binding(public):
-    s = lambda b: int.from_bytes(b, 'big')
-    b = [s(b'TMR0_BIND_V2'), int(public['chain'], 16), int(public['pool'], 16), int(public['token'], 16)]
-    b += public['root'] + public['nullifiers'][0] + public['nullifiers'][1]
-    b += public['commitments'][0] + [int(public['deliveries'][0], 16)] + public['commitments'][1] + [int(public['deliveries'][1], 16)]
-    b += [int(public['withdrawal_recipient'], 16), int(public['withdrawal_amount'])]
-    return ref.poseidon_hash_span(b)
+sys.path.insert(0, str(ROOT / 'bench/m31-private-wrapper/client-port'))
+from validate_bridge_r0 import binding  # noqa: E402  (the bridge's independent V3 reference)
 
 
 def sha(p):

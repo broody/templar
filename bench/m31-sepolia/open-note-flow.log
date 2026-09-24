@@ -1,0 +1,27 @@
+{"tx": "0x029e88b06baa20ed81f8ba608483b6711d20f358545943580ada28ed13fc48ff", "status": "SUCCEEDED", "block": 15538421, "fee_STRK": 2.0846416590174637, "revert_reason": null}
+{"tx": "0x01706c8241f322bdef826bb5ecedea53c441c5e3807bd89cde8290682cd0969a", "status": "SUCCEEDED", "block": 15538427, "fee_STRK": 1.4723202365123784, "revert_reason": null}
+open-note swap: 300 A -> B through Ekubo, change 700 A
+{"base_block": 15538430, "capture_seconds": 11.7794894259996, "proof2_wall_seconds": 116.10338346299977, "proof_bytes": 253592}
+{
+ "included": false,
+ "gateway": {
+  "code": "StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED",
+  "message": "Proof version 88314448135730 (PROOF2) is not accepted by this gateway."
+ },
+ "error": "gateway rejected swap: {\"code\": \"StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED\", \"message\": \"Proof version 88314448135730 (PROOF2) is not accepted by this gateway.\"}",
+ "simulation": {
+  "result": "SUCCEEDED (with validation, latest block)",
+  "total_l2_gas": 150280600,
+  "l1_data_gas": 5536,
+  "apply_spend_with_invoke_l2_gas": 68631035,
+  "fee_STRK": 3.8007303227140388,
+  "open_note_funded": [
+   [
+    11776628046462915087,
+    3,
+    1428832039008617000195820088556908623791563621072455733433048352489604685892,
+    299
+   ]
+  ]
+ }
+}

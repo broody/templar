@@ -1,0 +1,16 @@
+{
+  "blinding_rows": 2390,
+  "build_seconds": 0.23913472299999983,
+  "native_negatives": [
+    "output",
+    "trace",
+    "topology",
+    "circuit-hash",
+    "config"
+  ],
+  "proof_felts": 30254,
+  "proving_seconds": 1.181693832,
+  "revealed_fri_values": 1767,
+  "scope": "R0 V2 wallet proof for a live spend (Tree::Compress)",
+  "trace_log_size": 18
+}
