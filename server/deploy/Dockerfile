@@ -12,7 +12,9 @@ ENV PATH=/opt/cairo-lang/bin:$PATH
 WORKDIR /src
 COPY os-runner os-runner
 COPY prover prover
-RUN cd os-runner && RUSTFLAGS="-C target-cpu=$CPU" cargo build --release --locked
+# The runner needs no CPU-specific flags (and AVX-512 flags would enable a nightly-only feature
+# in a transitive dependency on this stable toolchain).
+RUN cd os-runner && cargo build --release --locked
 RUN cd prover && cargo build --release --locked
 
 FROM rust:1.95-bookworm AS nightly

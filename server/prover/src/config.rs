@@ -15,6 +15,18 @@ pub struct Config {
     pub sandbox: Sandbox,
     #[serde(default)]
     pub prover: Prover,
+    /// Oblivious HTTP (spec §2); absent means plain HTTP only.
+    pub ohttp: Option<Ohttp>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct Ohttp {
+    /// A file holding the hex X25519 private key (64 hex characters). Rotate by replacing it and
+    /// restarting; clients re-fetch `/ohttp-keys` (cached for an hour).
+    pub key_file: PathBuf,
+    /// Submissions per relay address per hour (all of a relay's clients share it).
+    #[serde(default = "d_relay_per_hour")]
+    pub submissions_per_hour_per_relay: u32,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -125,6 +137,7 @@ fn d_one() -> usize { 1 }
 fn d_queue() -> usize { 16 }
 fn d_per_hour() -> u32 { 20 }
 fn d_two() -> usize { 2 }
+fn d_relay_per_hour() -> u32 { 400 }
 fn d_backoff() -> u64 { 60 }
 fn d_job_memory() -> String { "32G".into() }
 fn d_check_memory() -> String { "4G".into() }

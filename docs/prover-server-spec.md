@@ -54,9 +54,10 @@ the statement). It can refuse, delay or drop jobs.
 over oblivious HTTP (OHTTP), with the same gateway layer the upstream transaction prover uses
 (`tower_ohttp`): a client going through an OHTTP relay hides its address from the server, and the
 relay sees no content. A client that submits over OHTTP must also poll over it, or the poll links
-its address to the job (PS-13). The gateway's key configuration is served at a fixed path and in
-`/v1/info`, rotated on a schedule with the previous key accepted for one rotation period. Plain
-HTTPS remains available.
+its address to the job (PS-13). The gateway's key configuration is served at `/ohttp-keys` and in
+`/v1/info`. Upstream's gateway holds one key, so rotation replaces the key and restarts the server;
+clients re-fetch the configuration (cached for an hour), and a client holding the old one gets a
+decapsulation error and retries. Plain HTTPS remains available.
 
 ## 3. Architecture
 

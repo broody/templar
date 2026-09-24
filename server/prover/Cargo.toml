@@ -21,5 +21,15 @@ toml = "0.8"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
+# Oblivious HTTP (RFC 9458): upstream's gateway primitives, from the same pinned sequencer revision.
+tower_ohttp = { git = "https://github.com/broody/sequencer", rev = "625929ac645c399f2481fb2b65ffdd14702aa525" }
+bhttp = "0.7"
+ohttp = { version = "0.7", default-features = false }
+http-body-util = "0.1"
+hex = "0.4"
+
+[dev-dependencies]
+tower_ohttp = { git = "https://github.com/broody/sequencer", rev = "625929ac645c399f2481fb2b65ffdd14702aa525", features = ["testing"] }
+
 [profile.release]
 debug = false

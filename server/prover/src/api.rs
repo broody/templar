@@ -104,26 +104,38 @@ fn client_ip(state: &AppState, peer: SocketAddr, headers: &HeaderMap) -> IpAddr 
     peer.ip()
 }
 
-pub fn router(state: Arc<AppState>) -> Router {
+pub fn router(state: Arc<AppState>, ohttp: Option<Arc<crate::ohttp::OhttpState>>) -> Router {
     let limit = state.config.server.max_body_bytes;
-    Router::new()
+    let router = Router::new()
         .route("/v1/jobs", post(submit))
         .route("/v1/jobs/{id}", get(status))
         .route("/v1/info", get(info))
         .layer(DefaultBodyLimit::max(limit))
-        .with_state(state)
+        .with_state(state);
+    match ohttp {
+        // The middleware wraps the whole router (as its fallback), so it sees every path, and a
+        // decapsulated request is routed afresh by the inner router.
+        Some(o) => Router::new().fallback_service(router).layer(axum::middleware::from_fn_with_state(o, crate::ohttp::middleware)),
+        None => router,
+    }
 }
 
 async fn info(State(state): State<Arc<AppState>>) -> Json<Value> {
     Json(state.info.clone())
 }
 
-async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectInfo<SocketAddr>, headers: HeaderMap,
-                body: axum::body::Bytes) -> Reply {
-    let key = address_key(client_ip(&state, peer, &headers));
+async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectInfo<SocketAddr>,
+                ohttp: Option<axum::Extension<crate::ohttp::Ohttp>>, headers: HeaderMap, body: axum::body::Bytes) -> Reply {
+    // Over OHTTP the peer is the relay: its clients share one larger bucket and no per-address
+    // queue cap (spec §7); per-note deduplication applies regardless.
+    let via_relay = ohttp.is_some();
+    let key = if via_relay { format!("relay:{}", address_key(peer.ip())) } else { address_key(client_ip(&state, peer, &headers)) };
     // Rate limit: a token bucket per address key, refilled over the hour.
     {
-        let rate = state.config.limits.submissions_per_hour as f64;
+        let rate = match (&state.config.ohttp, via_relay) {
+            (Some(o), true) => o.submissions_per_hour_per_relay as f64,
+            _ => state.config.limits.submissions_per_hour as f64,
+        };
         let mut buckets = state.buckets.lock().unwrap();
         let b = buckets.entry(key.clone()).or_insert(Bucket { tokens: rate, updated: Instant::now() });
         let now = Instant::now();
@@ -137,7 +149,7 @@ async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectIn
     {
         let jobs = state.jobs.lock().unwrap();
         let queued = jobs.values().filter(|j| j.address_key == key && matches!(j.status, Status::Queued | Status::Running)).count();
-        if queued >= state.config.limits.queued_per_address {
+        if !via_relay && queued >= state.config.limits.queued_per_address {
             return err(StatusCode::TOO_MANY_REQUESTS, "too many jobs in progress from this address");
         }
         if jobs.values().filter(|j| j.status == Status::Queued).count() >= state.config.server.queue_capacity {

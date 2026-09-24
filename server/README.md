@@ -93,6 +93,7 @@ queue.
   "result", "error"}`. A result carries `proof` (base64), `proof_facts`, `base_block`,
   `submit_after` (`base_block + 11`), `valid_until` (`base_block + max_proof_age`), `binding`,
   `message_hash` and timings. Submit the transaction within that window.
+- `GET /ohttp-keys` — the OHTTP key configuration (when enabled).
 - `GET /v1/info` — the network, pool, relations (statement accounts, classes, tags, adapters,
   circuit hashes), dependency revisions and limits. Wallets compare it with the adapters on chain
   before using a result.
@@ -103,4 +104,11 @@ Tested end to end on Sepolia (2026-09-24): an R0 V4 hidden-asset transfer and a 
 release, each through the API (pre-check, OS run on live state, large proof, facts) and then
 simulated with validation as the signed pool transaction: both succeed, with the same gas as the
 bench-produced proofs. The large proof from `templar-prove` is byte-identical to the bench
-prover's for the same PIE. Oblivious-HTTP submission (spec §2) is not implemented yet.
+prover's for the same PIE.
+
+**Oblivious HTTP.** With an `[ohttp]` key configured, every endpoint is also reachable inside an
+OHTTP envelope (`POST` any path with `content-type: message/ohttp-req`; the key configuration is
+at `GET /ohttp-keys` and in `/v1/info`), so a client going through an OHTTP relay hides its address
+from the server. Submit and poll through the relay alike. Relayed submissions are rate-limited per
+relay. `examples/ohttp_client.rs` is a minimal client. The optional proof-of-work stamp for relayed
+submissions (spec §7) is not implemented; per-note deduplication applies to every submission.

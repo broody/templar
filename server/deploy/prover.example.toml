@@ -59,3 +59,11 @@ cairo_fri_columns = 16
 circuit_fri_columns = 16
 stream_commitments = false                    # true: ~22 GiB, ~30% slower
 threads = 4
+
+# Oblivious HTTP (optional): clients reach the server through an OHTTP relay, which hides their
+# address. The key file holds a hex X25519 private key (64 hex characters), e.g.
+# `openssl rand -hex 32 > /etc/templar/ohttp.key`. Rotate by replacing it and restarting;
+# clients re-fetch GET /ohttp-keys (cached for an hour).
+[ohttp]
+key_file = "/etc/templar/ohttp.key"
+submissions_per_hour_per_relay = 400

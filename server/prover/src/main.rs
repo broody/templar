@@ -7,12 +7,14 @@
 //! - `templar-prover info CONFIG`: the startup checks and the published configuration.
 mod api;
 mod config;
+mod ohttp;
 mod pipeline;
 mod rpc;
 mod sandbox;
 mod statement;
 
 use std::net::SocketAddr;
+use std::sync::Arc;
 use std::path::Path;
 
 use anyhow::{bail, Context, Result};
@@ -117,8 +119,20 @@ async fn main() -> Result<()> {
             let info = startup(&cfg, &rpc).await?;
             std::fs::create_dir_all(&cfg.server.data_dir)?;
             let listen: SocketAddr = cfg.server.listen.parse().context("listen")?;
+            let ohttp = match &cfg.ohttp {
+                Some(o) => {
+                    let key = std::fs::read_to_string(&o.key_file).context("reading the OHTTP key file")?;
+                    Some(Arc::new(ohttp::OhttpState { gateway: ohttp::gateway(&key)?, body_limit: cfg.server.max_body_bytes + 4096 }))
+                }
+                None => None,
+            };
+            let mut info = info;
+            info["ohttp"] = match &ohttp {
+                Some(o) => json!({"enabled": true, "keys_path": "/ohttp-keys", "key_config_hex": hex::encode(o.gateway.encoded_config())}),
+                None => json!({"enabled": false}),
+            };
             let state = api::start(cfg, rpc, info);
-            let app = api::router(state).into_make_service_with_connect_info::<SocketAddr>();
+            let app = api::router(state, ohttp).into_make_service_with_connect_info::<SocketAddr>();
             let listener = tokio::net::TcpListener::bind(listen).await?;
             tracing::info!(%listen, "serving");
             axum::serve(listener, app).await?;
