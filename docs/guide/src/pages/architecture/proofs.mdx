@@ -23,9 +23,11 @@ The compact R0 relation proves that:
 - each input commitment belongs to the selected tree root;
 - each nullifier is derived from the owner's nullifier key, the commitment and its leaf position,
   and the inputs are distinct;
-- each output commitment matches its receiving identity, randomness, amount and chain/pool/token
+- each output commitment matches its receiving identity, randomness, amount and chain/pool/asset
   context;
-- amounts are range-checked and conserved exactly for one token;
+- every note of the spend uses one private asset, published only when value leaves the pool;
+- a second input may be a zero-value dummy, whose membership is not checked;
+- amounts are range-checked and conserved exactly for that asset;
 - the public result binds the nullifiers, output commitments with their delivery digests, and
   withdrawal destinations and amounts.
 
@@ -38,14 +40,14 @@ not enough, because spent leaves remain in the tree.
 
 ## Binding the public result to the transaction
 
-A proof's public output is small. The transaction additionally carries the token, nullifiers,
+A proof's public output is small. The transaction additionally carries the asset on exit, nullifiers,
 output commitments, ciphertexts, withdrawals and, where present, the execution intent or policy
 fields. A **statement binding** ties them together: a hash over every public field, in a fixed
 order with fixed counts and zero padding, so the encoding is unambiguous.
 
 The client proof's outputs carry the whole public statement as field limbs. The bridge decodes and
-range-checks it and computes the binding (`TMR0_BIND_V3` for R0, `TMP1_BIND_V1` for P1); the
-statement account emits it in its message.
+range-checks it, rejects an asset published without a withdrawal or execution intent, and computes the
+binding (`TMR0_BIND_V4` for R0, `TMP1_BIND_V1` for P1); the statement account emits it in its message.
 
 The pool computes each delivery digest from the actual ciphertext bytes, recomputes the
 binding from the transaction's data, and requires it to match the proven one. Changing a payload,

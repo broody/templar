@@ -8,7 +8,7 @@ description: Locally derived cloaked receiving addresses, private ownership, and
 
 Templar supports push payments to reusable **cloaked receiving addresses**, or **cloaked addresses** for short. A payer chooses an amount and creates a fresh note for the recipient. The recipient can be offline and does not need to prepare anything for that particular payment.
 
-A note describes a token, an amount, a receiving identity and fresh randomness within a particular chain and pool. Its **commitment** is the hash stored as a leaf in the pool's tree. Spending requires both the note data and the owner's spending authority.
+A note describes an asset (an ERC20 token, or an ERC721 or ERC1155 token id; see [assets](/architecture/assets)), an amount, a receiving identity and fresh randomness within a particular chain and pool. Its **commitment** is the hash stored as a leaf in the pool's tree. Spending requires both the note data and the owner's spending authority.
 
 ## A cloaked receiving address is shareable payment information
 
@@ -38,7 +38,7 @@ Each domain is a distinct versioned tag. The encoding is chosen for the compact 
 | | Encoding |
 | --- | --- |
 | Hash `H` | A framed Poseidon2 sponge over M31, with nine-word (279-bit) digests |
-| Felts (chain, pool, token) | Nine 28-bit limbs |
+| Felts (chain, pool, asset) | Nine 28-bit limbs |
 | Amount | Eight 16-bit limbs, range-checked |
 
 A [policy note](/architecture/policy-notes) is an ordinary-format leaf whose receiver commits to a per-note capability and a policy instead of an owner. Format qualifications are recorded on the [status page](/status).

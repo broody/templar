@@ -53,7 +53,7 @@ A proof can pass one check and fail the other. The adapter's experimental age li
 
 ## The ledger invariants
 
-1. A deposited commitment is backed by a successful token transfer into the pool.
+1. A deposited commitment is backed by a token transfer into the pool, checked against the token's own balance or ownership; the pool's holding of each asset equals the value of its unspent notes.
 2. A spend proves that input value equals output value plus public withdrawals for one asset.
 3. Each consumed note contributes exactly one previously unused nullifier.
 4. Applied actions correspond exactly to the public values bound by the proof.

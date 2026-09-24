@@ -16,7 +16,7 @@ Templar is based on [StarkWare's starknet-privacy](https://github.com/starkware-
 
 The [Starknet Privacy comparison](/comparison) shows how the two designs differ in trust, note handling, supported flows, and client responsibilities.
 
-The pool holds ERC20 tokens. A user's private balance is the sum of the unspent **notes** they control. Each note describes some value and a spending condition. The chain stores a cryptographic commitment to the note rather than a private balance indexed by wallet address.
+The pool holds ERC20, ERC721 and ERC1155 tokens. A user's private balance is the sum of the unspent **notes** they control. Each note describes some value and a spending condition. The chain stores a cryptographic commitment to the note rather than a private balance indexed by wallet address.
 
 To pay someone, a holder consumes existing notes and creates fresh encrypted notes for the recipient and, when needed, change. A zero-knowledge proof establishes ownership, membership in the pool, and conservation of value. The pool binds the proof to the exact operation and publishes the encrypted outputs atomically. The recipient discovers them later using their wallet keys.
 
@@ -41,7 +41,7 @@ These concepts are similar to consuming and creating outputs in a UTXO system. T
 
 | Note | What it is | Spent by |
 | --- | --- | --- |
-| [Ordinary note](/architecture/notes) | A private claim on an amount of one token, owned by a receiving key | The owner's spending secret |
+| [Ordinary note](/architecture/notes) | A private claim on an amount of one asset (ERC20, ERC1155, or an ERC721 NFT), owned by a receiving key | The owner's spending secret |
 | [Open note](/architecture/open-notes) | A destination for the proceeds of an external call (a swap, a vault), funded in the same transaction | Becomes an ordinary note once funded |
 | [Policy note](/architecture/policy-notes) | Funds that may only move into outcomes committed at creation, approved by an on-chain controller, refundable after a deadline | Anyone holding its capability, only as the policy allows |
 
@@ -59,6 +59,7 @@ The device proves only the payment rules, in a small, browser-class circuit, and
   <a className="guide-card" href="/architecture/lifecycle"><strong>Transaction lifecycle →</strong><span>Follow a deposit, payment, recipient spend, and withdrawal.</span></a>
   <a className="guide-card" href="/architecture/proving"><strong>Proving →</strong><span>A compact client proof on the device, wrapped into a Starknet large proof by a server.</span></a>
   <a className="guide-card" href="/architecture/proofs"><strong>Proofs & verification →</strong><span>What a spend proves and what the pool must still check.</span></a>
+  <a className="guide-card" href="/architecture/assets"><strong>Assets & hidden transfers →</strong><span>ERC20, ERC721 and ERC1155 notes; transfers that hide the asset too.</span></a>
   <a className="guide-card" href="/architecture/open-notes"><strong>Open notes →</strong><span>Private DeFi: fund notes from a public call, and keep positions in shadow accounts.</span></a>
   <a className="guide-card" href="/architecture/policy-notes"><strong>Policy notes →</strong><span>Escrow, vesting and conditional payments without a trusted signer.</span></a>
 </div>

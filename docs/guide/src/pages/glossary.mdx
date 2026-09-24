@@ -8,6 +8,7 @@ description: The cryptographic and system terms used in the Templar architecture
 
 | Term | Meaning in this guide |
 | --- | --- |
+| Asset identifier | A note's token field: an ERC20 address, or a hash of the standard, contract and token id for an ERC721 or ERC1155 token. |
 | Base block | The chain snapshot used by virtual execution. |
 | Bridge | The Cairo code in a statement account that verifies a client proof against its pinned circuit, decodes the public statement and computes its binding. |
 | Checkpoint | A canonical block identity and pool state against which a wallet verifies history and reports a balance. |
@@ -16,6 +17,7 @@ description: The cryptographic and system terms used in the Templar architecture
 | Commitment | A hash that binds a note's fields while concealing its private contents; also the tree leaf. |
 | Capability | A policy note's per-note spending secret. Every holder derives the same nullifier and can cause only the note's committed outcomes. |
 | Controller | The contract a policy note names; it approves a settlement before the note's deadline. |
+| Dummy input, dummy output | A zero-value note that pads a spend to two inputs and two outputs, so every spend has the same public shape. |
 | Delivery digest | A hash of canonical ciphertext bytes, bound to the spend and recorded with the output position. |
 | felt252 | A value in Starknet's prime field, used by Cairo and by statement bindings. |
 | Full client-side proving | Proving the whole Cairo spend on the device as a native small proof. An earlier reference did this; a device-side path on the M31 pool is future work. |
@@ -31,6 +33,7 @@ description: The cryptographic and system terms used in the Templar architecture
 | Poseidon | The hash family behind receiving identities, commitments, nullifiers and the tree: Poseidon2 over M31. Bindings use felt252 Poseidon. |
 | Proof facts | Public results exposed by native verification; the adapter must interpret and bind them. |
 | Public inputs | Values visible to verification and settlement, in contrast to the private witness. |
+| Push deposit | An ERC721 or ERC1155 deposit made by safe-transferring the token to the pool with the note data; the pool's receiver hook appends the note. |
 | Push payment | A sender-created payment to a reusable receiving address that does not require a per-payment recipient response. |
 | R0 | The spend relation: ordinary spends, with an optional open-note intent and identity handle. |
 | Cloaked receiving address | Shareable payment information derived locally by the recipient's wallet: a receiving identity and encryption public key, scoped to a chain and pool. It is not a Starknet account address and requires no onchain registration or deployment. Also called a cloaked address. |
@@ -40,6 +43,7 @@ description: The cryptographic and system terms used in the Templar architecture
 | Identity handle | `H(IDENTITY, sk₀ ‖ scope)`, proven by the client for a shadow-account call; the pool derives upstream's identity commitment from it. |
 | Shadow account | A persistent account, driven only through the pool, that holds an application position for a private owner. |
 | OpenNoteDeposit | The upstream-compatible adapter response containing a destination identifier, token and actual amount. |
+| Exit rule | A spend publishes its asset exactly when value leaves the pool (a withdrawal or an execution); an in-pool transfer publishes none. |
 | Execution intent | The proof-bound adapter, exact call, input budget, expiry and open-note destinations. |
 | Spending secret | The private authority the statement requires to prove ownership and consume a note. |
 | S-two / STWO | StarkWare's circle-STARK prover over M31, behind the client proof and Starknet's native proofs. |

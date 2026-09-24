@@ -12,9 +12,9 @@ Templar has two entry paths for value changes: a public deposit and a proof-auth
 
 ## Deposit: fund a note
 
-A deposit supplies a token, amount, inner commitment, and encrypted note payload. The pool computes the commitment using its own chain/pool context, the actual token and amount, and the supplied inner value. It transfers the tokens from the caller and publishes the ciphertext with the new leaf. A deposit can also create a [policy note](/architecture/policy-notes): its inner value simply commits to a policy receiver instead of an owner.
+A deposit supplies an asset, amount, inner commitment, and encrypted note payload. The pool computes the commitment using its own chain/pool context, the asset and the amount it actually received, and the supplied inner value, then publishes the ciphertext with the new leaf. ERC20 tokens are pulled from the caller; ERC721 and ERC1155 tokens are pushed to the pool by a safe transfer carrying the note data ([assets](/architecture/assets)). A deposit can also create a [policy note](/architecture/policy-notes): its inner value simply commits to a policy receiver instead of an owner.
 
-No zero-knowledge proof is needed for this operation. The token, amount, funding account, and supplied inner value are public. The receiving identity and note randomness remain hidden inside the inner commitment and encrypted payload.
+No zero-knowledge proof is needed for this operation. The asset, amount, funding account, and supplied inner value are public. The receiving identity and note randomness remain hidden inside the inner commitment and encrypted payload.
 
 The deposit caller and eventual note owner can differ. The caller supplies funds; the note's receiving identity determines whose spending secret can authorize its consumption.
 
@@ -60,15 +60,15 @@ Counts and ordering are bound to the proof. Changing a ciphertext, adding an out
 
 ## Bundle boundaries and fees
 
-Each spend covers one public token. Every note amount is a nonzero u128, and a spend needs at least one output or withdrawal. An ordinary spend (the R0 relation) has:
+Each spend moves one asset, which stays private unless value leaves the pool. Real note amounts are nonzero u128s. An ordinary spend (the R0 relation) always publishes the same shape:
 
-| | Limit |
-| --- | --- |
-| Inputs | exactly 2 |
-| Outputs | up to 2 |
-| Withdrawals | up to 1 |
+| | Real | Published |
+| --- | --- | --- |
+| Inputs | 1 or 2 | always 2 nullifiers (a dummy input fills the second) |
+| Outputs | 0, 1 or 2 | always 2 commitments and payloads (dummy outputs fill the rest) |
+| Withdrawals | up to 1 | |
 
-R0 always consumes two real notes; a wallet holding a single note cannot yet spend it alone. [Policy notes](/architecture/policy-notes) settle through their own relation, P1, with one policy input.
+Dummies carry zero value, so they never affect the balance ([assets](/architecture/assets)). [Policy notes](/architecture/policy-notes) settle through their own relation, P1, with one policy input.
 
 ```text
 sum(input note amounts) = sum(output note amounts) + sum(withdrawals)

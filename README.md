@@ -20,7 +20,12 @@ proving ([below](#relation-to-starknet-privacy)).
   derived locally, with no on-chain registration. Payers create notes for it and publish them
   encrypted. The recipient can be offline.
 - **Private spending.** A spend proves that its notes exist in the pool's commitment tree and
-  belong to the spender, without revealing which notes. Nullifiers stop double spends.
+  belong to the spender, without revealing which notes. Nullifiers stop double spends. An
+  in-pool transfer hides the amount, the asset and how many notes it really moves; every spend
+  has the same public shape.
+- **ERC20, ERC721 and ERC1155.** One pool holds fungible tokens and NFTs as private notes. NFTs
+  are deposited by a safe transfer to the pool, with no approval, and can move privately or be
+  locked in escrow.
 - **Seed recovery and viewing.** A wallet rebuilds its notes from its seed plus public encrypted
   history. It can grant an *incoming* viewing key (sees received notes) or a *full* viewing key
   (also sees which are spent). Neither can spend.
@@ -36,7 +41,7 @@ proving ([below](#relation-to-starknet-privacy)).
 
 | Note | What it is | Spent by | Typical use |
 |---|---|---|---|
-| **Ordinary note** | A private claim on an amount of one token, owned by a receiving key | The owner's spending key | Payments, change, withdrawals |
+| **Ordinary note** | A private claim on an amount of one asset (ERC20, ERC1155, or an ERC721 NFT), owned by a receiving key | The owner's spending key | Payments, change, withdrawals |
 | **Open note** | A destination for the proceeds of an external call, funded in the same transaction; becomes an ordinary note | (becomes ordinary once funded) | Swaps and other DeFi, returned privately |
 | **Policy note** | A note spent with a per-note *capability*, only into one of up to four outcomes committed at creation | Anyone holding the capability, only as the policy allows | Escrow, vesting tranches, conditional payments, arbitration |
 
@@ -45,13 +50,19 @@ proving ([below](#relation-to-starknet-privacy)).
 ```text
 receiver   = H(OWNER, H(AUTH, sk) ‖ H(NK, sk))       // the owner's receiving identity
 inner      = H(INNER, receiver ‖ rho)                // rho: fresh randomness
-commitment = H(NOTE, chain ‖ pool ‖ token ‖ amount ‖ inner)
+commitment = H(NOTE, chain ‖ pool ‖ asset ‖ amount ‖ inner)
 nullifier  = H(NF, nk ‖ commitment ‖ leaf position)
 ```
 
 A spend proves membership of its inputs under a known root, derives their nullifiers, and
 creates outputs whose values balance the inputs, as exact integers. Each output carries a
 304-byte encrypted payload that its recipient decrypts.
+
+The asset is an ERC20 address or a hash of an NFT's standard, contract and token id. It stays
+private in the proof and is published only when value leaves the pool (a withdrawal or a DeFi
+call). Every spend shows two nullifiers and two outputs: zero-value dummy notes fill in for a
+single input or missing outputs. So an in-pool transfer, of any asset, hides among every note in
+the pool. [Guide: assets & hidden transfers](docs/guide/src/pages/architecture/assets.mdx).
 
 **Open notes.** The spend's proof binds an *execution intent*: the adapter, the exact call, the
 input budget, an expiry and each destination's owner and minimum amount. The pool pays the budget
@@ -103,11 +114,12 @@ delay service, but it cannot forge a spend or learn the witness. Anyone can run 
 
 | Relation | Proves |
 |---|---|
-| **R0** | Ordinary spends: 2 inputs, up to 2 outputs, one withdrawal, plus an open-note intent and a shadow-account handle |
+| **R0** | Ordinary spends: 1–2 inputs and 0–2 outputs, padded with dummies to two of each; one withdrawal; one private asset, published only on exit; plus an open-note intent and a shadow-account handle |
 | **P1** | Policy-note settlement: one committed outcome of one policy note |
 
 Status:
 - It runs end to end locally with real client proofs and real large proofs: ordinary spends,
+  hidden-asset transfers of ERC20 and NFT notes, an NFT withdrawal, an ERC1155 escrow release,
   open-note swaps, and policy-note release and seed-only refund.
 - On Sepolia, deposits are on chain, and a proof-carrying swap through live Ekubo succeeds in
   simulation. The public gateway does not accept large-proof transactions yet.
@@ -131,9 +143,9 @@ implemented.
 |---|---|
 | [`docs/guide/`](docs/guide/README.md) | **Developer guide** (Vocs site): architecture, note types, receiving and recovery, privacy, status, code map |
 | [`docs/zk-guide/`](docs/zk-guide/README.md) | ZK fundamentals course: fields to STARKs to client-proof wrapping, with runnable checks |
-| `docs/*-spec.md` | Specifications: [push payments](docs/push-payment-spec.md), [open notes](docs/open-note-spec.md), [policy notes](docs/policy-note-spec.md) |
+| `docs/*-spec.md` | Specifications: [push payments](docs/push-payment-spec.md), [open notes](docs/open-note-spec.md), [policy notes](docs/policy-note-spec.md), [hidden assets and NFTs](docs/hidden-asset-spec.md) |
 | `bench/m31-private-wrapper/client-port/` | Client side: the R0 and P1 relations (Rust), the Cairo bridges and statement accounts, the wallet CLI |
-| `bench/m31-pool/` | Pool: M31 commitment tree, spends, open notes, policy notes, escrow, wallet helpers, end-to-end drivers |
+| `bench/m31-pool/` | Pool: M31 commitment tree, spends, assets and NFT deposits (pool V2), open notes, policy notes, escrow, wallet helpers, end-to-end drivers |
 | `bench/m31-private-wrapper/proof2-large/` | Server: large-proof wrapping, bounded-memory server build, memory profiler |
 | `bench/m31-sepolia/` | Sepolia: deploy and flow scripts, archived evidence |
 | `packages/` | Earlier package implementation; not yet integrated with the current formats |
@@ -156,16 +168,17 @@ cd bench/m31-pool/cairo && snforge test
 cd bench/m31-private-wrapper/client-port
 RUSTUP_TOOLCHAIN=nightly-2026-01-15 cargo test --release --test payment_r0 --test policy_p1
 RUSTUP_TOOLCHAIN=nightly-2026-01-15 cargo test --release --features tamper --test policy_p1_malicious
+RUSTUP_TOOLCHAIN=nightly-2026-01-15 cargo test --release --features tamper --test payment_r4 --test payment_r4_malicious
 
-# Wallet encodings for policy notes (known-answer vectors, recovery, discovery)
-cd bench/m31-pool && python3 test_policy_wallet.py
+# Wallet encodings for policy notes and hidden assets
+cd bench/m31-pool && python3 test_policy_wallet.py && python3 test_hidden_asset.py
 
 # Developer guide, locally
 cd docs/guide && npm ci && npm run dev
 ```
 
-**End to end with real proofs.** `bench/m31-pool/open_note_e2e.py` and
-`bench/m31-pool/policy_e2e.py` run wallet → client proof → bridge → virtual OS → large proof →
+**End to end with real proofs.** `bench/m31-pool/open_note_e2e.py`,
+`bench/m31-pool/policy_e2e.py` and `bench/m31-pool/hidden_asset_e2e.py` run wallet → client proof → bridge → virtual OS → large proof →
 settlement. They need a large machine: about 28 GiB per large proof in the default bounded mode.
 Build the large-proof prover with `RUSTFLAGS="-C target-cpu=native"`; without it proving is about
 1.7x slower ([build notes](bench/m31-private-wrapper/proof2-large/README.md#build)). Run artifacts and
@@ -177,6 +190,7 @@ wallet secrets go to `~/.local/share/templar/runs`, never into the repository.
 |---|---|---|
 | Receiving | Registered viewing keys, sender/recipient channels | Cloaked receiving addresses, no registration; payer pushes encrypted notes |
 | Note storage | Notes in a contract map, read during proving | Commitments in a depth-32 tree; private membership proofs |
+| Assets | ERC20; encrypted notes hide their token | ERC20, ERC721 and ERC1155; in-pool transfers hide the asset and their note counts |
 | Oversight | Auditor viewing-key path; deposit screening options | None; voluntary viewing keys only |
 | Proving | User or proving service runs the client actions | Client proves privately; optional server only wraps an already-private proof |
 | DeFi | Open notes, external invokes, `ComputeAndInvoke` / `privacy_compute` | Open notes and shadow accounts through the same adapter interface; no general `privacy_compute` |

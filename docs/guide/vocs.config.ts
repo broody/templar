@@ -27,6 +27,7 @@ export default defineConfig({
         { text: 'Pool state', link: '/architecture/state' },
         { text: 'Transaction lifecycle', link: '/architecture/lifecycle' },
         { text: 'Proofs & verification', link: '/architecture/proofs' },
+        { text: 'Assets & hidden transfers', link: '/architecture/assets' },
         { text: 'Open notes', link: '/architecture/open-notes' },
         { text: 'Policy notes', link: '/architecture/policy-notes' },
         { text: 'Privacy & trust', link: '/architecture/privacy' },

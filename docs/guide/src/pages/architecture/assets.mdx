@@ -1,0 +1,70 @@
+---
+showAskAi: false
+title: Assets & hidden transfers
+description: ERC20, ERC721 and ERC1155 notes in one pool, and in-pool transfers that reveal neither amount nor asset.
+---
+
+import { Flow } from '../../components/Flow'
+
+# Assets & hidden transfers
+
+The pool holds ERC20 tokens, ERC721 NFTs and ERC1155 tokens as private notes. A transfer inside the pool reveals neither the amount nor the asset, and every spend has the same public shape. An asset is public only where value enters or leaves the pool.
+
+## One anonymity set for every asset
+
+A spend proves which notes it consumes without saying which, but a pool that publishes each spend's token splits its tree by token: a transfer of a rarely used token hides only among that token's notes. Templar keeps the asset inside the proof. The spend's client proof uses one private asset for all its notes, and publishes it only when value leaves the pool:
+
+| Spend | Asset published? |
+| --- | --- |
+| Transfer inside the pool | No |
+| Withdrawal | Yes: the pool must know what to pay |
+| [Open-note](/architecture/open-notes) execution | Yes: the budget and proceeds are public calls |
+
+So an in-pool transfer of any asset, ERC20 or NFT, draws its inputs from every note in the pool. The rule is enforced three times: the circuit forces the asset out on any withdrawal or execution intent, and the bridge and the pool reject a spend that publishes an asset without one (a "voluntary reveal"), so every pure transfer looks alike.
+
+## Every spend has the same shape
+
+Each spend publishes exactly two nullifiers and two output commitments, each with a 304-byte encrypted payload:
+
+- **One input, or two.** A spend of a single note adds a **dummy input**: a zero-value note on a random path whose nullifier looks like any other. The circuit forces a dummy's amount to zero, so it moves no value.
+- **Zero, one or two real outputs.** Missing outputs are **dummy outputs**: zero-value notes to fresh random receivers, with a real sealed box of random bytes to a fresh key. Nobody can open or spend them.
+
+An observer cannot tell a one-input spend from a two-input one, or count its real outputs. The price is gas: a withdrawal still appends two notes.
+
+## Asset identifiers
+
+A note's token field holds an **asset identifier**:
+
+| Standard | Identifier | Note amount |
+| --- | --- | --- |
+| ERC20 | the token contract's address | any nonzero u128 |
+| ERC1155 | `Poseidon('TEMPLAR_ASSET_V1', 1155, contract, id)` | any nonzero u128 |
+| ERC721 | `Poseidon('TEMPLAR_ASSET_V1', 721, contract, id)` | exactly 1 |
+
+The pool registers an NFT identifier on its first deposit (`AssetRegistered`) and pays by the right standard at withdrawal. Each contract is fixed to one standard on its first deposit, so a hybrid token cannot back notes under two standards. Wallets read the registry in bulk and accept a received note only after recomputing its commitment from the decrypted asset, amount and owner.
+
+## Depositing NFTs
+
+<Flow steps={[
+  { title: 'Wallet', detail: 'Choose the note: owner commitment (inner) and encrypted payload.' },
+  { title: 'Safe transfer', detail: 'Send the NFT to the pool with data = inner ‖ ciphertext. No approval to the pool.' },
+  { title: 'Pool hook', detail: 'Check the token arrived, register the asset, append the note.' },
+]} caption="ERC20 deposits pull an approved amount; NFTs are pushed to the pool's receiver hook." />
+
+The pool answers the ERC721 and ERC1155 receiver hooks (`on_erc721_received`, `on_erc1155_received`). A transfer without valid note data reverts, and batch transfers are rejected. An NFT sent with a plain `transfer_from`, which runs no hook, is held without a note and cannot be recovered.
+
+The pool tracks what it owes per asset and checks the token's own view at every deposit and payout. A malicious token contract can affect only notes of its own assets.
+
+## NFTs and the other note types
+
+- **Transfers.** An ERC721 note has amount 1 and is spent with a dummy input: the NFT moves to a new owner inside the pool, and nobody sees which NFT, or that an NFT moved at all.
+- **Policy notes.** An NFT can be locked in a [policy note](/architecture/policy-notes), for example an escrow that pays it to a buyer on the arbiter's approval, or back to the seller after the deadline. Policy settlement stays public, including the asset.
+- **Open notes.** Executions move ERC20 only; NFTs cannot be a budget or a proceeds destination yet.
+
+## What stays public
+
+Deposits and withdrawals show the asset, amount and accounts. For an NFT, a deposit and a later withdrawal of the same id are linked by definition: what is hidden is who held it in between and how often it changed hands. The set of NFTs the pool holds is public (anyone can read the token contracts). Per-asset holdings and flows remain exact for analytics; only the per-asset count of in-pool transfers is lost.
+
+These properties hold only as far as the client proof is zero-knowledge; that argument is still being qualified. See [privacy & trust](/architecture/privacy) for the full boundary.
+
+Demonstrated results and open items are on the [status page](/status#assets-and-hidden-transfers).

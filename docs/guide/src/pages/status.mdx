@@ -8,7 +8,7 @@ description: What Templar has demonstrated, measured resources, and the remainin
 
 <div className="guide-eyebrow">Snapshot / 24 September 2026</div>
 
-Templar [proves](/architecture/proving) each spend as a compact client proof that a wrapping server turns into a Starknet large proof. This runs end to end locally with real proofs for ordinary spends, open notes and policy notes, and reaches Sepolia up to the gateway, which does not accept large-proof transactions yet.
+Templar [proves](/architecture/proving) each spend as a compact client proof that a wrapping server turns into a Starknet large proof. This runs end to end locally with real proofs for ordinary spends, hidden-asset transfers of ERC20, ERC721 and ERC1155 notes, open notes and policy notes, and reaches Sepolia up to the gateway, which does not accept large-proof transactions yet.
 
 Everything here is an unaudited, experimental construction with synthetic tokens. Key derivation, address and backup formats, viewing exports and delivery representations require independent review before production formats are frozen. The primary packages and a production wallet are not yet integrated.
 
@@ -26,6 +26,26 @@ The wallet proves an R0 spend from the pool's own events; a wrapping server veri
 | Gateway | Rejects the large proof's proof version (`PROOF_VERSION_NOT_ALLOWED`); stateless, no fee |
 
 From a relayer account with a Sierra 1.7 class, the simulated transfer costs about 135M L2 gas (3.1 test STRK), of which `apply_spend` is 52.2M and about 75M is the per-proof charge. Older account classes (below Sierra 1.7) make Starknet bill the pool's hashing by Cairo steps, about 2.7× more. Evidence is in `bench/m31-sepolia/`.
+
+## Assets and hidden transfers
+
+A newer pool (M31 pool V2) and spend relation (R0 V4) hide each in-pool transfer's asset, give every spend two nullifiers and two outputs using zero-value dummies, and hold ERC721 and ERC1155 notes alongside ERC20 ([design](/architecture/assets)). The earlier pool and relation remain for existing notes. The design was reviewed before implementation, and the relation and the pool, bridge and wallet code were reviewed after it (all GO).
+
+**Local end to end with real proofs** (`bench/m31-pool/hidden_asset_e2e.py`):
+
+| Spend | Client proof | Large proof | Pool gas |
+| --- | ---: | ---: | ---: |
+| ERC20 payment, asset hidden (one input and a dummy) | 0.6 s | 127 s, 28.3 GiB | 55.2M |
+| NFT transfer, asset hidden (one input, one output, dummies) | 0.7 s | 126 s, 28.3 GiB | 53.7M |
+| ERC1155 escrow release by a policy note, paid by safe transfer | 0.6 s | 126 s, 28.2 GiB | 3.5M |
+| NFT withdrawal, asset published (two dummy outputs) | 0.9 s | 126 s, 27.8 GiB | 58.0M |
+
+All four settle at committed addresses with the real proof facts, and the pool's tree ends at the wallets' root. Replays, another spend's facts, a redirected withdrawal, a revealed transfer and an unapproved release are rejected. A hidden transfer costs about 6% more pool gas than before; a withdrawal costs much more, because it now always appends two notes.
+
+**Tests:**
+- R0 V4: 19 relation tests, including malicious-witness tests; each of nine deliberately deleted constraints makes the suite fail.
+- Bridge: 60/60 cases on real proofs, including eight forged statements the circuit admits and the bridge rejects (a voluntary asset reveal, out-of-range addresses, a zero chain, and others).
+- Pool V2: 42 tests with OpenZeppelin ERC721 and ERC1155 contracts, among them holdings tracking across every path, receiver-hook abuse, one contract under two standards, and re-entry from a payout hook. The pool's class is 76,860 of the 81,920-felt declaration limit.
 
 ## Open notes
 
@@ -131,7 +151,7 @@ Submission uses sncast signing and the official Sepolia gateway for proof-bearin
 | --- | --- |
 | Client privacy | Complete and independently confirm the compact client proof's zero-knowledge argument |
 | Network support | Public acceptance of large-proof transactions on Starknet (Sepolia gateway, then mainnet) |
-| Relations | Single-note spends on R0, larger shapes, private creation of policy notes end to end, a real-proof split-outcome settlement |
+| Relations | Larger shapes, spends of several assets at once, NFTs in open-note executions, private creation of policy notes end to end, a real-proof split-outcome settlement |
 | Production integration | Bring the relations, bridges, pool ABI, delivery, recovery and adapters into the maintained packages |
 | Cryptography and formats | Independent review; finalize addresses, derivation, backups, exports and version handling |
 | Device qualification | Complete payments on physical target devices and in browsers |

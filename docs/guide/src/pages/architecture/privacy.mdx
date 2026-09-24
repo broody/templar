@@ -35,14 +35,15 @@ People who receive the same address off-chain can compare it and recognize the s
 | Receiving address and output opening | Recipient knows the decrypted note | Payer knows its output; authorized viewers can inspect receipts | No plaintext private-recipient field or private note amount |
 | Commitments, delivery digests, ciphertexts, and leaf positions at creation | Yes | Anyone can download them | Yes |
 | Nullifiers at spend | Owner can derive them | Full viewers can derive them for received notes | Yes |
-| Spend token, root, and bundle shape | Yes | Anyone can observe them | Yes |
+| Spend root | Yes | Anyone can observe it | Yes |
+| Spend asset and real input and output counts | Yes | Hidden for in-pool transfers; the asset is public on withdrawal or execution | Only on exit |
 | Client proof and its public statement | Created on the device | The wrapping server receives them, with the client's network metadata | The statement's fields appear in the transaction |
 | Deposit token, amount, and funding account | Yes | Anyone can observe them | Yes |
 | External call, return token and amount, and linked return deposit | Yes | Anyone can observe them | Yes |
 | Withdrawal token, amount, and destination | Yes | Anyone can observe them | Yes |
 | Transaction sender, fees, ordering, and timing | Yes | Anyone can observe them | Yes |
 
-The ordinary spend ABI exposes the token even when there is no withdrawal. Amounts of ordinary private-payment outputs remain inside the witness and encrypted payloads. Open-note funding amounts are public. Public movements and surrounding activity can still reveal or suggest those amounts.
+An in-pool transfer publishes neither its asset nor how many real inputs and outputs it has: every spend shows two nullifiers and two outputs, and the asset appears only when value leaves the pool ([assets](/architecture/assets)). Amounts of ordinary private-payment outputs remain inside the witness and encrypted payloads. Open-note funding amounts are public. Public movements and surrounding activity can still reveal or suggest those amounts.
 
 ## Viewing keys are sensitive capabilities
 

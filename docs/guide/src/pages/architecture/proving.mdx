@@ -43,7 +43,7 @@ data.
 
 | Relation | What it proves |
 | --- | --- |
-| **R0** | Ordinary spends: two inputs, up to two outputs, one withdrawal, one token; optionally an [open-note](/architecture/open-notes) execution intent and a shadow-account identity handle |
+| **R0** | Ordinary spends: one or two inputs, two outputs (dummies fill the gaps), one withdrawal, one private [asset](/architecture/assets) published only on exit; optionally an [open-note](/architecture/open-notes) execution intent and a shadow-account identity handle |
 | **P1** | [Policy-note](/architecture/policy-notes) settlement: one committed outcome of one policy note |
 
 **What the server can and cannot do.** It can refuse, delay or overcharge. It cannot make an
