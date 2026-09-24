@@ -1,7 +1,7 @@
 From 592480825fdbb9557cfa0be2ff5fba743ba86eee Mon Sep 17 00:00:00 2001
 From: broody <broody@gmail.com>
 Date: Thu, 24 Sep 2026 12:40:43 +0800
-Subject: [PATCH 4/4] Bounded mode: streamed commitments (16 columns at a
+Subject: [PATCH 4/5] Bounded mode: streamed commitments (16 columns at a
  time), switchable
 
 A column-provider leaf builder (MerkleOpsLifted::build_leaves_with_column_provider:

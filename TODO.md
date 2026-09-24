@@ -279,8 +279,9 @@ the accepted local proving architecture is unchanged.
     drops from 51.1 to 28.3 GiB (+9% time), passes a hard 30 GiB cap, and gives
     byte-identical proofs
     ([results](bench/m31-private-wrapper/proof2-large/README.md#bounded-memory-2026-09-24)).
-    Streamed commitments (default): 22.0 GiB, passes a hard 24 GiB cap, about +30% time;
-    `TEMPLAR_BOUNDED_STREAM=0` keeps whole trees (27.8 GiB, about +10%).
+    Default is bounded with whole trees (27.8 GiB, about +10% time). Streamed
+    commitments are opt-in (`TEMPLAR_BOUNDED_STREAM=1`: 22.0 GiB, passes a hard 24 GiB
+    cap, about +30%); full storage (batch sizes 0) is kept as the reference.
   Open for this route:
   - review of the fork's profile;
   - the hiding question (broody/templar#2), under test per

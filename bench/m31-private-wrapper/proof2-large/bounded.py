@@ -7,7 +7,7 @@ prover's log was in at that time (the last `Program execution done` / span-close
 line), giving a per-stage peak. The summary adds the kernel's peak RSS and the proof's
 verification and rejection checks from `prove_large`.
 
-    bounded.py PIE OUT [--cap 115G] [--cairo N] [--circuit N] [--no-stream] [--bin PATH]
+    bounded.py PIE OUT [--cap 115G] [--cairo N] [--circuit N] [--stream] [--bin PATH]
 
 `--cairo` / `--circuit`: FRI column batch size for the Cairo and circuit stages (0 = default
 storage). Never run while another build or proving job is running on the host."""
@@ -69,7 +69,7 @@ def main():
     ap.add_argument('--cairo', type=int, default=0)
     ap.add_argument('--circuit', type=int, default=0)
     ap.add_argument('--bin', type=Path, default=BIN)
-    ap.add_argument('--no-stream', action='store_true', help='bounded trees built whole, not 16 columns at a time')
+    ap.add_argument('--stream', action='store_true', help='bounded trees built 16 columns at a time (default: whole trees)')
     a = ap.parse_args()
     out = a.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
@@ -78,7 +78,7 @@ def main():
            '-p', 'CPUQuota=400%', '-p', 'CPUAffinity=0 1 2 3', '-p', f'WorkingDirectory={WORKDIR}',
            '--setenv=RAYON_NUM_THREADS=4', f'--setenv=TEMPLAR_BOUNDED_CAIRO_COLUMNS={a.cairo}',
            f'--setenv=TEMPLAR_BOUNDED_CIRCUIT_COLUMNS={a.circuit}', '--setenv=TEMPLAR_SPAN_EVENTS=1',
-           f'--setenv=TEMPLAR_BOUNDED_STREAM={0 if a.no_stream else 1}',
+           f'--setenv=TEMPLAR_BOUNDED_STREAM={1 if a.stream else 0}',
            '/usr/bin/time', '-v', str(a.bin.resolve()), str(a.pie.resolve()), str(out)]
     rows, stop = [], threading.Event()
     th = threading.Thread(target=sampler, args=(unit, stop, rows), daemon=True)
@@ -91,7 +91,7 @@ def main():
     elapsed = time.time() - start
     (out / 'memory.csv').write_text('unix_time,bytes\n' + ''.join(f'{t:.2f},{b}\n' for t, b in rows))
     summary = {'pie': str(a.pie), 'cap': a.cap, 'cairo_fri_columns': a.cairo or None,
-               'circuit_fri_columns': a.circuit or None, 'stream_commitments': not a.no_stream,
+               'circuit_fri_columns': a.circuit or None, 'stream_commitments': a.stream,
                'exit_code': r.returncode, 'elapsed_seconds': elapsed}
     (out / 'bounded-summary.json').write_text(json.dumps(summary, indent=1) + '\n')
     print(json.dumps(analyze(out), indent=1))

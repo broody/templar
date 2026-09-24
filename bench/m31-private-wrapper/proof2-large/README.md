@@ -58,7 +58,7 @@ the systemd cgroup peak line is not meaningful for this wrapper.
 
 **The large path now runs at 28 GiB instead of 51 GiB, with byte-identical proofs** (+9% prove
 time, fitting a hard 30 GiB cap, zero swap), **and at 22 GiB with streamed commitments** (about
-+30%, fitting 24 GiB; below). This is the client's coefficient-backed PCS mode
++30%, fitting 24 GiB; opt-in, below). This is the client's coefficient-backed PCS mode
 (`bench/bounded-memory`, ported to the client fork), applied to both server stages: the Cairo leaf
 proof and the Cairo-verifier circuit proof.
 
@@ -71,9 +71,9 @@ are untouched. Its patches are in `bounded/`:
   plus the `prove_large` harness. The existing functions are unchanged. `prove_leaf` also drops
   the Cairo VM runner after the adapter.
 
-`run.sh` now uses this build with 16-column FRI batches by default;
+`run.sh` now uses this build with 16-column FRI batches and whole-tree commitments by default;
 `TEMPLAR_BOUNDED_CAIRO_COLUMNS` and `TEMPLAR_BOUNDED_CIRCUIT_COLUMNS` override the batch size, and
-0 restores default storage. `bounded.py` runs one proof under a cap and samples the cgroup twice a
+0 in both restores the previous default, full storage, which is kept as the reference. `bounded.py` runs one proof under a cap and samples the cgroup twice a
 second, attributing each sample to a prover stage from the span log.
 
 All runs below used the policy-note release PIE (3.41M virtual-OS steps, log25 leaf), four pinned
@@ -103,17 +103,18 @@ own commitments on top of about 16–20 GiB of retained state. The FRI batch siz
 matters.
 
 **Streamed commitments (same day):** in bounded mode, trees are now built and rebuilt for
-opening 16 columns at a time (patch `0004`). A streamed Blake2s leaf builder keeps one packed hash
+opening 16 columns at a time (patches `0004`–`0005`). A streamed Blake2s leaf builder keeps one packed hash
 state per 16 rows and requests one 16-column block at a time, and queried values are captured
 while each block exists. Streamed leaves, layers, roots and openings equal the ordinary ones
-across sizes, lifts and block/lane boundaries (stwo unit test). This is the default; set
-`TEMPLAR_BOUNDED_STREAM=0` to build whole trees.
+across sizes, lifts and block/lane boundaries (stwo unit test). **Whole trees are the default**:
+streaming saves about 6 GiB for about 20 s more per proof, which is not worth it for now. Set
+`TEMPLAR_BOUNDED_STREAM=1` to stream.
 
 | Storage (same PIE, back to back) | Peak RSS | Prove time | Hard cap |
 |---|---:|---:|---|
-| Default | 51.7 GiB | 118.0 s | — |
-| Bounded, whole trees | 27.8 GiB | 127.8 s | passes 30G, killed at 28G |
-| Bounded, streamed (default) | **22.0 GiB** | 147.9 s | passes 24G, killed at 22G |
+| Full storage (previous default, reference: batch sizes 0) | 51.7 GiB | 118.0 s | — |
+| Bounded, whole trees (**default**) | **27.8 GiB** | 127.8 s | passes 30G, killed at 28G |
+| Bounded, streamed (`TEMPLAR_BOUNDED_STREAM=1`) | 22.0 GiB | 147.9 s | passes 24G, killed at 22G |
 
 All three proofs are byte-identical and verify. Streaming costs time because each 16-column block
 passes over every per-row hash state (about 2 GiB for the largest tree) once, where the whole-tree
