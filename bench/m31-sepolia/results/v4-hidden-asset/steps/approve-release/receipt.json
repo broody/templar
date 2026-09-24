@@ -1,0 +1,51 @@
+{
+  "actual_fee": {
+    "amount": "0x91168e29164efa",
+    "unit": "FRI"
+  },
+  "block_hash": "0xbbe56b04bc73d6933156400240e21d326bd977d80693c39031deb11f2b82de",
+  "block_number": 15555007,
+  "events": [
+    {
+      "data": [
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x517fb2618b59dd23cf112c8c5b3e7e90e8301675f79e7f2b14785dca6faca6f",
+        "0x1"
+      ],
+      "from_address": "0x5a2cdbca66d5c559078e9bf3eba55c8d0c93c2806e96f94470e79ec78636c5a",
+      "keys": [
+        "0x1894534fcdd19a4095fe0596a431ecd8cbe219bf4d17bc3ee9f8783a260daeb"
+      ]
+    },
+    {
+      "data": [],
+      "from_address": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+      "keys": [
+        "0x1dcde06aabdbca2f80aa51392b345d7549d7757aa855f7e37f5d335ac8243b1",
+        "0x5950293ef8e6bbb63f617f37b69f6129801abc778a7d67afd9df7742c2f08c3"
+      ]
+    },
+    {
+      "data": [
+        "0x91168e29164efa",
+        "0x0"
+      ],
+      "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+      "keys": [
+        "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9",
+        "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+        "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8"
+      ]
+    }
+  ],
+  "execution_resources": {
+    "l1_data_gas": 288,
+    "l1_gas": 0,
+    "l2_gas": 1815185
+  },
+  "execution_status": "SUCCEEDED",
+  "finality_status": "ACCEPTED_ON_L2",
+  "messages_sent": [],
+  "transaction_hash": "0x5950293ef8e6bbb63f617f37b69f6129801abc778a7d67afd9df7742c2f08c3",
+  "type": "INVOKE"
+}

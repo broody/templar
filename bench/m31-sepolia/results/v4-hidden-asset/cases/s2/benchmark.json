@@ -1,0 +1,54 @@
+{
+  "base_block": 15554816,
+  "binding": "0x7768cc6648a9b6e799cfaca65fedb7f75d073a0957ce799baf87ca5dcf6d986",
+  "message_hash": "0x6e59b1e91440005d1cc7f4271aba250bb2cbd00ff0c4d725ae2839344618068",
+  "facts": [
+    "0x50524f4f4632",
+    "0x5649525455414c5f534e4f53",
+    "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+    "0x5649525455414c5f534e4f5330",
+    "0xed5900",
+    "0x732f216b114539241d03af8b20ab56afad056f6cff94ce24c72f9b3334f2155",
+    "0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57",
+    "0x1",
+    "0x6e59b1e91440005d1cc7f4271aba250bb2cbd00ff0c4d725ae2839344618068"
+  ],
+  "capture_seconds": 11.378464831999736,
+  "os_resources": {
+    "builtin_instance_counter": {
+      "add_mod_builtin": 0,
+      "bitwise_builtin": 0,
+      "ec_op_builtin": 0,
+      "ecdsa_builtin": 0,
+      "keccak_builtin": 0,
+      "mul_mod_builtin": 0,
+      "output_builtin": 6,
+      "pedersen_builtin": 48,
+      "poseidon_builtin": 15396,
+      "range_check96_builtin": 0,
+      "range_check_builtin": 345359
+    },
+    "n_memory_holes": 143597,
+    "n_steps": 3416476
+  },
+  "proof2_wall_seconds": 138.1454056060029,
+  "proof2": {
+    "bounded_cairo_fri_columns": 16,
+    "bounded_circuit_fri_columns": 16,
+    "bounded_stream_commitments": false,
+    "gateway_max_proof_size": 480000,
+    "leaf_verifier_trace_log_size": 25,
+    "output_preimage_len": 7,
+    "proof_bytes": 257962,
+    "prove_seconds": 136.063367108,
+    "rejects_changed_output": true,
+    "rejects_flipped_proof_byte": true,
+    "rejects_truncated_proof": true,
+    "verified": true,
+    "verify_seconds": 0.099085445
+  },
+  "proof2_max_rss_gib": 28.711944580078125,
+  "proof_bytes": 257962,
+  "proof_sha256": "a6c6d9fa190ab28c15fedba566087ffb95edd542b753511c7008188898325001",
+  "pie_sha256": "a8f091fad4240e7ee68c88076d548f4ca79286279e2e166f7456ca83a405c9dc"
+}

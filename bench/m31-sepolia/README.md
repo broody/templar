@@ -1,5 +1,39 @@
 # Sepolia run: option-A pool with R0 client proofs wrapped in PROOF2
 
+## Hidden assets and NFTs on Sepolia (2026-09-24, R0 V4, M31 pool V2)
+
+**All four proof-carrying spends succeed in simulation against live state; the deposits,
+including ERC721 and ERC1155 push deposits through the pool's receiver hooks, are on chain.**
+The gateway still rejects large proofs (`PROOF_VERSION_NOT_ALLOWED`), so nothing proof-carrying
+was included. Flow: [`hidden_asset_flow.py`](hidden_asset_flow.py) (`docs/hidden-asset-spec.md`).
+
+Deployment (declarations 312.8 test STRK: pool V2 105.9, R4 account 83.9, P1 account 85.8,
+test ERC721 15.5, test ERC1155 13.9, escrow 3.9, adapter 3.4, recipient 0.6): pool V2
+`0x02da001…37b9`, R4 statement account `0x0349eba…9ee4` and adapter `0x031ca0a…85fd`, P1 statement
+account `0x052828e…d70a` and adapter `0x021c760…4409`, escrow `0x05a2cdb…6c5a`, test ERC721
+`0x0535ca4…de0f`, test ERC1155 `0x0445558…b32a`, account-like recipient `0x02ec1c3…1a25`; token A
+reused.
+
+| On chain | Result |
+| --- | --- |
+| ERC20 deposit, 1000 A (pull, exact balance delta) | 2.07 STRK; commitment equals the wallet's |
+| ERC721 deposit, NFT #2 (safe transfer, `on_erc721_received`) | 1.52 STRK; asset registered, the undeployed-identifier check passes on Sepolia |
+| ERC1155 deposit, 300 of id 7 as an escrow policy note (`on_erc1155_received`) | 1.52 STRK; asset registered, `held` = 300 |
+| Arbiter (the relayer) approves the release | 0.04 STRK |
+
+| Spend (proved from the pool's events; OS on live state) | Client proof | OS capture | Large proof | Simulation (with validation) |
+| --- | ---: | ---: | ---: | --- |
+| S1 ERC20 payment, asset hidden (one input + dummy) | 0.80 s | 11.1 s | 126 s, 28.6 GiB | succeeds: 138.3M L2 gas, pool 55.4M, 3.41 STRK |
+| S2 NFT transfer, asset hidden (one input + dummy, dummy output) | 0.55 s | 11.4 s | 138 s, 28.7 GiB | succeeds: 138.3M L2 gas, pool 55.4M, 3.41 STRK |
+| S3 ERC1155 escrow release (P1), paid by safe transfer | 0.97 s | 12.0 s | 133 s, 28.3 GiB | succeeds: 81.6M L2 gas, pool 3.6M, 2.01 STRK |
+| S4 NFT withdrawal, asset published (two dummy outputs) | 0.75 s | 12.4 s | 148 s, 28.6 GiB | succeeds: 140.2M L2 gas, pool 56.6M, 3.46 STRK |
+
+S1 and S2, an ERC20 payment and an NFT transfer from the same tree state, cost exactly the same
+gas: the asset changes nothing an observer can measure. S2 and S4 each spend NFT #2 and were
+simulated independently. Evidence: [`results/v4-hidden-asset/`](results/v4-hidden-asset/)
+(deployment, classes, every receipt and gateway response, each case's public statement, client
+report, server benchmark and proof facts, and the simulations).
+
 ## Open notes on Sepolia (2026-09-24, R0 V3)
 
 **The V3 relayer transaction swaps through live Ekubo into an open note; it succeeds in

@@ -40,7 +40,12 @@ A newer pool (M31 pool V2) and spend relation (R0 V4) hide each in-pool transfer
 | ERC1155 escrow release by a policy note, paid by safe transfer | 0.6 s | 126 s, 28.2 GiB | 3.5M |
 | NFT withdrawal, asset published (two dummy outputs) | 0.9 s | 126 s, 27.8 GiB | 58.0M |
 
-All four settle at committed addresses with the real proof facts, and the pool's tree ends at the wallets' root. Replays, another spend's facts, a redirected withdrawal, a revealed transfer and an unapproved release are rejected. A hidden transfer costs about 6% more pool gas than before; a withdrawal costs much more, because it now always appends two notes.
+All four settle at committed addresses with the real proof facts, and the pool's tree ends at the wallets' root.
+
+**Sepolia (2026-09-24):**
+- Pool V2, both statement accounts and adapters, the escrow and test ERC721 and ERC1155 contracts are deployed; the ERC20, ERC721 and ERC1155 deposits (the NFTs pushed through the receiver hooks) are on chain.
+- All four proof-carrying spends, proved against live state, succeed when the exact signed transaction is simulated with validation: 138.3M L2 gas (3.41 STRK) for each hidden transfer, 81.6M (2.01 STRK) for the escrow release, 140.2M (3.46 STRK) for the NFT withdrawal. The ERC20 and NFT transfers cost exactly the same.
+- The gateway still rejects large proofs. Evidence is in `bench/m31-sepolia/results/v4-hidden-asset/`. Replays, another spend's facts, a redirected withdrawal, a revealed transfer and an unapproved release are rejected. A hidden transfer costs about 6% more pool gas than before; a withdrawal costs much more, because it now always appends two notes.
 
 **Tests:**
 - R0 V4: 19 relation tests, including malicious-witness tests; each of nine deliberately deleted constraints makes the suite fail.

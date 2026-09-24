@@ -18,9 +18,10 @@ def sha(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 
-def serve(client_dir, out, d):
+def serve(client_dir, out, d, statement=None, statement_class=None, tag=TAG, bind=None):
     """client_dir holds the wallet's `cairo-arguments.json` and `public.json`. Returns the
-    benchmark record; checkpointed on `out/benchmark.json`."""
+    benchmark record; checkpointed on `out/benchmark.json`. By default the R0 V3 statement account
+    of `d`; another relation passes its account, class, message tag and binding."""
     out = Path(out)
     if (out / 'benchmark.json').exists():
         return load(out / 'benchmark.json')
@@ -28,14 +29,16 @@ def serve(client_dir, out, d):
     public = load(client_dir / 'public.json')
     chain, pool = int(public['chain'], 16), int(public['pool'], 16)
     assert chain == CHAIN and pool == int(d['pool'], 16)
-    bind = binding(public)
+    bind = binding(public) if bind is None else bind
+    statement = statement or d['statement']
+    statement_class = statement_class or d['classes']['statement']
     # The base block must already contain the root the proof opens (and the statement account).
     block = rpc('starknet_getBlockWithTxHashes', ['latest'])
     base = block['block_number']
     assert call(d['pool'], 'root_is_known', [9, *public['root']], {'block_number': base}) == [1], 'root unknown at base block'
     save(out / 'base-block.json', {k: v for k, v in block.items() if k != 'transactions'})
-    nonce = rpc('starknet_getNonce', [{'block_number': base}, d['statement']])
-    tx = {'type': 'INVOKE', 'version': '0x3', 'sender_address': d['statement'],
+    nonce = rpc('starknet_getNonce', [{'block_number': base}, statement])
+    tx = {'type': 'INVOKE', 'version': '0x3', 'sender_address': statement,
           'calldata': load(client_dir / 'cairo-arguments.json'), 'signature': [], 'nonce': nonce,
           'resource_bounds': {g: {'max_amount': '0x3b9aca00' if g == 'l2_gas' else '0x0', 'max_price_per_unit': '0x0'}
                               for g in ('l1_gas', 'l2_gas', 'l1_data_gas')},
@@ -55,9 +58,9 @@ def serve(client_dir, out, d):
     produced = load(cap / 'capture.json')
     messages = produced['l2_to_l1_messages']
     num = lambda v: int(v, 16) if isinstance(v, str) else int(v)
-    assert len(messages) == 1 and num(messages[0]['from_address']) == int(d['statement'], 16)
+    assert len(messages) == 1 and num(messages[0]['from_address']) == int(statement, 16)
     payload = [num(x) for x in messages[0]['payload']]
-    assert payload == [int(d['classes']['statement'], 16), TAG, chain, pool, bind], payload
+    assert payload == [int(statement_class, 16), tag, chain, pool, bind], payload
     # PROOF2, 4 pinned workers under a 115 GiB cap.
     start = time.monotonic()
     r = subprocess.run(['bash', str(PROVE), str(cap / 'os.pie.zip'), str(out / 'proof2'), '115G'], capture_output=True, text=True)
@@ -67,7 +70,7 @@ def serve(client_dir, out, d):
     preimage = load(out / 'proof2/output-preimage.json')
     facts = [hex(int.from_bytes(b'PROOF2', 'big')), hex(int.from_bytes(b'VIRTUAL_SNOS', 'big')), *preimage]
     assert len(facts) == 9 and int(facts[2], 16) == int(d['os_program'], 16) and int(facts[4], 16) == base
-    message = ref.poseidon_hash_span([int(d['statement'], 16), 0, 5, *payload])
+    message = ref.poseidon_hash_span([int(statement, 16), 0, 5, *payload])
     assert int(facts[7], 16) == 1 and int(facts[8], 16) == message
     proof = (out / 'proof2/proof.bin').read_bytes()
     (out / 'proof.base64').write_text(base64.b64encode(proof).decode())

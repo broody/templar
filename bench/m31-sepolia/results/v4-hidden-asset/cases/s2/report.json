@@ -1,0 +1,16 @@
+{
+  "blinding_rows": 2390,
+  "build_seconds": 0.18791580200000002,
+  "native_negatives": [
+    "output",
+    "trace",
+    "topology",
+    "circuit-hash",
+    "config"
+  ],
+  "proof_felts": 30598,
+  "proving_seconds": 0.550637045,
+  "revealed_fri_values": 1767,
+  "scope": "tmpzr4-client-payment wallet proof (Tree::Compress)",
+  "trace_log_size": 18
+}

@@ -1,0 +1,189 @@
+{
+  "deployment": {
+    "pool": "0x02da0011f775d73885cf86c5145feb4cb9149d007f8546959cce32b51b5f37b9",
+    "statement4": "0x0349eba5bab782fec0997d0fc1c516848ac2c9e070d5fda0c1046727f6209ee4",
+    "adapter_statement4": "0x031ca0ad5bb55c5502b0443decdd1711942e2a1cc39763f44edd7d326e5185fd",
+    "statement1": "0x052828eb2a0d2095a0fa70d514b08a6ae4a2cb1ec38f72d2d843f1bf2a12d70a",
+    "adapter_statement1": "0x021c760cf44c96f2a017ef6c78c5c672dfe0bb3d132902b879cd5195a4b84409",
+    "escrow": "0x05a2cdbca66d5c559078e9bf3eba55c8d0c93c2806e96f94470e79ec78636c5a",
+    "erc721": "0x0535ca4f5d12d72d05ab6d954ca7939b73b5a20cec680241c6020735e751de0f",
+    "erc1155": "0x0445558d8ce71b9f6c55687821e7ed7c5081edf69fd0a3c44775e36c3d40b32a",
+    "account_like": "0x02ec1c39da81c3e67405248e33a24359d1168ccf991207bb40fb2cd247281a25",
+    "classes": {
+      "pool": "0x0618e980547d963d172d8d9d03df0c117f014e2a3a81b69140e84bc5736c97f2",
+      "adapter": "0x064148aed7efcab705956779e172385e7f2fa36eb161e62b4dcd629a5a3e6ddb",
+      "escrow": "0x02a7fca624bf22a78bc9b38e40eb7e8292b9405fd4559faf17f2c4c2648544e1",
+      "erc721": "0x070d84f6c2172ec208d6f33b39f1fec86b63a05cdf8f1c31706428586c7babed",
+      "erc1155": "0x05395afc4ef275c30f66615871db580c42fd9a953ac1752dd6743f7ac4b7f1f0",
+      "account_like": "0x02ff2c5dd23cb14be81930c20e2d1b4817e14debeabe5e4ea995ffa9e997c792",
+      "statement4": "0x003e609d3c89f5c4254b53eab4b11d7543cd7d7e7da7f6027673b12769d61478",
+      "statement1": "0x032e05ae1fc0e76252f356e169d2a896b0befea4adca4a8d653c0f107836a882"
+    },
+    "token": "0x39f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8",
+    "os_program": "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+    "max_proof_age": 4096,
+    "start_block": 15554632,
+    "builds": {
+      "statement4": {
+        "circuit_hash_u32_le": [
+          4130052835,
+          1598900057,
+          4277742495,
+          934065338,
+          3030711690,
+          3187179780,
+          957846778,
+          3640319832
+        ],
+        "trusted_manifest_sha256": "6d4ba20412b4132d47555cb04820b00cb7d35932cddd47ab84ef6fb44fa15ee2"
+      },
+      "statement1": {
+        "circuit_hash_u32_le": [
+          1116583792,
+          1398056921,
+          76462392,
+          3994223989,
+          66329835,
+          1407161816,
+          3917928487,
+          1128236499
+        ],
+        "trusted_manifest_sha256": "ab8d81ccf73d7161992d0b60aa44eb766f4153ff60856404f7b6fe7b64d3161c"
+      }
+    }
+  },
+  "outcomes": {
+    "s1": {
+      "included": false,
+      "gateway": {
+        "code": "StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED",
+        "message": "Proof version 88314448135730 (PROOF2) is not accepted by this gateway."
+      },
+      "error": "gateway rejected s1: {\"code\": \"StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED\", \"message\": \"Proof version 88314448135730 (PROOF2) is not accepted by this gateway.\"}",
+      "simulation": {
+        "result": "SUCCEEDED (with validation, latest block)",
+        "total_l2_gas": 138316310,
+        "l1_data_gas": 5120,
+        "pool_call_l2_gas": 55357705,
+        "fee_STRK": 3.4118329755921946
+      }
+    },
+    "s2": {
+      "included": false,
+      "gateway": {
+        "code": "StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED",
+        "message": "Proof version 88314448135730 (PROOF2) is not accepted by this gateway."
+      },
+      "error": "gateway rejected s2: {\"code\": \"StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED\", \"message\": \"Proof version 88314448135730 (PROOF2) is not accepted by this gateway.\"}",
+      "simulation": {
+        "result": "SUCCEEDED (with validation, latest block)",
+        "total_l2_gas": 138316310,
+        "l1_data_gas": 5120,
+        "pool_call_l2_gas": 55357705,
+        "fee_STRK": 3.411833917655396
+      }
+    },
+    "s3": {
+      "included": false,
+      "gateway": {
+        "code": "StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED",
+        "message": "Proof version 88314448135730 (PROOF2) is not accepted by this gateway."
+      },
+      "error": "gateway rejected s3: {\"code\": \"StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED\", \"message\": \"Proof version 88314448135730 (PROOF2) is not accepted by this gateway.\"}",
+      "simulation": {
+        "result": "SUCCEEDED (with validation, latest block)",
+        "total_l2_gas": 81634868,
+        "l1_data_gas": 736,
+        "pool_call_l2_gas": 3579543,
+        "fee_STRK": 2.012326886544328
+      }
+    },
+    "s4": {
+      "included": false,
+      "gateway": {
+        "code": "StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED",
+        "message": "Proof version 88314448135730 (PROOF2) is not accepted by this gateway."
+      },
+      "error": "gateway rejected s4: {\"code\": \"StarknetErrorCode.PROOF_VERSION_NOT_ALLOWED\", \"message\": \"Proof version 88314448135730 (PROOF2) is not accepted by this gateway.\"}",
+      "simulation": {
+        "result": "SUCCEEDED (with validation, latest block)",
+        "total_l2_gas": 140220840,
+        "l1_data_gas": 5472,
+        "pool_call_l2_gas": 56620235,
+        "fee_STRK": 3.458969581282633
+      }
+    }
+  },
+  "cases": {
+    "s1": {
+      "kind": "R4",
+      "client": {
+        "trace_log_size": 18,
+        "blinding_rows": 2390,
+        "proving_seconds": 0.796300156,
+        "proof_felts": 30234,
+        "max_rss_gib": 0.31191253662109375
+      },
+      "token_out": "0x0",
+      "server": {
+        "base_block": 15554727,
+        "capture_seconds": 11.092790451002656,
+        "proof2_wall_seconds": 126.00534337200224,
+        "proof_bytes": 253020,
+        "proof2_max_rss_gib": 28.635578155517578
+      }
+    },
+    "s2": {
+      "kind": "R4",
+      "client": {
+        "trace_log_size": 18,
+        "blinding_rows": 2390,
+        "proving_seconds": 0.550637045,
+        "proof_felts": 30598,
+        "max_rss_gib": 0.308349609375
+      },
+      "token_out": "0x0",
+      "server": {
+        "base_block": 15554816,
+        "capture_seconds": 11.378464831999736,
+        "proof2_wall_seconds": 138.1454056060029,
+        "proof_bytes": 257962,
+        "proof2_max_rss_gib": 28.711944580078125
+      }
+    },
+    "s3": {
+      "kind": "P1",
+      "client": {
+        "trace_log_size": 18,
+        "proving_seconds": 0.966726975,
+        "proof_felts": 30342
+      },
+      "token_out": null,
+      "server": {
+        "base_block": 15554915,
+        "capture_seconds": 11.999049341997306,
+        "proof2_wall_seconds": 132.72804347000056,
+        "proof_bytes": 254324,
+        "proof2_max_rss_gib": 28.31472396850586
+      }
+    },
+    "s4": {
+      "kind": "R4",
+      "client": {
+        "trace_log_size": 18,
+        "blinding_rows": 2390,
+        "proving_seconds": 0.747174655,
+        "proof_felts": 30358,
+        "max_rss_gib": 0.31288909912109375
+      },
+      "token_out": "0x2b22055d65f4e55233379cade1022accb1f2027e00075127170924c684f7f10",
+      "server": {
+        "base_block": 15555015,
+        "capture_seconds": 12.38195046599867,
+        "proof2_wall_seconds": 147.72216043099615,
+        "proof_bytes": 250705,
+        "proof2_max_rss_gib": 28.601905822753906
+      }
+    }
+  }
+}

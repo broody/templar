@@ -121,8 +121,10 @@ Status:
 - It runs end to end locally with real client proofs and real large proofs: ordinary spends,
   hidden-asset transfers of ERC20 and NFT notes, an NFT withdrawal, an ERC1155 escrow release,
   open-note swaps, and policy-note release and seed-only refund.
-- On Sepolia, deposits are on chain, and a proof-carrying swap through live Ekubo succeeds in
-  simulation. The public gateway does not accept large-proof transactions yet.
+- On Sepolia, deposits are on chain, including ERC721 and ERC1155 deposits through the pool's
+  receiver hooks, and proof-carrying hidden transfers, an NFT withdrawal, an ERC1155 escrow
+  release and a swap through live Ekubo all succeed in simulation. The public gateway does not
+  accept large-proof transactions yet.
 - The zero-knowledge argument for the compact proof is under review. One hiding issue was found
   and fixed.
 
