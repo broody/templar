@@ -1,7 +1,7 @@
 ---
 showAskAi: false
 title: Code map
-description: "Where each part of Templar lives: the split-architecture client, bridge, pool and server, and the full client-side reference."
+description: "Where each part of Templar lives: the client relations, bridges, pool, wallet and wrapping server."
 ---
 
 # Code map
@@ -10,7 +10,7 @@ Paths are relative to the repository root. They identify source responsibilities
 installation steps; the repository README has the commands to build and test them. The primary
 packages under `packages/` have not yet adopted these formats.
 
-## Split architecture: client side
+## Client side
 
 | Path | Responsibility | Read alongside |
 | --- | --- | --- |
@@ -19,7 +19,7 @@ packages under `packages/` have not yet adopted these formats.
 | `bench/m31-private-wrapper/client-port/examples/wallet.rs` | Wallet CLI: keys, commitments, R0 and P1 proofs from a spend description | [Notes & ownership](/architecture/notes) |
 | `bench/m31-private-wrapper/client-port/tests/` | Relation tests against the native references, and malicious-witness tests (`--features tamper`) | |
 
-## Split architecture: server side
+## Server side
 
 | Path | Responsibility |
 | --- | --- |
@@ -28,7 +28,7 @@ packages under `packages/` have not yet adopted these formats.
 | `bench/m31-private-wrapper/client-port/capture_os.py` | Run a statement account in the virtual OS and check its exact message |
 | `bench/m31-private-wrapper/proof2-large/` | PROOF2 wrapping on the large path, the bounded-memory server build (`bounded/`) and a per-stage memory profiler |
 
-## Split architecture: pool and wallet
+## Pool and wallet
 
 | Path | Responsibility |
 | --- | --- |
@@ -42,22 +42,13 @@ packages under `packages/` have not yet adopted these formats.
 | `bench/m31-pool/cairo/src/tests/` | Pool tests, including adversarial suites and settlements with real PROOF2 facts |
 | `bench/m31-sepolia/` | Sepolia deployment and flows, with archived evidence |
 
-## Full client-side proving
+## Earlier references
 
-The executable ordinary push-payment reference, with viewing and recovery, is in
-`bench/controlled-push-e2e/` (which also contains the superseded controlled-note experiment); the
-separate ordinary-only evidence is in `bench/push-e2e/`.
-
-| Path | Responsibility | Read alongside |
-| --- | --- | --- |
-| `bench/controlled-push-e2e/protocol.py` | Receiving and viewing keys, seed derivation, note encoding, sealed-box encryption, commitment and nullifier reference | [Notes & ownership](/architecture/notes) |
-| `bench/controlled-push-e2e/encoding.py` | Canonical ciphertext words and public calldata | [Proofs & verification](/architecture/proofs) |
-| `bench/controlled-push-e2e/sync.py`, `restore.py` | Pinned-block RPC checks, payload verification, spent-status reads; fresh-process seed restoration and full-view imports | [Receiving & recovery](/architecture/receiving) |
-| `bench/push-e2e/recovery_drills.py` | Missing, corrupted, reordered and stale history checks against public data | [Implementation status](/status) |
-| `bench/controlled-push-e2e/cairo/src/` | `pool.cairo`, `spend.cairo`, `tree.cairo`, `statement.cairo`, `statement_account.cairo`, `proof_adapter.cairo`: deposits and spends, binding, tree, the private statement, the virtual entry point and the PROOF1 adapter | [Proofs & verification](/architecture/proofs) |
-| `bench/controlled-push-e2e/flow.py` | Funded offline-payment, viewing, restore, spend and withdrawal lifecycle | |
-| `bench/return-note-e2e/` | The first open-note implementation (`ReturnNote`), with unchanged upstream Ekubo and Vesu adapters | [Open notes](/architecture/open-notes) |
-| `bench/bounded-memory/` | Coefficient-backed proving memory for the device pipeline | |
+The first, full client-side reference (a felt252 note format proved on the device as PROOF1) is
+archived with its Sepolia evidence in `bench/push-e2e/`, `bench/controlled-push-e2e/`,
+`bench/return-note-e2e/` and `bench/bounded-memory/`. It is no longer maintained; a device-side
+path is [future work](/architecture/proving#future-a-faster-device-side-path). The
+`bench/m31-private-wrapper/qm31-opcode/` experiment measures what native M31 arithmetic would buy it.
 
 ## Specifications
 
@@ -66,11 +57,9 @@ separate ordinary-only evidence is in `bench/push-e2e/`.
 
 ## A useful reading order
 
-For the split architecture, start with `payment.rs` for the note and spend rules, read the R0
+Start with `payment.rs` for the note and spend rules, read the R0
 bridge next to it to see how the public statement is decoded and bound, then `pool.cairo` and
-`adapter.cairo` for settlement, and `policy_e2e.py` for a complete run. For full client-side
-proving, start with `protocol.py`, then `spend.cairo` with `statement.cairo`, then `pool.cairo`,
-`proof_adapter.cairo` and `sync.py`.
+`adapter.cairo` for settlement, and `policy_e2e.py` for a complete run.
 
 A check made only by a client is not a pool invariant. A valid proof matters only if the adapter
 selects the intended statement and the pool applies exactly its bound operation. A recovery result

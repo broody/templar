@@ -20,12 +20,7 @@ A recipient shares a locally derived [cloaked receiving address](/architecture/n
 
 Every output carries a commitment and encrypted payload. The pool computes a digest from the actual payload and includes it in the operation checked against the proof. It appends the leaf, records the digest at that position, and publishes the ciphertext atomically.
 
-Every payload is a 304-byte libsodium sealed box of a fixed 256-byte plaintext, encrypted to the address's independent X25519 key, so all payloads look alike on chain. The plaintext layout depends on the pool's note format:
-
-| Format | Plaintext contents |
-| --- | --- |
-| Full client-side pool | Version, chain, pool, token, receiving identity, randomness, controller and policy (zero for ordinary notes), amount |
-| Split-architecture pool (`M301`) | Version, token, receiving identity and randomness (nine M31 words each), amount; chain and pool are the scanned pool's own |
+Every payload is a 304-byte libsodium sealed box of a fixed 256-byte plaintext, encrypted to the address's independent X25519 key, so all payloads look alike on chain. An ordinary note's plaintext (`M301`) holds the version, token, receiving identity and randomness (nine M31 words each) and the amount; chain and pool are the scanned pool's own.
 
 Policy notes add a `PB01` plaintext, the depositor's recovery backup, and `PS01` for split outputs whose amount is only known at settlement (see [policy notes](/architecture/policy-notes)).
 

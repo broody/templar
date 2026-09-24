@@ -33,16 +33,15 @@ commitment = H(NOTE, chain ‖ pool ‖ token ‖ amount ‖ inner)
 nullifier  = H(NF, nk ‖ commitment ‖ leaf_index)
 ```
 
-Each domain is a distinct versioned tag. The two [proving architectures](/architecture/proving) use the same structure with different hash encodings:
+Each domain is a distinct versioned tag. The encoding is chosen for the compact [client proof](/architecture/proving):
 
-| | Full client-side proving | Split architecture |
-| --- | --- | --- |
-| Hash `H` | Starknet Poseidon over canonical felt252 values | A framed Poseidon2 sponge over M31, with nine-word (279-bit) digests |
-| Felts (chain, pool, token) | One field element each | Nine 28-bit limbs |
-| Amount | u128 | Eight 16-bit limbs, range-checked |
-| Extra commitment fields | Controller and policy (zero for ordinary notes) | None |
+| | Encoding |
+| --- | --- |
+| Hash `H` | A framed Poseidon2 sponge over M31, with nine-word (279-bit) digests |
+| Felts (chain, pool, token) | Nine 28-bit limbs |
+| Amount | Eight 16-bit limbs, range-checked |
 
-The formats are not interchangeable; each pool accepts one. A [policy note](/architecture/policy-notes) is an ordinary-format leaf whose receiver commits to a per-note capability and a policy instead of an owner. Format qualifications are recorded on the [status page](/status).
+A [policy note](/architecture/policy-notes) is an ordinary-format leaf whose receiver commits to a per-note capability and a policy instead of an owner. Format qualifications are recorded on the [status page](/status).
 
 | Material | Who needs it | What it enables |
 | --- | --- | --- |

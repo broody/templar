@@ -10,7 +10,7 @@ The pool tracks note creation and note consumption separately. The commitment tr
 
 ## Commitment tree
 
-Every accepted deposit, spend output or funded open note appends a commitment to a depth-32 binary Merkle tree. Each parent is the hash of its two children: felt252 Poseidon in the full client-side pool, Poseidon2 over M31 in the split-architecture pool (one truncated permutation per node). The root is a compact commitment to the entire tree.
+Every accepted deposit, spend output or funded open note appends a commitment to a depth-32 binary Merkle tree. Each parent is the hash of its two children with Poseidon2 over M31 (one truncated permutation per node). The root is a compact commitment to the entire tree.
 
 To demonstrate membership, the holder supplies a leaf index and 32 sibling hashes to the private statement. Recomputing the path must produce the selected public root. The proof hides the opening, leaf index, and path from the public verifier.
 
@@ -57,7 +57,7 @@ A proof can pass one check and fail the other. The adapter's experimental age li
 2. A spend proves that input value equals output value plus public withdrawals for one asset.
 3. Each consumed note contributes exactly one previously unused nullifier.
 4. Applied actions correspond exactly to the public values bound by the proof.
-5. A failed spend rolls back all pool changes, including any pool fee and token transfers.
+5. A failed spend rolls back all pool changes, including token transfers.
 6. Every new commitment is published atomically with its bound encrypted payload and delivery digest.
 
 Network gas for a reverted transaction is still payable. The pool's atomicity does not eliminate that external cost.
