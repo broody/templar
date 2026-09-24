@@ -1,0 +1,142 @@
+---
+showAskAi: false
+title: Policy notes
+description: Private assets governed by application rules instead of an owner key, for escrow, vesting and conditional payments.
+---
+
+import { Flow } from '../../components/Flow'
+
+# Policy notes
+
+A **policy note** is a private note that nobody owns in the usual sense. It is spent with a per-note **capability**, and only into one of the outcomes committed when it was created. An on-chain **controller** decides which outcome is allowed at settlement time. After a committed **deadline**, the pool alone allows the refund.
+
+For example, a buyer funds an escrow note for a seller. The buyer gives the note's opening to an executor, perhaps the seller, and goes offline. When the arbiter releases the escrow, the executor proves the settlement and the seller receives an ordinary private note. If nobody settles, the buyer, or anyone holding the opening, refunds the note after the deadline. No signing service and no owner key take part.
+
+Policy notes replace the earlier controlled notes (ADR-0022), which needed the owner's proof plus an off-chain signature for every spend. The design is ADR-0025.
+
+<Flow steps={[
+  { title: 'Create', detail: 'Commit the outcomes and deposit the note, or send it as an ordinary output. It looks like any other note.' },
+  { title: 'Hand off', detail: 'Give the opening to an executor. The depositor can go offline and can still refund from their seed.' },
+  { title: 'Settle', detail: 'Prove one committed outcome. Before the deadline the controller must approve; after it, only the refund.' },
+]} caption="Settlement produces ordinary notes, and optionally a withdrawal, exactly as the outcome committed." />
+
+## The note
+
+A policy note is an ordinary-format leaf. Only its receiver differs:
+
+```text
+pnk      = H(PNK, cap)                       // capability → nullifier key
+recv     = H(PRECV, pnk ‖ policy)            // instead of H(OWNER, ak ‖ nk)
+inner    = H(INNER, recv ‖ rho)              // unchanged
+cm       = H(NOTE, chain ‖ pool ‖ token ‖ amount ‖ inner)
+nf       = H(NF, pnk ‖ cm ‖ position)
+```
+
+- **Creation needs no special path.** A pool `deposit` with this `inner`, or an ordinary spend output to `recv`, creates the note. On chain it is indistinguishable from an ordinary note.
+- **Separate spending paths.** The ordinary relation cannot spend it, and the policy relation cannot spend an ordinary note: that would need an `OWNER`/`PRECV` hash collision.
+- **One nullifier.** Everyone who holds `cap` derives the same nullifier, so a note settles once however many parties hold its opening. `pnk` alone lets a watcher recognise the note and see it spent, without being able to spend it.
+
+The depositor keeps the capability too. That is safe because no unconstrained spend exists. Any holder can cause only the committed outcomes: controller-approved before the deadline, the refund after it.
+
+## The policy
+
+```text
+policy    = H(POLICY, version ‖ kind ‖ controller ‖ controller_class ‖ handle ‖ deadline
+                      ‖ salt ‖ o₀ ‖ H(OREST, o₁ ‖ o₂ ‖ o₃))
+policy_id = H(POLICY_ID, chain ‖ pool ‖ token ‖ amount ‖ policy)
+```
+
+| Field | Meaning |
+| --- | --- |
+| `controller`, `controller_class` | The contract that approves settlements, and its class hash, pinned. |
+| `handle` | An application felt. It is **unauthenticated**: anyone can create a note naming any handle. |
+| `deadline` | Last block of the controller window. |
+| `salt` | Random, so `policy_id` cannot be guessed. |
+| `o₀` | The refund: a fixed outcome with a private output, no withdrawal and no delay. |
+| `o₁ … o₃` | Other outcomes; an unused slot is zero and can never be selected. |
+
+An outcome is **fixed**: up to two outputs, each with a committed receiver, randomness, amount and delivery digest, plus an optional withdrawal. Or it is a **split**: two committed receivers, with a public amount `x` chosen at settlement that pays `x` to the first and the rest to the second. Each outcome also has a `not_before` block.
+
+`policy_id` is what a controller approves. It binds the chain, pool, token and amount, so a copy of the policy funded in a junk token or with a different amount is a different id. It reveals nothing about the outcomes.
+
+## Settlement
+
+A separate client relation, **P1**, proves: the note is in the tree, the capability opens it, and the published outputs, withdrawal and fields equal the selected committed outcome. The server wraps it like any client proof, through its own bridge, statement account and PROOF2 adapter. The pool's entry point is:
+
+```cairo
+fn apply_policy_spend(
+    ref self: TState, spend: PolicySpend, data: Span<felt252>,
+    ciphertexts: Span<Span<felt252>>, proof: Span<felt252>,
+);
+```
+
+Under its lock, the pool:
+
+1. Checks the context, each published output's ciphertext against its proven delivery digest, the P1 binding and verdict, the root and the nullifier. It also checks `Poseidon(data)` against the proven `data`.
+2. Requires `block ≥ not_before`.
+3. **Controller window** (`block ≤ deadline`): checks that the controller's current class equals the pinned one. It then calls `templar_apply_policy(authorization, data)`. The call must return exactly `'TEMPLAR_POLICY_OK'`, and any failure reverts the whole settlement.
+4. **Refund window** (`block > deadline`): only outcome 0 settles, and the controller is not called. A broken, paused or upgraded controller cannot freeze funds past the deadline. An application that wants indefinite authority sets a far deadline, which is public at settlement.
+5. Appends the outputs, pays the withdrawal (never to the pool) and emits `PolicySettled { nullifier, controller, handle, policy_id, outcome, x, first_index, by_controller }`.
+
+Settlement must land by the deadline block. Proving and PROOF2 wrapping take minutes, so an approval settled too late is lost and the note can then be refunded.
+
+## Writing a controller
+
+```cairo
+#[starknet::interface]
+pub trait ITemplarPolicyController<T> {
+    fn templar_apply_policy(ref self: T, authorization: Span<felt252>, data: Span<felt252>) -> felt252;
+}
+```
+
+The selector is deliberately not upstream PR #2's `privacy_apply_controlled_transition`. That interface's controllers trust its arguments as their own privately validated receipt. Here the pool builds the authorization from proven fields:
+
+| Index | Field |
+| ---: | --- |
+| 0 | `'TEMPLAR_POLICY_V1'` |
+| 1–3 | chain, pool, token |
+| 4 | `policy_id` (as `key`: Poseidon of its nine words) |
+| 5 | handle |
+| 6–8 | outcome index, outcome type, `x` |
+| 9 | nullifier key |
+| 10–11 | `not_before`, deadline |
+| 12–13 | keys of the two output commitments (0 when absent) |
+| 14–15 | withdrawal recipient and amount |
+
+A controller must:
+
+- check `caller == pool` for the one pool it serves, and the tag, chain and pool;
+- **authorize on `policy_id`**, never on the handle alone. A note naming another case's handle is an attacker's note, and approving it could consume that case's approval;
+- pin every value chosen at settlement: the outcome index, and `x` for a split. Allow at most one outcome per `policy_id`, and record consumption;
+- treat the deadline as final, since the note may already have been refunded without a call;
+- be immutable and not a proxy. The pinned class fixes a controller's code, not its state: an admin setter or a proxy escapes it.
+
+**Reference escrow** (`policy_escrow.cairo`). The handle is the arbiter's address. The arbiter calls `approve(policy_id, outcome)` once per note; the approval is stored as `outcome + 1`, so an unset entry never reads as "cancel". `templar_apply_policy` accepts only the approved outcome of a fixed policy, once. A decoy note under the same arbiter has a different `policy_id` that the arbiter never approved. The arbiter approves only a `policy_id` that the party it protects has verified from the opening.
+
+## Wallet responsibilities
+
+- **Create.** Derive `cap`, the note's randomness, the salt and the refund's randomness and encryption key from the wallet seed and a random per-note nonce. The creation ciphertext is a standard 304-byte sealed box to the depositor. Its plaintext is a `PB01` backup: token, amount, controller, class, handle, deadline, `orest`, the nonce and the refund receiver index.
+- **Recover.** From the seed alone, trial-decrypt the history, find the `PB01` backup, rebuild the standard refund, including its encrypted message byte for byte, and prove the refund after the deadline. The recomputed commitment is checked against the leaf before the backup is trusted.
+- **Hand off.** An executor needs the full opening: every outcome and the outputs' ciphertexts. The transport is up to the application.
+- **Accept.** A beneficiary or executor should recompute the commitment and find it in the tree, check the controller class and the deadline margin, and decrypt its own output against the committed delivery. It then passes the verified `policy_id` to the approver.
+- **Receive.** Fixed outcomes deliver ordinary `M301` notes. A split output's plaintext is `PS01`: the `x` side learns `x` from `PolicySettled`, and the remainder side subtracts it from the note amount it was given.
+
+## Privacy boundary
+
+Creation is indistinguishable from an ordinary note. Settlement publishes that it is a policy spend, and the controller, handle, `policy_id`, deadline, outcome, `not_before`, `x`, `data`, the withdrawal, the output commitments and the root. Fixed-outcome amounts and receivers stay hidden. A split reveals `x`, and the whole amount only when `x` equals it. Settlement is linked to its application case by design, not to the funding transaction or the depositor's other notes. Holders of the opening can recognise the beneficiary's resulting commitment but cannot spend it or see it spent.
+
+## Limits
+
+- One policy note per settlement, no ordinary inputs beside it, one token, two outputs, one withdrawal and four outcomes.
+- No outcome decided from private data, and no private remainders (streaming vesting).
+- A controller cannot verify a note's existence or amount before settlement. Auction collateral therefore needs a creation proof, which is deferred.
+- Per-tranche vesting works as one note per tranche.
+
+## Where it lives
+
+- **Spec:** `docs/policy-note-spec.md` and ADR-0025, with the design reviews in `bench/m31-pool/reviews/policy-note-design-*.md`.
+- **Relation:** `client-port/src/policy.rs`; bridge and account in `client-port/cairo-p1`.
+- **Pool:** `bench/m31-pool/cairo/src/{policy,policy_escrow,pool}.cairo`.
+- **Wallet:** `bench/m31-pool/policy_note.py` and `policy_wallet.py`; the end-to-end run in `policy_e2e.py`.
+
+Demonstrated results and open items are on the [status page](/status#policy-notes).

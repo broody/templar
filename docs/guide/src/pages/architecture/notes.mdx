@@ -34,7 +34,7 @@ commitment = H(NOTE_DOMAIN,
 nullifier  = H(NULLIFIER_DOMAIN, nk, commitment, leaf_index)
 ```
 
-Here `H` is Starknet Poseidon over canonical felt252 values. Each domain is a distinct versioned tag. Ordinary notes fix controller and policy to zero. [Controlled notes](/architecture/controllers) bind a controller and policy into the same commitment and additionally require approval to spend. Format qualifications are recorded on the [status page](/status).
+Here `H` is Starknet Poseidon over canonical felt252 values. Each domain is a distinct versioned tag. Ordinary notes fix controller and policy to zero. On the compact path, a [policy note](/architecture/policy-notes) is an ordinary-format leaf whose receiver commits to a per-note capability and a policy instead of an owner. Format qualifications are recorded on the [status page](/status).
 
 | Material | Who needs it | What it enables |
 | --- | --- | --- |
@@ -64,4 +64,8 @@ The [receiving and recovery model](/architecture/receiving) explains encrypted d
 
 ## Receiving proceeds from an external operation
 
-A [return note](/architecture/returns) prepares ownership and recovery information before the amount is known. After the pool collects the actual proceeds, it creates an ordinary funded note. `ReturnNote` describes the preparation and funding lifecycle; it is not a separate permanent wallet balance or spending authority.
+An [open note](/architecture/open-notes) prepares ownership and recovery information before the amount is known. After the pool collects the actual proceeds, it creates an ordinary funded note. The destination is transaction-local; it is not a separate permanent wallet balance or spending authority.
+
+## Notes governed by a policy
+
+A [policy note](/architecture/policy-notes) is spent with a per-note capability instead of an owner key, and only into outcomes committed at creation, under an on-chain controller and a deadline refund. It suits escrow, vesting and conditional payments.

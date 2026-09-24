@@ -21,7 +21,7 @@ Templar separates secret-dependent computation from public settlement. The holde
 | Starknet native verifier | Verifies the cryptographic proof and exposes the resulting proof facts to contract execution. |
 | Native verifier adapter | Checks that those facts describe the approved statement, intended pool and chain, and expected public result. |
 | Pool contract | Enforces root freshness, double-spend protection, exact bundle binding, encrypted publication, fees, and token transfers. |
-| External application adapter | Executes the exact proof-authorized public call and provides funding instructions for return notes. |
+| External application adapter | Executes the exact proof-authorized public call and provides funding instructions for open notes. |
 | Public history source | Serves commitments, encrypted payloads, and spent data for verification against a canonical checkpoint. |
 
 “Note client” describes a responsibility, not a released wallet or SDK. The current end-to-end harness performs that role programmatically.
@@ -58,4 +58,4 @@ The token contract controls ERC20 behavior. The pool relies on token transfers b
 
 The pool owner can change verifier and fee configuration. That authority is part of the [trust model](/architecture/privacy#configuration-authority), even when proof generation is entirely local.
 
-[Return-note settlement](/architecture/returns) binds external execution and verifies actual incoming funding. The native proof authorizes the call; public execution determines the return amount.
+[Open-note settlement](/architecture/open-notes) binds external execution and verifies actual incoming funding. The native proof authorizes the call; public execution determines the return amount.

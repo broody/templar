@@ -54,8 +54,22 @@ Start with `protocol.py` for keys and notes. Read `spend.cairo` and `statement.c
 
 A check made only by a client is not a pool invariant. A valid proof matters only if the adapter selects the intended statement and the pool applies exactly its bound operation. A recovery result also depends on complete encrypted history and a trustworthy canonical checkpoint.
 
-## Return notes and upstream adapters
+## Open notes and upstream adapters
 
 `bench/return-note-e2e/cairo/src/return_note.cairo` defines `ReturnNote`, `ExecutionIntent` and the external `OpenNoteDeposit` response. Its `pool.cairo` validates execution, funding and atomic publication. `protocol.py` and `encoding.py` define return recovery and intent encoding. The Scarb manifest pins unchanged upstream Ekubo and Vesu adapter sources. `flow.py` exercises native Ekubo settlement and fresh recovery; Vesu mock-vault tests have a separate qualification scope.
 
-The architecture and interface are specified in `docs/return-note-spec.md` and `docs/adr/0023-return-notes-and-adapter-compatibility.md`. See [return notes](/architecture/returns) and [implementation status](/status#return-note-integration).
+That is the first reference, where the destination is called `ReturnNote`. On the compact path, the client relation (R0 V3: execution intent and identity handle) is in `bench/m31-private-wrapper/client-port/src/payment.rs`. The pool's `apply_spend_with_invoke` is in `bench/m31-pool/cairo/src/pool.cairo` with `open_note.cairo`, and the wallet helpers in `bench/m31-pool/open_note.py`. The architecture and interface are specified in `docs/open-note-spec.md` and `docs/adr/0023-return-notes-and-adapter-compatibility.md`. See [open notes](/architecture/open-notes) and [implementation status](/status#open-notes-on-the-compact-path).
+
+## Policy notes
+
+| Path | Responsibility |
+| --- | --- |
+| `bench/m31-private-wrapper/client-port/src/policy.rs` | The P1 settlement relation: note, policy and outcome hashes, native reference and circuit |
+| `bench/m31-private-wrapper/client-port/cairo-p1/` | P1 bridge (statement decoding, `TMP1_BIND_V1`) and statement account (`TMPZP1_POLICY_V1`) |
+| `bench/m31-pool/cairo/src/policy.cairo` | `PolicySpend`, binding, controller authorization and call |
+| `bench/m31-pool/cairo/src/pool.cairo` | `apply_policy_spend`: windows, controller call, publication |
+| `bench/m31-pool/cairo/src/policy_escrow.cairo` | Reference escrow controller |
+| `bench/m31-pool/policy_note.py`, `policy_wallet.py` | Policies and spends; seed derivations, plaintexts, sealed boxes, seed-only recovery |
+| `bench/m31-pool/policy_e2e.py` | Local end to end with real client proofs and PROOF2 |
+
+Specified in `docs/policy-note-spec.md` and `docs/adr/0025-policy-notes.md`. See [policy notes](/architecture/policy-notes) and [implementation status](/status#policy-notes).

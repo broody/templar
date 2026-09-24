@@ -62,10 +62,10 @@ A valid historical checkpoint establishes a historical balance. A minimum height
 
 The reference scans public outputs and tries decryption locally. Efficient history transport, private spent-status queries, and durable historical availability are separate requirements from the cryptographic ownership proof. The [status page](/status) records the current RPC trust model and measured synchronization limits.
 
-## Restoring controlled value
+## Restoring policy notes
 
-Decrypted notes include their controller and policy. Recovery preserves those conditions. An unspent balance reports value owned at the checkpoint; controlled value still needs approval before it can move. A full viewing key can display those conditions and spent status without granting ownership or controller authority.
+A depositor's [policy note](/architecture/policy-notes) is recoverable from the seed alone: its creation ciphertext is a `PB01` backup, and the note's secrets and its refund are derived from the seed. Recovery restores the right to refund after the deadline; any other outcome still needs its controller.
 
 ## Recovering external proceeds
 
-For [return notes](/architecture/returns), the wallet combines encrypted ownership information with an authenticated public amount determined at settlement. It verifies the delivery digest and final commitment before crediting the ordinary note. Seed recovery and viewing retain the same authority boundaries; history must include the amount as well as the ciphertext.
+For [open notes](/architecture/open-notes), the wallet combines encrypted ownership information with an authenticated public amount determined at settlement. It verifies the delivery digest and final commitment before crediting the ordinary note. Seed recovery and viewing retain the same authority boundaries; history must include the amount as well as the ciphertext.

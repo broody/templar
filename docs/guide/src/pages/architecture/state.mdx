@@ -14,7 +14,7 @@ Every accepted deposit, spend output or funded return appends a commitment to a 
 
 To demonstrate membership, the holder supplies a leaf index and 32 sibling hashes to the private statement. Recomputing the path must produce the selected public root. The proof hides the opening, leaf index, and path from the public verifier.
 
-Return destinations are transaction-local data. They create no placeholder leaves; the pool appends only the final funded note. See [return notes](/architecture/returns).
+Return destinations are transaction-local data. They create no placeholder leaves; the pool appends only the final funded note. See [open notes](/architecture/open-notes).
 
 The tree is append-only. Spending never deletes or changes a leaf. Its capacity is 2³² leaves, and unused subtrees have deterministic zero-hash values so the contract only needs to store populated paths.
 

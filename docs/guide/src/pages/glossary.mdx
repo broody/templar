@@ -12,7 +12,8 @@ description: The cryptographic and system terms used in the Templar architecture
 | Checkpoint | A canonical block identity and pool state against which a wallet verifies history and reports a balance. |
 | Ciphertext | Encrypted note data published with a funded output so its recipient can recover it. |
 | Commitment | A hash that binds a note's fields while concealing its private contents; also the tree leaf. |
-| Controller | An additional policy authority on a controlled note; approval and the owner’s proof are both required. Ordinary notes need no controller. |
+| Capability | A policy note's per-note spending secret. Every holder derives the same nullifier and can cause only the note's committed outcomes. |
+| Controller | The contract a policy note names; it approves a settlement before the note's deadline. (In the earlier controlled notes, an off-chain signer whose approval was required alongside the owner's proof.) |
 | Delivery digest | A hash of canonical ciphertext bytes, bound to the spend and recorded with the output position. |
 | felt252 | A value in Starknet's prime field, used by Cairo and the protocol's Poseidon hashes. |
 | Full viewing key | A sensitive read-only capability that decrypts receipts and derives their nullifiers to determine spent status. |
@@ -27,9 +28,13 @@ description: The cryptographic and system terms used in the Templar architecture
 | Public inputs | Values visible to verification and settlement, in contrast to the private witness. |
 | Push payment | A sender-created payment to a reusable receiving address that does not require a per-payment recipient response. |
 | Cloaked receiving address | Shareable payment information derived locally by the recipient's wallet: a receiving identity and encryption public key, scoped to a chain and pool. It is not a Starknet account address and requires no onchain registration or deployment. Also called a cloaked address. |
-| Return note | A transaction-local destination for externally funded proceeds. Verified funding creates an ordinary spendable note. Called `ReturnNote` in the implementation. |
-| OpenNoteDeposit | The upstream-compatible adapter response containing a return identifier, token and actual amount. |
-| Execution intent | The proof-bound adapter, exact call, input budget, expiry and required return destinations. |
+| Open note | A transaction-local destination for proceeds of an external call. Verified funding creates an ordinary spendable note. Called `ReturnNote` in the first reference. |
+| Policy note | A note spent with a capability into one of the outcomes committed at creation, approved by a controller before a deadline and refundable after it. |
+| `policy_id` | The public identifier of a policy note's policy, bound to chain, pool, token and amount; what a controller approves. |
+| Identity handle | `H(IDENTITY, sk₀ ‖ scope)`, proven by the client for a shadow-account call; the pool derives upstream's identity commitment from it. |
+| Shadow account | A persistent account, driven only through the pool, that holds an application position for a private owner. |
+| OpenNoteDeposit | The upstream-compatible adapter response containing a destination identifier, token and actual amount. |
+| Execution intent | The proof-bound adapter, exact call, input budget, expiry and open-note destinations. |
 | Spending secret | The private authority the statement requires to prove ownership and consume a note. |
 | S-two / STWO | The prover technology used by the selected recursive zero-knowledge privacy pipeline. |
 | Soundness | The property that a false claim cannot feasibly pass verification. |

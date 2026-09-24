@@ -8,7 +8,7 @@ import { Flow } from '../../components/Flow'
 
 # Transaction lifecycle
 
-Templar has two entry paths for value changes: a public deposit and a proof-authorized spend. Payments, change, and withdrawals are output shapes of the same spend mechanism. A [return-note execution](/architecture/returns) extends an ordinary spend with an authorized external call and atomic funding of its proceeds.
+Templar has two entry paths for value changes: a public deposit and a proof-authorized spend. Payments, change, and withdrawals are output shapes of the same spend mechanism. An [open-note execution](/architecture/open-notes) extends an ordinary spend with an authorized external call and atomic funding of its proceeds.
 
 ## Deposit: fund a note
 
@@ -60,7 +60,7 @@ Counts and ordering are bound to the proof. Changing a ciphertext, adding an out
 
 ## Bundle boundaries and fees
 
-A bundle supports at most **4 inputs, 4 outputs, and 2 withdrawals** for one public token. It requires at least one input and at least one output or withdrawal. Each note amount is a nonzero u128 value. Ordinary notes have zero controller and policy. [Controlled notes](/architecture/controllers) require a controller signature and preserve that controller across every input and output.
+A bundle supports at most **4 inputs, 4 outputs, and 2 withdrawals** for one public token. It requires at least one input and at least one output or withdrawal. Each note amount is a nonzero u128 value. Ordinary notes have zero controller and policy. The earlier controlled notes required a controller signature and preserved that controller across every input and output; [policy notes](/architecture/policy-notes) replace them on the compact path.
 
 ```text
 sum(input note amounts) = sum(output note amounts) + sum(withdrawals)
@@ -74,4 +74,4 @@ The 4/4/2 limit is the current reference format’s cap. Native proving supports
 
 ## External execution and returns
 
-The input-token spend funds the adapter. The public operation returns one or more authorized assets, and verified receipts fund ordinary notes in the same transaction. Private change and return notes share the total output cap; amounts in different tokens are accounted separately. A failed return reverts the entire operation, including the initial spend.
+The input-token spend funds the adapter. The public operation returns one or more authorized assets, and verified receipts fund ordinary notes in the same transaction. Private change and open notes share the total output cap; amounts in different tokens are accounted separately. A failed return reverts the entire operation, including the initial spend.
