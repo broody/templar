@@ -3,7 +3,8 @@
 //! commitment on chain from `inner`; spends check the binding, fact verdict, known root and
 //! unused nullifiers, then publish both outputs. `apply_spend_with_invoke` additionally runs one
 //! open-note execution (`open_note`): it pays the budget, calls the adapter and appends the
-//! funded open notes, all under the pool's lock.
+//! funded open notes, all under the pool's lock. `apply_policy_spend` settles a policy note
+//! (`policy`, ADR-0025) from a P1 proof, verified through its own adapter.
 use starknet::ContractAddress;
 
 #[starknet::interface]
@@ -19,6 +20,12 @@ pub trait IM31Pool<TState> {
     fn get_verifier(self: @TState) -> ContractAddress;
     fn set_shadow_class(ref self: TState, class_hash: starknet::ClassHash, allowed: bool);
     fn is_shadow_class(self: @TState, class_hash: starknet::ClassHash) -> bool;
+    fn apply_policy_spend(
+        ref self: TState, spend: crate::policy::PolicySpend, data: Span<felt252>, ciphertexts: Span<Span<felt252>>,
+        proof: Span<felt252>,
+    );
+    fn set_policy_verifier(ref self: TState, verifier: ContractAddress);
+    fn get_policy_verifier(self: @TState) -> ContractAddress;
 }
 
 #[starknet::contract]
@@ -38,6 +45,7 @@ pub mod M31Pool {
         IERC20Dispatcher, IERC20DispatcherTrait, IVerifierDispatcher, IVerifierDispatcherTrait,
         Spend, compute_binding, delivery_digest, is_active,
     };
+    use crate::policy::{PolicySpend, FIXED, call_controller, key_or_zero, policy_binding};
     use crate::tree::m31_tree_component;
     use crate::tree::m31_tree_component::M31TreeInternalTrait;
     component!(path: m31_tree_component, storage: tree, event: TreeEvent);
@@ -46,6 +54,8 @@ pub mod M31Pool {
     pub struct Storage {
         owner: ContractAddress,
         verifier: ContractAddress,
+        /// The P1 (policy settlement) verifier adapter: a separate statement class and tag.
+        policy_verifier: ContractAddress,
         nullifiers: Map<felt252, bool>,
         delivery_digests: Map<u64, felt252>,
         /// Classes a `COMPUTE` execution may call (upstream's shadow-account anonymizer).
@@ -65,6 +75,20 @@ pub mod M31Pool {
         ShadowClassSet: ShadowClassSet,
         Withdrawn: Withdrawn,
         OpenNoteFunded: OpenNoteFunded,
+        PolicySettled: PolicySettled,
+    }
+    /// A policy note settled; its new notes start at `first_index` (`x` lets split receivers
+    /// compute their amounts).
+    #[derive(Drop, starknet::Event)]
+    pub struct PolicySettled {
+        pub nullifier: felt252,
+        pub controller: ContractAddress,
+        pub handle: felt252,
+        pub policy_id: felt252,
+        pub outcome: u8,
+        pub x: u128,
+        pub first_index: u64,
+        pub by_controller: bool,
     }
     /// An open note funded by an execution; its `NotePublished` carries the same index.
     #[derive(Drop, starknet::Event)]
@@ -237,6 +261,97 @@ pub mod M31Pool {
 
         fn is_shadow_class(self: @ContractState, class_hash: ClassHash) -> bool {
             self.shadow_classes.read(class_hash)
+        }
+
+        /// Settles a policy note (`docs/policy-note-spec.md` §6): verify the P1 statement, then,
+        /// by the deadline, the pinned-class controller's approval (atomically, under the lock);
+        /// after it, only the refund (outcome 0). Appends the outcome's notes and pays its
+        /// withdrawal.
+        fn apply_policy_spend(
+            ref self: ContractState, spend: PolicySpend, data: Span<felt252>, ciphertexts: Span<Span<felt252>>,
+            proof: Span<felt252>,
+        ) {
+            self.start();
+            let this = get_contract_address();
+            assert(spend.chain == get_tx_info().unbox().chain_id, 'WRONG_CHAIN');
+            assert(spend.pool == this, 'WRONG_POOL');
+            assert(spend.token.into() != 0, 'ZERO_TOKEN');
+            // Outputs and their ciphertexts: a published commitment carries its ciphertext, whose
+            // delivery digest the proof fixed; an unpublished one has neither.
+            assert(ciphertexts.len() == 2, 'CIPHERTEXT_COUNT');
+            let mut notes: Array<(Digest, felt252, Span<felt252>)> = array![];
+            let deliveries = [spend.delivery0, spend.delivery1];
+            for j in 0..2_u32 {
+                let cm = read_digest(spend.commitments.slice(9 * j, 9));
+                let ct = *ciphertexts.at(j);
+                let d = *deliveries.span().at(j);
+                if is_zero(cm) {
+                    assert(ct.len() == 0 && d == 0, 'INACTIVE_PAYLOAD');
+                } else {
+                    assert(d != 0 && delivery_digest(ct) == d, 'DELIVERY');
+                    notes.append((cm, d, ct));
+                }
+            }
+            // The statement: binding, P1 verdict, known root, fresh nullifier.
+            let binding = policy_binding(@spend);
+            assert(binding == spend.binding, 'BAD_BINDING');
+            let public = array![spend.chain, this.into(), binding];
+            let verifier = self.policy_verifier.read();
+            assert(verifier.into() != 0, 'NO_POLICY_VERIFIER');
+            assert(IVerifierDispatcher { contract_address: verifier }.verify(proof, public.span()), 'PROOF_REJECTED');
+            assert(self.tree.root_history.read(key(read_digest(spend.root))), 'UNKNOWN_ROOT');
+            let nf = read_digest(spend.nullifier);
+            assert(!is_zero(nf), 'ZERO_NULLIFIER');
+            let nf_key = key(nf);
+            assert(!self.nullifiers.read(nf_key), 'NULLIFIER_USED');
+            self.nullifiers.write(nf_key, true);
+            self.emit(NullifierSpent { nullifier: nf.span() });
+            assert(core::poseidon::poseidon_hash_span(data) == spend.data, 'POLICY_DATA');
+            // Windows: not before `not_before`; the controller decides until the deadline, after
+            // which only the refund settles.
+            let b = get_block_number();
+            assert(b >= spend.not_before, 'POLICY_NOT_BEFORE');
+            assert(spend.index != 0 || spend.kind == FIXED, 'REFUND_TYPE');
+            let by_controller = b <= spend.deadline;
+            if by_controller {
+                call_controller(@spend, this, data);
+            } else {
+                assert(spend.index == 0, 'POLICY_EXPIRED');
+            }
+            // Effects: the outcome's notes, then its withdrawal.
+            let first = self.tree.tree_count.read();
+            if notes.len() > 0 {
+                self.append_notes(notes.span());
+            }
+            let w = spend.withdrawal;
+            if w.amount != 0 {
+                assert(w.recipient.into() != 0 && w.recipient != this, 'BAD_WITHDRAWAL');
+                assert(
+                    IERC20Dispatcher { contract_address: spend.token }.transfer(w.recipient, w.amount.into()),
+                    'TRANSFER_FAILED',
+                );
+                self.emit(Withdrawn { token: spend.token, recipient: w.recipient, amount: w.amount });
+            } else {
+                assert(w.recipient.into() == 0, 'BAD_WITHDRAWAL');
+                assert(notes.len() > 0, 'EMPTY_OUTPUT');
+            }
+            self.emit(PolicySettled {
+                nullifier: nf_key, controller: spend.controller, handle: spend.handle,
+                policy_id: key_or_zero(read_digest(spend.policy_id)), outcome: spend.index, x: spend.x,
+                first_index: first, by_controller,
+            });
+            self.locked.write(false);
+        }
+
+        /// Owner only: the P1 verifier adapter (its own statement class and account tag).
+        fn set_policy_verifier(ref self: ContractState, verifier: ContractAddress) {
+            assert(get_caller_address() == self.owner.read(), 'NOT_OWNER');
+            assert(verifier.into() != 0, 'ZERO_VERIFIER');
+            self.policy_verifier.write(verifier);
+        }
+
+        fn get_policy_verifier(self: @ContractState) -> ContractAddress {
+            self.policy_verifier.read()
         }
     }
 

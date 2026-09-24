@@ -100,7 +100,8 @@ if 'adapter' not in d:
     # Owner, verifier (attached below), format 1 (single-permutation nodes), frontier storage.
     d['pool'] = deploy('pool', [ACCOUNT, 0, 1, 0])
     d['statement'] = deploy('statement', [])
-    d['adapter'] = deploy('adapter', [d['pool'], d['statement'], classes['statement'], OS_PROGRAM, MAX_PROOF_AGE])
+    d['adapter'] = deploy('adapter', [d['pool'], d['statement'], classes['statement'], OS_PROGRAM, MAX_PROOF_AGE,
+                                      hex(int.from_bytes(b'TMPZR0_PAYMENT_V3', 'big'))])
     d.update(classes=classes, os_program=hex(OS_PROGRAM), max_proof_age=MAX_PROOF_AGE, supply=SUPPLY,
              start_block=load(RUN / 'steps/deploy-pool/receipt.json')['block_number'],
              token_b=RETURN_RUN['token_b'], anonymizer=RETURN_RUN['adapter'],

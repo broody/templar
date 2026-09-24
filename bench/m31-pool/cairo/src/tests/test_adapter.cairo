@@ -18,7 +18,7 @@ fn setup(mutation: u32) -> (IVerifierDispatcher, Array<felt252>) {
     let statement: felt252 = 0x456;
     let statement_class: felt252 = 0x789;
     let class = declare("Proof2Adapter").unwrap_syscall().contract_class();
-    let (addr, _) = class.deploy(@array![pool.into(), statement, statement_class, OS, 20]).unwrap_syscall();
+    let (addr, _) = class.deploy(@array![pool.into(), statement, statement_class, OS, 20, 'TMPZR0_PAYMENT_V3']).unwrap_syscall();
     start_cheat_caller_address(addr, pool);
     start_cheat_chain_id(addr, 'SN_SEPOLIA');
     start_cheat_block_number(addr, 200);
@@ -84,7 +84,7 @@ fn adapter_rejects_calldata_proof() { let (v, p) = setup(0); v.verify(array![1].
 fn real_setup() -> IVerifierDispatcher {
     let pool: ContractAddress = REAL_POOL.try_into().unwrap();
     let class = declare("Proof2Adapter").unwrap_syscall().contract_class();
-    let (addr, _) = class.deploy(@array![REAL_POOL, REAL_STATEMENT, REAL_STATEMENT_CLASS, OS, 100]).unwrap_syscall();
+    let (addr, _) = class.deploy(@array![REAL_POOL, REAL_STATEMENT, REAL_STATEMENT_CLASS, OS, 100, 'TMPZR0_PAYMENT_V3']).unwrap_syscall();
     start_cheat_caller_address(addr, pool);
     start_cheat_chain_id(addr, REAL_CHAIN);
     start_cheat_block_number(addr, REAL_BASE_BLOCK + 20);
@@ -99,4 +99,19 @@ fn adapter_accepts_real_proof2_facts() {
 #[should_panic(expected: ('PROOF_BINDING',))]
 fn adapter_rejects_real_facts_for_other_binding() {
     real_setup().verify(array![].span(), array![REAL_CHAIN, REAL_POOL, REAL_BINDING + 1].span());
+}
+
+/// One adapter serves one relation: an adapter pinned to the P1 account tag rejects the facts of
+/// a real R0 PROOF2, whose message carries `'TMPZR0_PAYMENT_V3'`.
+#[test]
+#[should_panic(expected: ('PROOF_BINDING',))]
+fn policy_adapter_rejects_r0_facts() {
+    let pool: ContractAddress = REAL_POOL.try_into().unwrap();
+    let class = declare("Proof2Adapter").unwrap_syscall().contract_class();
+    let (addr, _) = class.deploy(@array![REAL_POOL, REAL_STATEMENT, REAL_STATEMENT_CLASS, OS, 100, 'TMPZP1_POLICY_V1']).unwrap_syscall();
+    start_cheat_caller_address(addr, pool);
+    start_cheat_chain_id(addr, REAL_CHAIN);
+    start_cheat_block_number(addr, REAL_BASE_BLOCK + 20);
+    start_cheat_proof_facts(addr, REAL_FACTS.span());
+    IVerifierDispatcher { contract_address: addr }.verify(array![].span(), array![REAL_CHAIN, REAL_POOL, REAL_BINDING].span());
 }

@@ -5,8 +5,10 @@
 //!
 //! - facts = `['PROOF2', 'VIRTUAL_SNOS', os_program, 'VIRTUAL_SNOS0', base_block, base_hash, _,
 //!   n_messages, message_hash]` (the sequencer's `ProofFactsVariant::Snos` layout);
-//! - `message_hash = Poseidon(statement, 0, 5, statement_class, 'TMPZR0_PAYMENT_V3', chain, pool,
-//!   binding)`: the R0 statement account's L2→L1 message (`client-port/cairo-r0/account`).
+//! - `message_hash = Poseidon(statement, 0, 5, statement_class, account_tag, chain, pool,
+//!   binding)`: the statement account's L2→L1 message, with `account_tag` fixed at deployment:
+//!   `'TMPZR0_PAYMENT_V3'` (R0, `client-port/cairo-r0/account`) or `'TMPZP1_POLICY_V1'` (P1,
+//!   `client-port/cairo-p1/account`). One adapter serves one relation.
 //!
 //! The sequencer checks the base block's hash; this adapter bounds its age.
 #[starknet::contract]
@@ -24,20 +26,22 @@ pub mod Proof2Adapter {
         statement_class: felt252,
         os_program: felt252,
         max_proof_age: u64,
+        account_tag: felt252,
     }
 
     #[constructor]
     fn constructor(
         ref self: ContractState, pool: ContractAddress, statement: ContractAddress, statement_class: felt252,
-        os_program: felt252, max_proof_age: u64,
+        os_program: felt252, max_proof_age: u64, account_tag: felt252,
     ) {
         assert(pool.into() != 0 && statement.into() != 0, 'ZERO_ADDRESS');
-        assert(statement_class != 0 && os_program != 0 && max_proof_age != 0, 'BAD_CONFIG');
+        assert(statement_class != 0 && os_program != 0 && max_proof_age != 0 && account_tag != 0, 'BAD_CONFIG');
         self.pool.write(pool);
         self.statement.write(statement);
         self.statement_class.write(statement_class);
         self.os_program.write(os_program);
         self.max_proof_age.write(max_proof_age);
+        self.account_tag.write(account_tag);
     }
 
     #[abi(embed_v0)]
@@ -63,7 +67,7 @@ pub mod Proof2Adapter {
             assert(current - base <= self.max_proof_age.read(), 'PROOF_AGE');
             assert(*facts.at(7) == 1, 'MESSAGE_COUNT');
             let message = array![
-                self.statement.read().into(), 0, 5, self.statement_class.read(), 'TMPZR0_PAYMENT_V3', chain,
+                self.statement.read().into(), 0, 5, self.statement_class.read(), self.account_tag.read(), chain,
                 *public_inputs.at(1), *public_inputs.at(2),
             ];
             assert(*facts.at(8) == poseidon_hash_span(message.span()), 'PROOF_BINDING');

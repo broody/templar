@@ -31,6 +31,13 @@ TAG = None
 def expected_payload(fixture, public):
     chain = int.from_bytes(b'SN_SEPOLIA', 'big')
     assert int(public['chain'], 16) == chain
+    if TAG_VERSION == 'P1':
+        # P1 policy bridge: the pool recomputes `TMP1_BIND_V1` from its policy-spend data.
+        pspec = importlib.util.spec_from_file_location('policy_note', ROOT / 'bench/m31-pool/policy_note.py')
+        pn = importlib.util.module_from_spec(pspec)
+        pspec.loader.exec_module(pn)
+        tag = int.from_bytes((TAG or 'TMPZP1_POLICY_V1').encode(), 'big')
+        return [int(fixture['authority']['statement_class'], 16), tag, chain, int(public['pool'], 16), pn.binding(public)]
     if TAG_VERSION == 'R0':
         # R0 payment bridge: the pool recomputes the binding from its spend data.
         import validate_bridge_r0
@@ -60,7 +67,7 @@ def main():
     ap.add_argument('--public', type=Path, required=True)
     ap.add_argument('--output', type=Path, required=True)
     ap.add_argument('--l2-gas', default='0x3b9aca00')
-    ap.add_argument('--tag-version', default='V1', choices=['V1', 'V2', 'SA', 'R0'])
+    ap.add_argument('--tag-version', default='V1', choices=['V1', 'V2', 'SA', 'R0', 'P1'])
     ap.add_argument('--prefix-hex')
     ap.add_argument('--tag')
     ap.add_argument('--expect-reject', action='store_true',

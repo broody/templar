@@ -17,6 +17,8 @@ mod perm_compact;
 #[cfg(not(feature: 'compact_perm'))]
 mod perm_unrolled;
 pub mod open_note;
+pub mod policy;
+pub mod policy_escrow;
 pub mod pool;
 pub mod spend;
 pub mod test_adapters;

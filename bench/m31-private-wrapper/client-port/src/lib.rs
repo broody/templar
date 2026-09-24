@@ -29,3 +29,4 @@ mod constants;
 pub mod hash;
 pub mod membership;
 pub mod payment;
+pub mod policy;

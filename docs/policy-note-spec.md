@@ -1,12 +1,13 @@
 # Policy notes — bounded policy-controlled private assets
 
-Status: **design reviewed: GO for implementation** from both independent reviews (ADR-0025,
-Proposed). Revision 3, after the design reviews and re-reviews in
+Status: **design reviewed (GO); implemented experimentally, implementation review pending**
+(ADR-0025, Proposed). Revision 3, after the design reviews and re-reviews in
 `bench/m31-pool/reviews/policy-note-design-{math,protocol}-review.md` (finding IDs `PN-*`, `P-*` and
-`N-*` are cited where they changed the text). Nothing here is implemented. It targets the compact
-client-proof path (ADR-0024): a fixed arithmetic relation proved on the client with S-two
-(stwo-circuits, arithmetic-only fork), wrapped by the server as PROOF2, settled by the M31 pool
-(`bench/m31-pool`).
+`N-*` are cited where they changed the text). Implementation: `client-port/src/policy.rs` and
+`cairo-p1`, `bench/m31-pool` (`policy.cairo`, `policy_escrow.cairo`, `policy_note.py`,
+`policy_wallet.py`, `policy_e2e.py`). It targets the compact client-proof path (ADR-0024): a fixed
+arithmetic relation proved on the client with S-two (stwo-circuits, arithmetic-only fork), wrapped
+by the server as PROOF2, settled by the M31 pool (`bench/m31-pool`).
 
 ## 1. Purpose and scope
 

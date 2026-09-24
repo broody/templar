@@ -190,3 +190,76 @@ pub mod FeeToken {
         self.balances.write(to, self.balances.read(to) + amount);
     }
 }
+
+// ---------------------------------------------------------------- policy controllers (tests)
+
+#[starknet::interface]
+pub trait IMockPolicyController<T> {
+    fn last_authorization(self: @T) -> Span<felt252>;
+    fn calls(self: @T) -> u32;
+}
+
+/// A policy controller for pool tests. Mode 0 approves (and records the authorization), 1
+/// reverts, 2 returns a wrong value, 3 tries to re-enter the pool.
+#[starknet::contract]
+pub mod MockPolicyController {
+    use starknet::storage::{
+        MutableVecTrait, StoragePointerReadAccess, StoragePointerWriteAccess, Vec, VecTrait,
+    };
+    use starknet::{ContractAddress, get_caller_address};
+    use crate::pool::{IM31PoolDispatcher, IM31PoolDispatcherTrait};
+    use crate::policy::ITemplarPolicyController;
+
+    #[storage]
+    struct Storage {
+        mode: u8,
+        calls: u32,
+        last: Vec<felt252>,
+    }
+
+    #[constructor]
+    fn constructor(ref self: ContractState, mode: u8) {
+        self.mode.write(mode);
+    }
+
+    #[abi(embed_v0)]
+    impl ViewImpl of super::IMockPolicyController<ContractState> {
+        fn last_authorization(self: @ContractState) -> Span<felt252> {
+            let mut out = array![];
+            for i in 0..self.last.len() {
+                out.append(self.last.at(i).read());
+            }
+            out.span()
+        }
+
+        fn calls(self: @ContractState) -> u32 {
+            self.calls.read()
+        }
+    }
+
+    #[abi(embed_v0)]
+    impl ControllerImpl of ITemplarPolicyController<ContractState> {
+        fn templar_apply_policy(ref self: ContractState, authorization: Span<felt252>, data: Span<felt252>) -> felt252 {
+            let mode = self.mode.read();
+            assert(mode != 1, 'CONTROLLER_SAYS_NO');
+            if mode == 3 {
+                let pool: ContractAddress = get_caller_address();
+                IM31PoolDispatcher { contract_address: pool }
+                    .deposit(1.try_into().unwrap(), 1, array![1, 2, 3, 4, 5, 6, 7, 8, 9].span(), array![].span());
+            }
+            while self.last.len() > 0 {
+                let _ = self.last.pop();
+            }
+            for a in authorization {
+                self.last.push(*a);
+            }
+            self.calls.write(self.calls.read() + 1);
+            let _ = data;
+            if mode == 2 {
+                'NOPE'
+            } else {
+                crate::policy::POLICY_OK
+            }
+        }
+    }
+}

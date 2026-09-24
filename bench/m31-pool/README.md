@@ -135,6 +135,49 @@ same for both pools apart from R0's longer calldata.
   - withdrawals pay the recipient, and inactive slots append nothing;
   - a withdrawal without a recipient, a redirected withdrawal and an empty spend are rejected.
 
+## Policy notes (ADR-0025, experimental)
+
+Spec: [policy-note-spec.md](../../docs/policy-note-spec.md), reviewed before implementation
+(`reviews/policy-note-design-*.md`). The implementation has not had its own review yet.
+
+- **Relation.** P1 (`client-port/src/policy.rs`) is a separate relation next to R0, which is
+  unchanged. A policy note is an ordinary leaf whose receiver is `H(PRECV, H(PNK, cap) ‖ policy)`,
+  so a deposit or an R0 output creates one. Settling it proves one committed outcome: fixed, or a
+  split with a public `x`. Circuit: 231,512 qm31 rows with single-permutation nodes (R0: 182,947).
+- **Bridge and account.** `client-port/cairo-p1` (41 outputs, tag `P1V1`/`P1C1`, binding
+  `TMP1_BIND_V1`, message tag `TMPZP1_POLICY_V1`). `Proof2Adapter` now takes its account tag at
+  deployment, so the P1 path has its own adapter.
+- **Pool.** `apply_policy_spend` (`policy.cairo`) checks the statement. Up to the deadline it calls
+  the pinned-class controller's `templar_apply_policy`. After the deadline only the refund
+  (outcome 0) settles, without a controller. `policy_escrow.cairo` is the reference escrow: the
+  handle is the arbiter, and approvals are keyed by `(arbiter, policy_id)`, written once and stored
+  as `outcome + 1`.
+- **Wallet.** `policy_note.py` covers policies, spends and the binding. `policy_wallet.py` covers
+  the seed derivations, the `M301`/`PB01`/`PS01` plaintexts, the reproducible refund sealed box
+  and seed-only recovery. The spending and incoming keys are fixture derivations.
+
+**Local end to end with real proofs** (`policy_e2e.py`,
+[results](results/policy-e2e.json)):
+1. A depositor creates two escrow notes by deposit.
+2. An executor holding only note A's opening proves the arbiter-approved release.
+3. The depositor, from the seed alone, recovers note B and proves its refund after the deadline.
+4. Each proof goes through the P1 bridge (31/31 cases), the virtual OS (exact message) and PROOF2.
+5. Both settle in snforge through the P1 adapter, and the pool's tree ends at the root the
+   beneficiary's wallet computed.
+6. The beneficiary finds its two notes by trial decryption and proves an ordinary R0 spend of them.
+
+| | Release (A) | Refund (B) |
+|---|---|---|
+| client proof | 5.3 s, 0.31 GiB, log 18 | 1.9 s, 0.30 GiB, log 18 |
+| bridge | 2.02M steps | 1.96M steps |
+| virtual OS | 3.41M steps | 3.33M steps |
+| PROOF2 | 111.0 s, 257,470 B, 50.9 GiB | 110.8 s, 253,006 B, 51.7 GiB |
+| `apply_policy_spend` L2 gas | 52.4M (two notes) | 51.5M (one note) |
+
+The settlement gas excludes the PROOF2 fact check and account validation. The snforge rejection
+tests run against real facts: no approval, a cancelled approval, a replay, another proof's facts,
+a redirected output, and a rebound deadline.
+
 ## Limits
 
 - These are snforge local VM measurements under Scarb 2.18.0 and snforge 0.63.0, not Sepolia or

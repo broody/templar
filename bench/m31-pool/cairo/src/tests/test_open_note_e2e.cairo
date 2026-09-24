@@ -35,7 +35,7 @@ fn open_note_real_proof_end_to_end() {
     deploy_at("E2EToken", array![me, 1000000, 0], TOKEN_A);
     deploy_at("E2EToken", array![me, 1000000, 0], TOKEN_B);
     deploy_at("MockSwapAdapter", array![], ADAPTER);
-    deploy_at("Proof2Adapter", array![POOL, STATEMENT, STATEMENT_CLASS, OS_PROGRAM, 4096], PROOF2_ADAPTER);
+    deploy_at("Proof2Adapter", array![POOL, STATEMENT, STATEMENT_CLASS, OS_PROGRAM, 4096, 'TMPZR0_PAYMENT_V3'], PROOF2_ADAPTER);
     deploy_at("M31Pool", array![me, PROOF2_ADAPTER, 1, 0], POOL);
     let (a, b) = (IERC20Dispatcher { contract_address: addr(TOKEN_A) }, IERC20Dispatcher { contract_address: addr(TOKEN_B) });
     let pool = IM31PoolDispatcher { contract_address: addr(POOL) };

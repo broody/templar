@@ -483,12 +483,12 @@ pub fn fresh_shape(tree: Tree, shape: Shape, rng: &mut impl RngCore) -> (Public,
 
 // ---------------------------------------------------------------- circuit
 
-fn guess_words<V: IValue>(c: &mut Context<V>, words: &[u32]) -> Vec<Var> {
+pub(crate) fn guess_words<V: IValue>(c: &mut Context<V>, words: &[u32]) -> Vec<Var> {
     words.iter().map(|w| guess_m31(c, *w)).collect()
 }
 
 /// Asserts `v ≠ 0` with a witness inverse.
-fn nonzero<V: IValue>(c: &mut Context<V>, v: Var, value: u32) {
+pub(crate) fn nonzero<V: IValue>(c: &mut Context<V>, v: Var, value: u32) {
     let inv = if value == 0 { 0 } else { M31::from(value).inverse().0 };
     let inv = guess_m31(c, inv);
     let one = c.one();
@@ -497,7 +497,7 @@ fn nonzero<V: IValue>(c: &mut Context<V>, v: Var, value: u32) {
 }
 
 /// `v · inv = active`, with `active` boolean: `v ≠ 0` when active, no constraint on `v` otherwise.
-fn nonzero_if<V: IValue>(c: &mut Context<V>, v: Var, value: u32, active: (Var, bool)) {
+pub(crate) fn nonzero_if<V: IValue>(c: &mut Context<V>, v: Var, value: u32, active: (Var, bool)) {
     let inv = if active.1 && value != 0 { M31::from(value).inverse().0 } else { 0 };
     let inv = guess_m31(c, inv);
     let prod = eval!(c, (v) * (inv));
@@ -505,7 +505,7 @@ fn nonzero_if<V: IValue>(c: &mut Context<V>, v: Var, value: u32, active: (Var, b
 }
 
 /// [`nonzero_vector`] when `active` (an output slot's flag); no constraint otherwise.
-fn nonzero_vector_if<V: IValue>(c: &mut Context<V>, words: &[Var], values: &[u32], active: (Var, bool)) {
+pub(crate) fn nonzero_vector_if<V: IValue>(c: &mut Context<V>, words: &[Var], values: &[u32], active: (Var, bool)) {
     let k = values.iter().position(|v| *v != 0).unwrap_or(0);
     let bits: Vec<Var> = (0..words.len()).map(|i| guess_bits(c, (i == k) as usize, 1)[0]).collect();
     let mut sum_bits = c.zero();
@@ -520,7 +520,7 @@ fn nonzero_vector_if<V: IValue>(c: &mut Context<V>, words: &[Var], values: &[u32
 }
 
 /// Asserts some word of `words` is nonzero: a one-hot selector picks it, then [`nonzero`].
-fn nonzero_vector<V: IValue>(c: &mut Context<V>, words: &[Var], values: &[u32]) {
+pub(crate) fn nonzero_vector<V: IValue>(c: &mut Context<V>, words: &[Var], values: &[u32]) {
     let k = values.iter().position(|v| *v != 0).unwrap_or(0);
     let bits: Vec<Var> = (0..words.len()).map(|i| guess_bits(c, (i == k) as usize, 1)[0]).collect();
     let mut sum_bits = c.zero();
@@ -535,7 +535,7 @@ fn nonzero_vector<V: IValue>(c: &mut Context<V>, words: &[Var], values: &[u32]) 
 }
 
 /// A u128 amount as eight range-checked 16-bit limbs; asserts it is nonzero.
-fn amount<V: IValue>(c: &mut Context<V>, a: u128) -> Vec<Var> {
+pub(crate) fn amount<V: IValue>(c: &mut Context<V>, a: u128) -> Vec<Var> {
     let (vars, sum) = amount_unchecked(c, a);
     // Eight limbs below 2^16 sum below 2^19, so the sum is zero only if every limb is.
     let s: u32 = amount_limbs(a).iter().sum();
@@ -544,7 +544,7 @@ fn amount<V: IValue>(c: &mut Context<V>, a: u128) -> Vec<Var> {
 }
 
 /// A u128 amount as eight range-checked 16-bit limbs and their sum (zero iff the amount is).
-fn amount_unchecked<V: IValue>(c: &mut Context<V>, a: u128) -> (Vec<Var>, Var) {
+pub(crate) fn amount_unchecked<V: IValue>(c: &mut Context<V>, a: u128) -> (Vec<Var>, Var) {
     let limbs = amount_limbs(a);
     let mut vars = vec![];
     let mut sum = c.zero();
@@ -563,7 +563,7 @@ fn amount_unchecked<V: IValue>(c: &mut Context<V>, a: u128) -> (Vec<Var>, Var) {
 
 /// `Σ ins = Σ outs` over the integers (two inputs; outputs and withdrawal), limb by limb. Each
 /// limb difference lies in (-3·2^16, 2·2^16), so the signed carries lie in {-2, -1, 0, 1}.
-fn conservation<V: IValue>(c: &mut Context<V>, ins: &[&[Var]], outs: &[&[Var]], in_values: &[u128], out_values: &[u128]) {
+pub(crate) fn conservation<V: IValue>(c: &mut Context<V>, ins: &[&[Var]], outs: &[&[Var]], in_values: &[u128], out_values: &[u128]) {
     let shift = c.constant(M31::from(1u32 << 16).into());
     let li: Vec<[u32; AMOUNT_LIMBS]> = in_values.iter().map(|a| amount_limbs(*a)).collect();
     let lo: Vec<[u32; AMOUNT_LIMBS]> = out_values.iter().map(|a| amount_limbs(*a)).collect();
@@ -605,7 +605,7 @@ fn conservation<V: IValue>(c: &mut Context<V>, ins: &[&[Var]], outs: &[&[Var]], 
 
 /// Hashes independent requests of equal framed length, four per lane-packed sponge
 /// (`membership::sponge_lanes`); returns each request's digest in order.
-fn hash_batch<V: Lanes>(c: &mut Context<V>, requests: Vec<(u32, u32, Vec<Var>)>) -> Vec<Vec<Var>> {
+pub(crate) fn hash_batch<V: Lanes>(c: &mut Context<V>, requests: Vec<(u32, u32, Vec<Var>)>) -> Vec<Vec<Var>> {
     let messages: Vec<Vec<Var>> = requests
         .into_iter()
         .map(|(kind, level, payload)| {

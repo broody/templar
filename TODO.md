@@ -264,6 +264,15 @@ the accepted local proving architecture is unchanged.
     2026-09-24: deposits on chain; the proof-carrying Ekubo swap into an open
     note succeeds in simulation (299 B funded, 3.80 STRK); the gateway rejects
     PROOF2 ([evidence](bench/m31-sepolia/results/v3-open-note/)).
+  - **Policy notes on the compact path (2026-09-24, ADR-0025):** design reviewed
+    before implementation (math and protocol reviews, three revisions, GO).
+    Implemented: the P1 relation, bridge and account, `apply_policy_spend`, the
+    reference escrow and the wallet's seed-recoverable backup. A local end-to-end
+    run with real client proofs and PROOF2 settles an executor's escrow release and
+    a seed-only refund
+    ([results](bench/m31-pool/results/policy-e2e.json)). **Pending:** the review of
+    the implementation, private creation through an R0 output end to end, and
+    Sepolia.
   Open for this route:
   - review of the fork's profile;
   - the hiding question (broody/templar#2), under test per
@@ -453,7 +462,9 @@ qualification gates the default wallet batch size.
   public history, show accurate balances and conditions, and spend recovered
   ordinary and controlled notes without benchmark tooling.
 
-- [ ] **7. Define and implement controller operations.** Specify policy decisions,
+- [ ] **7. Define and implement controller operations.** *(Superseded for new work by policy
+  notes, ADR-0025: controller approval is on chain at settlement, with a pool-enforced deadline
+  refund; this item remains for ADR-0022's experiment only.)* Specify policy decisions,
   approval expiry, minimal retained metadata, availability expectations, and
   behavior when approval is denied or the service is unavailable. Decide key
   rotation, revocation, and whether any escape mechanism is permitted by a note's

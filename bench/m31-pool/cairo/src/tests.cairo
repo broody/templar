@@ -6,3 +6,6 @@ mod test_open_note;
 mod e2e_vectors;
 mod test_open_note_e2e;
 mod test_open_note_adversarial;
+mod test_policy;
+mod policy_vectors;
+mod test_policy_e2e;
