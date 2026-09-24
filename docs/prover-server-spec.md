@@ -187,10 +187,11 @@ result retention; listen address. `info` prints it with the dependency revisions
   - for `templar-os-runner` only: `starknet_transaction_prover` at sequencer revision `e6b6fd2e…`
     (the revision whose virtual OS the adapters pin). Its runner module is public, but the
     runner's constructors are `pub(crate)` and the only public entry point continues into the
-    crate's own small-proof prover (PS-11). The runner therefore builds from **a pinned fork
-    `broody/sequencer`** at `e6b6fd2e…` plus one recorded commit making `RpcRunnerFactory::new`
-    public (`VirtualSnosRunner::run_virtual_os` is already public); the change is also offered
-    upstream. It builds with the sequencer's pinned toolchain;
+    crate's own small-proof prover (PS-11). The runner therefore builds from **the pinned fork
+    `broody/sequencer`, branch `templar/runner-visibility`, commit `625929a`**: `e6b6fd2e…` plus
+    one commit making `RpcRunnerFactory::new` public (`VirtualSnosRunner::run_virtual_os` and
+    `RunnerOutput` are already public). The change is drafted for upstream; if accepted, the pin
+    moves to the upstream revision and the fork is dropped. It builds with the sequencer's pinned toolchain;
   - `broody/proving` `templar/bounded-server` (`b54ed94f8`, public) for the bounded large-proof
     prover;
   - `client-port` (path) for the relations' statement layouts, `bridge_checks` and the circuit
