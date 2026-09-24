@@ -141,6 +141,7 @@ fn invoke_two_open_notes_with_two_outputs() {
 fn shadow_compute_passes_identity_commitment() {
     let e = env();
     let shadow = deploy("MockShadowAnonymizer", array![]);
+    e.pool.set_shadow_class(starknet::syscalls::get_class_hash_at_syscall(shadow).unwrap_syscall(), true);
     mint(e.c, shadow, 100);
     let identity = digest(3000);
     let mut sp = spend(@e, 3000, 1, 0, 0.try_into().unwrap(), identity);

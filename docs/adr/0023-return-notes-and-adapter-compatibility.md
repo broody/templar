@@ -142,3 +142,22 @@ claimed from introducing this abstraction.
   destinations with a zero note id, token, minimum or inner before any external effect, and budgets
   paid to the pool itself. The contract review's adversarial tests and new ones are in
   `test_open_note_adversarial.cairo`. A re-review of the fixes is still pending.
+- **`COMPUTE` targets restricted (2026-09-24).** The pool calls `privacy_invoke_with_computation`
+  only on contracts of an owner-allowed class (upstream's shadow-account anonymizer). Upstream
+  targets treat that call's calldata prefix as their own proven `privacy_compute` output; the
+  compact path supplies the pool's identity commitment followed by user calldata. That matches only
+  the shadow anonymizer, and any other target trusting the pool would be open to forged compute
+  output. A class allowlist was chosen over an address allowlist (it has no per-deployment trust and
+  an anonymizer upgrade fails closed), over a Templar-specific selector (which would break
+  compatibility with the upstream anonymizer) and over documentation alone.
+- **General `privacy_compute` deferred (2026-09-24).** Upstream's `privacy_compute` runs a target's
+  own Cairo logic over the user's secret inside the client proof. The compact client proof is a
+  fixed arithmetic relation, so each such computation would need its own relation extension. Shadow
+  accounts cover DeFi composability, including continuity for applications that authorize by
+  caller address. What is given up is private continuity: authenticating as the same user across
+  actions without a shared public account (for example Whisper's operator check). A credential
+  proof on the pool tree (prove ownership of a note of an application-defined class under a pinned
+  root without spending it, and publish a per-context tag) was considered. It would support
+  anonymous membership, authentication and voter-private DAO voting (one member one vote, or
+  token-weighted against a snapshot root). It was deferred for lack of near-term demand; it would
+  fit with the policy-note design.

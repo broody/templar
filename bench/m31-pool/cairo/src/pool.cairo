@@ -17,6 +17,8 @@ pub trait IM31Pool<TState> {
     fn get_delivery_digest(self: @TState, index: u64) -> felt252;
     fn set_verifier(ref self: TState, verifier: ContractAddress);
     fn get_verifier(self: @TState) -> ContractAddress;
+    fn set_shadow_class(ref self: TState, class_hash: starknet::ClassHash, allowed: bool);
+    fn is_shadow_class(self: @TState, class_hash: starknet::ClassHash) -> bool;
 }
 
 #[starknet::contract]
@@ -25,8 +27,8 @@ pub mod M31Pool {
         Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
         StoragePointerWriteAccess,
     };
-    use starknet::syscalls::call_contract_syscall;
-    use starknet::{ContractAddress, SyscallResultTrait, get_block_number, get_caller_address, get_contract_address, get_tx_info};
+    use starknet::syscalls::{call_contract_syscall, get_class_hash_at_syscall};
+    use starknet::{ClassHash, ContractAddress, SyscallResultTrait, get_block_number, get_caller_address, get_contract_address, get_tx_info};
     use crate::hash::{Digest, commitment, is_zero, key, read_digest};
     use crate::open_note::{
         COMPUTE, ExecutionIntent, INVOKE, MAX_NOTES, OpenNoteDeposit, hash_intent, identity_commitment,
@@ -46,6 +48,8 @@ pub mod M31Pool {
         verifier: ContractAddress,
         nullifiers: Map<felt252, bool>,
         delivery_digests: Map<u64, felt252>,
+        /// Classes a `COMPUTE` execution may call (upstream's shadow-account anonymizer).
+        shadow_classes: Map<ClassHash, bool>,
         locked: bool,
         #[substorage(v0)]
         pub tree: m31_tree_component::Storage,
@@ -58,6 +62,7 @@ pub mod M31Pool {
         NotePublished: NotePublished,
         NullifierSpent: NullifierSpent,
         Deposited: Deposited,
+        ShadowClassSet: ShadowClassSet,
         Withdrawn: Withdrawn,
         OpenNoteFunded: OpenNoteFunded,
     }
@@ -86,6 +91,12 @@ pub mod M31Pool {
     pub struct NullifierSpent {
         pub nullifier: Span<felt252>,
     }
+    #[derive(Drop, starknet::Event)]
+    pub struct ShadowClassSet {
+        pub class_hash: ClassHash,
+        pub allowed: bool,
+    }
+
     #[derive(Drop, starknet::Event)]
     pub struct Deposited {
         pub token: ContractAddress,
@@ -138,6 +149,12 @@ pub mod M31Pool {
             // A shadow-account execution needs the proven identity handle; a plain one publishes none.
             if intent.kind == COMPUTE {
                 assert(is_active(spend.identity), 'IDENTITY_REQUIRED');
+                // Upstream targets trust `privacy_invoke_with_computation`'s calldata prefix as
+                // their own `privacy_compute` output. Ours is `[identity commitment] ++ user
+                // calldata`, which matches only the shadow anonymizer's compute; other targets
+                // would read user data as proven output.
+                let class = get_class_hash_at_syscall(intent.adapter).unwrap_syscall();
+                assert(self.shadow_classes.read(class), 'COMPUTE_TARGET');
             } else {
                 assert(intent.kind == INVOKE && !is_active(spend.identity), 'IDENTITY_UNEXPECTED');
             }
@@ -206,6 +223,20 @@ pub mod M31Pool {
 
         fn get_verifier(self: @ContractState) -> ContractAddress {
             self.verifier.read()
+        }
+
+        /// Owner only: allow or revoke a shadow-anonymizer class as a `COMPUTE` target. An
+        /// upgrade of an anonymizer changes its class and disables it until its new class is
+        /// allowed.
+        fn set_shadow_class(ref self: ContractState, class_hash: ClassHash, allowed: bool) {
+            assert(get_caller_address() == self.owner.read(), 'NOT_OWNER');
+            assert(class_hash.into() != 0, 'ZERO_CLASS');
+            self.shadow_classes.write(class_hash, allowed);
+            self.emit(ShadowClassSet { class_hash, allowed });
+        }
+
+        fn is_shadow_class(self: @ContractState, class_hash: ClassHash) -> bool {
+            self.shadow_classes.read(class_hash)
         }
     }
 

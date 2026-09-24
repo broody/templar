@@ -281,6 +281,49 @@ fn a_compute_without_identity_rejected() {
     intent.kind = COMPUTE;
     run_with(@e, adapter, sp, intent);
 }
+/// A `COMPUTE` target must be an allowed shadow-anonymizer class: another contract would read
+/// the user's calldata as its own proven `privacy_compute` output.
+fn compute_to(e: @Env, adapter: ContractAddress) {
+    let mut sp = spend(e, 1000, 1, 40, adapter);
+    sp.identity = digest(3000);
+    let mut intent = with_destination(e, adapter, destination(77, *e.b.contract_address, 1, digest(900)));
+    intent.kind = COMPUTE;
+    run_with(e, adapter, sp, intent);
+}
+fn class_of(address: ContractAddress) -> starknet::ClassHash {
+    starknet::syscalls::get_class_hash_at_syscall(address).unwrap_syscall()
+}
+#[test]
+#[should_panic(expected: 'COMPUTE_TARGET')]
+fn a_compute_to_unlisted_class_rejected() {
+    let (e, adapter) = setup_evil();
+    compute_to(@e, adapter);
+}
+#[test]
+#[should_panic(expected: 'COMPUTE_TARGET')]
+fn a_compute_to_revoked_class_rejected() {
+    let (e, adapter) = setup_evil();
+    e.pool.set_shadow_class(class_of(adapter), true);
+    e.pool.set_shadow_class(class_of(adapter), false);
+    compute_to(@e, adapter);
+}
+/// Control: once its class is allowed, the same call passes the target check (and then fails on
+/// the adapter's own ABI, which is not a shadow anonymizer's).
+#[test]
+#[should_panic(expected: 'ENTRYPOINT_NOT_FOUND')]
+fn a_compute_to_allowed_class_passes_check() {
+    let (e, adapter) = setup_evil();
+    e.pool.set_shadow_class(class_of(adapter), true);
+    assert!(e.pool.is_shadow_class(class_of(adapter)));
+    compute_to(@e, adapter);
+}
+#[test]
+#[should_panic(expected: 'NOT_OWNER')]
+fn a_set_shadow_class_owner_only() {
+    let (e, adapter) = setup_evil();
+    snforge_std::start_cheat_caller_address(e.pool.contract_address, adapter);
+    e.pool.set_shadow_class(class_of(adapter), true);
+}
 #[test]
 #[should_panic(expected: 'IDENTITY_UNEXPECTED')]
 fn a_invoke_with_identity_rejected() {

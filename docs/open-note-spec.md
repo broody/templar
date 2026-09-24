@@ -51,6 +51,16 @@ intent = Poseidon('OPEN_EXEC_V1', chain, pool, token, kind, adapter, nonce,
   handle, so only they can address their shadow accounts. Upstream's shadow-account anonymizer is
   used unchanged, configured with the Templar pool as its privacy contract.
 
+**`COMPUTE` targets.** Upstream contracts trust the calldata prefix of
+`privacy_invoke_with_computation` as the output of their own `privacy_compute`, run over the
+user's secret in the client proof; they check only that the privacy contract is the caller. The
+compact path has no such client-side computation: the prefix is always the pool's identity
+commitment, followed by user calldata. That is exactly the shadow anonymizer's compute output, but
+any other target would read user-chosen data as proven output. The pool therefore calls only
+contracts whose class the owner has allowed (`set_shadow_class`, event `ShadowClassSet`). An
+upgrade of an anonymizer changes its class and disables `COMPUTE` to it until the new class is
+reviewed and allowed. General `privacy_compute` is not supported (ADR-0023).
+
 **Shadow accounts.** The handle `H(IDENTITY, sk₀ ‖ scope)` is public, and anyone can compute
 `Poseidon(partial, n)` from it for every `n`. A public nonce would therefore let anyone enumerate
 every shadow account under one handle; the pool requires it to be zero. A wallet separates accounts
@@ -65,7 +75,8 @@ scope_i = Poseidon('TEMPLAR_SHADOW_SCOPE_V1', seed, chain, pool, anonymizer, dap
 
 **Settlement (`apply_spend_with_invoke`)**, under the pool's lock:
 1. Recompute `intent`; check expiry (block number); the adapter is nonzero and not the pool; the
-   identity handle is present for `COMPUTE` and absent for `INVOKE`.
+   identity handle is present for `COMPUTE` and absent for `INVOKE`; a `COMPUTE` adapter's class is
+   allowed.
 2. Verify the spend: context, binding, fact verdict, known root, fresh nullifiers.
 3. Pay the budget to its recipient.
 4. Call the adapter. Deserialize `Span<OpenNoteDeposit>`; for `COMPUTE`, optionally followed by the
