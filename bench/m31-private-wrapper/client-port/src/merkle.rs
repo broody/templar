@@ -11,9 +11,18 @@ use circuits::ops::eq;
 
 /// Guessed boolean index bits, least significant first.
 pub fn guess_bits<Value: IValue>(ctx: &mut Context<Value>, index: usize, n_bits: u32) -> Vec<Var> {
-    (0..n_bits)
-        .map(|k| {
-            let b = guess_m31(ctx, ((index >> k) & 1) as u32);
+    let values: Vec<u32> = (0..n_bits).map(|k| ((index >> k) & 1) as u32).collect();
+    guess_bits_raw(ctx, &values)
+}
+
+/// Guessed bits from raw hint values, each constrained boolean: `b·(b − 1) = 0`. Honest callers
+/// pass 0 or 1 (as [`guess_bits`] does); malicious-witness tests pass other values to show the
+/// booleanity gate rejects them (F09).
+pub fn guess_bits_raw<Value: IValue>(ctx: &mut Context<Value>, values: &[u32]) -> Vec<Var> {
+    values
+        .iter()
+        .map(|v| {
+            let b = guess_m31(ctx, *v);
             let zero = ctx.zero();
             let boolean = eval!(ctx, (b) * ((b) - (1)));
             eq(ctx, boolean, zero);

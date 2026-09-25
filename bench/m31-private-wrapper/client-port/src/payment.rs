@@ -44,7 +44,7 @@ use stwo::core::fields::m31::M31;
 
 use crate::hash::WIDTH;
 use crate::membership::{Lanes, compress_lanes, permute, sponge_lanes};
-use crate::merkle::guess_bits;
+use crate::merkle::{guess_bits, guess_bits_raw};
 use crate::ro::guess_m31;
 
 pub const P: u32 = (1 << 31) - 1;
@@ -545,11 +545,21 @@ pub(crate) fn amount<V: IValue>(c: &mut Context<V>, a: u128) -> Vec<Var> {
 
 /// A u128 amount as eight range-checked 16-bit limbs and their sum (zero iff the amount is).
 pub(crate) fn amount_unchecked<V: IValue>(c: &mut Context<V>, a: u128) -> (Vec<Var>, Var) {
-    let limbs = amount_limbs(a);
+    amount_from_bits(c, &amount_bits(a))
+}
+
+/// The honest bit hints of an amount: sixteen bits per limb, least significant first.
+pub(crate) fn amount_bits(a: u128) -> [[u32; 16]; AMOUNT_LIMBS] {
+    amount_limbs(a).map(|l| std::array::from_fn(|k| (l >> k) & 1))
+}
+
+/// Eight limbs from bit hints (each bit constrained boolean, so each limb is below 2^16) and
+/// their sum. [`amount_unchecked`] passes the honest bits; malicious-witness tests pass raw ones.
+pub(crate) fn amount_from_bits<V: IValue>(c: &mut Context<V>, limb_bits: &[[u32; 16]; AMOUNT_LIMBS]) -> (Vec<Var>, Var) {
     let mut vars = vec![];
     let mut sum = c.zero();
-    for l in limbs {
-        let bits = guess_bits(c, l as usize, 16);
+    for raw in limb_bits {
+        let bits = guess_bits_raw(c, raw);
         let mut v = c.zero();
         for (k, b) in bits.iter().enumerate() {
             let w = c.constant(M31::from(1u32 << k).into());

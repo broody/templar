@@ -238,3 +238,80 @@ pub fn revealed_fri_values(proof: &CircuitProof<Blake2sMerkleHasher>) -> usize {
     std::iter::once(&fri.first_layer).chain(&fri.inner_layers).map(|l| l.fri_witness.len()).sum::<usize>()
         + fri.last_layer_poly.len()
 }
+
+/// The relation a hiding audit runs on (F27): `--relation r0` (default, the committed V3
+/// baselines), `r5` or `r5-bound`, and for R0 V5 `--shape S`. Removes the flags from `args`.
+pub enum Witness {
+    R0(templar_client_verifier_circuit::payment::Public, templar_client_verifier_circuit::payment::Private),
+    R5(templar_client_verifier_circuit::payment5::Public, templar_client_verifier_circuit::payment5::Private),
+}
+
+impl Witness {
+    pub fn from_args(args: &mut Vec<String>, seed: u64) -> (Self, String) {
+        use rand::SeedableRng;
+        use templar_client_verifier_circuit::{payment, payment5};
+        let mut take = |name: &str| {
+            args.iter().position(|x| x == name).map(|k| {
+                let v = args.remove(k + 1);
+                args.remove(k);
+                v
+            })
+        };
+        let relation = take("--relation").unwrap_or_else(|| "r0".into());
+        let shape = take("--shape").unwrap_or_else(|| "transfer".into());
+        let rng = &mut rand::rngs::StdRng::seed_from_u64(seed);
+        let tree = payment::Tree::Compress;
+        let witness = match relation.as_str() {
+            "r0" => {
+                assert_eq!(shape, "transfer", "R0 V3 audits use the transfer shape");
+                let (p, w) = payment::fresh_shape(tree, payment::Shape::Transfer, rng);
+                Witness::R0(p, w)
+            }
+            "r5" | "r5-bound" => {
+                let mode = if relation == "r5" { payment5::Mode::Ordinary } else { payment5::Mode::Bound };
+                let shape = match shape.as_str() {
+                    "transfer" => payment5::Shape::Transfer,
+                    "single" => payment5::Shape::Single,
+                    "one-out" => payment5::Shape::OneOut,
+                    "partial" => payment5::Shape::Partial,
+                    "full" => payment5::Shape::Full,
+                    "invoke" => payment5::Shape::Invoke,
+                    "shadow" => payment5::Shape::Shadow,
+                    "nft" => payment5::Shape::Nft,
+                    other => panic!("unknown shape {other}"),
+                };
+                let (p, w) = payment5::fresh_shape(tree, shape, mode, rng);
+                Witness::R5(p, w)
+            }
+            other => panic!("unknown relation {other}"),
+        };
+        (witness, format!("{relation} {shape}"))
+    }
+
+    pub fn n_outputs(&self) -> usize {
+        match self {
+            Witness::R0(..) => templar_client_verifier_circuit::payment::N_OUTPUTS,
+            Witness::R5(..) => templar_client_verifier_circuit::payment5::N_OUTPUTS,
+        }
+    }
+
+    pub fn build<V: templar_client_verifier_circuit::membership::Lanes>(&self, c: &mut circuits::context::Context<V>) -> Vec<circuits::context::Var> {
+        use templar_client_verifier_circuit::{payment, payment5};
+        match self {
+            Witness::R0(p, w) => payment::build(c, payment::Tree::Compress, p, w),
+            Witness::R5(p, w) => payment5::build(c, payment::Tree::Compress, p, w),
+        }
+    }
+
+    /// The finalized, blinded circuit (arithmetic profile), as the provers build it.
+    pub fn circuit<V: templar_client_verifier_circuit::membership::Lanes>(&self, seed: [u8; 32], blinding: usize) -> circuits::context::FinalizedContext<V> {
+        use circuit_common::finalize::{Profile, add_zk_blinding_for, pad_context_for};
+        let mut c = circuits::context::Context::<V>::new(self.n_outputs());
+        let outputs = self.build(&mut c);
+        c.set_outputs(&outputs);
+        let mut c = c.finalize(true);
+        add_zk_blinding_for(&mut c, seed, blinding, Profile::Arithmetic);
+        pad_context_for(&mut c, Profile::Arithmetic);
+        c
+    }
+}

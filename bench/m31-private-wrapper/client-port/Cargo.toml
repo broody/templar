@@ -42,5 +42,9 @@ required-features = ["tamper"]
 name = "payment_r4_malicious"
 required-features = ["tamper"]
 
+[[test]]
+name = "payment_r5_malicious"
+required-features = ["tamper"]
+
 [profile.release]
 debug = false

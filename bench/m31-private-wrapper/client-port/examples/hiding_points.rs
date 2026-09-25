@@ -17,11 +17,10 @@ use std::collections::HashMap;
 #[path = "support/mod.rs"]
 mod support;
 use circuit_common::Qm31OpsTraceGenerator;
-use circuit_common::finalize::{Profile, add_zk_blinding_for, pad_context_for};
 use circuit_common::preprocessed::PreprocessedCircuit;
 use circuit_prover::prover::{BaseColumnPool, SimdBackend};
 use circuit_prover::witness::trace::{TraceGenerator, write_trace};
-use circuits::context::{Context, FinalizedContext};
+use circuits::context::FinalizedContext;
 use circuits::ivalue::NoValue;
 use rand::{Rng, SeedableRng, rngs::StdRng};
 use serde_json::json;
@@ -35,19 +34,11 @@ use stwo::prover::backend::Column;
 use stwo::prover::poly::circle::PolyOps;
 use stwo::prover::{CommitmentSchemeProver, CommitmentTreeProver};
 use templar_client_verifier_circuit::membership::Lanes;
-use templar_client_verifier_circuit::payment::{self, N_OUTPUTS, Private, Public, Shape, Tree};
 
-const TREE: Tree = Tree::Compress;
 const PP: u64 = P as u64;
 
-fn circuit<V: Lanes>(public: &Public, private: &Private, seed: [u8; 32], blinding: usize) -> FinalizedContext<V> {
-    let mut c = Context::<V>::new(N_OUTPUTS);
-    let outputs = payment::build(&mut c, TREE, public, private);
-    c.set_outputs(&outputs);
-    let mut c = c.finalize(true);
-    add_zk_blinding_for(&mut c, seed, blinding, Profile::Arithmetic);
-    pad_context_for(&mut c, Profile::Arithmetic);
-    c
+fn circuit<V: Lanes>(w: &support::Witness, seed: [u8; 32], blinding: usize) -> FinalizedContext<V> {
+    w.circuit(seed, blinding)
 }
 
 /// Base-trace columns on the trace domain (bit-reversed), with log sizes.
@@ -130,14 +121,14 @@ impl Echelon {
 }
 
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
+    let mut args: Vec<String> = std::env::args().collect();
+    let (w, relation) = support::Witness::from_args(&mut args, 11);
     let out = std::path::Path::new(args.get(1).map(String::as_str).unwrap_or("target/hiding-points"));
     let ks: Vec<usize> = args.get(2).map(|s| s.split(',').map(|x| x.parse().unwrap()).collect()).unwrap_or(vec![35, 560]);
     std::fs::create_dir_all(out).unwrap();
-    let (public, private) = payment::fresh_shape(TREE, Shape::Transfer, &mut StdRng::seed_from_u64(11));
     let mut blinding = 0;
     let pp = loop {
-        let topology = circuit::<NoValue>(&public, &private, [0; 32], blinding);
+        let topology = circuit::<NoValue>(&w, [0; 32], blinding);
         let pp = PreprocessedCircuit::from_finalized_circuit(topology.circuit());
         let need = support::blinding_budget(pp.trace_log_size());
         if blinding >= need {
@@ -145,8 +136,8 @@ fn main() {
         }
         blinding = need;
     };
-    let a = circuit::<QM31>(&public, &private, [0xa1; 32], blinding);
-    let b = circuit::<QM31>(&public, &private, [0xb2; 32], blinding);
+    let a = circuit::<QM31>(&w, [0xa1; 32], blinding);
+    let b = circuit::<QM31>(&w, [0xb2; 32], blinding);
     let ta = base_trace(a.values(), &pp);
     let tb = base_trace(b.values(), &pp);
     let log = pp.trace_log_size();
@@ -262,6 +253,7 @@ fn main() {
         results.push(r);
     }
     let report = json!({
+        "relation": relation,
         "scope": "per-point rank test, qm31_ops base columns, R0 V2 transfer, fork 4de7408a6 blinding; conditioned on x and eq yields",
         "trace_log_size": log, "blinding_iterations": blinding, "classes": classes, "results": results,
     });

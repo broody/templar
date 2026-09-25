@@ -1,0 +1,546 @@
+{
+ "rank-r0": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r0 transfer",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-bound-full": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5-bound full",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-bound-invoke": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5-bound invoke",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-bound-nft": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5-bound nft",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-bound-one-out": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5-bound one-out",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-bound-partial": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5-bound partial",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-bound-shadow": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5-bound shadow",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-bound-single": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5-bound single",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-bound-transfer": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5-bound transfer",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-full": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5 full",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-invoke": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5 invoke",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-nft": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5 nft",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-one-out": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5 one-out",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-partial": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5 partial",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-shadow": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5 shadow",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-single": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5 single",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r5-transfer": {
+  "blinding_iterations": 2390,
+  "groups": [
+   [
+    "base",
+    12,
+    4,
+    4
+   ],
+   [
+    "base",
+    18,
+    12,
+    12
+   ],
+   [
+    "interaction",
+    12,
+    4,
+    4
+   ],
+   [
+    "interaction",
+    18,
+    8,
+    8
+   ]
+  ],
+  "relation": "r5 transfer",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ }
+}

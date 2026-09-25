@@ -1,0 +1,602 @@
+{
+ "bound-transfer": {
+  "blinding_rows": 2390,
+  "circuit_hash_u32_le": [
+   1903585510,
+   1708577544,
+   3915427995,
+   3101166941,
+   461832048,
+   2805149134,
+   1077751030,
+   1205594117
+  ],
+  "component_log_sizes": [
+   12,
+   18,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "forged": null,
+  "mode": "Bound",
+  "native_negatives": [
+   "output",
+   "trace",
+   "topology",
+   "circuit-hash",
+   "config"
+  ],
+  "proof_felts": 30382,
+  "proving_seconds": 0.749681173,
+  "revealed_fri_values": 1752,
+  "shape": "Transfer",
+  "trace_log_size": 18
+ },
+ "forge-account-limb-range": {
+  "blinding_rows": 2390,
+  "circuit_hash_u32_le": [
+   1903585510,
+   1708577544,
+   3915427995,
+   3101166941,
+   461832048,
+   2805149134,
+   1077751030,
+   1205594117
+  ],
+  "component_log_sizes": [
+   12,
+   18,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "forged": "account-limb-range",
+  "mode": "Bound",
+  "native_negatives": [
+   "output",
+   "trace",
+   "topology",
+   "circuit-hash",
+   "config"
+  ],
+  "proof_felts": 30358,
+  "proving_seconds": 0.919785469,
+  "revealed_fri_values": 1782,
+  "shape": "Transfer",
+  "trace_log_size": 18
+ },
+ "forge-account-range": {
+  "blinding_rows": 2390,
+  "circuit_hash_u32_le": [
+   1903585510,
+   1708577544,
+   3915427995,
+   3101166941,
+   461832048,
+   2805149134,
+   1077751030,
+   1205594117
+  ],
+  "component_log_sizes": [
+   12,
+   18,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "forged": "account-range",
+  "mode": "Bound",
+  "native_negatives": [
+   "output",
+   "trace",
+   "topology",
+   "circuit-hash",
+   "config"
+  ],
+  "proof_felts": 30214,
+  "proving_seconds": 0.912114382,
+  "revealed_fri_values": 1752,
+  "shape": "Transfer",
+  "trace_log_size": 18
+ },
+ "forge-asset-range": {
+  "blinding_rows": 2390,
+  "circuit_hash_u32_le": [
+   1903585510,
+   1708577544,
+   3915427995,
+   3101166941,
+   461832048,
+   2805149134,
+   1077751030,
+   1205594117
+  ],
+  "component_log_sizes": [
+   12,
+   18,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "forged": "asset-range",
+  "mode": "Ordinary",
+  "native_negatives": [
+   "output",
+   "trace",
+   "topology",
+   "circuit-hash",
+   "config"
+  ],
+  "proof_felts": 29502,
+  "proving_seconds": 0.724417026,
+  "revealed_fri_values": 1722,
+  "shape": "Partial",
+  "trace_log_size": 18
+ },
+ "forge-valid-until-limb-range": {
+  "blinding_rows": 2390,
+  "circuit_hash_u32_le": [
+   1903585510,
+   1708577544,
+   3915427995,
+   3101166941,
+   461832048,
+   2805149134,
+   1077751030,
+   1205594117
+  ],
+  "component_log_sizes": [
+   12,
+   18,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "forged": "valid-until-limb-range",
+  "mode": "Ordinary",
+  "native_negatives": [
+   "output",
+   "trace",
+   "topology",
+   "circuit-hash",
+   "config"
+  ],
+  "proof_felts": 29730,
+  "proving_seconds": 0.598001954,
+  "revealed_fri_values": 1707,
+  "shape": "Transfer",
+  "trace_log_size": 18
+ },
+ "forge-valid-until-zero": {
+  "blinding_rows": 2390,
+  "circuit_hash_u32_le": [
+   1903585510,
+   1708577544,
+   3915427995,
+   3101166941,
+   461832048,
+   2805149134,
+   1077751030,
+   1205594117
+  ],
+  "component_log_sizes": [
+   12,
+   18,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "forged": "valid-until-zero",
+  "mode": "Ordinary",
+  "native_negatives": [
+   "output",
+   "trace",
+   "topology",
+   "circuit-hash",
+   "config"
+  ],
+  "proof_felts": 29922,
+  "proving_seconds": 0.570743268,
+  "revealed_fri_values": 1767,
+  "shape": "Transfer",
+  "trace_log_size": 18
+ },
+ "forge-voluntary-reveal": {
+  "blinding_rows": 2390,
+  "circuit_hash_u32_le": [
+   1903585510,
+   1708577544,
+   3915427995,
+   3101166941,
+   461832048,
+   2805149134,
+   1077751030,
+   1205594117
+  ],
+  "component_log_sizes": [
+   12,
+   18,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "forged": "voluntary-reveal",
+  "mode": "Ordinary",
+  "native_negatives": [
+   "output",
+   "trace",
+   "topology",
+   "circuit-hash",
+   "config"
+  ],
+  "proof_felts": 29622,
+  "proving_seconds": 0.909155973,
+  "revealed_fri_values": 1692,
+  "shape": "Transfer",
+  "trace_log_size": 18
+ },
+ "forge-zero-delivery": {
+  "blinding_rows": 2390,
+  "circuit_hash_u32_le": [
+   1903585510,
+   1708577544,
+   3915427995,
+   3101166941,
+   461832048,
+   2805149134,
+   1077751030,
+   1205594117
+  ],
+  "component_log_sizes": [
+   12,
+   18,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "forged": "zero-delivery",
+  "mode": "Ordinary",
+  "native_negatives": [
+   "output",
+   "trace",
+   "topology",
+   "circuit-hash",
+   "config"
+  ],
+  "proof_felts": 30490,
+  "proving_seconds": 1.140121683,
+  "revealed_fri_values": 1767,
+  "shape": "Transfer",
+  "trace_log_size": 18
+ },
+ "ordinary-transfer": {
+  "blinding_rows": 2390,
+  "circuit_hash_u32_le": [
+   1903585510,
+   1708577544,
+   3915427995,
+   3101166941,
+   461832048,
+   2805149134,
+   1077751030,
+   1205594117
+  ],
+  "component_log_sizes": [
+   12,
+   18,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "forged": null,
+  "mode": "Ordinary",
+  "native_negatives": [
+   "output",
+   "trace",
+   "topology",
+   "circuit-hash",
+   "config"
+  ],
+  "proof_felts": 30598,
+  "proving_seconds": 0.571245278,
+  "revealed_fri_values": 1782,
+  "shape": "Transfer",
+  "trace_log_size": 18
+ },
+ "var-bound-1": {
+  "blinding_rows": 2390,
+  "circuit_hash_u32_le": [
+   1903585510,
+   1708577544,
+   3915427995,
+   3101166941,
+   461832048,
+   2805149134,
+   1077751030,
+   1205594117
+  ],
+  "component_log_sizes": [
+   12,
+   18,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "forged": null,
+  "mode": "Bound",
+  "native_negatives": [
+   "output",
+   "trace",
+   "topology",
+   "circuit-hash",
+   "config"
+  ],
+  "proof_felts": 29506,
+  "proving_seconds": 0.752767277,
+  "revealed_fri_values": 1707,
+  "shape": "Transfer",
+  "trace_log_size": 18
+ },
+ "var-bound-2": {
+  "blinding_rows": 2390,
+  "circuit_hash_u32_le": [
+   1903585510,
+   1708577544,
+   3915427995,
+   3101166941,
+   461832048,
+   2805149134,
+   1077751030,
+   1205594117
+  ],
+  "component_log_sizes": [
+   12,
+   18,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "forged": null,
+  "mode": "Bound",
+  "native_negatives": [
+   "output",
+   "trace",
+   "topology",
+   "circuit-hash",
+   "config"
+  ],
+  "proof_felts": 30646,
+  "proving_seconds": 0.825880415,
+  "revealed_fri_values": 1782,
+  "shape": "Transfer",
+  "trace_log_size": 18
+ },
+ "var-bound-3": {
+  "blinding_rows": 2390,
+  "circuit_hash_u32_le": [
+   1903585510,
+   1708577544,
+   3915427995,
+   3101166941,
+   461832048,
+   2805149134,
+   1077751030,
+   1205594117
+  ],
+  "component_log_sizes": [
+   12,
+   18,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "forged": null,
+  "mode": "Bound",
+  "native_negatives": [
+   "output",
+   "trace",
+   "topology",
+   "circuit-hash",
+   "config"
+  ],
+  "proof_felts": 29710,
+  "proving_seconds": 1.117773362,
+  "revealed_fri_values": 1722,
+  "shape": "Transfer",
+  "trace_log_size": 18
+ },
+ "var-ordinary-1": {
+  "blinding_rows": 2390,
+  "circuit_hash_u32_le": [
+   1903585510,
+   1708577544,
+   3915427995,
+   3101166941,
+   461832048,
+   2805149134,
+   1077751030,
+   1205594117
+  ],
+  "component_log_sizes": [
+   12,
+   18,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "forged": null,
+  "mode": "Ordinary",
+  "native_negatives": [
+   "output",
+   "trace",
+   "topology",
+   "circuit-hash",
+   "config"
+  ],
+  "proof_felts": 29634,
+  "proving_seconds": 0.754701255,
+  "revealed_fri_values": 1707,
+  "shape": "Transfer",
+  "trace_log_size": 18
+ },
+ "var-ordinary-2": {
+  "blinding_rows": 2390,
+  "circuit_hash_u32_le": [
+   1903585510,
+   1708577544,
+   3915427995,
+   3101166941,
+   461832048,
+   2805149134,
+   1077751030,
+   1205594117
+  ],
+  "component_log_sizes": [
+   12,
+   18,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "forged": null,
+  "mode": "Ordinary",
+  "native_negatives": [
+   "output",
+   "trace",
+   "topology",
+   "circuit-hash",
+   "config"
+  ],
+  "proof_felts": 30146,
+  "proving_seconds": 0.563743962,
+  "revealed_fri_values": 1767,
+  "shape": "Transfer",
+  "trace_log_size": 18
+ },
+ "var-ordinary-3": {
+  "blinding_rows": 2390,
+  "circuit_hash_u32_le": [
+   1903585510,
+   1708577544,
+   3915427995,
+   3101166941,
+   461832048,
+   2805149134,
+   1077751030,
+   1205594117
+  ],
+  "component_log_sizes": [
+   12,
+   18,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "forged": null,
+  "mode": "Ordinary",
+  "native_negatives": [
+   "output",
+   "trace",
+   "topology",
+   "circuit-hash",
+   "config"
+  ],
+  "proof_felts": 29578,
+  "proving_seconds": 0.737841912,
+  "revealed_fri_values": 1737,
+  "shape": "Transfer",
+  "trace_log_size": 18
+ }
+}

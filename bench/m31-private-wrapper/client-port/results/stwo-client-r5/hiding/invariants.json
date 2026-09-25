@@ -1,0 +1,47 @@
+{
+ "inv-r0": {
+  "columns": 28,
+  "functionals": 336,
+  "lde_points_per_column": 4,
+  "rank": 336,
+  "relation": "r0 transfer",
+  "seed_invariant_combinations": 0,
+  "seeds": 336
+ },
+ "inv-r5-bound-single": {
+  "columns": 28,
+  "functionals": 336,
+  "lde_points_per_column": 4,
+  "rank": 336,
+  "relation": "r5-bound single",
+  "seed_invariant_combinations": 0,
+  "seeds": 336
+ },
+ "inv-r5-bound-transfer": {
+  "columns": 28,
+  "functionals": 336,
+  "lde_points_per_column": 4,
+  "rank": 336,
+  "relation": "r5-bound transfer",
+  "seed_invariant_combinations": 0,
+  "seeds": 336
+ },
+ "inv-r5-single": {
+  "columns": 28,
+  "functionals": 336,
+  "lde_points_per_column": 4,
+  "rank": 336,
+  "relation": "r5 single",
+  "seed_invariant_combinations": 0,
+  "seeds": 336
+ },
+ "inv-r5-transfer": {
+  "columns": 28,
+  "functionals": 336,
+  "lde_points_per_column": 4,
+  "rank": 336,
+  "relation": "r5 transfer",
+  "seed_invariant_combinations": 0,
+  "seeds": 336
+ }
+}

@@ -1,0 +1,96 @@
+{
+  "blinding_rows": 2390,
+  "channel": "Blake2sMerkleChannel",
+  "circuit_hash_u32_le": [
+    1903585510,
+    1708577544,
+    3915427995,
+    3101166941,
+    461832048,
+    2805149134,
+    1077751030,
+    1205594117
+  ],
+  "component_log_sizes": [
+    12,
+    18,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "fri_config": {
+    "fold_step": 4,
+    "log_blowup_factor": 2,
+    "log_last_layer_degree_bound": 0,
+    "n_queries": 35,
+    "pow_bits": 26
+  },
+  "n_outputs": 35,
+  "preprocessed_columns": [
+    {
+      "id": "eq_in0_address",
+      "log_size": 12
+    },
+    {
+      "id": "eq_in1_address",
+      "log_size": 12
+    },
+    {
+      "id": "qm31_ops_add_flag",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_sub_flag",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_mul_flag",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_pointwise_mul_flag",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_in0_address",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_in1_address",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_out_address",
+      "log_size": 18
+    },
+    {
+      "id": "qm31_ops_mults",
+      "log_size": 18
+    }
+  ],
+  "preprocessed_root_u32_le": [
+    1995833797,
+    3945689458,
+    1089705299,
+    3085905505,
+    1045899095,
+    2527953587,
+    4292848098,
+    3060061067
+  ],
+  "purpose": "tmpzr5-client-payment",
+  "stack": "broody/proving templar/arithmetic-profile (on starkware-libs/proving@5a7c5ed), arithmetic profile, bridge FRI",
+  "statement_layout": "138 limbs padded to 140, 4 per output: tag 2, chain 9, pool 9, token_out 9 (28-bit LE, zero unless exit), root 9, nf0 9, nf1 9, cm0 9, delivery0 9 (28-bit LE), cm1 9, delivery1 9 (28-bit LE), withdrawal recipient 9 (28-bit LE), withdrawal amount 8 (16-bit LE), intent 9 (28-bit LE), identity 9, account 9 (28-bit LE, zero in ordinary mode), valid_until 2 (28-bit LE), zero 2; both outputs always published",
+  "statement_tag_u32": [
+    1414352986,
+    1378894645
+  ],
+  "trace_log_size": 18,
+  "tree_nodes": "Compress"
+}

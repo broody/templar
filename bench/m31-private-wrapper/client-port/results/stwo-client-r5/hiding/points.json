@@ -1,0 +1,107 @@
+{
+ "pts-r0": {
+  "blinding_iterations": 2390,
+  "relation": "r0 transfer",
+  "results": [
+   {
+    "full_rank": true,
+    "functionals": 468,
+    "lde_points": 35,
+    "oods_points": 1,
+    "rank": 468
+   },
+   {
+    "full_rank": true,
+    "functionals": 6768,
+    "lde_points": 560,
+    "oods_points": 1,
+    "rank": 6768
+   }
+  ],
+  "trace_log_size": 18
+ },
+ "pts-r5-bound-single": {
+  "blinding_iterations": 2390,
+  "relation": "r5-bound single",
+  "results": [
+   {
+    "full_rank": true,
+    "functionals": 468,
+    "lde_points": 35,
+    "oods_points": 1,
+    "rank": 468
+   },
+   {
+    "full_rank": true,
+    "functionals": 6768,
+    "lde_points": 560,
+    "oods_points": 1,
+    "rank": 6768
+   }
+  ],
+  "trace_log_size": 18
+ },
+ "pts-r5-bound-transfer": {
+  "blinding_iterations": 2390,
+  "relation": "r5-bound transfer",
+  "results": [
+   {
+    "full_rank": true,
+    "functionals": 468,
+    "lde_points": 35,
+    "oods_points": 1,
+    "rank": 468
+   },
+   {
+    "full_rank": true,
+    "functionals": 6768,
+    "lde_points": 560,
+    "oods_points": 1,
+    "rank": 6768
+   }
+  ],
+  "trace_log_size": 18
+ },
+ "pts-r5-single": {
+  "blinding_iterations": 2390,
+  "relation": "r5 single",
+  "results": [
+   {
+    "full_rank": true,
+    "functionals": 468,
+    "lde_points": 35,
+    "oods_points": 1,
+    "rank": 468
+   },
+   {
+    "full_rank": true,
+    "functionals": 6768,
+    "lde_points": 560,
+    "oods_points": 1,
+    "rank": 6768
+   }
+  ],
+  "trace_log_size": 18
+ },
+ "pts-r5-transfer": {
+  "blinding_iterations": 2390,
+  "relation": "r5 transfer",
+  "results": [
+   {
+    "full_rank": true,
+    "functionals": 468,
+    "lde_points": 35,
+    "oods_points": 1,
+    "rank": 468
+   },
+   {
+    "full_rank": true,
+    "functionals": 6768,
+    "lde_points": 560,
+    "oods_points": 1,
+    "rank": 6768
+   }
+  ],
+  "trace_log_size": 18
+ }
+}

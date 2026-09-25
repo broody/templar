@@ -14,12 +14,11 @@
 #[path = "support/mod.rs"]
 mod support;
 use circuit_common::Qm31OpsTraceGenerator;
-use circuit_common::finalize::{Profile, add_zk_blinding_for, pad_context_for};
 use circuit_common::preprocessed::PreprocessedCircuit;
 use circuit_prover::prover::{BaseColumnPool, SimdBackend};
 use circuit_prover::witness::trace::{TraceGenerator, write_interaction_trace, write_trace};
 use circuit_verifier::circuit_claim::CircuitInteractionElements;
-use circuits::context::{Context, FinalizedContext};
+use circuits::context::FinalizedContext;
 use circuits::ivalue::NoValue;
 use rand::{Rng, SeedableRng, rngs::StdRng};
 use serde_json::json;
@@ -32,19 +31,11 @@ use stwo::core::utils::MaybeOwned;
 use stwo::prover::poly::circle::PolyOps;
 use stwo::prover::{CommitmentSchemeProver, CommitmentTreeProver};
 use templar_client_verifier_circuit::membership::Lanes;
-use templar_client_verifier_circuit::payment::{self, N_OUTPUTS, Private, Public, Shape, Tree};
 
-const TREE: Tree = Tree::Compress;
 const PP: u64 = P as u64;
 
-fn circuit<V: Lanes>(public: &Public, private: &Private, seed: [u8; 32], blinding: usize) -> FinalizedContext<V> {
-    let mut c = Context::<V>::new(N_OUTPUTS);
-    let outputs = payment::build(&mut c, TREE, public, private);
-    c.set_outputs(&outputs);
-    let mut c = c.finalize(true);
-    add_zk_blinding_for(&mut c, seed, blinding, Profile::Arithmetic);
-    pad_context_for(&mut c, Profile::Arithmetic);
-    c
+fn circuit<V: Lanes>(w: &support::Witness, seed: [u8; 32], blinding: usize) -> FinalizedContext<V> {
+    w.circuit(seed, blinding)
 }
 
 /// Per column of trees 1 and 2: (tree, log size, values at the column's points).
@@ -82,15 +73,15 @@ fn evaluate(values: &[QM31], pp: &PreprocessedCircuit, elements: &CircuitInterac
 }
 
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
+    let mut args: Vec<String> = std::env::args().collect();
+    let (w, relation) = support::Witness::from_args(&mut args, 11);
     let out = std::path::Path::new(args.get(1).map(String::as_str).unwrap_or("target/hiding-invariants"));
     let n_lde: usize = args.get(2).map(|s| s.parse().unwrap()).unwrap_or(4);
     let extra_seeds: usize = args.get(3).map(|s| s.parse().unwrap()).unwrap_or(30);
     std::fs::create_dir_all(out).unwrap();
-    let (public, private) = payment::fresh_shape(TREE, Shape::Transfer, &mut StdRng::seed_from_u64(11));
     let mut blinding = 0;
     let pp = loop {
-        let topology = circuit::<NoValue>(&public, &private, [0; 32], blinding);
+        let topology = circuit::<NoValue>(&w, [0; 32], blinding);
         let pp = PreprocessedCircuit::from_finalized_circuit(topology.circuit());
         let need = support::blinding_budget(pp.trace_log_size());
         if blinding >= need {
@@ -129,7 +120,7 @@ fn main() {
         }
         v
     };
-    let base_values = circuit::<QM31>(&public, &private, [0; 32], blinding);
+    let base_values = circuit::<QM31>(&w, [0; 32], blinding);
     let v0_cols = evaluate(base_values.values(), &pp, &elements, &points);
     let layout: Vec<(usize, u32)> = v0_cols.iter().map(|(t, l, _)| (*t, *l)).collect();
     let v0 = flatten(&v0_cols);
@@ -156,7 +147,7 @@ fn main() {
         let mut seed = [0u8; 32];
         seed[..8].copy_from_slice(&(seeds as u64).to_le_bytes());
         seed[8] = 0x5e;
-        let c = circuit::<QM31>(&public, &private, seed, blinding);
+        let c = circuit::<QM31>(&w, seed, blinding);
         let v = flatten(&evaluate(c.values(), &pp, &elements, &points));
         let mut row: Vec<u64> = (0..n).map(|j| (v[j] + PP - v0[j]) % PP).collect();
         for (piv, b) in &basis {
@@ -187,6 +178,7 @@ fn main() {
     let missing: Vec<serde_json::Value> = (0..n).filter(|j| !pivots.contains(j))
         .map(|j| json!({"column": j / coords_per_column, "tree_log": layout[j / coords_per_column], "coord": j % coords_per_column})).collect();
     let report = json!({
+        "relation": relation,
         "scope": "seed-invariant linear combinations of revealed values, base + interaction trees, qm31_ops + eq; R0 V2 transfer; fork 4de7408a6",
         "lde_points_per_column": n_lde, "oods_points": ["z", "z - step"], "columns": layout.len(), "functionals": n,
         "seeds": seeds, "rank": basis.len(), "seed_invariant_combinations": n - basis.len(),

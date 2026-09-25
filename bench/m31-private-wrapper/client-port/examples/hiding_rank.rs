@@ -10,14 +10,12 @@
 #[path = "support/mod.rs"]
 mod support;
 use circuit_common::Qm31OpsTraceGenerator;
-use circuit_common::finalize::{Profile, add_zk_blinding_for, pad_context_for};
 use circuit_common::preprocessed::PreprocessedCircuit;
 use circuit_prover::prover::{BaseColumnPool, SimdBackend};
 use circuit_prover::witness::trace::{TraceGenerator, write_interaction_trace, write_trace};
 use circuit_verifier::circuit_claim::CircuitInteractionElements;
-use circuits::context::{Context, FinalizedContext};
+use circuits::context::FinalizedContext;
 use circuits::ivalue::NoValue;
-use rand::{SeedableRng, rngs::StdRng};
 use serde_json::json;
 use stwo::core::channel::{Channel, MerkleChannel};
 use stwo::core::fields::m31::{M31, P};
@@ -28,18 +26,10 @@ use stwo::prover::backend::Column;
 use stwo::prover::poly::circle::PolyOps;
 use stwo::prover::{CommitmentSchemeProver, CommitmentTreeProver};
 use templar_client_verifier_circuit::membership::Lanes;
-use templar_client_verifier_circuit::payment::{self, N_OUTPUTS, Private, Public, Shape, Tree};
 
-const TREE: Tree = Tree::Compress;
 
-fn circuit<V: Lanes>(public: &Public, private: &Private, seed: [u8; 32], blinding: usize) -> FinalizedContext<V> {
-    let mut c = Context::<V>::new(N_OUTPUTS);
-    let outputs = payment::build(&mut c, TREE, public, private);
-    c.set_outputs(&outputs);
-    let mut c = c.finalize(true);
-    add_zk_blinding_for(&mut c, seed, blinding, Profile::Arithmetic);
-    pad_context_for(&mut c, Profile::Arithmetic);
-    c
+fn circuit<V: Lanes>(w: &support::Witness, seed: [u8; 32], blinding: usize) -> FinalizedContext<V> {
+    w.circuit(seed, blinding)
 }
 
 type Columns = Vec<(u32, Vec<M31>)>;
@@ -163,13 +153,13 @@ fn audit(name: &str, a: &Columns, b: &Columns) -> serde_json::Value {
 }
 
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
+    let mut args: Vec<String> = std::env::args().collect();
+    let (w, relation) = support::Witness::from_args(&mut args, 11);
     let out = std::path::Path::new(args.get(1).map(String::as_str).unwrap_or("target/hiding-rank"));
     std::fs::create_dir_all(out).unwrap();
-    let (public, private) = payment::fresh_shape(TREE, Shape::Transfer, &mut StdRng::seed_from_u64(11));
     let mut blinding = 0;
     let pp = loop {
-        let topology = circuit::<NoValue>(&public, &private, [0; 32], blinding);
+        let topology = circuit::<NoValue>(&w, [0; 32], blinding);
         let pp = PreprocessedCircuit::from_finalized_circuit(topology.circuit());
         let need = support::blinding_budget(pp.trace_log_size());
         if blinding >= need {
@@ -177,8 +167,8 @@ fn main() {
         }
         blinding = need;
     };
-    let a = circuit::<QM31>(&public, &private, [0xa1; 32], blinding);
-    let b = circuit::<QM31>(&public, &private, [0xb2; 32], blinding);
+    let a = circuit::<QM31>(&w, [0xa1; 32], blinding);
+    let b = circuit::<QM31>(&w, [0xb2; 32], blinding);
     assert!(a.circuit() == b.circuit(), "the seed changed the topology");
     // Challenges from a fixed channel, the same for both traces.
     let channel = &mut <support::MC as MerkleChannel>::C::default();
@@ -190,6 +180,7 @@ fn main() {
     let inter = audit("interaction", &inter_a, &inter_b);
     let total: u64 = base.as_array().unwrap().iter().chain(inter.as_array().unwrap()).map(|g| g["unblinded_combinations"].as_u64().unwrap()).sum();
     let report = json!({
+        "relation": relation,
         "scope": "R0 V2 transfer, arithmetic profile; two blinding seeds, same interaction elements; per component and tree",
         "trace_log_size": pp.trace_log_size(), "blinding_iterations": blinding,
         "base": base, "interaction": inter, "unblinded_combinations_total": total,
