@@ -1,0 +1,14 @@
+[package]
+name = "templar_wallet_sig_account"
+version = "0.1.0"
+edition = "2024_07"
+description = "P0b spike (throwaway): R4 statement account plus an inlined Stark-owner SNIP-12 signature check"
+
+[[target.starknet-contract]]
+sierra = true
+casm = true
+
+[dependencies]
+templar_membership_bridge = { path = "../bridge" }
+templar_wallet_sig_snip12 = { path = "../snip12" }
+starknet = "2.18.0"

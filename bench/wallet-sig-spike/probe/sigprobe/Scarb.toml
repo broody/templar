@@ -1,0 +1,28 @@
+# P0b spike (throwaway): SigProbe, a prove-only account whose __execute__ calls a Starknet
+# account's is_valid_signature and emits one L2->L1 message on 'VALID'. Build outputs go to
+# target/wallet-sig-spike/probe/ (SCARB_TARGET_DIR); scripts in ../ (class_info.mjs, recon.mjs,
+# estimate_fee.mjs, declare_deploy.py, run_probe.py).
+[package]
+name = "wallet_sig_probe"
+version = "0.1.0"
+edition = "2024_07"
+
+[dependencies]
+starknet = "2.18.0"
+
+[dev-dependencies]
+snforge_std = "0.63.0"
+assert_macros = "2.18.0"
+
+[[target.starknet-contract]]
+sierra = true
+casm = true
+
+[scripts]
+test = "snforge test"
+
+# Read-only fork of the local Sepolia node for the tests (no transactions).
+[[tool.snforge.fork]]
+name = "SEPOLIA"
+url = "http://127.0.0.1:9545/rpc/v0_10"
+block_id.number = "15609963"

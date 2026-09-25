@@ -1,0 +1,143 @@
+{
+  "note": "P0b spike KAT. Reference: starknet.js 10.8.0 typedData.getMessageHash(td, account), SNIP-12 revision 1. Random cases are sha256-seeded (deterministic).",
+  "seed": "templar/wallet-sig-spike/snip12/kat/v1",
+  "starknet_message": "0x537461726b4e6574204d657373616765",
+  "domain": {
+    "name": "Templar",
+    "version": "1",
+    "revision": "1",
+    "name_felt": "0x54656d706c6172",
+    "version_felt": "0x1",
+    "revision_felt": "0x1"
+  },
+  "types": {
+    "StarknetDomain": {
+      "encode_type": "\"StarknetDomain\"(\"name\":\"shortstring\",\"version\":\"shortstring\",\"chainId\":\"shortstring\",\"revision\":\"shortstring\")",
+      "type_hash": "0x1ff2f602e42168014d405a94f75e8a93d640751d71d16311266e140d8b0a210"
+    },
+    "TemplarSpend": {
+      "encode_type": "\"TemplarSpend\"(\"pool\":\"ContractAddress\",\"binding_commitment\":\"felt\",\"token_out\":\"ContractAddress\",\"withdrawal_recipient\":\"ContractAddress\",\"withdrawal_amount\":\"u128\",\"intent\":\"felt\",\"valid_until\":\"u128\")",
+      "type_hash": "0x345e1c67b3674e509394d35a1a2f6205c217586359fe5c5c729bd3cfd64710e"
+    },
+    "TemplarKeyDerivation": {
+      "encode_type": "\"TemplarKeyDerivation\"(\"purpose\":\"shortstring\",\"chain\":\"shortstring\",\"account\":\"ContractAddress\")",
+      "type_hash": "0x2c12ffa63c6a1e80ff60bf73eef3bf52feb22e5cf5b4c75a4d5df70a8245e1"
+    }
+  },
+  "pitfall_ascii_version_domain_hash_sn_sepolia": "0x76913d0d05d57447acf2d9c33da65cd2bc2fb88f06a833bd581a48db0ff6f83",
+  "spend": [
+    {
+      "id": "fixed",
+      "inputs": {
+        "id": "fixed",
+        "chain_id": "SN_SEPOLIA",
+        "account": "0x0734b2c2",
+        "pool": "0x2da0011111111111111111111111111111111111111111111111111111137b9",
+        "binding": "0x1234",
+        "salt": "0x5678",
+        "token_out": "0x0",
+        "withdrawal_recipient": "0x0",
+        "withdrawal_amount": "0",
+        "intent": "0x0",
+        "valid_until": "16000000",
+        "chain_id_felt": "0x534e5f5345504f4c4941"
+      },
+      "binding_commitment": "0x4ab86daf490dde3bec017cc90ea7b076ea8e4a290b55d3b2e925cf392420afb",
+      "domain_hash": "0x4d3c5487c1499cd0d4be51d58e8830f2719c23a3556c31011f707d39fa2d909",
+      "struct_hash": "0x39d457205462866c2081940ad88f5b51b9e5c445040e5abf24996ce9cd78f98",
+      "message_hash": "0x2bf922f4a8ad28fd0054dc05d00ffe0a02894650e2ac1723fe3f81ac697be2c"
+    },
+    {
+      "id": "random1",
+      "inputs": {
+        "id": "random1",
+        "chain_id": "SN_MAIN",
+        "account": "0x1045a945b9be33270741e7eb1fccf1fe4931f0a12aba63411dfa6b6b2f0c8e7",
+        "pool": "0x48642bea59a4cf5e253eeceb0e5893fea5d6d960410f2d706a5a13315c4e6d6",
+        "binding": "0x503910600302a3ba6e80fa04281be8088eab7c497c5b591c1741e0fe84ab9b",
+        "salt": "0x54321ea1bdd482eca68bf63da946da613825dde9c2b99d0cdf48e5c1dab1b79",
+        "token_out": "0x1000597c43f1da4ffd5534695af9e2a6077614483e7bc2bb7ed58c0341c43b4",
+        "withdrawal_recipient": "0x47c842a786e89ee3b4869ee43ab0ab7c3bf9cb8c2b0e033229fd72999dddad9",
+        "withdrawal_amount": "15121044684065986882655424928588170879",
+        "intent": "0x1a073d30b84ba78d4f2d21d53bdb5cda586caca0a35d95c92b37b39c35db044",
+        "valid_until": "101052878137054909744505089026358730438",
+        "chain_id_felt": "0x534e5f4d41494e"
+      },
+      "binding_commitment": "0x39684e5f40b63b7d86e40c725a4f9e0adb0c1eb849f7fcf861430e7b5ff17f1",
+      "domain_hash": "0x2ecbbb59923e3e4aac281d0f52cd69a797600b168a92f9868a63f82f9512cd3",
+      "struct_hash": "0x363115229a54b4d390db1eb609913391ee9d9234af2997d616d07423b8c78c2",
+      "message_hash": "0x2fb85c73da961a2c09f9290d3af5d6ffe1e4795bf77ab130c6d1890eb864c9"
+    },
+    {
+      "id": "random2",
+      "inputs": {
+        "id": "random2",
+        "chain_id": "0xa2f73813fe171e84960b613296e11bd4ce6d616f050f6c4461e58eed69c783",
+        "account": "0x2f0bdadcd7980465076665104dd230f24d57635d069881fcf03e6f6316fa001",
+        "pool": "0x2fbd8ba1ed0cb34ec51ebdc426853306541a59586f8c3a3d12ce834ca107dd5",
+        "binding": "0x314d132402c01eaae50ccc731b7721bbc9659c6a21ccad81fa969e02a4d5007",
+        "salt": "0x7bc41c5b3b0135855418675982891b8af3e57372fe841995a7d995e397c7a34",
+        "token_out": "0x11ae8ddd8fe061ed72296ba200a6b41bcea2627f7115b111b1f43540090e42f",
+        "withdrawal_recipient": "0x1bcd08c278c6375f34971ded08ad603e83985798de5617ea89323127f0a42b1",
+        "withdrawal_amount": "340282366920938463463374607431768211455",
+        "intent": "0x5674b891732a9785d997345fb140e7dc787c5c6bc5d6941efb51677844321b0",
+        "valid_until": "289813797060880819580772079501841661717",
+        "chain_id_felt": "0xa2f73813fe171e84960b613296e11bd4ce6d616f050f6c4461e58eed69c783"
+      },
+      "binding_commitment": "0x502ef8013fc70561cdcc68772596e545440e363d9dc2741cade7949f77e0437",
+      "domain_hash": "0x351bd2f1a63676125a5d657a66bcb50e13d7d7b651bf7aef14ba8550e9c9971",
+      "struct_hash": "0x1d1899376e48927203265c61ab72afa3344a50f123b1f16016d5fb351be845a",
+      "message_hash": "0x58ae0a62db3fdbe2ce8053b5394bbc7e3500d5c7f7e9da0a01ec0f8f41b4d2b"
+    }
+  ],
+  "derivation": [
+    {
+      "id": "fixed",
+      "inputs": {
+        "id": "fixed",
+        "chain_id": "SN_SEPOLIA",
+        "account": "0x0734b2c2",
+        "purpose": "TEMPLAR_SECRET_V1",
+        "chain": "SN_SEPOLIA",
+        "chain_id_felt": "0x534e5f5345504f4c4941",
+        "purpose_felt": "0x54454d504c41525f5345435245545f5631",
+        "chain_felt": "0x534e5f5345504f4c4941"
+      },
+      "domain_hash": "0x4d3c5487c1499cd0d4be51d58e8830f2719c23a3556c31011f707d39fa2d909",
+      "struct_hash": "0x57ea3d3d29f5a38085220506972351f9c961963bc3b5016a98797dcf71fa864",
+      "message_hash": "0x154aae51ddf2e6c317b04c1ea92e565b969534c2f252d39588072d465f16864"
+    },
+    {
+      "id": "random1",
+      "inputs": {
+        "id": "random1",
+        "chain_id": "SN_MAIN",
+        "account": "0x754f02ea52a598bec0ad8968707f65d7207a4d089c30549c24dd2bc2ec7c23a",
+        "purpose": "TEMPLAR_SECRET_V1",
+        "chain": "SN_MAIN",
+        "chain_id_felt": "0x534e5f4d41494e",
+        "purpose_felt": "0x54454d504c41525f5345435245545f5631",
+        "chain_felt": "0x534e5f4d41494e"
+      },
+      "domain_hash": "0x2ecbbb59923e3e4aac281d0f52cd69a797600b168a92f9868a63f82f9512cd3",
+      "struct_hash": "0x125e18987ef232eae485c67a9e0e82281bc63a0587531d8fb8a37e3c67f91a",
+      "message_hash": "0x559870e6a524f8c537ccf8bc7ea813d04da3ab0a185bbd18aaec1be759ae3c2"
+    },
+    {
+      "id": "random2",
+      "inputs": {
+        "id": "random2",
+        "chain_id": "0x3221252b578a71b85c4ed61990562e2ca58755121b80db6f908974279bca735",
+        "account": "0x454422f9b8da266a924e24167a5a5d4d5b09d6929895cd81ef70c2ad0fe7ee8",
+        "purpose": "0x262f47b78c81ef0907844dc22d8d2de3bd0c42a78ea74b690d2db37d5082c56",
+        "chain": "0x30ca896d87ab22fce047e0874ae82e716eb761c5267a6a986446e568edb5915",
+        "chain_id_felt": "0x3221252b578a71b85c4ed61990562e2ca58755121b80db6f908974279bca735",
+        "purpose_felt": "0x262f47b78c81ef0907844dc22d8d2de3bd0c42a78ea74b690d2db37d5082c56",
+        "chain_felt": "0x30ca896d87ab22fce047e0874ae82e716eb761c5267a6a986446e568edb5915"
+      },
+      "domain_hash": "0x73ac3327fcd948550d0bd1af263c3d6f39cc99fd37e8e4a4a467b4ddf15dc8d",
+      "struct_hash": "0x5ebbe98314211c90f4af3f07f4cbfe5aa9e171068dd190125726b5ed5a5353a",
+      "message_hash": "0x2c5e8d546256bc32d2a3a3ec659278b83d0eb24fa89b94e7de9962b35235440"
+    }
+  ]
+}

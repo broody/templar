@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Templar Wallet Signing Test</title>
+<!--
+  P0b spike (throwaway). Serve it on localhost (see README.md). Libraries are fetched from
+  cdn.jsdelivr.net/npm/ at pinned versions and checked against pinned SHA-384 hashes (sign-logic.mjs
+  LIBS) before they run. The page asks the wallet to connect and to sign two typed-data messages,
+  twice each. It never asks for a transaction.
+-->
+<style>
+  :root {
+    --bg: #f6f6f3;
+    --panel: #ffffff;
+    --ink: #1c1d1f;
+    --muted: #5d6167;
+    --line: #dcdcd6;
+    --accent: #2f5bd3;
+    --accent-ink: #ffffff;
+    --ok: #1d7a3e;
+    --ok-bg: #e5f4ea;
+    --bad: #b3261e;
+    --bad-bg: #fbe9e7;
+    --warn: #8a5a00;
+    --warn-bg: #fdf3dc;
+    --code-bg: #f1f1ec;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #131416;
+      --panel: #1c1d20;
+      --ink: #e8e8e4;
+      --muted: #a2a5ab;
+      --line: #33353a;
+      --accent: #7d9cf0;
+      --accent-ink: #0d1020;
+      --ok: #7fd49b;
+      --ok-bg: #16301f;
+      --bad: #f2a29b;
+      --bad-bg: #3a1a17;
+      --warn: #f0c46c;
+      --warn-bg: #362a10;
+      --code-bg: #25272b;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #131416; --panel: #1c1d20; --ink: #e8e8e4; --muted: #a2a5ab; --line: #33353a;
+    --accent: #7d9cf0; --accent-ink: #0d1020; --ok: #7fd49b; --ok-bg: #16301f; --bad: #f2a29b;
+    --bad-bg: #3a1a17; --warn: #f0c46c; --warn-bg: #362a10; --code-bg: #25272b;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans);
+  }
+  main { max-width: 920px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.45rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h2 { font-size: 1.05rem; margin: 0 0 10px; }
+  .sub { color: var(--muted); margin: 0 0 18px; }
+  section {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px 18px; margin: 0 0 14px;
+  }
+  .notice { border-left: 4px solid var(--accent); }
+  .notice ul { margin: 6px 0 0; padding-left: 20px; }
+  .notice li { margin: 2px 0; }
+  button {
+    font: inherit; font-weight: 600; border-radius: 8px; border: 1px solid var(--accent);
+    background: var(--accent); color: var(--accent-ink); padding: 8px 14px; cursor: pointer;
+  }
+  button.secondary { background: transparent; color: var(--accent); }
+  button:disabled { opacity: 0.45; cursor: not-allowed; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .status { color: var(--muted); font-size: 0.93rem; margin: 10px 0 0; }
+  .status:empty { display: none; }
+  dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 12px 0 0; }
+  dl.kv dt { color: var(--muted); }
+  dl.kv dd { margin: 0; min-width: 0; }
+  .mono, code, pre, textarea { font-family: var(--mono); font-size: 0.84rem; }
+  .mono { overflow-wrap: anywhere; }
+  .pill {
+    display: inline-block; border-radius: 999px; padding: 1px 9px; font-size: 0.82rem; font-weight: 600;
+  }
+  .pill.ok { background: var(--ok-bg); color: var(--ok); }
+  .pill.bad { background: var(--bad-bg); color: var(--bad); }
+  .pill.warn { background: var(--warn-bg); color: var(--warn); }
+  .pill.idle { background: var(--code-bg); color: var(--muted); }
+  .warnbox {
+    background: var(--warn-bg); color: var(--warn); border-radius: 8px; padding: 8px 12px; margin: 10px 0 0;
+  }
+  .warnbox:empty { display: none; }
+  ol.steps { margin: 12px 0 0; padding-left: 22px; }
+  ol.steps li { margin: 3px 0; }
+  .msg { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 14px; }
+  .msg h3 { font-size: 0.98rem; margin: 0 0 6px; }
+  .sig { background: var(--code-bg); border-radius: 6px; padding: 6px 9px; margin: 4px 0; }
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--muted); }
+  pre { background: var(--code-bg); border-radius: 6px; padding: 8px 10px; overflow-x: auto; margin: 6px 0 0; }
+  label { display: block; color: var(--muted); font-size: 0.93rem; }
+  input[type="text"] {
+    width: 100%; font: 0.9rem var(--mono); padding: 7px 9px; margin-top: 4px; border-radius: 7px;
+    border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+  }
+  textarea {
+    width: 100%; min-height: 220px; margin-top: 10px; border-radius: 7px; border: 1px solid var(--line);
+    background: var(--code-bg); color: var(--ink); padding: 8px 10px; resize: vertical;
+  }
+  footer { color: var(--muted); font-size: 0.85rem; margin-top: 18px; }
+  @media (max-width: 560px) {
+    dl.kv { grid-template-columns: 1fr; gap: 0 0; }
+    dl.kv dd { margin-bottom: 6px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Templar wallet signing test</h1>
+  <p class="sub">P0b spike, throwaway page. Starknet Sepolia. Nothing is sent anywhere except to your wallet.</p>
+
+  <section class="notice" aria-label="What this page does">
+    <strong>This page only asks your wallet to sign two test messages, twice each.</strong>
+    <ul>
+      <li>You will see <strong>one connect request</strong> and then <strong>four "sign message" prompts</strong>
+        (Templar domain). It never asks for a transaction, a network switch, or any other permission.
+        If your wallet shows anything else, reject it.</li>
+      <li>The messages are test values: a made-up pool address and a withdrawal of 0. No contract accepts them.</li>
+      <li>The first message uses the spike-only purpose <code>TEMPLAR_SIGTEST_V0</code>, so its signature is
+        not a Templar secret.</li>
+      <li>Signatures stay on this page until you press <em>Copy JSON</em>.</li>
+    </ul>
+  </section>
+
+  <section id="s-connect">
+    <h2>1. Connect</h2>
+    <div class="row">
+      <button id="btn-connect" disabled>Connect wallet</button>
+      <span id="lib-status" class="pill idle">loading libraries</span>
+    </div>
+    <p id="connect-status" class="status">Loading starknet.js and get-starknet from jsDelivr (hash-checked).</p>
+    <dl class="kv" id="wallet-info" hidden>
+      <dt>Wallet</dt><dd id="w-name"></dd>
+      <dt>Account</dt><dd class="mono" id="w-account"></dd>
+      <dt>Chain id</dt><dd class="mono" id="w-chain"></dd>
+    </dl>
+    <p id="chain-warn" class="warnbox"></p>
+  </section>
+
+  <section id="s-sign">
+    <h2>2. Sign the test messages</h2>
+    <p class="status" style="margin-top:0">The four prompts come in this order: derivation, spend, derivation, spend.
+      Approve each one. A rejected prompt stops the run; press the button again to continue from it.</p>
+    <div class="row">
+      <button id="btn-sign" disabled>Sign 4 test messages</button>
+      <button id="btn-reset" class="secondary" disabled>Clear signatures</button>
+    </div>
+    <ol class="steps" id="steps"></ol>
+    <p id="sign-status" class="status"></p>
+    <div id="messages"></div>
+  </section>
+
+  <section id="s-check">
+    <h2>3. Optional read-only check</h2>
+    <p class="status" style="margin-top:0">Asks a Starknet node (no wallet involved) for the account class hash
+      and calls the account's <code>is_valid_signature</code> on each locally computed hash. These are read calls:
+      nothing is signed or sent. The default endpoint is the read-only proxy in <code>serve.py</code>.</p>
+    <label for="rpc-url">RPC endpoint</label>
+    <input type="text" id="rpc-url" value="/rpc/sepolia" spellcheck="false" autocomplete="off">
+    <div class="row" style="margin-top:10px">
+      <button id="btn-check" disabled>Run read-only check</button>
+    </div>
+    <p id="check-status" class="status"></p>
+    <dl class="kv" id="check-info" hidden></dl>
+  </section>
+
+  <section id="s-export">
+    <h2>4. Export</h2>
+    <div class="row">
+      <button id="btn-copy" disabled>Copy JSON</button>
+      <span id="copy-status" class="status" style="margin:0"></span>
+    </div>
+    <textarea id="json" readonly spellcheck="false" aria-label="Result JSON"></textarea>
+  </section>
+
+  <footer>
+    <div id="kat-line">starknet.js self-check against the S1 test vectors: not run yet.</div>
+    <div id="lib-line"></div>
+  </footer>
+</main>
+
+<script type="module">
+import * as L from './sign-logic.mjs';
+
+const $ = (id) => document.getElementById(id);
+const state = {
+  sn: null, gs: null, libsVerified: false, kat: null,
+  swo: null, conn: null, messages: null,
+  sigs: { derivation: [null, null], spend: [null, null] },
+  stepState: L.SIGN_PLAN.map(() => 'waiting'),
+  checks: null, rpcLabel: null, busy: false,
+};
+// For inspection and the headless browser test only (README, "Testing").
+window.templarSignPage = { L, state };
+
+const el = (tag, props = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) {
+    if (k === 'class') n.className = v; else if (k === 'text') n.textContent = v; else n.setAttribute(k, v);
+  }
+  for (const k of kids) n.append(k);
+  return n;
+};
+const pill = (text, kind) => el('span', { class: `pill ${kind}`, text });
+const errText = (e) => String((e && (e.message || e.code)) || e);
+
+// ---------------------------------------------------------------------------------------------
+// Libraries: fetch with Subresource Integrity, then evaluate.
+// starknet.js's IIFE declares a global `starknet`, which is also the name wallets inject, so it
+// is evaluated inside a function scope instead of as a <script> tag.
+// ---------------------------------------------------------------------------------------------
+async function fetchVerified(lib) {
+  const res = await fetch(lib.url, { integrity: lib.integrity, mode: 'cors', credentials: 'omit' });
+  if (!res.ok) throw new Error(`${lib.name}@${lib.version}: HTTP ${res.status}`);
+  return res.text();
+}
+
+async function loadLibraries() {
+  const [snCode, gsCode] = await Promise.all([fetchVerified(L.LIBS.starknet), fetchVerified(L.LIBS.getStarknet)]);
+  const sn = new Function(`${snCode.replace(/^\/\/# sourceMappingURL=.*$/m, '')}\n;return starknet;`)();
+  const gs = await import(URL.createObjectURL(new Blob([gsCode], { type: 'text/javascript' })));
+  if (!sn || !sn.typedData || typeof gs.connect !== 'function') throw new Error('library exports missing');
+  return { sn, gs };
+}
+
+// ---------------------------------------------------------------------------------------------
+// Rendering.
+// ---------------------------------------------------------------------------------------------
+const STEP_LABEL = { derivation: 'TemplarKeyDerivation', spend: 'TemplarSpend' };
+
+function renderSteps() {
+  const ol = $('steps');
+  ol.replaceChildren();
+  L.SIGN_PLAN.forEach((s, i) => {
+    const st = state.stepState[i];
+    const kind = st === 'done' ? 'ok' : st === 'error' ? 'bad' : st === 'pending' ? 'warn' : 'idle';
+    const text = st === 'pending' ? 'check your wallet' : st;
+    ol.append(el('li', {}, `Prompt ${i + 1}: ${STEP_LABEL[s.message]} #${s.round} `, pill(text, kind)));
+  });
+}
+
+function sigBlock(label, s) {
+  if (!s) return el('div', { class: 'sig' }, el('span', { class: 'status', text: `${label}: not signed yet` }));
+  return el('div', { class: 'sig' },
+    el('div', { class: 'status', text: `${label} (${s.signature.length} felts)` }),
+    el('div', { class: 'mono', text: `[${s.signature.join(', ')}]` }));
+}
+
+function renderMessages() {
+  const box = $('messages');
+  box.replaceChildren();
+  if (!state.messages) return;
+  for (const key of ['derivation', 'spend']) {
+    const m = state.messages[key];
+    const same = L.pairStatus(state.sigs[key]);
+    const verdict = same === null ? pill('waiting for both signatures', 'idle')
+      : same ? pill('identical', 'ok') : pill('different', 'bad');
+    const td = JSON.stringify(m.typedData, null, 2);
+    box.append(el('div', { class: 'msg' },
+      el('h3', { text: m.label }),
+      el('dl', { class: 'kv' },
+        el('dt', { text: 'Local message hash' }), el('dd', { class: 'mono', text: m.messageHash }),
+        el('dt', { text: 'Signatures #1 and #2' }), el('dd', {}, verdict)),
+      sigBlock('Signature #1', state.sigs[key][0]),
+      sigBlock('Signature #2', state.sigs[key][1]),
+      el('details', {}, el('summary', { text: 'Typed data sent to the wallet' }), el('pre', { text: td }))));
+  }
+}
+
+function renderChecks() {
+  const dl = $('check-info');
+  dl.replaceChildren();
+  const c = state.checks;
+  if (!c) { dl.hidden = true; return; }
+  dl.hidden = false;
+  const add = (k, v, cls) => dl.append(el('dt', { text: k }), el('dd', cls ? { class: cls } : {}, v));
+  add('RPC chain id', c.rpc_chain_id ?? `error: ${c.rpc_chain_id_error}`, 'mono');
+  add('Class hash', c.class_hash ?? `unavailable: ${c.class_hash_error}`, 'mono');
+  if (!c.class_hash) add('is_valid_signature', 'not called: no class at this address on the RPC node');
+  for (const r of c.signatures) {
+    let v;
+    if (r.matched_variant === 'standard') v = pill('VALID', 'ok');
+    else if (r.matched_variant) v = pill(`VALID only with ${r.matched_variant} domain`, 'warn');
+    else if (r.checks.standard.missing) v = pill('account class has no is_valid_signature', 'warn');
+    else {
+      const s = r.checks.standard;
+      v = el('span', {}, pill('not valid', 'bad'), ` ${s.error ? s.error : `returned [${(s.result || []).join(', ')}]`}`);
+    }
+    add(`${STEP_LABEL[r.message]} #${r.round}`, v);
+  }
+}
+
+function renderJson() {
+  const report = L.buildReport({
+    conn: state.conn, messages: state.messages, sigs: state.sigs, kat: state.kat,
+    checks: state.checks, rpcLabel: state.rpcLabel, libsVerified: state.libsVerified,
+  });
+  $('json').value = JSON.stringify(report, null, 2);
+  $('btn-copy').disabled = !state.conn;
+}
+
+function renderButtons() {
+  const ready = !!(state.sn && state.gs);
+  $('btn-connect').disabled = !ready || state.busy;
+  $('btn-sign').disabled = !state.conn || state.busy;
+  const anySig = [...state.sigs.derivation, ...state.sigs.spend].some(Boolean);
+  $('btn-reset').disabled = !anySig || state.busy;
+  $('btn-check').disabled = !anySig || state.busy;
+  const allDone = [...state.sigs.derivation, ...state.sigs.spend].every(Boolean);
+  $('btn-sign').textContent = allDone ? 'All 4 signed' : anySig ? 'Continue signing' : 'Sign 4 test messages';
+  if (allDone) $('btn-sign').disabled = true;
+}
+
+function renderAll() {
+  renderSteps(); renderMessages(); renderChecks(); renderJson(); renderButtons();
+}
+
+function resetSignatures() {
+  state.sigs = { derivation: [null, null], spend: [null, null] };
+  state.stepState = L.SIGN_PLAN.map(() => 'waiting');
+  state.checks = null; state.rpcLabel = null;
+  $('sign-status').textContent = ''; $('check-status').textContent = '';
+}
+
+// ---------------------------------------------------------------------------------------------
+// Actions.
+// ---------------------------------------------------------------------------------------------
+async function refreshConnection(reason) {
+  const conn = await L.readWallet(state.sn, state.swo);
+  state.conn = conn;
+  state.messages = L.buildMessages(state.sn, conn.account, conn.chain);
+  resetSignatures();
+  $('wallet-info').hidden = false;
+  $('w-name').textContent = [conn.wallet.name, conn.wallet.version && `v${conn.wallet.version}`, conn.wallet.id && `(${conn.wallet.id})`]
+    .filter(Boolean).join(' ');
+  $('w-account').textContent = conn.account;
+  $('w-chain').textContent = conn.chain.text ? `${conn.chain.text} (${conn.chain.hex})` : conn.chain.hex;
+  $('chain-warn').textContent = conn.chain.network === 'sepolia' ? ''
+    : `The wallet is not on Starknet Sepolia (${conn.chain.text ?? conn.chain.hex}). The test is meant for Sepolia; `
+      + 'switch the network in the wallet, and the page will reset.';
+  $('rpc-url').value = conn.chain.network === 'mainnet' ? '/rpc/mainnet' : '/rpc/sepolia';
+  $('connect-status').textContent = reason ?? 'Connected. Next: sign the test messages.';
+  renderAll();
+}
+
+$('btn-connect').addEventListener('click', async () => {
+  state.busy = true; renderButtons();
+  $('connect-status').textContent = 'Choose Ready (Argent X) or Braavos in the dialog, then approve the connection.';
+  try {
+    const swo = await state.gs.connect({ modalMode: 'alwaysAsk', modalTheme: 'system', exclude: ['metamask'] });
+    if (!swo) { $('connect-status').textContent = 'No wallet connected (dialog closed or request rejected).'; return; }
+    state.swo = swo;
+    const onChange = () => refreshConnection('The wallet changed account or network; signatures were cleared.')
+      .catch((e) => { $('connect-status').textContent = `Reconnect failed: ${errText(e)}`; });
+    try { swo.on('accountsChanged', onChange); swo.on('networkChanged', onChange); } catch (_) { /* optional */ }
+    await refreshConnection();
+  } catch (e) {
+    $('connect-status').textContent = `Connect failed: ${errText(e)}`;
+  } finally {
+    state.busy = false; renderButtons();
+  }
+});
+
+$('btn-sign').addEventListener('click', async () => {
+  state.busy = true; renderButtons();
+  $('sign-status').textContent = '';
+  try {
+    await L.signAll(state.swo, state.messages, state.sigs, (i, step, status, detail) => {
+      state.stepState[i] = status;
+      if (status === 'error') {
+        $('sign-status').textContent = `Prompt ${i + 1} was rejected or failed: ${errText(detail)}. `
+          + 'Press the button again to continue from this prompt.';
+      }
+      renderAll();
+    });
+    $('sign-status').textContent = 'All four signatures received. Optional: run the read-only check, then Copy JSON.';
+  } catch (_) {
+    /* status already shown */
+  } finally {
+    state.busy = false; renderAll();
+  }
+});
+
+$('btn-reset').addEventListener('click', () => { resetSignatures(); renderAll(); });
+
+$('btn-check').addEventListener('click', async () => {
+  const url = $('rpc-url').value.trim();
+  state.busy = true; renderButtons();
+  $('check-status').textContent = 'Calling the node (read-only)…';
+  try {
+    state.rpcLabel = url.startsWith('/') ? `serve.py proxy ${url}` : new URL(url).origin;
+    const rpc = L.makeRpc(url);
+    state.checks = await L.readOnlyChecks(state.sn, rpc, state.conn.account, state.messages, state.sigs);
+    const mismatch = state.checks.rpc_chain_id && !L.sameFelt(state.checks.rpc_chain_id, state.conn.chain.hex);
+    $('check-status').textContent = mismatch
+      ? `Warning: the RPC node is on ${state.checks.rpc_chain_id}, the wallet on ${state.conn.chain.hex}.`
+      : 'Done.';
+  } catch (e) {
+    state.checks = null;
+    $('check-status').textContent = `Check failed: ${errText(e)}. With python3 -m http.server there is no proxy: `
+      + 'run serve.py instead (README), or enter an RPC URL that accepts browser requests.';
+  } finally {
+    state.busy = false; renderAll();
+  }
+});
+
+$('btn-copy').addEventListener('click', async () => {
+  const text = $('json').value;
+  try {
+    await navigator.clipboard.writeText(text);
+    $('copy-status').textContent = 'Copied.';
+  } catch (_) {
+    $('json').focus(); $('json').select();
+    const ok = document.execCommand && document.execCommand('copy');
+    $('copy-status').textContent = ok ? 'Copied.' : 'Clipboard blocked: the JSON is selected, copy it by hand.';
+  }
+});
+
+// ---------------------------------------------------------------------------------------------
+// Start.
+// ---------------------------------------------------------------------------------------------
+renderAll();
+try {
+  const { sn, gs } = await loadLibraries();
+  state.sn = sn; state.gs = gs; state.libsVerified = true;
+  state.kat = L.katSelfCheck(sn);
+  const pass = state.kat.rows.filter((r) => r.ok).length;
+  $('lib-status').replaceWith(pill(state.kat.ok ? 'libraries ready' : 'self-check failed', state.kat.ok ? 'ok' : 'bad'));
+  $('kat-line').textContent = `starknet.js self-check against the S1 test vectors: ${pass}/${state.kat.rows.length} `
+    + (state.kat.ok ? 'match.' : 'match. Do not use this page until this is fixed.');
+  $('connect-status').textContent = state.kat.ok ? 'Ready. Press Connect wallet.' : 'Self-check failed (see footer).';
+  if (!state.kat.ok) { state.sn = null; console.error('KAT self-check', state.kat.rows); }
+} catch (e) {
+  $('lib-status').replaceWith(pill('libraries failed', 'bad'));
+  $('connect-status').textContent = `Could not load the libraries: ${errText(e)}. An integrity failure means jsDelivr `
+    + 'served different bytes than the pinned hash.';
+}
+$('lib-line').textContent = `Libraries: starknet ${L.LIBS.starknet.version}, @starknet-io/get-starknet `
+  + `${L.LIBS.getStarknet.version}, from cdn.jsdelivr.net/npm with SHA-384 integrity. Page ${L.PAGE_ID}.`;
+renderAll();
+</script>
+</body>
+</html>

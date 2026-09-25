@@ -1,0 +1,129 @@
+{
+  "note": "Exact SNIP-12 rev-1 typedData objects for the fixed KAT (signing page). messageHash = starknet.js typedData.getMessageHash(typedData, account). binding_commitment = poseidon_hash_many([binding, salt]).",
+  "spend": {
+    "account": "0x0734b2c2",
+    "binding": "0x1234",
+    "salt": "0x5678",
+    "typedData": {
+      "types": {
+        "StarknetDomain": [
+          {
+            "name": "name",
+            "type": "shortstring"
+          },
+          {
+            "name": "version",
+            "type": "shortstring"
+          },
+          {
+            "name": "chainId",
+            "type": "shortstring"
+          },
+          {
+            "name": "revision",
+            "type": "shortstring"
+          }
+        ],
+        "TemplarSpend": [
+          {
+            "name": "pool",
+            "type": "ContractAddress"
+          },
+          {
+            "name": "binding_commitment",
+            "type": "felt"
+          },
+          {
+            "name": "token_out",
+            "type": "ContractAddress"
+          },
+          {
+            "name": "withdrawal_recipient",
+            "type": "ContractAddress"
+          },
+          {
+            "name": "withdrawal_amount",
+            "type": "u128"
+          },
+          {
+            "name": "intent",
+            "type": "felt"
+          },
+          {
+            "name": "valid_until",
+            "type": "u128"
+          }
+        ]
+      },
+      "primaryType": "TemplarSpend",
+      "domain": {
+        "name": "Templar",
+        "version": "1",
+        "chainId": "SN_SEPOLIA",
+        "revision": "1"
+      },
+      "message": {
+        "pool": "0x2da0011111111111111111111111111111111111111111111111111111137b9",
+        "binding_commitment": "0x4ab86daf490dde3bec017cc90ea7b076ea8e4a290b55d3b2e925cf392420afb",
+        "token_out": "0x0",
+        "withdrawal_recipient": "0x0",
+        "withdrawal_amount": "0",
+        "intent": "0x0",
+        "valid_until": "16000000"
+      }
+    },
+    "messageHash": "0x2bf922f4a8ad28fd0054dc05d00ffe0a02894650e2ac1723fe3f81ac697be2c"
+  },
+  "derivation": {
+    "account": "0x0734b2c2",
+    "typedData": {
+      "types": {
+        "StarknetDomain": [
+          {
+            "name": "name",
+            "type": "shortstring"
+          },
+          {
+            "name": "version",
+            "type": "shortstring"
+          },
+          {
+            "name": "chainId",
+            "type": "shortstring"
+          },
+          {
+            "name": "revision",
+            "type": "shortstring"
+          }
+        ],
+        "TemplarKeyDerivation": [
+          {
+            "name": "purpose",
+            "type": "shortstring"
+          },
+          {
+            "name": "chain",
+            "type": "shortstring"
+          },
+          {
+            "name": "account",
+            "type": "ContractAddress"
+          }
+        ]
+      },
+      "primaryType": "TemplarKeyDerivation",
+      "domain": {
+        "name": "Templar",
+        "version": "1",
+        "chainId": "SN_SEPOLIA",
+        "revision": "1"
+      },
+      "message": {
+        "purpose": "TEMPLAR_SECRET_V1",
+        "chain": "SN_SEPOLIA",
+        "account": "0x0734b2c2"
+      }
+    },
+    "messageHash": "0x154aae51ddf2e6c317b04c1ea92e565b969534c2f252d39588072d465f16864"
+  }
+}

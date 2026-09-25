@@ -1,0 +1,3 @@
+# Build outputs go to target/wallet-sig-spike/snip12 via SCARB_TARGET_DIR; these are fallbacks.
+target/
+.snfoundry_cache/
