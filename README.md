@@ -209,7 +209,8 @@ The [comparison page](docs/guide/src/pages/comparison.mdx) in the guide goes int
 ## Security and limitations
 
 - **No audit.** The relations, contracts and wallet encodings have had internal reviews, not an
-  external audit.
+  external audit. The latest is an adversarial
+  [battle test of the hidden-asset spend path](docs/reviews/hidden-asset-path-battle-test.md).
 - **Hiding of the compact client proof** is still being qualified.
 - **Wallet keys** in the demos use fixture derivations, not a production key and
   backup standard.
