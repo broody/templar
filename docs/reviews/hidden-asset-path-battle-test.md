@@ -781,24 +781,83 @@ Each line gives the blocking check and whether the refutation was executed.
 
 ## Cost of this review
 
-One workflow run (wf_79e3771d-227), 102 subagents plus the orchestrating session, 6.6 hours wall clock,
-3,059 tool calls. Every call ran on Claude Opus 5.5 at standard speed. The costs below are API-equivalent at
-first-party list prices per million tokens: input $4, output $20 (thinking is billed as output), cache read
-$0.20, cache write $5 (5-minute TTL) or $8 (1-hour TTL). They are not necessarily what was billed: a
-subscription session is priced differently. Computed from the per-call usage records in the transcripts
-(`swarm/token_usage.py`).
+Recorded for planning the next run. One workflow run (`wf_79e3771d-227`): 102 subagents plus the
+orchestrating session, 2,973 model calls, 3,059 subagent tool calls, 6.6 hours wall clock
+(2026-09-24 23:57Z to 2026-09-25 06:30Z). Every call ran on Claude Opus 5.5 at standard speed. Costs are
+API-equivalent at first-party list prices per million tokens: input $4, output $20 (thinking is billed as
+output), cache read $0.20, cache write $5 (5-minute TTL) or $8 (1-hour TTL). They are not necessarily what was
+billed: a subscription session is priced differently. Computed from the per-call usage records in the agent
+transcripts with `swarm/token_usage.py`; the workflow script is `swarm/workflow.js`.
+
+**Total: $297.68**, of which output $86.29, cache writes $116.49 ($110.39 at the 5-minute TTL the subagents
+used, $6.10 at the orchestrator's 1-hour TTL), cache reads $94.88 and uncached input $0.02.
+
+### By stage
 
 | Stage | Model calls | Output (incl. thinking) | Uncached input + cache writes | Cache reads | API cost |
 |---|---:|---:|---:|---:|---:|
-| Attack | 1,196 | 1.84M | 6.55M | 248.94M | $119.34 |
-| Verify | 1,152 | 0.99M | 4.72M | 84.24M | $60.17 |
-| Gaps | 553 | 1.32M | 10.45M | 127.12M | $104.06 |
+| Attack (16 first-round finders) | 1,196 | 1.84M | 6.55M | 248.94M | $119.34 |
+| Verify (all rounds) | 1,152 | 0.99M | 4.72M | 84.24M | $60.17 |
+| Gaps (2 critics, 7 gap finders) | 553 | 1.32M | 10.45M | 127.12M | $104.06 |
 | Synthesize | 10 | 0.08M | 0.36M | 2.82M | $3.96 |
 | Orchestrator (main session) | 62 | 0.09M | 0.76M | 11.30M | $10.15 |
-| **Total** (102 subagents) | 2,973 | 4.31M | 22.85M | 474.42M | $297.68 |
+| **Total** (102 subagents) | 2,973 | 4.31M | 22.85M | 474.42M | **$297.68** |
 
-Cost by token type: input $0.02, output $86.29, write_5m $110.39, write_1h $6.10, read $94.88
-Fast-mode calls: 0; calls on other models: 0
+### Timeline
+
+| Phase | Wall clock | Gated by |
+|---|---:|---|
+| Round 1: 16 lanes and their verifiers | 61 min | L11 (58 min) |
+| Critic, round 2 | 17 min | |
+| Gap round 2: G21-G25 and verifiers | 193 min | G21 (189 min); the other four finished within 42 min |
+| Critic, round 3 | 18 min | |
+| Gap round 3: G31, G32 and verifiers | 92 min | G32 (91 min) |
+| Synthesis | 12 min | |
+
+### By lane (finder plus its verifiers)
+
+| Lane | Finder time | Finder cost | Verifier votes | Verifier cost | Lane total |
+|---|---:|---:|---:|---:|---:|
+| L01 circuit value | 22 min | $5.65 | 1 | $0.80 | $6.45 |
+| L02 circuit membership | 22 min | $5.95 | 1 | $0.60 | $6.55 |
+| L03 circuit statement | 22 min | $5.59 | 1 | $0.39 | $5.98 |
+| L04 Poseidon2 | 24 min | $7.09 | 2 | $0.94 | $8.03 |
+| L05 STARK (Rust) | 24 min | $6.47 | 2 | $0.89 | $7.37 |
+| L06 STARK (Cairo) | 28 min | $7.84 | 1 | $0.63 | $8.47 |
+| L07 bridge binding | 32 min | $8.85 | 6 | $6.52 | $15.37 |
+| L08 pool core | 21 min | $4.09 | 6 | $5.66 | $9.74 |
+| L09 pool assets | 23 min | $4.82 | 2 | $1.01 | $5.83 |
+| L10 invoke and policy | 24 min | $7.06 | 4 | $5.21 | $12.26 |
+| L11 ZK theory | 58 min | $12.67 | 5 | $2.78 | $15.45 |
+| L12 ZK empirical | 45 min | $12.17 | 1 | $0.39 | $12.56 |
+| L13 privacy metadata | 26 min | $7.31 | 7 | $3.29 | $10.60 |
+| L14 spec conformance | 32 min | $12.66 | 12 | $12.27 | $24.93 |
+| L15 cross-layer red team | 21 min | $5.01 | 6 | $5.32 | $10.33 |
+| L16 note encryption | 21 min | $6.11 | 6 | $3.33 | $9.43 |
+| G21 ZK O4 nonlinear, production | 189 min | $40.23 | 4 | $3.03 | $43.26 |
+| G22 Poseidon2 compression algebra | 42 min | $7.24 | 0 | $0.00 | $7.24 |
+| G23 P1 shared-pool drain | 27 min | $8.44 | 1 | $0.65 | $9.09 |
+| G24 Cairo gate forgery | 22 min | $6.65 | 2 | $1.57 | $8.21 |
+| G25 forced-revert linkage | 28 min | $7.13 | 5 | $4.37 | $11.49 |
+| G31 FRI/DEEP OODS lie (stopped) | 1 min | $0.74 | 0 | $0.00 | $0.74 |
+| G32 ZK additive bound | 91 min | $25.37 | 1 | $0.52 | $25.89 |
+| Critics (rounds 2 and 3) | 35 min | $8.27 | - | - | $8.27 |
+| Synthesis | 12 min | $3.96 | - | - | $3.96 |
+| Orchestrator (main session) | - | - | - | - | $10.15 |
+
+### Settings used, and what drove cost and time
+
+- **Settings.** 16 first-round lanes; finders, critics and synthesis at effort `xhigh`. Verification by
+  claimed severity: 3 votes for critical/high (`xhigh`), 2 for medium and 1 for low (`high`); info not
+  verified. The critic could add up to 6 lanes per round, for at most 2 gap rounds. Concurrency cap 16.
+- **A first-round lane cost about $6-13 and took 20-30 minutes.** Theory and empirical ZK lanes ran longer.
+- **Long computational lanes dominated the gap rounds.** G21 and G32 together cost $69 (24% of all subagent
+  cost) and set 4.7 of the 6.6 hours. The critic's lane prompts had no runtime cap; one would have cut about
+  2.5 hours from round 2.
+- **Duplicate findings were verified separately.** F01 was reported by five lanes and got 15 of the run's 76
+  verifier votes (10 high, 4 medium, 1 low); deduplicating before verification would have needed 3. The five
+  lanes that reported it (L07, L08, L10, L14, L15) account for $35 of the $60 verifier spend.
+- **Cache reads were 95% of tokens but 32% of cost;** output and cache writes were the rest.
 
 Notes on the record:
 - Lane G31 did no attack work. Its report says the session was stopped by a safety intervention while it read
