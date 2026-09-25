@@ -1,7 +1,9 @@
 # Account-bound notes, expiry and M31 pool V3 (R0 V5)
 
-Status: **design, revision 4.** Nothing here is implemented. Decided by the user on 2026-09-25
-([ADR-0026](adr/0026-account-bound-notes.md)).
+Status: **design, revision 4.** Decided by the user on 2026-09-25
+([ADR-0026](adr/0026-account-bound-notes.md)). Implemented so far: P2, the relation
+(`client-port/results/stwo-client-r5`), and P3, the bridge and statement account
+(`client-port/results/r5-bridge`). Nothing is deployed.
 
 - Revision 1 was reviewed in `docs/reviews/account-bound-design-{math,protocol}-review.md` (both
   CONDITIONAL GO).
@@ -302,9 +304,13 @@ hash = Poseidon('StarkNet Message', domain_hash, account, struct_hash)
   - `INVOKE` and `COMPUTE` intents show a bare felt;
   - an NFT's `token_out` is an asset hash displayed as an address.
 - Before the circuit freezes, two things are required:
-  - cross-KATs between the SDK core, the Cairo module and starknet.js;
-  - real-wallet signatures of this exact struct and domain. The P0b wallets signed a predecessor
-    with `version: '1'` and a `valid_until` field.
+  - cross-KATs between the SDK core, the Cairo module and starknet.js. The Cairo module and
+    starknet.js agree (P3, `cairo-r5/kat`); the SDK core joins in P4;
+  - real-wallet signatures of this exact struct and domain. Done in P3: Ready X 5.33.11 and
+    Braavos 4.19.6 signed the V5 message for real proofs naming their accounts, and the statement
+    account accepted both from the live account classes on a Sepolia fork
+    (`client-port/results/r5-bridge`). The P0b wallets had signed a predecessor with
+    `version: '1'` and a `valid_until` field.
 
 ### 5.4 Statement account
 
@@ -318,6 +324,12 @@ V5's calldata; AB-M11).
 3. If `statement.account = 0` (ordinary): require `salt = 0` and `signature` empty.
 4. Otherwise (bound):
    - require `salt ≠ 0` and `statement.account ≠` this contract's address;
+   - require a contract is deployed at `statement.account` (`get_class_hash_at ≠ 0`). The check is
+     diagnostic: calling an undeployed address aborts the whole execution instead of returning an
+     `Err`, and the check turns that into an explicit rejection (P3, AB-IP1). Other failures inside
+     the callee can still abort rather than err (the callee calling an undeployed address, running
+     out of steps, recursion depth, Cairo 0 VM errors). Either way no message is emitted and no
+     proof exists;
    - compute `hash` (§5.3);
    - call `call_contract_syscall(statement.account, selector!("is_valid_signature"),
      [hash, signature.len(), signature…])`; an `Err` reverts;
@@ -330,12 +342,13 @@ The account call is in `__execute__` only and comes before the message. Around i
 - The caller-0 guard blocks re-entry.
 - The statement account exposes no `is_valid_signature`.
 - Any padding contract (§12) that answers `is_valid_signature` must never be a bound account:
-  the statement account rejects it and the SDK never binds to it.
+  the SDK never binds to it, and when one is added (P5) the statement account must reject its
+  address as it rejects its own (AB-IP4).
 
 ### 5.5 Class size
 
-R4's account is 61,395 CASM felts (limit 81,920). The V5 additions are expected to add about
-1–2k; the build record shows the result.
+R4's account is 61,395 CASM felts (limit 81,920). V5's is 63,483 (P3 build record,
+`client-port/results/r5-bridge/bridge-build-record.json`).
 
 ## 6. Product-1 wallet: seed and keys
 
@@ -675,7 +688,10 @@ open-note invokes, shadow classes and views are V2's, with these fixes:
   7. the bridge. The server also checks that the calldata matches the statement: its delivery
      digests, the intent hash, and the binding recomputed from the `Spend`;
   8. in bound mode, the account's `is_valid_signature` at the latest block through
-     `starknet_call`. A failure asks the SDK to re-authorize, not to retry.
+     `starknet_call`. A failure asks the SDK to re-authorize, not to retry. The check is
+     advisory (AB-IP2): it runs with caller 0, while inside the virtual OS the caller is the
+     statement account, so a hostile class can pass it and then fail. The virtual-OS run is
+     authoritative.
 
   A job without valid payment is refused before any proving or account call. A self-hosted
   server can turn off the payment check.
@@ -697,8 +713,9 @@ open-note invokes, shadow classes and views are V2's, with these fixes:
     relayer or OHTTP (§10). So honest clients rarely meet a server-side failure.
   - At job start, the tickets are **spent** only after the job-start checks pass. A job-start
     expiry failure comes from the server's own queue, so it releases them.
-  - After that, a virtual-OS revert or a cap violation is the client's fault and keeps them
-    spent. Otherwise a hostile account class could burn OS time for free.
+  - After that, a virtual-OS revert, an aborted execution (AB-IP1) or a cap violation is the
+    client's fault and keeps them spent. Otherwise a hostile account class could burn OS time for
+    free.
   - A job the server itself fails (a crash, a prover error) earns replacement tickets, signed on
     the job's blinded refund requests.
 - **Job start.**
@@ -708,7 +725,9 @@ open-note invokes, shadow classes and views are V2's, with these fixes:
   - Caps on virtual-OS steps, builtin counts and Blake compressions. They are set from P5
     measurements, so that an accepted job stays in the measured leaf bucket and within
     `job_memory`.
-  - A lower L2 gas bound on the virtual transaction.
+  - A lower L2 gas bound on the virtual transaction, set from the measured cost of `__execute__`
+    rather than today's 10^9 (AB-IP2). P3's snforge runs measured about 364–372M L2 gas per bound
+    `__execute__`; P5 measures it in the virtual OS.
 - **Deadline.** The result reports `send_deadline = min(statement.valid_until, base +
   max_proof_age)`, a name distinct from the statement field. Deduplication is released at it. The
   relayer submits the result (§7.4), so the service chooses when to settle, up to
@@ -903,7 +922,11 @@ Losing the account's keys entirely is the same as for the wallet's public funds.
   - submission of every proved spend;
   - a transaction hash or a refusal for every job, and the SDK's fallback timing (§7.4).
 - **P5 local end to end:**
-  - both modes on live Sepolia state with real Ready and Braavos accounts;
+  - both modes on live Sepolia state with real Ready and Braavos accounts, with the V5 statement
+    account in the pinned virtual OS (P3's real-wallet evidence ran in snforge with a cheated
+    caller and chain, AB-IP2);
+  - real-wallet signatures of the V5 struct for an in-pool transfer and an invoke (P3 signed
+    withdrawals, AB-IP6);
   - PROOF2 per mode and vendor;
   - the uniformity gate (§12);
   - the expiry rate against `E`;

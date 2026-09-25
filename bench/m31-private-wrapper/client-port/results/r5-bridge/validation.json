@@ -1,0 +1,850 @@
+{
+ "scope": "standalone Cairo execution of the R0 V5 payment bridge (fork circuit_air); no OS, no large proof",
+ "executable_sha256": "5fcc53a0baae66bc2eca46eaa60ea1afe1ed75777823973267fde10114c641fd",
+ "bindings": {
+  "ordinary-transfer": "0xbc8ee79602fa3b62b3cb37b2180549c2494e18b7b55e74581ec30cfbca3e17",
+  "ordinary-single": "0xfdf0732a6eaa860615cf259242e0edab5bd719d8c46191040b28df6ae32c96",
+  "ordinary-one-out": "0x7fd36e160fbca14ab1f1e4b0999ac524cc7ba2e7a425a3379e9b5a2f3f0cb74",
+  "ordinary-partial": "0x38455a97ca57bee32cb2f92d88f6bcf0f8815f0fda55f0dc191099fb17387d4",
+  "ordinary-full": "0x644b5133c3115c700ddf53bb09da232bffaf448254ab2a2a4a4942915e030e3",
+  "ordinary-invoke": "0x1bc78d562b645e1d5c23f525f2d3253ebed0b389fe75f6820de499f2966011",
+  "ordinary-shadow": "0x1879c7c1e84642403c6ae5c232764fd2ad25640dcd38ccfc9b27070d95ebf57",
+  "ordinary-nft": "0x7feb8e53939abbc202ad96ad619635159c81299ee2b65521354d892404823f2",
+  "bound-transfer": "0x149046db5c60f0e7bea2b8b8da7b5b202625e1fa9c8d4b96969805123778c87",
+  "bound-single": "0x7fa8499f33b1edb048c637d8aed17029222595ed43647ddb73f2f42deb84262",
+  "bound-one-out": "0x1515bf2fcfe87420d3bfa2cba03b7121284e5e6a2a8a391a55b14deec9b5afd",
+  "bound-partial": "0x7bcab9bfaf097f5a3408dc75f18c92203cf43055b213c89af642543f5ce2e51",
+  "bound-full": "0x277a9e3b70e4881247c927322516b0c36676f260323258b93d760fb23ee76aa",
+  "bound-invoke": "0x3d09769d03392793d24fd3ef5d1eb0709dbec0f0298fcda2d161e98cad45f84",
+  "bound-shadow": "0x492fd307735a025c086bc472e992de0e3009d256c9750564879557c0d3a254e",
+  "bound-nft": "0x5d0ffbd4633ea91bd7c69ea9ce0f8550e5517829e1719740b56ba8e79031780"
+ },
+ "cases": [
+  {
+   "name": "ordinary-transfer-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 2036535,
+   "reason": null
+  },
+  {
+   "name": "ordinary-transfer-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "ordinary-single-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 2060230,
+   "reason": null
+  },
+  {
+   "name": "ordinary-single-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "ordinary-one-out-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 1987523,
+   "reason": null
+  },
+  {
+   "name": "ordinary-one-out-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "ordinary-partial-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 2031055,
+   "reason": null
+  },
+  {
+   "name": "ordinary-partial-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "ordinary-full-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 2019574,
+   "reason": null
+  },
+  {
+   "name": "ordinary-full-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "ordinary-invoke-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 2045691,
+   "reason": null
+  },
+  {
+   "name": "ordinary-invoke-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "ordinary-shadow-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 2022523,
+   "reason": null
+  },
+  {
+   "name": "ordinary-shadow-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "ordinary-nft-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 1973220,
+   "reason": null
+  },
+  {
+   "name": "ordinary-nft-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "bound-transfer-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 2057192,
+   "reason": null
+  },
+  {
+   "name": "bound-transfer-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "bound-single-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 2026741,
+   "reason": null
+  },
+  {
+   "name": "bound-single-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "bound-one-out-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 2003424,
+   "reason": null
+  },
+  {
+   "name": "bound-one-out-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "bound-partial-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 1987971,
+   "reason": null
+  },
+  {
+   "name": "bound-partial-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "bound-full-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 2036597,
+   "reason": null
+  },
+  {
+   "name": "bound-full-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "bound-invoke-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 1997574,
+   "reason": null
+  },
+  {
+   "name": "bound-invoke-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "bound-shadow-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 2015015,
+   "reason": null
+  },
+  {
+   "name": "bound-shadow-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "bound-nft-valid",
+   "passed": true,
+   "expected_accept": true,
+   "steps": 2050838,
+   "reason": null
+  },
+  {
+   "name": "bound-nft-claimed-token-out",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "ordinary-transfer-tag-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "statement tag"
+  },
+  {
+   "name": "ordinary-transfer-token-out-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "exit rule"
+  },
+  {
+   "name": "ordinary-transfer-nullifier-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Interaction Proof Of Work verification failed"
+  },
+  {
+   "name": "ordinary-transfer-commitment-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Interaction Proof Of Work verification failed"
+  },
+  {
+   "name": "ordinary-transfer-account-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Interaction Proof Of Work verification failed"
+  },
+  {
+   "name": "ordinary-transfer-valid-until-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Interaction Proof Of Work verification failed"
+  },
+  {
+   "name": "ordinary-transfer-padding-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "statement padding"
+  },
+  {
+   "name": "ordinary-transfer-absent-claimed-sum",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "absent component claims a nonzero sum"
+  },
+  {
+   "name": "ordinary-transfer-proof-body",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Merkle Verification Error: Root Mismatch"
+  },
+  {
+   "name": "ordinary-transfer-wrong-chain",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "ordinary-transfer-wrong-pool",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "ordinary-transfer-wrong-root",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "root"
+  },
+  {
+   "name": "ordinary-transfer-wrong-nullifier",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "nullifiers"
+  },
+  {
+   "name": "ordinary-transfer-swapped-outputs",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "commitments"
+  },
+  {
+   "name": "ordinary-transfer-wrong-delivery",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "deliveries"
+  },
+  {
+   "name": "ordinary-transfer-wrong-withdrawal-recipient",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "withdrawal"
+  },
+  {
+   "name": "ordinary-transfer-wrong-withdrawal-amount",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "withdrawal"
+  },
+  {
+   "name": "ordinary-transfer-wrong-intent",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "intent or identity"
+  },
+  {
+   "name": "ordinary-transfer-wrong-identity",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "intent or identity"
+  },
+  {
+   "name": "ordinary-transfer-wrong-account",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "account or valid_until"
+  },
+  {
+   "name": "ordinary-transfer-account-added",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "account or valid_until"
+  },
+  {
+   "name": "ordinary-transfer-wrong-valid-until",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "account or valid_until"
+  },
+  {
+   "name": "ordinary-transfer-trailing",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "trailing proof data"
+  },
+  {
+   "name": "ordinary-transfer-truncated",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "INVALID_PROOF_ENCODING"
+  },
+  {
+   "name": "bound-transfer-tag-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "statement tag"
+  },
+  {
+   "name": "bound-transfer-token-out-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "exit rule"
+  },
+  {
+   "name": "bound-transfer-nullifier-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Interaction Proof Of Work verification failed"
+  },
+  {
+   "name": "bound-transfer-commitment-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Interaction Proof Of Work verification failed"
+  },
+  {
+   "name": "bound-transfer-account-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Interaction Proof Of Work verification failed"
+  },
+  {
+   "name": "bound-transfer-valid-until-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Interaction Proof Of Work verification failed"
+  },
+  {
+   "name": "bound-transfer-padding-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "statement padding"
+  },
+  {
+   "name": "bound-transfer-absent-claimed-sum",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "absent component claims a nonzero sum"
+  },
+  {
+   "name": "bound-transfer-proof-body",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Merkle Verification Error: Root Mismatch"
+  },
+  {
+   "name": "bound-transfer-wrong-chain",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "bound-transfer-wrong-pool",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "bound-transfer-wrong-root",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "root"
+  },
+  {
+   "name": "bound-transfer-wrong-nullifier",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "nullifiers"
+  },
+  {
+   "name": "bound-transfer-swapped-outputs",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "commitments"
+  },
+  {
+   "name": "bound-transfer-wrong-delivery",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "deliveries"
+  },
+  {
+   "name": "bound-transfer-wrong-withdrawal-recipient",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "withdrawal"
+  },
+  {
+   "name": "bound-transfer-wrong-withdrawal-amount",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "withdrawal"
+  },
+  {
+   "name": "bound-transfer-wrong-intent",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "intent or identity"
+  },
+  {
+   "name": "bound-transfer-wrong-identity",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "intent or identity"
+  },
+  {
+   "name": "bound-transfer-wrong-account",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "account or valid_until"
+  },
+  {
+   "name": "bound-transfer-account-dropped",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "account or valid_until"
+  },
+  {
+   "name": "bound-transfer-wrong-valid-until",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "account or valid_until"
+  },
+  {
+   "name": "bound-transfer-trailing",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "trailing proof data"
+  },
+  {
+   "name": "bound-transfer-truncated",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "INVALID_PROOF_ENCODING"
+  },
+  {
+   "name": "bound-partial-tag-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "statement tag"
+  },
+  {
+   "name": "bound-partial-token-out-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Interaction Proof Of Work verification failed"
+  },
+  {
+   "name": "bound-partial-nullifier-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Interaction Proof Of Work verification failed"
+  },
+  {
+   "name": "bound-partial-commitment-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Interaction Proof Of Work verification failed"
+  },
+  {
+   "name": "bound-partial-account-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Interaction Proof Of Work verification failed"
+  },
+  {
+   "name": "bound-partial-valid-until-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Interaction Proof Of Work verification failed"
+  },
+  {
+   "name": "bound-partial-padding-output",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "statement padding"
+  },
+  {
+   "name": "bound-partial-absent-claimed-sum",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "absent component claims a nonzero sum"
+  },
+  {
+   "name": "bound-partial-proof-body",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "Merkle Verification Error: Root Mismatch"
+  },
+  {
+   "name": "bound-partial-wrong-chain",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "bound-partial-wrong-pool",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "context"
+  },
+  {
+   "name": "bound-partial-wrong-root",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "root"
+  },
+  {
+   "name": "bound-partial-wrong-nullifier",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "nullifiers"
+  },
+  {
+   "name": "bound-partial-swapped-outputs",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "commitments"
+  },
+  {
+   "name": "bound-partial-wrong-delivery",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "deliveries"
+  },
+  {
+   "name": "bound-partial-wrong-withdrawal-recipient",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "withdrawal"
+  },
+  {
+   "name": "bound-partial-wrong-withdrawal-amount",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "withdrawal"
+  },
+  {
+   "name": "bound-partial-wrong-intent",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "intent or identity"
+  },
+  {
+   "name": "bound-partial-wrong-identity",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "intent or identity"
+  },
+  {
+   "name": "bound-partial-wrong-account",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "account or valid_until"
+  },
+  {
+   "name": "bound-partial-account-dropped",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "account or valid_until"
+  },
+  {
+   "name": "bound-partial-wrong-valid-until",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "account or valid_until"
+  },
+  {
+   "name": "bound-partial-trailing",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "trailing proof data"
+  },
+  {
+   "name": "bound-partial-truncated",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "INVALID_PROOF_ENCODING"
+  },
+  {
+   "name": "forge-voluntary-reveal",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "exit rule"
+  },
+  {
+   "name": "forge-zero-delivery",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "delivery"
+  },
+  {
+   "name": "forge-recipient-only",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "withdrawal"
+  },
+  {
+   "name": "forge-identity-no-intent",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "identity intent"
+  },
+  {
+   "name": "forge-duplicate-nullifier",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "duplicate nullifier"
+  },
+  {
+   "name": "forge-asset-range",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "address range"
+  },
+  {
+   "name": "forge-recipient-range",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "address range"
+  },
+  {
+   "name": "forge-zero-chain",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "zero context"
+  },
+  {
+   "name": "forge-account-range",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "account range"
+  },
+  {
+   "name": "forge-account-noncanonical",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "non-canonical felt"
+  },
+  {
+   "name": "forge-valid-until-zero",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "valid_until"
+  },
+  {
+   "name": "forge-account-limb-range",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "limb range"
+  },
+  {
+   "name": "forge-valid-until-limb-range",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "limb range"
+  },
+  {
+   "name": "forge-valid-until-hi-limb-range",
+   "passed": true,
+   "expected_accept": false,
+   "steps": null,
+   "reason": "limb range"
+  }
+ ]
+}

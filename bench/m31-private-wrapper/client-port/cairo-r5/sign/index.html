@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Templar V5 Signing</title>
+<style>
+  :root { --bg:#fbfaf7; --fg:#1d1c1a; --muted:#6b6862; --line:#e2dfd8; --ok:#1d7a3e; --bad:#b3261e; --card:#fff; --accent:#2f4f8f; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#161614; --fg:#ecebe7; --muted:#9d9a93; --line:#34322e; --ok:#5cc47f; --bad:#f07a70; --card:#1f1e1b; --accent:#8fb0ee; } }
+  body { background:var(--bg); color:var(--fg); font:15px/1.5 system-ui, sans-serif; margin:0; padding:24px 16px 64px; }
+  main { max-width:860px; margin:0 auto; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .note { color:var(--muted); margin:0 0 20px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; margin:0 0 16px; }
+  button { font:inherit; padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--fg); cursor:pointer; margin:0 8px 8px 0; }
+  button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+  button:disabled { opacity:.45; cursor:default; }
+  code, .mono { font-family:ui-monospace, monospace; font-size:12.5px; word-break:break-all; }
+  table { border-collapse:collapse; width:100%; }
+  td, th { text-align:left; vertical-align:top; padding:6px 8px; border-top:1px solid var(--line); }
+  th { color:var(--muted); font-weight:500; width:30%; }
+  .ok { color:var(--ok); font-weight:600; } .bad { color:var(--bad); font-weight:600; }
+  #log { color:var(--muted); white-space:pre-wrap; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Templar V5 spend signing</h1>
+  <p class="note">This page asks your wallet to sign one Templar V5 spend message (1 prompt): the exact message
+  the statement account checks, for a test proof that names your account. It sends no transaction and asks for no
+  other permission. The signature is checked with a read-only call and saved only on this machine. Use your
+  wallet on <b>Sepolia</b>.</p>
+
+  <div class="card">
+    <div id="wallets">Looking for wallets…</div>
+    <button id="rescan">Rescan</button>
+  </div>
+
+  <div class="card" id="acct" hidden>
+    <table>
+      <tr><th>Wallet</th><td id="w-name"></td></tr>
+      <tr><th>Account</th><td class="mono" id="w-acct"></td></tr>
+      <tr><th>Chain</th><td id="w-chain"></td></tr>
+      <tr><th>Class hash</th><td class="mono" id="w-class"></td></tr>
+    </table>
+    <p><button class="primary" id="sign">Sign the spend message</button></p>
+  </div>
+
+  <div class="card" id="res" hidden>
+    <table id="rows"></table>
+    <p id="summary"></p>
+    <button id="save" disabled>Save results</button>
+    <button id="copy" disabled>Copy JSON</button>
+    <span id="saved" class="mono"></span>
+  </div>
+
+  <div id="log"></div>
+</main>
+
+<script>
+let SN = null;
+// starknet.js 10.8.0, evaluated in a function scope so it cannot clobber a wallet's window.starknet.
+const snReady = fetch('/starknet.js').then((r) => r.text()).then((t) => { SN = new Function(t + '\nreturn starknet;')(); });
+const $ = (id) => document.getElementById(id);
+const log = (m) => { $('log').textContent += m + '\n'; };
+const SEPOLIA = 'SN_SEPOLIA';
+const VALID = '0x56414c4944';           // 'VALID'
+let requests = {};
+const requestsReady = fetch('/requests.json').then((r) => r.json()).then((j) => { requests = j; });
+let wallet = null, account = null, chain = null, classHash = null, result = null;
+
+async function rpc(method, params) {
+  const r = await fetch('/rpc', { method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) });
+  const j = await r.json();
+  if (j.error) throw new Error(JSON.stringify(j.error));
+  return j.result;
+}
+
+// Wallets announced through the wallet-standard events (newer Ready X builds use this path).
+const standardWallets = [];
+function registerStandard(...ws) {
+  for (const w of ws) {
+    const api = w.features && w.features['starknet:walletApi'];
+    if (api && api.request && !standardWallets.some((x) => x.std === w)) {
+      standardWallets.push({ std: w, id: w.name, name: w.name, version: w.version, request: (a) => api.request(a) });
+    }
+  }
+}
+window.addEventListener('wallet-standard:register-wallet', (e) => { try { e.detail({ register: registerStandard }); } catch {} });
+window.dispatchEvent(new CustomEvent('wallet-standard:app-ready', { detail: { register: registerStandard } }));
+
+function findWallets() {
+  const seen = new Set(), out = [];
+  // getOwnPropertyNames also finds wallets injected as non-enumerable properties.
+  const keys = new Set([...Object.getOwnPropertyNames(window).filter((k) => k.startsWith('starknet')),
+    'starknet', 'starknet_argentX', 'starknet_ready', 'starknet_braavos']);
+  for (const k of keys) {
+    const w = window[k];
+    if (w && typeof w === 'object' && (w.request || w.enable) && !seen.has(w)) { seen.add(w); out.push(w); }
+  }
+  for (const w of standardWallets) {
+    const name = (w.name || '').toLowerCase();
+    if (!out.some((x) => (x.name || '').toLowerCase() === name)) out.push(w);
+  }
+  log('wallet keys: ' + [...keys].filter((k) => window[k]).join(', ') + (standardWallets.length ? ' | wallet-standard: ' + standardWallets.map((w) => w.name).join(', ') : ''));
+  return out;
+}
+
+function renderWallets() {
+  const ws = findWallets(), box = $('wallets');
+  box.textContent = '';
+  if (!ws.length) { box.textContent = 'No Starknet wallet found. Unlock Ready or Braavos, then press Rescan.'; return; }
+  for (const w of ws) {
+    const b = document.createElement('button');
+    b.className = 'primary';
+    b.textContent = `Connect ${w.name || w.id}`;
+    b.onclick = () => connect(w).catch((e) => log('connect failed: ' + (e.message || e)));
+    box.appendChild(b);
+  }
+}
+
+function chainName(c) {
+  if (!c) return '';
+  try { return c.startsWith('0x') ? SN.shortString.decodeShortString(c) : c; } catch { return c; }
+}
+
+async function connect(w) {
+  wallet = w;
+  let accounts;
+  if (w.request) {
+    accounts = await w.request({ type: 'wallet_requestAccounts' });
+    chain = await w.request({ type: 'wallet_requestChainId' });
+  } else {
+    accounts = await w.enable();
+    chain = w.chainId || (w.provider && (await w.provider.getChainId()));
+  }
+  account = SN.num.toHex(accounts[0]);
+  chain = chainName(chain);
+  try { classHash = await rpc('starknet_getClassHashAt', ['latest', account]); } catch (e) { classHash = 'not deployed: ' + e.message; }
+  $('w-name').textContent = `${w.name || ''} (${w.id || ''}${w.version ? ', ' + w.version : ''})`;
+  $('w-acct').textContent = account;
+  $('w-chain').innerHTML = chain === SEPOLIA ? `<span class="ok">${SEPOLIA}</span>` : '';
+  if (chain !== SEPOLIA) $('w-chain').appendChild(Object.assign(document.createElement('span'),
+    { className: 'bad', textContent: `${chain} — switch the wallet to Sepolia and reconnect` }));
+  $('w-class').textContent = classHash;
+  $('sign').disabled = chain !== SEPOLIA;
+  $('acct').hidden = false;
+  log(`connected ${w.id} ${account} on ${chain}`);
+}
+
+async function sign(td) {
+  const sig = wallet.request
+    ? await wallet.request({ type: 'wallet_signTypedData', params: td })
+    : await wallet.account.signMessage(td);
+  const arr = Array.isArray(sig) ? sig : [sig.r, sig.s];
+  return arr.map((x) => SN.num.toHex(x));
+}
+
+async function isValid(hash, sig) {
+  try {
+    const r = await rpc('starknet_call', [{ contract_address: account,
+      entry_point_selector: SN.hash.getSelectorFromName('is_valid_signature'),
+      calldata: [hash, SN.num.toHex(sig.length), ...sig] }, 'latest']);
+    return { result: r, valid: r.length === 1 && BigInt(r[0]) === BigInt(VALID) };
+  } catch (e) { return { error: String(e.message || e), valid: false }; }
+}
+
+function row(label, html) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<th></th><td></td>`;
+  tr.children[0].textContent = label;
+  if (html instanceof Node) tr.children[1].appendChild(html); else tr.children[1].textContent = html;
+  $('rows').appendChild(tr);
+}
+const badge = (ok, yes, no) => Object.assign(document.createElement('span'), { className: ok ? 'ok' : 'bad', textContent: ok ? yes : no });
+
+async function run() {
+  $('sign').disabled = true; $('rows').textContent = ''; $('summary').textContent = ''; $('saved').textContent = '';
+  $('res').hidden = false;
+  const req = requests[SN.num.toHex(account)];
+  if (!req) { $('summary').replaceChildren(badge(false, '', 'No spend message was prepared for this account.')); return; }
+  const hash = SN.typedData.getMessageHash(req.typedData, account);
+  row('message hash (page)', hash);
+  row('message hash (prepared)', req.messageHash);
+  const same = BigInt(hash) === BigInt(req.messageHash);
+  row('hashes agree', badge(same, 'yes', 'NO'));
+  log('asking wallet to sign the spend message…');
+  const sig = await sign(req.typedData);
+  const v = await isValid(hash, sig);
+  row('signature', sig.join(', '));
+  row('is_valid_signature (Sepolia, read-only)', badge(v.valid, 'VALID', v.error || JSON.stringify(v.result)));
+  result = { page: 'templar-r5-sign-v1', at: new Date().toISOString(),
+    wallet: { id: wallet.id, name: wallet.name, version: wallet.version }, account, chainId: chain, classHash,
+    request: req, messageHash: hash, signature: sig, isValidSignature: v };
+  $('summary').replaceChildren(badge(same && v.valid, 'The wallet signed the V5 spend message and the account accepts it.', 'The signature did not verify — see above.'));
+  $('save').disabled = false; $('copy').disabled = false; $('sign').disabled = false;
+  await save();
+}
+
+async function save() {
+  const r = await fetch('/save', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(result) });
+  const j = await r.json();
+  $('saved').textContent = j.saved ? `saved to ${j.saved}` : 'save failed';
+}
+
+$('sign').onclick = () => run().catch((e) => { log('signing stopped: ' + (e.message || e)); $('sign').disabled = false; });
+$('save').onclick = () => save().catch((e) => log('save failed: ' + e));
+$('copy').onclick = () => navigator.clipboard.writeText(JSON.stringify(result, null, 2)).then(() => log('copied'));
+$('rescan').onclick = renderWallets;
+window.addEventListener('load', () => Promise.all([snReady, requestsReady]).then(() => { setTimeout(renderWallets, 400); setTimeout(renderWallets, 1500); }).catch((e) => log('page failed to load: ' + e)));
+</script>
+</body>
+</html>

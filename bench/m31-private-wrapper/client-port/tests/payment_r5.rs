@@ -565,3 +565,22 @@ fn same_leaf_twice_publishes_equal_nullifiers() {
     assert!(valid, "the circuit admits it; the bridge and pool reject it");
     assert_eq!(limbs[38..47], limbs[47..56]);
 }
+
+/// The pinned circuit hashes are the code's (F38): the R5 manifest the bridge build pins, and the
+/// deployed R4 bridge's build record, are recomputed from the current relations. A change to any
+/// shared gadget that moves a hash fails here, before a bridge is rebuilt.
+#[test]
+fn pinned_circuit_hashes_match_the_code() {
+    use templar_client_verifier_circuit::prove;
+    let recorded = |rel: &str| -> Vec<u32> {
+        let path = format!("{}/{rel}", env!("CARGO_MANIFEST_DIR"));
+        let v: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+        v["circuit_hash_u32_le"].as_array().unwrap().iter().map(|w| w.as_u64().unwrap() as u32).collect()
+    };
+    let (p5, w5) = fresh_shape(prove::TREE, Shape::Transfer, Mode::Bound, &mut StdRng::seed_from_u64(1));
+    let h5 = prove::words(prove::prove(&prove::R5(&p5, &w5), [7; 32], None).unwrap().circuit_hash);
+    assert_eq!(h5.to_vec(), recorded("results/stwo-client-r5/trusted-config.json"), "R5");
+    let (p4, w4) = payment4::fresh_shape(prove::TREE, payment4::Shape::Transfer, &mut StdRng::seed_from_u64(1));
+    let h4 = prove::words(prove::prove(&prove::R4(&p4, &w4), [7; 32], None).unwrap().circuit_hash);
+    assert_eq!(h4.to_vec(), recorded("results/r4-bridge/bridge-build-record.json"), "R4");
+}

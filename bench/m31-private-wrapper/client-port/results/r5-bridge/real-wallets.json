@@ -1,0 +1,30 @@
+[
+ {
+  "wallet": {
+   "id": "argentX",
+   "name": "Ready X",
+   "version": "5.33.11"
+  },
+  "account_class": "0x73414441639dcd11d1846f287650a00c60c416b9d3ba45d31c651672125b2c2",
+  "account": "0x54f2b25070\u2026",
+  "chain": "SN_SEPOLIA",
+  "signature_felts": 2,
+  "hash_page_equals_prepared": true,
+  "is_valid_signature_sepolia": true,
+  "at": "2026-09-25T22:48:35.033Z"
+ },
+ {
+  "wallet": {
+   "id": "braavos",
+   "name": "Braavos",
+   "version": "4.19.6"
+  },
+  "account_class": "0x3957f9f5a1cbfe918cedc2015c85200ca51a5f7506ecb6de98a5207b759bf8a",
+  "account": "0x665f820f6f\u2026",
+  "chain": "SN_SEPOLIA",
+  "signature_felts": 3,
+  "hash_page_equals_prepared": true,
+  "is_valid_signature_sepolia": true,
+  "at": "2026-09-25T22:48:49.868Z"
+ }
+]

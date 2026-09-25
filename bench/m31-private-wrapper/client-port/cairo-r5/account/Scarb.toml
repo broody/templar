@@ -1,0 +1,15 @@
+[package]
+name = "templar_membership_account"
+version = "0.1.0"
+edition = "2024_07"
+
+# The lib target lets the snforge package (account_tests) build this contract as an external one.
+[lib]
+
+[[target.starknet-contract]]
+sierra = true
+casm = true
+
+[dependencies]
+templar_membership_bridge = { path = "../bridge" }
+starknet = "2.18.0"

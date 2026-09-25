@@ -1,14 +1,15 @@
 //! R0 V5 payment (account-bound notes and a public expiry; `docs/account-bound-note-spec.md` §4)
 //! as a blinded arithmetic-only stwo-circuits client proof. The relation is `src/payment5.rs`;
 //! the 35 outputs carry the 138-limb public statement and two zero limbs.
-//! `prove_payment_r5 OUT [MAX_FRI_COLUMNS] [--compress-nodes] [--bound]
+//! `prove_payment_r5 OUT [MAX_FRI_COLUMNS] [--compress-nodes] [--bound] [--account HEX]
 //! [--shape transfer|single|one-out|partial|full|invoke|shadow|nft]
-//! [--forge voluntary-reveal|zero-delivery|recipient-only|identity-no-intent|duplicate-nullifier|asset-range|recipient-range|zero-chain|account-range|valid-until-zero|account-limb-range|valid-until-limb-range]`.
-//! `asset-range` and `recipient-range` need an exiting shape (e.g. `--shape partial`); `account-range`
-//! and `account-limb-range` need `--bound`. `--forge` proves a statement the circuit admits and
+//! [--forge voluntary-reveal|zero-delivery|recipient-only|identity-no-intent|duplicate-nullifier|asset-range|recipient-range|zero-chain|account-range|account-noncanonical|valid-until-zero|account-limb-range|valid-until-limb-range|valid-until-hi-limb-range]`.
+//! `asset-range` and `recipient-range` need an exiting shape (e.g. `--shape partial`); `account-range`,
+//! `account-noncanonical` and `account-limb-range` need `--bound`. `--forge` proves a statement the circuit admits and
 //! the bridge must reject (spec §5.1), for the bridge's real-proof negatives (F11);
-//! `voluntary-reveal` and the two `*-limb-range` forgeries need the `tamper` feature.
+//! `voluntary-reveal` and the three `*-limb-range` forgeries need the `tamper` feature.
 //! `statement-limbs.json` holds the exact published limbs (a limb-range forgery has no hex form).
+//! `--account HEX` binds a bound spend to a chosen account (test fixtures deploy mocks there).
 use std::{fs, path::Path, time::Instant};
 #[path = "support/mod.rs"]
 mod support;
@@ -67,12 +68,25 @@ fn main() {
     let forge = option(&mut a, "--forge");
     let tree = if flag(&mut a, "--compress-nodes") { Tree::Compress } else { Tree::Sponge };
     let mode = if flag(&mut a, "--bound") { Mode::Bound } else { Mode::Ordinary };
+    let fixed_account = option(&mut a, "--account");
     assert!(a.len() == 2 || a.len() == 3, "prove_payment_r5 OUT [MAX_FRI_COLUMNS] [--compress-nodes] [--bound] [--shape S] [--forge F]");
     let out = Path::new(&a[1]);
     let max_fri_columns: Option<usize> = a.get(2).map(|n| n.parse().unwrap());
     fs::create_dir_all(out).unwrap();
     let mut rng = rand::rngs::OsRng;
     let (mut public, mut private) = payment5::fresh_shape(tree, shape, mode, &mut rng);
+    if let Some(account) = fixed_account {
+        assert_eq!(mode, Mode::Bound, "--account needs --bound");
+        private.account = account;
+        let words = payment::felt_limbs(&private.account);
+        replant(tree, &public, &mut private, &words);
+        public = payment5::statement(
+            tree, &public.chain, &public.pool, public.deliveries.clone(),
+            (public.withdrawal_recipient.clone(), public.withdrawal_amount), &public.intent, public.valid_until, &private,
+        )
+        .expect("valid witness");
+        payment5::bridge_checks(&public).expect("the bridge accepts it");
+    }
     if let Some(kind) = &forge {
         (public, private) = forged(tree, kind, public, private);
     }
@@ -251,6 +265,14 @@ fn forged(tree: Tree, kind: &str, mut public: Public, mut private: Private) -> (
             let a = payment::felt_limbs(&private.account);
             replant(tree, &public, &mut private, &a);
         }
+        "account-noncanonical" => {
+            // The field prime itself: the circuit admits any nine words; the bridge's decoder
+            // rejects a value at or above p.
+            assert!(!private.account.ends_with("x0"), "account-noncanonical needs --bound");
+            private.account = "0x800000000000011000000000000000000000000000000000000000000000001".into();
+            let a = payment::felt_limbs(&private.account);
+            replant(tree, &public, &mut private, &a);
+        }
         "valid-until-zero" => public.valid_until = 0,
         "account-limb-range" => {
             needs_tamper();
@@ -263,6 +285,10 @@ fn forged(tree: Tree, kind: &str, mut public: Public, mut private: Private) -> (
         "valid-until-limb-range" => {
             needs_tamper();
             payment5::TAMPER.with(|t| t.borrow_mut().valid_until = Some([1 << 28, 0]));
+        }
+        "valid-until-hi-limb-range" => {
+            needs_tamper();
+            payment5::TAMPER.with(|t| t.borrow_mut().valid_until = Some([1, 1 << 28]));
         }
         other => panic!("unknown forgery {other}"),
     }

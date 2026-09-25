@@ -1,0 +1,146 @@
+[
+ {
+  "test": "validate_rejects_a_price",
+  "result": "PASS",
+  "l2_gas": 467730,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "validate_rejects_a_tip",
+  "result": "PASS",
+  "l2_gas": 462090,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "validate_accepts_a_free_transaction",
+  "result": "PASS",
+  "l2_gas": 467290,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "nonzero_caller",
+  "result": "PASS",
+  "l2_gas": 97677530,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "bound_tampered_signature",
+  "result": "PASS",
+  "l2_gas": 368267756,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "bound_valid_signature_emits_one_message",
+  "result": "PASS",
+  "l2_gas": 368383655,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "bound_account_returns_two_felts",
+  "result": "PASS",
+  "l2_gas": 366686513,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "bound_account_that_emits_leaves_two_messages",
+  "result": "PASS",
+  "l2_gas": 368690523,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "bound_account_returns_zero",
+  "result": "PASS",
+  "l2_gas": 368596023,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "bound_zero_salt",
+  "result": "PASS",
+  "l2_gas": 368382571,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "bound_account_undeployed",
+  "result": "PASS",
+  "l2_gas": 366357101,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "bound_account_without_the_entry_point",
+  "result": "PASS",
+  "l2_gas": 366704393,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "bound_account_that_reenters_fails",
+  "result": "PASS",
+  "l2_gas": 372066899,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "other_chain",
+  "result": "PASS",
+  "l2_gas": 368153858,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "ordinary_needs_no_authorization",
+  "result": "PASS",
+  "l2_gas": 363690093,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "ordinary_rejects_a_signature",
+  "result": "PASS",
+  "l2_gas": 363562383,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "bound_other_salt_is_not_signed",
+  "result": "PASS",
+  "l2_gas": 368219383,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "ordinary_rejects_a_salt",
+  "result": "PASS",
+  "l2_gas": 363558653,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "bound_account_is_the_statement_account",
+  "result": "PASS",
+  "l2_gas": 366349391,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "bound_account_panics",
+  "result": "PASS",
+  "l2_gas": 368653224,
+  "suite": "mock accounts"
+ },
+ {
+  "test": "real_braavos_rejects_another_salt",
+  "result": "PASS",
+  "l2_gas": 364430918,
+  "suite": "real wallets, Sepolia fork at block 15637581"
+ },
+ {
+  "test": "real_ready_rejects_another_salt",
+  "result": "PASS",
+  "l2_gas": 363647030,
+  "suite": "real wallets, Sepolia fork at block 15637581"
+ },
+ {
+  "test": "real_braavos_accepts_its_signature",
+  "result": "PASS",
+  "l2_gas": 364576878,
+  "suite": "real wallets, Sepolia fork at block 15637581"
+ },
+ {
+  "test": "real_ready_accepts_its_signature",
+  "result": "PASS",
+  "l2_gas": 363704470,
+  "suite": "real wallets, Sepolia fork at block 15637581"
+ }
+]
