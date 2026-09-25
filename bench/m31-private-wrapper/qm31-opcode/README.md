@@ -12,9 +12,10 @@ which enforces the allowlist.
   not fit PROOF1. The limiting components are Blake2s and the calldata Poseidon, which the opcode
   does not touch.
 - **One pool for both architectures:** a Poseidon2-M31 permutation drops from about 12k to about
-  4.5k Cairo steps. That would bring an M31 spend in Cairo to roughly 0.5M steps, the size of the
-  largest statement already proved with PROOF1. So a device-side PROOF1 path on the same M31 pool
-  becomes plausible.
+  4.5k Cairo steps. That would bring an M31 spend in Cairo to roughly 0.5M steps (an estimate, not
+  a measured spend), still about 2.5× the largest statement proved with PROOF1. A device-side
+  PROOF1 path on the same M31 pool comes closer but is not shown: bounded-memory proving has not
+  been run at that size, and PROOF1's per-component limits may bind before step count does.
 
 ## A. The R0 bridge and statement account, with and without the opcode
 
@@ -62,9 +63,18 @@ optimized felt252 code and needs no range checks.
 **An R0 spend in Cairo** hashes about 100 permutations: 64 tree nodes on two paths, four note
 commitments of four permutations each, key, receiver, inner, nullifier and identity hashes. That
 is about 1.2M steps with felt252 arithmetic, too large for PROOF1, but about 0.46M with the opcode.
-Adding decoding and conservation, that is around 0.5M steps, comparable to the largest statement
-already verified with PROOF1 (about 0.5M, the 16/16/8 synthetic shape). This is an estimate from the
-measured permutation, not a measured spend.
+Adding decoding and conservation, that is around 0.5M steps. This is an estimate from the measured
+permutation, not a measured spend.
+
+That is about 2.5× the largest statement proved with PROOF1, before the virtual OS adds its own
+steps. The largest proved is the counted 16/16/8 shape, at 196,470 virtual-OS steps and 15.4 GiB
+peak with the stock prover; the 32/32/16 (290,245 steps) and 64/64/32 (495,408 steps) shapes were
+killed at the 16 GiB memory cap
+([`native-counted-shapes`](../../native-counted-shapes/results/measurements.md)). Bounded-memory
+proving has not been run at that size. Step count may not bind first either: PROOF1 also caps each
+component, notably Blake2s at 8,192 compressions, and the OS hashes the executed bytecode with
+Blake. For the R0 statement account that hashing alone took 7,355 compressions
+(`../server-log20/`).
 
 Pool gas would fall too: every on-chain commitment and tree append is dominated by these
 permutations.

@@ -7,8 +7,9 @@
 //!   n_messages, message_hash]` (the sequencer's `ProofFactsVariant::Snos` layout);
 //! - `message_hash = Poseidon(statement, 0, 5, statement_class, account_tag, chain, pool,
 //!   binding)`: the statement account's L2→L1 message, with `account_tag` fixed at deployment:
-//!   `'TMPZR0_PAYMENT_V3'` (R0, `client-port/cairo-r0/account`) or `'TMPZP1_POLICY_V1'` (P1,
-//!   `client-port/cairo-p1/account`). One adapter serves one relation.
+//!   `'TMPZR0_PAYMENT_V3'` (R0, `client-port/cairo-r0/account`), `'TMPZR0_PAYMENT_V4'` (R4,
+//!   `client-port/cairo-r4/account`) or `'TMPZP1_POLICY_V1'` (P1, `client-port/cairo-p1/account`).
+//!   One adapter serves one relation.
 //!
 //! The sequencer checks the base block's hash; this adapter bounds its age.
 #[starknet::contract]

@@ -135,9 +135,11 @@ pipeline itself and submitting a native Starknet small proof. Templar's earliest
 this with a felt252 note format, but it is too heavy for a phone or browser, and a felt252 pool
 would split the anonymity set from the M31 pool. The likeliest route is a device-side small proof
 over the same M31 pool once Starknet allows native M31 arithmetic (the `qm31` libfuncs) in
-contracts. An experiment estimates an M31 spend at about 0.5M Cairo steps with native M31
-arithmetic ([`qm31-opcode`](bench/m31-private-wrapper/qm31-opcode/README.md)). It is not
-implemented.
+contracts. An experiment estimates, without measuring a spend, that an M31 spend would take about
+0.5M Cairo steps with native M31 arithmetic
+([`qm31-opcode`](bench/m31-private-wrapper/qm31-opcode/README.md)). That is about 2.5× the
+largest statement proved as a small proof so far (196,470 steps), and the small proof's
+per-component limits may bind before step count does. It is not implemented.
 
 ## Repository map
 

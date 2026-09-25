@@ -50,9 +50,9 @@ the virtual OS and wrapped by the server into a Starknet proof. Keep one atomic
 on-chain spend and the accepted push-payment semantics. The client proves every
 private rule; the server only wraps.
 
-The outer proof is PROOF2's large path today. The small log20 path (PROOF1's
-geometry, accepted by both gateways now) is under evaluation for the same
-account; see Consequences.
+The outer proof is PROOF2's large path. The small log20 path (PROOF1's
+geometry, accepted by both gateways now) was evaluated for the same account and
+dropped on 2026-09-23; see Consequences.
 
 **Preferred client route: a blinded stwo-circuits proof on an arithmetic-only
 component set** (`eq` and `qm31_ops`, no lookup tables). The hardest
@@ -262,11 +262,17 @@ in the upload.
   whole-wallet budgets still need measurement.
 - **Server cost.** Wrapping costs ~119 s and ~52 GiB per payment on PROOF2's
   large path, close to its fixed floor (87 s / 42 GiB for StarkWare's sample).
-  The small log20 path is under evaluation. A trace of the live transfer's PIE has
-  only three components one power of two over log20. They are driven by the client
-  proof's shape: its Blake Merkle openings, and the OS hashing its 29,866 calldata
-  felts with Poseidon. PROOF1-geometry proving took ~12 s / 14 GiB in the PROOF1
-  Sepolia run.
+  The small log20 path was evaluated and dropped on 2026-09-23
+  ([server-log20](../../bench/m31-private-wrapper/server-log20/README.md)). A trace
+  of the live transfer's PIE has three components one power of two over log20. The
+  two driven by the OS hashing the calldata with Poseidon would fit with packed
+  calldata. Blake would not: the bootloader and the OS, mostly hashing the
+  account's executed bytecode, already take 9,743 compressions against a budget of
+  8,192, before the client proof's Merkle openings. Fewer FRI queries shrink only
+  the openings. At 2⁴/18, even with every unexecuted felt removed from the
+  account, bytecode hashing would be within 2% of the limit. Batching client
+  proofs on the large path is the better server lever if server cost matters
+  again. PROOF1-geometry proving took ~12 s / 14 GiB in the PROOF1 Sepolia run.
 - **Service dependency.** Wrapping adds a dependency for availability, latency and
   pricing. A service can delay or censor and see network metadata, but cannot learn
   the witness or forge a transition. Specify retry behavior and support independent
