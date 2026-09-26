@@ -39,7 +39,9 @@ fn seeded_plan_and_proof_are_fixed() {
     let (alice, request, tree, notes) = fixture();
     let plan = spend::plan(
         PlanInput {
-            seed: &alice,
+            keys: &alice,
+            version: spend::Version::V4,
+            expiry: None,
             chain: felt::from_short_string("SN_SEPOLIA").unwrap(),
             pool: felt::parse("0x2da0011f775d73885cf86c5145feb4cb9149d007f8546959cce32b51b5f37b9").unwrap(),
             request: serde_json::from_str(&request).unwrap(),
@@ -52,7 +54,7 @@ fn seeded_plan_and_proof_are_fixed() {
         &mut ChaCha20Rng::seed_from_u64(7),
     )
     .unwrap();
-    let proved = spend::prove_plan(&alice, &plan, &mut ChaCha20Rng::seed_from_u64(8)).unwrap();
+    let proved = spend::prove_plan(&alice, &plan, None, &mut ChaCha20Rng::seed_from_u64(8)).unwrap();
     let got = serde_json::json!({
         "plan_sha256": sha(&plan),
         "proof_sha256": sha(&proved.proof),

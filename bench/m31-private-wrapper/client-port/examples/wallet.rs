@@ -23,7 +23,7 @@
 //!   or x2, outputs: [{receiver, rho, amount, delivery}] x2, withdrawal, intent?,
 //!   identity_scope?}`. With one input, input 1 is a dummy drawn fresh from the OS CSPRNG for this
 //!   proof (spec §6); outputs of amount zero are dummies the caller built.
-//! - `wallet keys5 SK_JSON ACCOUNT`: `{receiver, nk}` of an R0 V5 key bound to `ACCOUNT` (`0x0`:
+//! - `wallet keys5 SK_JSON ACCOUNT`: `{receiver, nk, ak}` of an R0 V5 key bound to `ACCOUNT` (`0x0`:
 //!   an ordinary key, as `keys`) (`docs/account-bound-note-spec.md` §3.2).
 //! - `wallet prove5 SPEND_JSON OUT [MAX_FRI_COLUMNS]`: an R0 V5 proof (spec §4): `prove4`'s spend
 //!   plus `account` (`0x0` for an ordinary spend; both inputs are bound to it) and `valid_until`.
@@ -453,8 +453,9 @@ fn main() {
             prove4(spec, Path::new(&a[3]), a.get(4).map(|n| n.parse().unwrap()));
         }
         Some("keys5") => {
-            let (receiver, nk) = payment5::receiver_of(&felt_limbs(&a[3]), &digest(&a[2]));
-            println!("{}", json!({"receiver": receiver, "nk": nk}));
+            let (account, sk) = (felt_limbs(&a[3]), digest(&a[2]));
+            let (receiver, nk) = payment5::receiver_of(&account, &sk);
+            println!("{}", json!({"receiver": receiver, "nk": nk, "ak": payment5::ak_of(&account, &sk)}));
         }
         Some("prove5") => {
             let spec: SpendJson5 = serde_json::from_slice(&fs::read(&a[2]).unwrap()).unwrap();

@@ -108,6 +108,10 @@ export type SpendRequest =
   | { kind: 'consolidate'; asset: Hex };
 
 export interface Plan {
+  /** R0 V5 plans carry these; a V4 plan omits them. */
+  version?: 'v4' | 'v5';
+  valid_until?: number;
+  bound_account?: Hex;
   chain: Hex;
   pool: Hex;
   asset: Hex;
@@ -135,9 +139,26 @@ export interface Statement {
   withdrawal_amount: number | string;
   intent: Hex;
   identity: Digest;
+  /** R0 V5: the bound account (`0x0` for an ordinary spend) and the expiry. */
+  account?: Hex;
+  valid_until?: number | string;
+}
+
+/** The latest block and the pool's `E` and `Q`: a V5 plan's expiry inputs, read with its tree. */
+export interface Expiry {
+  latest_block: number;
+  window: number;
+  quantum: number;
+}
+
+/** A bound account's SNIP-12 spend message: the typed data to sign and the hash it signs. */
+export interface SpendMessage {
+  typed_data: object;
+  hash: Hex;
 }
 
 export interface Proved {
+  version?: 'v4' | 'v5';
   /** The statement exactly as the core serialized it (send this, never a re-serialization). */
   statement_json: string;
   proof: Hex[];
@@ -164,6 +185,9 @@ export interface ServerResult {
   proof_facts: Hex[];
   base_block: number;
   binding: Hex;
+  /** R0 V5: the last block the result may land in, and the pool call the relayer settles. */
+  send_deadline?: number;
+  pool_call?: { entry_point: string; calldata: Hex[] };
 }
 
 export interface Window {

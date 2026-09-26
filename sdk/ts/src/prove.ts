@@ -9,9 +9,13 @@ export interface ProveOptions {
 
 type Reply = { ok: true; proved: string } | { ok: false; code: string; message: string };
 
-export async function proveInWorker(seed: Uint8Array, plan: string, opts: ProveOptions = {}): Promise<Proved> {
+/**
+ * Proves `plan` in a fresh worker with the wallet's key material. A V5 plan needs `now` (the
+ * latest block and the pool's `E`, `Q`; JSON), `"null"` otherwise.
+ */
+export async function proveInWorker(keys: Uint8Array, plan: string, now: string, opts: ProveOptions = {}): Promise<Proved> {
   const url = new URL('./worker.js', import.meta.url);
-  const job = { seed, plan, wasm: opts.wasm };
+  const job = { keys, plan, now, wasm: opts.wasm };
   let reply: Reply;
   if (typeof process !== 'undefined' && process.versions?.node) {
     const { Worker } = await import('node:worker_threads');

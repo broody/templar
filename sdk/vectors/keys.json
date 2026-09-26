@@ -1,6 +1,987 @@
 {
+  "bound_pool": "0x7e57b301",
+  "bound_seeds": [
+    {
+      "mnemonic": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon admit",
+      "seed": "00000000000000000000000000000000000000000000000000000000",
+      "wallets": [
+        {
+          "account": "0x7e57b3c0",
+          "accounts": [
+            {
+              "address": "templarsep1dgrxalh3849d4fmu3fmtu7waxesq0u8sct05hdtg0xmnpj6s2cxwkcfj4avc0re0rwk0hjm9h7uupydr2p9fv9gm9k3yr7c4uwnxnkcdgw7q3cu6aa8ysk89zfsgsmp0vdrg4zy34g3hmyjwy9u8jhhg2qz9hmr565jqjt0x8mx4ptuzrc8thrdfnu3e42y0qeqnxqxp8vsr8z592xpfkevfjhmlv6h0u6yr9ndr8a9x2rkzez9mjj",
+              "ak": [
+                100991724,
+                2119170368,
+                486701155,
+                439630043,
+                1074038139,
+                445064336,
+                632688905,
+                1552291965,
+                1631327626
+              ],
+              "fingerprint": "ac3e-4435-f353-b010-cdeb",
+              "index": 0,
+              "ivk": "187584c7839f7d54bb2f9868fd73916f73c7bbfa15e6ab994b781cf8d7aefe43",
+              "nk": [
+                1507387977,
+                148546161,
+                255904616,
+                1033593959,
+                1147630187,
+                1262641275,
+                940964196,
+                1998530838,
+                1826534488
+              ],
+              "pk": "d317a9e5088e80c1198f1250a2a2f95d82008120d9fb903c71f87a851503406a",
+              "receiver": [
+                1264684819,
+                1754932510,
+                996654742,
+                1389085941,
+                1396067914,
+                2029334866,
+                1557713832,
+                390070967,
+                995220950
+              ],
+              "sk": [
+                523172764,
+                1127215256,
+                1366552494,
+                1365617480,
+                1268882121,
+                409170799,
+                1993788396,
+                1223262474,
+                1956498581
+              ]
+            },
+            {
+              "address": "templarsep1f5y93nlxsc3j4nlwtzhx64f98uzvf83z54w4v0pgfg8g5c4mw45y4jzy4c8j3tqzp2f4qvqk87x3v2uzd0wxfl4gp5tr4hcmujm22ru3v7g9std4xsr9au4x2et3esmhprxeggra5ykre28z3vxz6anamhyx6hxer43qn2973s0fpgakmzwr2vk9emdu3tfdkq8ptf5eqcdf2c7g3ngd8jdhzvpkp74lwjwvn707ltx68xdvlzcqy8",
+              "ak": [
+                1532053757,
+                2061708040,
+                263355018,
+                39737526,
+                1476530526,
+                349646274,
+                1858883618,
+                343219526,
+                1611588808
+              ],
+              "fingerprint": "eee9-edcf-12c2-21fe-aaac",
+              "index": 1,
+              "ivk": "18f33731f1632210d0c0274c19d5af3ee869b9842743611d296edc22e7445976",
+              "nk": [
+                308644349,
+                100028286,
+                383398054,
+                997218580,
+                706895182,
+                1231247479,
+                1943840521,
+                222272311,
+                993521796
+              ],
+              "pk": "7b8ca5d2c3fc08ae44a0361d6fcfa860c1c1b176612011493a3c25b9a79df033",
+              "receiver": [
+                1142953740,
+                914309923,
+                1461074685,
+                291573560,
+                456932464,
+                1169333285,
+                1309364826,
+                1025869332,
+                1457392261
+              ],
+              "sk": [
+                1450866546,
+                1686071456,
+                1709072839,
+                286115979,
+                190771211,
+                567505931,
+                2071643653,
+                761421830,
+                1756000221
+              ]
+            },
+            {
+              "address": "templarsep18z2wyj2r320rxdexwatqknc37qj0rnddqanzeyc6g4fnh5gshm2asnhq97ftjpzz6ve7862uel3tx3jk9m4c0p4h9c7lstsl9ff3xl5zy39d29cxh6skna0va3vyzc93nc8dr8kn3wky2l2xs2ajft207zrznmqx46xx6565nr93x85g4t0dchm8wcvq7vgts68drpg2zu6r32uch29nyq4hspnrzs3f5ze5zhnet7mynx92xjnp5e",
+              "ak": [
+                1970276433,
+                1581279725,
+                1435673268,
+                1592047739,
+                1424841385,
+                890303956,
+                1562917484,
+                1237485296,
+                457937085
+              ],
+              "fingerprint": "7673-3a60-d1c6-988a-d9e3",
+              "index": 7,
+              "ivk": "f8758edbbd375e86644baf1ea1f611d37f841fc3289dbd5214873a50ae26745a",
+              "nk": [
+                1729891753,
+                356541233,
+                463023028,
+                296204515,
+                1957515309,
+                161350403,
+                1642645938,
+                2095271679,
+                1366596979
+              ],
+              "pk": "86e33546aa8815f30135592c9ee7d9d5d595c28a296f482bad37086fb0c0d61b",
+              "receiver": [
+                2133450453,
+                154805275,
+                122013778,
+                601414969,
+                410580523,
+                1412691009,
+                164640657,
+                813755550,
+                801594491
+              ],
+              "sk": [
+                526046304,
+                18069277,
+                1471673428,
+                900898170,
+                773467686,
+                941707348,
+                1552583979,
+                1098471754,
+                543301221
+              ]
+            }
+          ],
+          "store_id_key": "a1289a7a64bed5792676a737ea59c7d09da250bf2981e05122b90e2c27ab3ac0",
+          "store_key": "75344708d54a2b99fa5832cc89fdad55bbff51891f5016fd2b7a9d83b106d14b"
+        },
+        {
+          "account": "0x7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "accounts": [
+            {
+              "address": "templarsep19vf4tqcf5sef6rxg2a222fhtmm34hnv4refzc8al5gjc6xp9mf9utquewl3886a7ay4ah939k3df30luf7fka9990tqrlmwxyp96d62vr32xxzse0swlwle5n56qtyrug7gfqz5ly6aj6u30tcmel8237w8dwje3qkqhsdr2aj0lecy99gjud0lnc98f7yqw8caxujjfk3vzztykvaw0a7smz0e6ee5tx7a3f08lnjnnj6zfjch7lh",
+              "ak": [
+                1555432405,
+                1117469991,
+                1220006448,
+                1283073014,
+                1285026539,
+                1195613441,
+                1683162277,
+                1208707373,
+                655082667
+              ],
+              "fingerprint": "cad0-ec71-320e-c46a-9870",
+              "index": 0,
+              "ivk": "986453aa896d67fc0b5a01273d8fd7f2fca8a48977c31b7aea3c80495781e262",
+              "nk": [
+                1421454432,
+                2117517994,
+                274326337,
+                669117366,
+                468973444,
+                1421752283,
+                2063953187,
+                1237951419,
+                890574721
+              ],
+              "pk": "9f367f281ed60aff11dfb858b8ea62d78e891a17cbf6afeffcc8816a3df1fb17",
+              "receiver": [
+                1613462504,
+                1061502312,
+                221294227,
+                808831880,
+                1291530108,
+                1830158736,
+                1115604679,
+                285760805,
+                1290314897
+              ],
+              "sk": [
+                73684460,
+                1314799853,
+                1336506531,
+                1685205035,
+                2013381859,
+                1394244831,
+                1232366365,
+                1908621293,
+                624870010
+              ]
+            },
+            {
+              "address": "templarsep1r36q9ht7swc959hgfwcs296e5duyk466htk89v0zvy9cu8r72w63chsgkcau7l6j8wtwkf0e65fkmk908nenm6j2edf6yv77ewlfmulf4suyd8suxzpvhqe68txlgmtz3j5uulut9rqsz8phz5qejx9zyzyyjy9u5pun7evz7ahp3wcfjels26jmsz46sxpu4evezyw8quvhglxastqshpyjl8374djafytda6nn0dgrrjgm30n7ht",
+              "ak": [
+                209494292,
+                1010430391,
+                280347467,
+                1111622642,
+                1921553399,
+                841186557,
+                284213738,
+                2130363284,
+                1649601171
+              ],
+              "fingerprint": "a96f-0318-0872-f77f-4976",
+              "index": 1,
+              "ivk": "c0bdd3e6592c2d04d20876ef212d42a9df01b870f112e9d8dcae8ae67779694e",
+              "nk": [
+                376112681,
+                2001958290,
+                227595765,
+                180270901,
+                1798610278,
+                1036966130,
+                772091525,
+                911964212,
+                2004999937
+              ],
+              "pk": "f5ef14e1509e7a0b02c8985d8e6c35b097386ba784a625480852ea1eb6138723",
+              "receiver": [
+                295396618,
+                1555364127,
+                1859851382,
+                82015650,
+                1721519995,
+                927677421,
+                836441752,
+                405787829,
+                565534190
+              ],
+              "sk": [
+                25635786,
+                2126196717,
+                830131092,
+                2081311823,
+                1887691649,
+                1555922087,
+                1558346135,
+                1500903320,
+                1867721960
+              ]
+            },
+            {
+              "address": "templarsep1g6c537zr6ry08vw43hnjsgezwf3dvusl2xhtckvdwhwr6c07cezrulzq5ta6ej90nlz6zdta27q9akc9622yn9ykfhk2ha2vvzr5tc3mjp0e57fzxynlndwmm4vr4fz07cvhqzsjlxh6mn8gg84ehdpjlk0yg2erlap28a66s2pzflur57tvll0ul3t3g7xemu49l0p4nauym27yhjn8545250fwr4qxkddjmtld0sjtntfg8jga54",
+              "ak": [
+                2126467151,
+                934394057,
+                36791860,
+                1250999491,
+                6571878,
+                1394016399,
+                1436446815,
+                2066146145,
+                781849785
+              ],
+              "fingerprint": "a1db-15ff-585a-981a-0797",
+              "index": 7,
+              "ivk": "d8869e98dfb60f84579232733fed56e7fc05db17fc247a04caee8ca486846177",
+              "nk": [
+                1500452470,
+                167817179,
+                108848190,
+                1602455849,
+                1540334611,
+                2142532562,
+                2096756691,
+                1404607759,
+                1367469382
+              ],
+              "pk": "cd22eca86c35c43016c4289fdb5ba3e052d1b0b23b161e25b27d60dfa4e9f305",
+              "receiver": [
+                1006145039,
+                34134199,
+                334752801,
+                450559641,
+                1367577504,
+                839438972,
+                2111853203,
+                753003180,
+                368550923
+              ],
+              "sk": [
+                547303626,
+                1740547508,
+                1463558211,
+                255553382,
+                1994124251,
+                315540518,
+                1399183302,
+                1083007859,
+                1814385769
+              ]
+            }
+          ],
+          "store_id_key": "eb139dd3722a04389c0f76db73b871dad0783144056142d5d6bcb28f66dcbd7a",
+          "store_key": "b0b00f554ff13932b4cb912e00b4fd33447594e589442861ee5bdc1b58ef99a9"
+        }
+      ]
+    },
+    {
+      "mnemonic": "fog spot notable regret pizza coffee harvest ensure fog spot notable regret pizza coffee harvest ensure fog spot notable regret park",
+      "seed": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+      "wallets": [
+        {
+          "account": "0x7e57b3c0",
+          "accounts": [
+            {
+              "address": "templarsep1fqzu726s2z8nqv0hy9g0vpv76jx84n5mp6lzpqw4djne8f300nkth08e75m76f87m2dmznurnr74xantefhv4emghfvktxgxlmg0djme32xkgnfc4n8wzye83zcz0gyhj978zhrwd32zwaxvfu6rj0wk2qjvr0eyrs9mwrd76382a2tgcxqznf022a08td4ldtygemwl07vygqzhva38lcnpsm530ektwxlnm33t84s3xp7wdzzurg",
+              "ak": [
+                111154537,
+                310374382,
+                2127129390,
+                743332826,
+                1335587762,
+                1088665279,
+                1918937838,
+                2065349634,
+                1651607601
+              ],
+              "fingerprint": "0000-500d-c7ad-56b8-507f",
+              "index": 0,
+              "ivk": "f0702e4cdd0d697b2cc0c8d984c764314415c8ffad7fbb8999afa96dd915a55a",
+              "nk": [
+                957440167,
+                503552442,
+                1837608901,
+                1995200877,
+                1782740778,
+                2078815129,
+                390875332,
+                1287054095,
+                1734564432
+              ],
+              "pk": "c736b63161bba0d3f73f73e5d9bb5403adef22ff616201d49427ff1cf75ffd68",
+              "receiver": [
+                2091354811,
+                611835324,
+                1617851814,
+                1187346566,
+                619964834,
+                666298576,
+                1045285064,
+                118534362,
+                1923053076
+              ],
+              "sk": [
+                771208577,
+                369974951,
+                298956304,
+                1699136161,
+                2127484311,
+                1802922871,
+                15992922,
+                1708194833,
+                1545794304
+              ]
+            },
+            {
+              "address": "templarsep1mw87v645ah8afy8f5qhyspe0w4q2frp7gnwreyfxs2araxzxes7q0g3w988ru27sf9hlwxfzcd4w56fa7jemt2pnwg3ct03nwu89utrjfu4tnny874znj3c0plaeujnctdta33eanwz364rj3r0kdjs67958n3j6hftd8zfln7azxkqlvyecpmjp4qf5k540k5ggvlmh63jgc0g0396cqtgc3csez9f824dduxearquzvvx87x7csd",
+              "ak": [
+                824671910,
+                559698082,
+                578850735,
+                753939689,
+                1053165648,
+                1305783507,
+                1787421031,
+                679158753,
+                324213920
+              ],
+              "fingerprint": "1c63-d439-1fb1-c132-359a",
+              "index": 1,
+              "ivk": "a8dce3f2ad2b4d5f388cead7dc969b890cb38ef36cacfd5339b85874c01f157b",
+              "nk": [
+                491855223,
+                851623056,
+                368524836,
+                237354236,
+                51214305,
+                917540967,
+                1786762650,
+                844938558,
+                1714195630
+              ],
+              "pk": "7d057c42690dabb9222b35a8ee568456cf5d5557d1a875643ef4eb22bb613b09",
+              "receiver": [
+                1824670316,
+                357075360,
+                1065967190,
+                1387685407,
+                647017875,
+                1401698599,
+                1037279904,
+                2124168447,
+                1157416676
+              ],
+              "sk": [
+                1455123632,
+                1304564432,
+                70784319,
+                1285137199,
+                1696751921,
+                1822424898,
+                309275272,
+                1459653313,
+                239388341
+              ]
+            },
+            {
+              "address": "templarsep1tg0u32ld7467qnsqgq3acyy2mn5l693gyhlj97gvgnhg0jrzhzlacgykwmz2r60yhqw036wdgv6hpf2v9sj9pvvs5k46ap02ft6299ev30rv3h7ttf2ylavzvhzzklzvfxrsmk62k3wlvtc3vfsemw7lnsmezlj5z0ekt7m9tp064megkaa0uejwguped5hvese88gh4cqnsw0ply92mzmpevf8ujvft2jkvkxneu3nk6svp4f9vfu",
+              "ak": [
+                1653259341,
+                1554403972,
+                1813715668,
+                2051160762,
+                170675069,
+                1653841444,
+                1669163135,
+                1481608208,
+                2115912303
+              ],
+              "fingerprint": "c230-2188-c489-487f-c345",
+              "index": 7,
+              "ivk": "884f85a1f73c7d3df6476ff99deadd403ef8108294f75466495c6d86a09efb6e",
+              "nk": [
+                2003415445,
+                430658531,
+                1830278081,
+                1291949105,
+                2025779655,
+                1864315999,
+                221873682,
+                1127924229,
+                1070415678
+              ],
+              "pk": "6e72f638d6fb77e05e6e8def6862e7cbd88c2d567c80bc3296b001b5bd84854e",
+              "receiver": [
+                949468683,
+                1897329248,
+                65756035,
+                1891434066,
+                410094047,
+                2107737794,
+                2022475001,
+                1290876671,
+                904908558
+              ],
+              "sk": [
+                359670874,
+                623530095,
+                850586246,
+                1485599662,
+                509882450,
+                1778915030,
+                847094003,
+                1159693793,
+                1778804598
+              ]
+            }
+          ],
+          "store_id_key": "a2c8b4865c05d6149fcd98d81edd33f0cf897fb015fa49e0d1f47ee0e74c1f51",
+          "store_key": "113d4a74798b934f80e2dda5fa52544a15cc565ab31d9428dd200e5d5d5d80de"
+        },
+        {
+          "account": "0x7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "accounts": [
+            {
+              "address": "templarsep1xe9k2mm2s2ww6nuemzuhzvqqj3chh9zjpjgm23gy2uu6mk4dfqcvtjrsdfufllzvddxga87u9tm8qnuquua0z4vz0cd04hdlzegueqx3q0cuja0v93eh0jdndq48xfm79cag72rmkp2amve7smww9zpg8ddag4t7sz2e9gxapt72car0j945dw9lkh77dvrhaa7cyp8jdk7mda58rkca8m6uyczzk8zjdt4uzr2v7v0qwj8t6enhm9",
+              "ak": [
+                486230667,
+                190444035,
+                541886628,
+                1489795528,
+                1166106648,
+                1404647658,
+                1275130248,
+                1865986031,
+                2103698864
+              ],
+              "fingerprint": "af71-e5d4-68fc-8d82-1519",
+              "index": 0,
+              "ivk": "e8e9ab82de03cbdde43dd4975416dba18c378697440c4b0411368eb216f60b4d",
+              "nk": [
+                385056768,
+                1607136327,
+                1460739745,
+                90010336,
+                1763355240,
+                715349979,
+                153179977,
+                253394832,
+                967298721
+              ],
+              "pk": "31e712db23500a214b2e2c47ced0d1566cb0156d41ed7988d2581d4769384b51",
+              "receiver": [
+                710671991,
+                357249338,
+                622737578,
+                739926719,
+                1090145359,
+                1136076942,
+                2009809217,
+                1126624779,
+                1572680686
+              ],
+              "sk": [
+                1047281201,
+                1345731716,
+                1743278102,
+                680829126,
+                933506337,
+                224941767,
+                1016543393,
+                2055508105,
+                2075385798
+              ]
+            },
+            {
+              "address": "templarsep1hq8nxwxhgs9c0c08tp7wkngf239hycwvzgy9kqv520zk77n3az7q6vay4n28zu5ue9mlyfu96z9syu0cprytljljv6425s567syquk5qe9ztpxt5rqgrhay2r85vj4tews9ntguysu8mj8djkn5f4envauewdffrt3a6948p20wqut0nxfe5f9jmp794crhsaxhd2e6jqzhcgnterzpuhg5jzurjem3gg2petsusltthqnj6p8zf4h",
+              "ak": [
+                287320330,
+                607885245,
+                1189222564,
+                813012191,
+                614167830,
+                1028943263,
+                1473533871,
+                651245821,
+                1961982361
+              ],
+              "fingerprint": "1cf0-b69a-c215-6816-724c",
+              "index": 1,
+              "ivk": "48666a63d2cfbd255e3efa8443e5e6bbb550e87968e547d1e046c29629a74346",
+              "nk": [
+                1397636110,
+                1204724376,
+                14355128,
+                1166464649,
+                2147099745,
+                331407807,
+                2124105087,
+                2147063914,
+                35294721
+              ],
+              "pk": "447362051123bea08636602e3315b9e9d2ed5cd15067d83c45146d664f5db34e",
+              "receiver": [
+                1141020718,
+                1210699672,
+                1446883024,
+                1741035651,
+                1730953049,
+                1562280728,
+                683648344,
+                1054708295,
+                1109500147
+              ],
+              "sk": [
+                1567712806,
+                334221469,
+                128142840,
+                436761645,
+                644579867,
+                273816651,
+                1078804827,
+                1232678708,
+                1851541885
+              ]
+            },
+            {
+              "address": "templarsep1lfyqanq88gs00rk2js4k3ak4cmqz0z2lfr62klx3w9h8tun328fgw30qq56mskkyzdpllr94mmsyqwsk259y58yehn4f7zegydf700v8y6hh4xrev8znfl5yrupnuanl3gruy7gnefl3gs54wt7auevtupxc6649vp25pwynnefa7uqqrqvtslduagm8mxugfjz4ez7vpz8hs26sky45g5al56ywqpraavvqksf45zxva0qpv3mvps",
+              "ak": [
+                1217609215,
+                71944505,
+                636808486,
+                1305087727,
+                2130906454,
+                2045633843,
+                1051779178,
+                170628823,
+                415688280
+              ],
+              "fingerprint": "1bb9-d235-80eb-5557-5db5",
+              "index": 7,
+              "ivk": "2042a8ca99b01b617475a8d9aed6d3fc4b524b2f35b05341c6b404c956cc9976",
+              "nk": [
+                937008437,
+                1867114090,
+                360159501,
+                85528759,
+                1222312407,
+                215047264,
+                491451127,
+                1902471662,
+                1532508312
+              ],
+              "pk": "775452ad0ff85108ddaac4dd1bd6320cf63bceb1b16671dcf5bd220de9c85152",
+              "receiver": [
+                956951290,
+                616721061,
+                110520144,
+                915598070,
+                160778952,
+                2038843254,
+                135182009,
+                226020938,
+                169757465
+              ],
+              "sk": [
+                478270945,
+                1562699956,
+                1469204838,
+                947136029,
+                2038037452,
+                157403096,
+                154372299,
+                1311337917,
+                2024121991
+              ]
+            }
+          ],
+          "store_id_key": "67b19d7ecb08aeae329950a3b9dad74bfa11aa778d3f7ea041abe28c0cca5124",
+          "store_key": "3fbd6881b080d551e10db040e24a27667908122e2da066b65fe347b31d41e6c0"
+        }
+      ]
+    },
+    {
+      "mnemonic": "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo veteran",
+      "seed": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "wallets": [
+        {
+          "account": "0x7e57b3c0",
+          "accounts": [
+            {
+              "address": "templarsep19k2xwaha4djf6a6lqt84ht3swr4h4ezyzm26q4a2c6mlax2av9gws9pss0whhd2ky0jk6w9cmzqxktdcywuzur6yjr6vrur7v86f3zxqgfs8yq6uvtuavnspqyxnjd3xphspk2xhf9lltt7q2nljme6p3fpe8ctwlctnv0y7c7g0rmn5ug5pep5z6yun829gsc26k024j35m2n93xhvgs2ghzp3hh96vslxc3ydnld2c9z36fz5hkm",
+              "ak": [
+                1321690326,
+                1552142577,
+                1425384974,
+                316888532,
+                866332089,
+                1376875924,
+                1729628340,
+                907683101,
+                963199556
+              ],
+              "fingerprint": "990d-4b24-a850-c0b1-a7bb",
+              "index": 0,
+              "ivk": "5821747267d18e1ef1063522e3570b099184310669e354605418ff7395381973",
+              "nk": [
+                280818571,
+                941017996,
+                2020238643,
+                50042436,
+                1260908622,
+                746067422,
+                349879648,
+                1340028098,
+                964745616
+              ],
+              "pk": "3c01688b5f3a4a42905da1ddf750b37dc105f1a3fbacb2d28649ff571e494024",
+              "receiver": [
+                564744689,
+                1245621255,
+                717160940,
+                1146210894,
+                1172363955,
+                2092254417,
+                1664042157,
+                967271654,
+                151077099
+              ],
+              "sk": [
+                1499770867,
+                1485921133,
+                1660682969,
+                2129070642,
+                620624077,
+                861817075,
+                1759631344,
+                2108942868,
+                1676541859
+              ]
+            },
+            {
+              "address": "templarsep12pruzuwmfaenj3y5l9zzjj2ulau2x9jd3dph4mqax5j458k023jp4clz5lf6xkug5xqh0a355jw963anp4ktkver77wf9c6yhxxq5qel2h8x0545zyracdundhqeycfgmpy0sccpd2cnmgxqsautjuy7fzt2wlfvhcep209kns5myggx6tkh06hlpfrsdpu694un5zvv2r58n7ynqp4ed94eh00mxeacups29gwqxwuqfame2jyf6v",
+              "ak": [
+                1847161034,
+                1798313473,
+                1187136352,
+                1898879394,
+                1185452649,
+                490335456,
+                1605165955,
+                1710119632,
+                1141959143
+              ],
+              "fingerprint": "696c-9b30-1bd7-cea5-3155",
+              "index": 1,
+              "ivk": "78dd5e7a3a57486c3de09d958dbc4b5603a4c26f1bcfa3dec51b1c62014b857b",
+              "nk": [
+                1677207333,
+                688185455,
+                816742067,
+                1675642568,
+                606712604,
+                375324251,
+                370990635,
+                150418524,
+                1771781285
+              ],
+              "pk": "3c95a063b26a22664023347c9a4e074354b6f3aaece3e0d257cfdcb5bd892f0f",
+              "receiver": [
+                765917231,
+                1934751638,
+                627716833,
+                813308599,
+                950919359,
+                286973508,
+                2046132194,
+                1298659803,
+                1472240245
+              ],
+              "sk": [
+                1427602102,
+                1691016359,
+                140974157,
+                1849758578,
+                444124693,
+                2033538118,
+                1818612347,
+                1827995884,
+                2117688786
+              ]
+            },
+            {
+              "address": "templarsep1uaz4lr3n06h5qcl3nzz5fjhlpu7qkljq6qju7ks6trw4gtsnymp0wad4z3v68x2d6893dhdsrtpze5hgcfw846wte9wfezs2qm68dchrnhxcrzqf374mhulyejgmhxzueq9cs3gcmv89fmh69xf5ww05cmmfzjwp943wwfga529wafsk3cuyxsss9mfydzwzdmudfk3alqgfm78j2q2ugmq86rxjmczhtwqy7k9k75squqgkm8dfgf",
+              "ak": [
+                2110224154,
+                577848434,
+                1139753213,
+                1735951172,
+                177330000,
+                1946489683,
+                1723643732,
+                2074140065,
+                2017439203
+              ],
+              "fingerprint": "0d47-b044-6cc7-a70e-04e6",
+              "index": 7,
+              "ivk": "f0608ea6e47c72ec48b40b1c5f4bbdd74e66194bfc747792efd00a163be84d7c",
+              "nk": [
+                2090078477,
+                541787932,
+                335528759,
+                1559242907,
+                1267111684,
+                1143522040,
+                1208715169,
+                459158535,
+                251260712
+              ],
+              "pk": "56cb4c91a25b901e1f083d01c41ab98f4231fc55f312d9858852a18d650eeb2f",
+              "receiver": [
+                1149816555,
+                493654618,
+                1253575049,
+                1746844483,
+                91000663,
+                1761722350,
+                2078800288,
+                741908600,
+                1095644346
+              ],
+              "sk": [
+                852512623,
+                820817018,
+                740358562,
+                404818811,
+                916838075,
+                1057103189,
+                1414052480,
+                875604974,
+                470021170
+              ]
+            }
+          ],
+          "store_id_key": "8bad51cb571f162d51086c1ccd5b159408a860ac1c93d0ea41197e6a0664bb9f",
+          "store_key": "5c48604cd158821d83eefe891923b9422a476537ff51c8095df24f8f5fe3c8ba"
+        },
+        {
+          "account": "0x7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "accounts": [
+            {
+              "address": "templarsep1n63reh2xu8w4ahpgmzyg4aqpyu4p9gf3xa9vzvdkq7tctvfdf4j4h6zl9vxru4q9w2sn37m45xs57pztdrztxyuw0a6juz47aez0yhec3r095l54gjt8g763nh2ldrz9ya36khc6cxy8f6ckpmhxr9a57j2gy6mu72jkak0ctkyw39us04e7tzwnjmhx7n2hk695qy6hferx39caar5n4r808mnw89plv3xu2nppe09kye95j6nmyy",
+              "ak": [
+                949828241,
+                276690478,
+                1623632041,
+                1192633178,
+                263672399,
+                1186745244,
+                1597043644,
+                2029530998,
+                848847187
+              ],
+              "fingerprint": "09c9-8cfd-7ad5-fae4-fd74",
+              "index": 0,
+              "ivk": "40ec05b6a248ac7589edbcbaff4e426ff0e0ade2dfd6626270f211c51a7bbc64",
+              "nk": [
+                1430145275,
+                123057369,
+                1758875878,
+                615245148,
+                2072048648,
+                387029488,
+                490055688,
+                2124891343,
+                1602229193
+              ],
+              "pk": "b3470bfd865b4abb8e2a7ef4d72b6a2cc7b3050fb988e7de6429d8e6477abe6e",
+              "receiver": [
+                501012359,
+                1454748492,
+                753001161,
+                1900951571,
+                880458692,
+                2068139879,
+                576665976,
+                868719998,
+                21900760
+              ],
+              "sk": [
+                774403166,
+                1901529834,
+                74412774,
+                1512838002,
+                1120860265,
+                633512954,
+                1959312202,
+                499799639,
+                2077078336
+              ]
+            },
+            {
+              "address": "templarsep19vq4jmcunr52jr40m0hxfvn7f9e5zgdd7v463a897pmm64l4zckxzyfqd0s498wpgdmumt4qngu53ygrwlpgj4spdkxq3kj5vsvhfwu44pywhsvyr5ns7wf2ekp8dcsfsyzv203snn8pwxg73j0lrxrercp2lhpvnkp7cl9qs4vdd09qs02v7zcpnlu4qce2kvhd2qfkvlwutgp6w22ga3qaf63pa0fz2m0cmgra38mpnklrcts9mz",
+              "ak": [
+                482291177,
+                331385462,
+                55704370,
+                794208218,
+                2089776900,
+                1973298659,
+                69635736,
+                1794101242,
+                438643086
+              ],
+              "fingerprint": "51a3-c24b-a1e9-f9c1-980d",
+              "index": 1,
+              "ivk": "e8b392843aabc39bf54749303f7477afee584cf35e54626e56569db429602f6a",
+              "nk": [
+                1525900305,
+                1058105494,
+                1368975103,
+                245801380,
+                1916591287,
+                1709955917,
+                673319802,
+                795565755,
+                1888275981
+              ],
+              "pk": "31a22b9cef29145c45f7e17de9d525fa865f9cb39132f9979ec171464bd34b2a",
+              "receiver": [
+                314509690,
+                1620093864,
+                1030907122,
+                1763437020,
+                906187924,
+                1897796874,
+                2098917317,
+                796674089,
+                1075607341
+              ],
+              "sk": [
+                1910396883,
+                125038132,
+                1948438232,
+                845587495,
+                474414880,
+                1651418783,
+                1424299879,
+                1511192287,
+                1557480224
+              ]
+            },
+            {
+              "address": "templarsep1hashe4lnkxnhn9pjt3e2tc2qla5xzvzr9hse03qzu8sc28p2zx4wgp60rsaqtquayrmapf4qy6zq7ul2l53vr9qjqh9ry5q9tl23968h6rzp9fprvyra3safxtaccavem00t9mxms9vzayfuwnrthvakjvspdehc0jx27p42u56qx50ldkl53yuc09mxjl0ankl8qhcn6jae4jujycvptjxdslm0urke9uemu5zepfgl5ylyh6ajup",
+              "ak": [
+                140586092,
+                389965903,
+                825197325,
+                244361357,
+                1962243698,
+                588417655,
+                1608812908,
+                1663731621,
+                1998210147
+              ],
+              "fingerprint": "db85-32a3-4cab-8198-f550",
+              "index": 7,
+              "ivk": "4076c939081b8f4d8ae892a249578bc26e0cdbed39724ef507405449f07c7c49",
+              "nk": [
+                1102698221,
+                1310759899,
+                110500592,
+                1501994019,
+                1708702240,
+                1422177386,
+                676889409,
+                1632354009,
+                475071216
+              ],
+              "pk": "f82cc932dc3b3573d8edca0b744b08e09e555f8d19edb47b93488753f093e35e",
+              "receiver": [
+                2101637102,
+                92295811,
+                568184532,
+                1868045656,
+                1869078897,
+                562818550,
+                1941352382,
+                391191637,
+                566270228
+              ],
+              "sk": [
+                2007199396,
+                304800359,
+                403284407,
+                35628624,
+                976199723,
+                152544036,
+                481227803,
+                245965388,
+                1173993062
+              ]
+            }
+          ],
+          "store_id_key": "5a15bb79464e08fad5fc62fb9ad9ed4758a23018ef7ba46eccf594f053a67f74",
+          "store_key": "50dc835640635f1265c6287b7592747ad308e28327d0398c5b67093ec923097f"
+        }
+      ]
+    }
+  ],
   "chain": "SN_SEPOLIA",
-  "description": "templar-core key, address, viewing-key, sealed-box and store-key vectors (docs/sdk-spec.md §3-§5)",
+  "description": "templar-core key, address, viewing-key, sealed-box and store-key vectors (docs/sdk-spec.md §3-§5), and bound-wallet keys (docs/account-bound-note-spec.md §6)",
   "pool": "0x2da0011f775d73885cf86c5145feb4cb9149d007f8546959cce32b51b5f37b9",
   "sealed_boxes": {
     "boxes": [

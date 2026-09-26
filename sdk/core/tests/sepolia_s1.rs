@@ -42,19 +42,19 @@ fn binding_calldata_and_result() {
     };
     let p: Pins = serde_json::from_value(v["pins"].clone()).unwrap();
     assert_eq!(templar_core::felt::to_hex(&result::message_hash(&p, &binding).unwrap()), norm(server["message_hash"].as_str().unwrap()));
-    let w = result::check(&p, server["binding"].as_str().unwrap(), &r, r.base_block + 20).unwrap();
+    let w = result::check(&p, server["binding"].as_str().unwrap(), &r, r.base_block + 20, None).unwrap();
     assert_eq!((w.submit_after, w.valid_until), (r.base_block + 11, r.base_block + 4096));
     // Every pinned fact is enforced.
     for i in [0usize, 1, 2, 3, 4, 6, 7, 8] {
         let mut bad = r.clone();
         bad.proof_facts[i] = "0x1234".into();
-        assert!(result::check(&p, &r.binding, &bad, r.base_block + 20).is_err(), "fact {i}");
+        assert!(result::check(&p, &r.binding, &bad, r.base_block + 20, None).is_err(), "fact {i}");
     }
     let mut short = r.clone();
     short.proof_facts.pop();
-    assert!(result::check(&p, &r.binding, &short, r.base_block + 20).is_err());
-    assert!(result::check(&p, &r.binding, &r, r.base_block - 1).is_err(), "base block in the future");
+    assert!(result::check(&p, &r.binding, &short, r.base_block + 20, None).is_err());
+    assert!(result::check(&p, &r.binding, &r, r.base_block - 1, None).is_err(), "base block in the future");
     let mut other = p.clone();
     other.statement_class = "0x1".into();
-    assert!(result::check(&other, &r.binding, &r, r.base_block + 20).is_err(), "other class");
+    assert!(result::check(&other, &r.binding, &r, r.base_block + 20, None).is_err(), "other class");
 }

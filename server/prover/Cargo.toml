@@ -27,6 +27,8 @@ bhttp = "0.7"
 ohttp = { version = "0.7", default-features = false }
 http-body-util = "0.1"
 hex = "0.4"
+# Tickets: RFC 9474 blind RSA signatures (docs/account-bound-note-spec.md §7.2).
+blind-rsa-signatures = "0.18"
 
 [dev-dependencies]
 tower_ohttp = { git = "https://github.com/broody/sequencer", rev = "625929ac645c399f2481fb2b65ffdd14702aa525", features = ["testing"] }

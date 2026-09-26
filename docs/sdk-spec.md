@@ -5,7 +5,10 @@ protocol GO: `docs/reviews/sdk-impl-{math,protocol}-review.md`); funded Sepolia 
 `docs/reviews/sdk-design-protocol-review.md`: both CONDITIONAL GO on revision 1; on revision 2,
 math GO and protocol CONDITIONAL GO, whose items revision 3 resolves). Finding IDs
 `SDK-M*` and `SDK-P*` are cited where they changed the text; §16 lists every resolution. Nothing is
-implemented.** Defines the maintained client side of the compact client-proof path (TODO item
+implemented.** **Revision 4 amendments** (`docs/account-bound-note-spec.md` §11, P4 on
+`feat/account-bound`) add R0 V5 on pool V3 and bound wallets (product 1): §3.4, and the
+"Pool V3 (R0 V5)" paragraphs in §8, §9, §10.2, §11 and §14. R0 V4 on pool V2 is unchanged.
+Defines the maintained client side of the compact client-proof path (TODO item
 4): a Rust core compiled to WebAssembly, and a TypeScript package on top that uses starknet.js for
 every chain interaction.
 
@@ -140,6 +143,34 @@ from one account and its change goes to that account.
   nullifier; reuse reveals nothing new. Before proving, the core checks that the companion's
   nullifier is not spent. A companion is never used with another note. `docs/hidden-asset-spec.md`
   §6 carries the same amendment.
+
+### 3.4 Bound seeds (R0 V5, pool V3; revision 4)
+
+Normative text: `docs/account-bound-note-spec.md` §6. In short:
+
+- A bound wallet (product 1) is keyed to one existing account `A` (Ready or Braavos). Its seed
+  `S_w` is 28 random bytes, backed up as 21 BIP-39 words. Import refuses a Templar wallet's 24
+  words, and a Templar import refuses 21, so neither seed is ever taken for the other.
+- Keys follow §3.2 with `PRK_w = HKDF-Extract("TEMPLAR_BOUND_WALLET_V1", S_w)`, the labels
+  `TEMPLAR_BOUND_{SPEND,INCOMING,STORE,STORE_ID}_V1`, and `actx = felt₃₂(chain) ‖ felt₃₂(pool) ‖
+  felt₃₂(A)` in every context. The receiver is `H(OWNER, H(WAUTH, limbs(A) ‖ sk) ‖ H(NK, sk))`,
+  so every note a bound wallet creates is bound to `A`.
+- Bound keys, addresses and deposits exist only for a pool whose network constants declare R0
+  V5, and never for a pool known to settle R0 V4 (the core's `KNOWN_V4_POOLS`), whatever the
+  caller says: a note bound on such a pool could never be spent (AB-SM1).
+- **Setup checks** before a bound seed is created, at one block through `starknet_call`, never
+  simulation: `A` is deployed; its class is in `BOUND_ACCOUNT_CLASSES` (Argent 0.5.0, Braavos
+  1.2.0 at launch) and passes that class's signer checks (no guardian, multisig or non-Stark
+  signer); its `is_valid_signature` answers exactly `'VALID'` for a signature over the setup
+  message (a `TemplarSpend` with pool 0, which can never authorize a spend), and not for a
+  tampered copy or for the same signature over another hash; a node that fails to answer fails
+  the check rather than counting as a refusal. `A` comes from the connected wallet, never from
+  typed input: the signer's address must equal `A`.
+- Opening a bound wallet re-runs the class and signer checks. After a guardian is added or the
+  class upgraded, the wallet still opens (to sync, show balances and try spends, which the
+  account may refuse to sign) but creates no address or deposit (`accountIssue`). It needs a
+  spend provider on the same chain and not on the main provider's node. Because the signature pre-check names `A` to the spend provider, each of
+  its requests must be unlinkable: OHTTP or the relayer, never a plain node.
 
 ## 4. Addresses and viewing keys (normative, new)
 
@@ -397,6 +428,40 @@ the result):
 The base-block hash is not read separately (SDK-P5): the sequencer checks it statelessly, and a
 wrong one is rejected without a fee.
 
+**Pool V3 (R0 V5; revision 4).**
+
+- **Pins.** Each pool also pins its relation (`version: 'v5'`) and pool V3's constructor
+  constants `E`, `Q`, `W`, which must equal `get_parameters`. The relation served is `r5`
+  (account tag `TMPZR0_PAYMENT_V5`, the R0 V5 circuit hash). The spend message's domain and type
+  hashes are the core's constants, never configuration.
+- **Verifier and proposals** (AB-PV7). The verifier check reads `get_verifier('R0')`. The SDK
+  reads `get_proposal` for `'R0'`, `'P1'` and every shadow class it uses, and shows each pending
+  change with its lapse time `eta + T`. A deposit is refused while a verifier change is pending
+  and not lapsed (judged at the latest block's timestamp); a shadow-class change is shown but
+  does not block deposits, since allowlisting cannot move funds. `T` is pinned too, and on
+  SN_MAIN must be at least 7 days, with `W ≥ E + Q`.
+- **Job body:** `{relation: "r5", proof, statement, pool_call: {entry_point, calldata}, salt?,
+  signature?, payment?}`.
+  - `statement` is the core's own JSON text, never re-serialized, since its u128 amount and
+    `valid_until` would not survive a JS number.
+  - `pool_call` is pool V3's exact calldata, with an empty proof span.
+  - A bound spend carries the salt and signature from `authorize()`, which asks the connected
+    wallet to sign the core's SNIP-12 message and checks `is_valid_signature` itself through the
+    spend provider (account-bound spec §10) before anything leaves. The body is refused unless the
+    stored authorization signs this very statement; `authorize({ fresh: true })` signs the same
+    statement again after a refusal (for example a key rotation).
+  - `payment` holds tickets (supplied by the application in P4; the ticket wallet is P7's), or,
+    for a full withdrawal of a priced asset, `freeWithdrawalPayment()`: both outputs' openings,
+    shown to the server only.
+- **Result checks** add: the window ends at `min(statement.valid_until, base_block +
+  max_proof_age)`, computed locally (the server's `send_deadline` is not trusted), and
+  `result.pool_call` must be `apply_spend` with the wallet's own calldata. `/v1/info` must publish
+  the core's spend domain and type hashes and the pinned `E`, `Q`, `W`, `T`.
+- **Refusals.** After an admission refusal (400, 402, 403) the stored body is dropped, so the next
+  wrap builds one with new payment or a fresh authorization; the statement and proof stay. When
+  the statement's own `valid_until` bounds the window, another job cannot help: `wrap` asks for a
+  re-plan.
+
 **OHTTP** (RFC 9458; SDK-M5, SDK-P6). The key configuration comes from the network constants
 (pinned per known server; rotation ships as a package update) or, for another server, from the
 application, which obtained it outside the proving session. A configuration that differs from the
@@ -442,7 +507,28 @@ job body, the result, and the signed transaction's hash, nonce and resource boun
   the record is re-proved with its identical witness (SDK-M10).
 - Two devices using one seed cannot coordinate records; the documentation says so.
 
+**Pool V3 (R0 V5; revision 4).**
+
+- A plan takes its root, paths and `valid_until = ⌈(latest + E) / Q⌉ · Q` from one synced block.
+  A re-proof keeps its inputs and companion but takes a fresh root, paths and `valid_until` from
+  one latest block, never the old root with a fresh `valid_until`, which could fail late with
+  `UNKNOWN_ROOT` (AB-PV6). The root is public and the nullifiers do not depend on it.
+- The core refuses to prove a plan that is off the grid, at or behind the latest block, or more
+  than `E + Q` ahead (`stale_plan`); the wallet then re-plans.
+- A record whose statement left the wallet is dead once every attempt's `valid_until` is buried by
+  10 blocks, with none of its nullifiers spent. This replaces the leaf count `m + 512`.
+- The in-flight window ends at the result's deadline, `min(valid_until, base + max_proof_age)`.
+- A duplicate-nullifier refusal (409) is reported and never triggers a re-plan.
+- A bound spend's authorization (salt and signature) is stored in the record before the body
+  leaves. A re-plan clears it (it signed the old statement), and the new statement is authorized
+  afresh; a closed or expiring record never prompts the wallet.
+
 ### 9.2 Sending (SDK-P4)
+
+**Pool V3 (revision 4).** A bound spend is never submitted by its own account `A`: `submit`
+refuses it (`owner_submits`), and another account or the relayer submits instead, never through
+the provider that has seen `A`. The fallback's timing (account-bound spec §7.4) comes with P4b. The relayer
+(P4b) and the ticket wallet (P7) are specified with those phases.
 
 - **Window.** Send only when the latest block is at least `submit_after` and at most
   `valid_until − 20`; otherwise wait, or re-prove the record (same inputs and companion) when the
@@ -527,6 +613,24 @@ pool and its deployment block, the R4 adapter and its class hash, the statement 
 the account tag, the OS program, the config hash, `max_proof_age`, the client circuit hash, known
 prover servers with their OHTTP key configurations, and the token list.
 
+**Pool V3 (revision 4).** Each pool also pins `version` (`'v4'` or `'v5'`) and, for pool V3,
+`parameters` (`E`, `Q`, `W`). Bound wallets:
+
+```ts
+const seed = Templar.generateBoundSeed()             // 28 bytes; Templar.boundMnemonic(seed): 21 words
+await tpl.boundSetupCheck(A, signer)                  // signer = { address: A, signTypedData }, from the connected wallet
+const bw = await tpl.boundWallet(seed, A, signer, { spendProvider })  // OHTTP or the relayer, never the main node
+const spend = await bw.withdraw(asset, amount, recipient)
+await spend.prove()
+await spend.authorize()                               // the account signs; checked with is_valid_signature
+                                                      // (authorize({ fresh: true }) after a 403 re-signs the same statement)
+await spend.wrap(prover, { url, payment: await spend.freeWithdrawalPayment() })
+await spend.submit(otherAccount, { confirmFee })      // never A itself
+await bw.proposals(shadowClasses)                     // pending owner changes on pool V3
+```
+
+`BOUND_ACCOUNT_CLASSES` is the launch matrix of account classes and their signer checks.
+
 ### 10.3 Storage (SDK-P9)
 
 `WalletStore` holds, per chain and pool: the sync state (leaves, checkpoints, owned notes, the
@@ -551,6 +655,11 @@ key derivation `TEMPLAR_*_V1`, address and viewing-key version byte 1, store `TE
 and its schema version, plaintext `M301`, relation R0 V4 (`R0C4`), binding `TMR0_BIND_V4`.
 Changing a format adds a version; old formats stay readable where funds could depend on them, and
 recovery tries every derivation version (§3.1).
+
+**Revision 4** adds relation R0 V5 (`R0C5`) with binding `TMR0_BIND_V5`, the bound derivation
+labels `TEMPLAR_BOUND_*_V1` (§3.4), the SNIP-12 spend domain `('Templar', 'V5', chain, 1)` with
+the `TemplarSpend` type, and job relation `r5`. Recovery of a bound seed tries only pools that
+settle R0 V5.
 
 ## 12. Tests and acceptance
 
@@ -613,6 +722,17 @@ recovery tries every derivation version (§3.1).
 | OHTTP relay | the client's IP and the fact of using the server, not the content |
 | Submitting account | public and linked to the spend (`linkable: true` in v1) |
 | Everyone | per `docs/hidden-asset-spec.md` §7: a transfer shows no asset; an exit shows asset, amount, recipient; a published revert shows its calldata |
+
+**Pool V3 and bound wallets (revision 4;** account-bound spec §3, §10**):**
+
+- The prover server learns the bound account `A` of a bound spend, and that a free full
+  withdrawal empties its inputs. It holds the full pool calldata, so it can settle the spend, and
+  it chooses when, up to `send_deadline`.
+- Bound spend-specific reads (estimates, simulation, nullifier, root and recipient checks, status
+  polls) and submission go through the spend provider or the relayer, never a provider that has
+  seen `A` in that session.
+- A retained signature over a public binding is third-party-verifiable proof that `A` made the
+  spend; servers delete bound inputs when proving ends and results on acknowledgement.
 
 Timing between the prover request and the chain submission can link them for a party that sees
 both; a relayer that also simulates for the wallet (TODO item 5) removes the spend-specific RPC

@@ -360,6 +360,27 @@ let its owner replace the code holding all funds. So:
   `is_shadow_class`, `get_asset`, `asset_id`, `get_contract_standard`, `get_held`, and the tree's
   views.
 
+**M31 pool V3** (`bench/m31-pool/cairo/src/pool_v3.cairo`; `docs/account-bound-note-spec.md` §8)
+settles R0 V5 and P1. Against V2:
+
+- `apply_spend` and `apply_spend_with_invoke` take R0 V5 spends: the V4 fields plus a public
+  `valid_until` in the binding (`TMR0_BIND_V5`). A bound spend's account is checked inside the
+  statement account's proven execution and never reaches the chain. A spend is accepted while
+  `block ≤ valid_until`, `valid_until` is a nonzero multiple of `Q`, and `valid_until ≤ block + E
+  + Q`;
+- roots by supersession: the current root is always accepted, and a replaced root for `W` blocks
+  after it was replaced (`get_root_superseded_at`), with `W ≥ E + Q` checked by the constructor;
+- the owner levers are timelocked: `propose(key, value)`, `apply(key)` within `[eta, eta + T]`
+  (then the proposal lapses), and `cancel(key)`, where the key is `'R0'` or `'P1'` (a verifier)
+  or a shadow class hash (allowed or not); `initialize(r0, p1, shadow_classes)` runs once, before
+  any deposit; ownership moves in two steps (`transfer_ownership`, `accept_ownership`);
+- views: `get_verifier(kind)`, `get_proposal(key)`, `get_parameters` (`E`, `Q`, `W`, `T`),
+  `get_owner`, `get_pending_owner`, `is_shadow_class`, `get_nullifier_spent`,
+  `get_delivery_digest`, `get_asset`, `get_contract_standard`, `get_held`, and the tree's views;
+  no `asset_id` view;
+- no fees and no gating: anyone may call every entry point but the owner's, and the service is
+  paid off chain (account-bound spec §7.2).
+
 ## 6. Wallet (normative)
 
 - **Dummy values** are nine words each sampled uniformly in `[0, p)` (canonical M31, nonzero

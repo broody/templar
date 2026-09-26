@@ -1,16 +1,21 @@
-//! R0 V4 spends (spec §7.2, §7.3): note selection, outputs, dummies and the sticky companion
-//! dummy input, the statement and the bridge's checks, the binding and the pool calldata, and the
-//! client proof. Every choice uses the core's CSPRNG.
+//! Spends (spec §7.2, §7.3): note selection, outputs, dummies and the sticky companion dummy
+//! input, the statement and the bridge's checks, the binding and the pool calldata, and the client
+//! proof. Every choice uses the core's CSPRNG.
+//!
+//! Two relations: R0 V4 for pool V2, and R0 V5 for pool V3 (`docs/account-bound-note-spec.md`),
+//! which adds a public `valid_until` and, for a bound wallet, the account both inputs are bound to.
+//! The keys come from a [`KeySource`]: the Templar wallet's seed (never bound) or a bound wallet's.
 use rand::Rng;
 use rand_core::{CryptoRng, RngCore};
 use serde::{Deserialize, Serialize};
 use templar_client_verifier_circuit::payment::{DEPTH, Identity, Input};
-use templar_client_verifier_circuit::payment4::{self, Output, Private, Public};
-use templar_client_verifier_circuit::prove::{self, R4, TREE};
+use templar_client_verifier_circuit::payment4::{self, Output};
+use templar_client_verifier_circuit::payment5;
+use templar_client_verifier_circuit::prove::{self, R4, R5, TREE};
 
 use crate::address::Address;
 use crate::felt::{self, Felt32};
-use crate::keys::Seed;
+use crate::keys::{Account, BoundWallet, Seed};
 use crate::note;
 use crate::sealbox;
 use crate::tree::Tree;
@@ -18,6 +23,77 @@ use crate::{Digest, Error, Result, digest_ok, random_digest};
 
 /// Bounded FRI columns while proving (the bench's setting; about 0.3–0.6 GiB).
 pub const MAX_FRI_COLUMNS: usize = 16;
+
+pub use crate::pool::{PoolRef, Version};
+
+/// A source of spending keys.
+pub trait KeySource {
+    /// The keys of account `i` in `pool`.
+    fn account(&self, pool: &PoolRef, i: u32) -> Result<Account>;
+    /// The account every input is bound to: zero for the Templar wallet, `A` for a bound wallet.
+    fn bound_account(&self) -> Felt32;
+}
+
+impl KeySource for Seed {
+    fn account(&self, pool: &PoolRef, i: u32) -> Result<Account> {
+        Seed::account(self, pool.chain(), pool.pool(), i)
+    }
+    fn bound_account(&self) -> Felt32 {
+        [0; 32]
+    }
+}
+
+impl KeySource for BoundWallet {
+    fn account(&self, pool: &PoolRef, i: u32) -> Result<Account> {
+        self.keys(pool, i)
+    }
+    fn bound_account(&self) -> Felt32 {
+        *self.account_address()
+    }
+}
+
+/// Inputs to a V5 spend's `valid_until`, all read at one block together with the tree the root
+/// and paths come from (spec §8.2, AB-PV6): a re-plan takes all of them fresh, never an old root
+/// with a new expiry.
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+pub struct Expiry {
+    /// The latest block, the one the tree was read at.
+    pub latest_block: u64,
+    /// The pool's `E`.
+    pub window: u64,
+    /// The pool's `Q`.
+    pub quantum: u64,
+}
+
+/// A V5 plan can still land when proved at `now.latest_block` (AB-SM4): on the pool's grid,
+/// ahead of the latest block, and not beyond what the pool accepts (`E + Q`). A plan that fails
+/// is re-planned with a fresh root and expiry (AB-PV6).
+pub fn check_fresh(plan: &Plan, now: &Expiry) -> Result<()> {
+    if plan.version != Version::V5 {
+        return Ok(());
+    }
+    let v = plan.valid_until;
+    if now.quantum == 0 || now.quantum > u32::MAX as u64 || now.window > u32::MAX as u64 {
+        return Err(Error::input("expiry: the pool's E and Q"));
+    }
+    if !v.is_multiple_of(now.quantum) || v <= now.latest_block || v > now.latest_block.saturating_add(now.window + now.quantum) {
+        return Err(Error::new("stale_plan", "the plan's valid_until no longer fits the pool's rules; plan again"));
+    }
+    Ok(())
+}
+
+/// The SDK's `valid_until = ceil((latest + E) / Q) · Q` (spec §8.2): on the pool's grid, at least
+/// `E` blocks ahead and at most `E + Q`.
+pub fn valid_until(e: &Expiry) -> Result<u64> {
+    if e.quantum == 0 || e.quantum > u32::MAX as u64 || e.window > u32::MAX as u64 {
+        return Err(Error::input("expiry: the pool's E and Q"));
+    }
+    let v = e.latest_block.checked_add(e.window + e.quantum - 1).ok_or_else(|| Error::input("expiry: latest block"))? / e.quantum * e.quantum;
+    if v == 0 || v >= payment5::VALID_UNTIL_BOUND {
+        return Err(Error::input("expiry: valid_until out of range"));
+    }
+    Ok(v)
+}
 
 /// A spendable note, as the wallet holds it.
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -49,9 +125,11 @@ impl Companion {
         }
     }
 
-    /// The nullifier the companion publishes for `asset` (the wallet checks it is unspent).
-    pub fn nullifier(&self, chain: &Felt32, pool: &Felt32, asset: &Felt32) -> Result<Digest> {
-        let (receiver, nk) = templar_client_verifier_circuit::payment::receiver_of(&self.sk);
+    /// The nullifier the companion publishes for `asset` (the wallet checks it is unspent). A
+    /// bound spend's companion is bound to the same account (spec §6.2, AB-M14); `account` is zero
+    /// otherwise.
+    pub fn nullifier(&self, chain: &Felt32, pool: &Felt32, asset: &Felt32, account: &Felt32) -> Result<Digest> {
+        let (receiver, nk) = payment5::receiver_of(&felt::limbs(account)?, &self.sk);
         let cm = note::commitment(chain, pool, asset, 0, &receiver, &self.rho)?;
         Ok(note::nullifier(&nk, &cm, self.position))
     }
@@ -78,6 +156,15 @@ pub struct PlannedOutput {
 /// A checked plan: everything the proof needs except keys, which are re-derived from the seed.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Plan {
+    /// The relation. The V5 fields are omitted for V4, so a V4 plan serializes as before V5.
+    #[serde(default, skip_serializing_if = "is_v4")]
+    pub version: Version,
+    /// V5: the last block the spend may land in; 0 for V4.
+    #[serde(default, skip_serializing_if = "is_zero_u64")]
+    pub valid_until: u64,
+    /// V5: the account the inputs are bound to, `0x0` for an ordinary spend.
+    #[serde(default = "zero_hex", skip_serializing_if = "is_zero_hex")]
+    pub bound_account: String,
     pub chain: String,
     pub pool: String,
     pub asset: String,
@@ -95,6 +182,19 @@ pub struct Plan {
     pub outputs: [PlannedOutput; 2],
     pub withdrawal_recipient: String,
     pub withdrawal_amount: String,
+}
+
+fn zero_hex() -> String {
+    "0x0".into()
+}
+fn is_zero_hex(s: &str) -> bool {
+    s == "0x0"
+}
+fn is_zero_u64(v: &u64) -> bool {
+    *v == 0
+}
+fn is_v4(v: &Version) -> bool {
+    *v == Version::V4
 }
 
 /// A canonical decimal u128: digits only, no sign, no leading zeros (SDK-IM7).
@@ -170,7 +270,10 @@ fn select(notes: &[NoteRef], amount: u128) -> Result<Vec<NoteRef>> {
 }
 
 pub struct PlanInput<'a> {
-    pub seed: &'a Seed,
+    pub keys: &'a dyn KeySource,
+    pub version: Version,
+    /// Required for V5; the tree must be the one read at `expiry.latest_block`.
+    pub expiry: Option<Expiry>,
     pub chain: Felt32,
     pub pool: Felt32,
     pub request: Request,
@@ -231,7 +334,15 @@ pub fn plan(p: PlanInput, rng: &mut (impl RngCore + CryptoRng)) -> Result<Plan> 
     if inputs.iter().any(|n| n.account != account_index) {
         return Err(Error::new("one_account", "a spend's inputs come from one account"));
     }
-    let account = p.seed.account(&p.chain, &p.pool, account_index)?;
+    let bound = p.keys.bound_account();
+    let pool_ref = PoolRef::new(p.chain, p.pool, p.version)?;
+    let valid_until = match (p.version, &p.expiry) {
+        (Version::V4, _) if !felt::is_zero(&bound) => return Err(Error::new("wrong_relation", "a bound wallet spends only with R0 V5")),
+        (Version::V4, _) => 0,
+        (Version::V5, Some(e)) => valid_until(e)?,
+        (Version::V5, None) => return Err(Error::input("a V5 spend needs the pool's expiry rules and the latest block")),
+    };
+    let account = p.keys.account(&pool_ref, account_index)?;
     let mut total: u128 = 0;
     for n in &inputs {
         let amount = u128_of(&n.amount)?;
@@ -281,7 +392,7 @@ pub fn plan(p: PlanInput, rng: &mut (impl RngCore + CryptoRng)) -> Result<Plan> 
     let (companion, companion_is_new) = if inputs.len() == 1 {
         match p.companions.iter().find(|(i, _)| *i == inputs[0].index) {
             Some((_, c)) => {
-                if p.spent.contains(&c.nullifier(&p.chain, &p.pool, &asset)?) {
+                if p.spent.contains(&c.nullifier(&p.chain, &p.pool, &asset, &bound)?) {
                     return Err(Error::new("companion_spent", "the note's companion dummy was already spent"));
                 }
                 (Some(c.clone()), false)
@@ -292,6 +403,9 @@ pub fn plan(p: PlanInput, rng: &mut (impl RngCore + CryptoRng)) -> Result<Plan> 
         (None, false)
     };
     let plan = Plan {
+        version: p.version,
+        valid_until,
+        bound_account: felt::to_hex(&bound),
         chain: felt::to_hex(&p.chain),
         pool: felt::to_hex(&p.pool),
         asset: felt::to_hex(&asset),
@@ -307,12 +421,95 @@ pub fn plan(p: PlanInput, rng: &mut (impl RngCore + CryptoRng)) -> Result<Plan> 
         withdrawal_amount: withdrawal.1.to_string(),
     };
     // The whole statement is checked now, before any proving.
-    witness(p.seed, &plan)?;
+    witness(p.keys, &plan)?;
     Ok(plan)
 }
 
+/// The openings a free full withdrawal reveals to the prover server (spec §7.2, AB-M13): each
+/// output's `inner`, when the plan is a V5 plain withdrawal whose outputs are both zero-value notes.
+/// The server recomputes each commitment with the published asset and amount 0. `None` for any
+/// other plan, which pays a ticket instead.
+pub fn free_withdrawal_openings(plan: &Plan) -> Result<Option<[Digest; 2]>> {
+    if plan.version != Version::V5 || u128_of(&plan.withdrawal_amount)? == 0 || plan.outputs.iter().any(|o| o.amount != "0") {
+        return Ok(None);
+    }
+    Ok(Some([note::inner(&plan.outputs[0].receiver, &plan.outputs[0].rho), note::inner(&plan.outputs[1].receiver, &plan.outputs[1].rho)]))
+}
+
+/// A spend's public statement: R0 V4's, or R0 V5's (V4's plus `account` and `valid_until`).
+/// Serialized as the relation's own JSON (the server's `statement`), with u128 amounts as exact
+/// integers. It is never parsed back in the core.
+#[derive(Clone, Debug)]
+pub enum Statement {
+    V4(payment4::Public),
+    V5(payment5::Public),
+}
+
+impl Serialize for Statement {
+    fn serialize<S: serde::Serializer>(&self, s: S) -> std::result::Result<S::Ok, S::Error> {
+        match self {
+            Statement::V4(p) => p.serialize(s),
+            Statement::V5(p) => p.serialize(s),
+        }
+    }
+}
+
+impl Statement {
+    pub fn version(&self) -> Version {
+        match self {
+            Statement::V4(_) => Version::V4,
+            Statement::V5(_) => Version::V5,
+        }
+    }
+    pub fn root(&self) -> Digest {
+        match self {
+            Statement::V4(p) => p.root,
+            Statement::V5(p) => p.root,
+        }
+    }
+    pub fn nullifiers(&self) -> [Digest; 2] {
+        match self {
+            Statement::V4(p) => p.nullifiers,
+            Statement::V5(p) => p.nullifiers,
+        }
+    }
+    pub fn commitments(&self) -> [Digest; 2] {
+        match self {
+            Statement::V4(p) => p.commitments,
+            Statement::V5(p) => p.commitments,
+        }
+    }
+    pub fn token_out(&self) -> &str {
+        match self {
+            Statement::V4(p) => &p.token_out,
+            Statement::V5(p) => &p.token_out,
+        }
+    }
+    /// `TMR0_BIND_V4` or `TMR0_BIND_V5`: the bridge's and the pool's binding.
+    pub fn binding(&self) -> Result<Felt32> {
+        match self {
+            Statement::V4(p) => binding(p),
+            Statement::V5(p) => binding5(p),
+        }
+    }
+    /// `apply_spend(spend, proof)` calldata for the statement's pool.
+    pub fn calldata(&self, ciphertexts: &[Vec<String>; 2]) -> Result<Vec<String>> {
+        match self {
+            Statement::V4(p) => calldata(p, ciphertexts),
+            Statement::V5(p) => calldata5(p, ciphertexts),
+        }
+    }
+}
+
+/// The relation's private witness, for proving only.
+#[derive(Debug)]
+pub enum Witness {
+    V4(payment4::Private),
+    V5(payment5::Private),
+}
+
 /// Rebuilds the relation's witness and statement from a plan, with every check the bridge runs.
-pub fn witness(seed: &Seed, plan: &Plan) -> Result<(Public, Private)> {
+pub fn witness(keys: &dyn KeySource, plan: &Plan) -> Result<(Statement, Witness)> {
     let chain = felt::parse(&plan.chain)?;
     let pool = felt::parse(&plan.pool)?;
     let asset = felt::parse(&plan.asset)?;
@@ -324,7 +521,18 @@ pub fn witness(seed: &Seed, plan: &Plan) -> Result<(Public, Private)> {
     // The relation's own encoders panic on non-canonical text (64 hex digits), so every felt it
     // parses is rebuilt from its parsed value (SDK-IM1).
     let (chain_s, pool_s, asset_s) = (felt::to_hex(&chain), felt::to_hex(&pool), felt::to_hex(&asset));
-    let account = seed.account(&chain, &pool, plan.account)?;
+    let bound = keys.bound_account();
+    if felt::parse(&plan.bound_account)? != bound {
+        return Err(Error::input("the plan is for another wallet's account binding"));
+    }
+    match plan.version {
+        Version::V4 if !felt::is_zero(&bound) || plan.valid_until != 0 => return Err(Error::input("a V4 plan is ordinary and has no expiry")),
+        Version::V5 if plan.valid_until == 0 || plan.valid_until >= payment5::VALID_UNTIL_BOUND => {
+            return Err(Error::input("valid_until out of range"));
+        }
+        _ => {}
+    }
+    let account = keys.account(&PoolRef::new(chain, pool, plan.version)?, plan.account)?;
     if plan.inputs.is_empty() || plan.inputs.len() > 2 || plan.paths.len() != plan.inputs.len() {
         return Err(Error::input("one or two inputs"));
     }
@@ -378,28 +586,30 @@ pub fn witness(seed: &Seed, plan: &Plan) -> Result<(Public, Private)> {
         return Err(Error::input("recipient"));
     }
     let recipient_s = felt::to_hex(&recipient);
-    let private = Private {
-        token: asset_s.clone(),
-        inputs: [inputs[0].clone(), inputs[1].clone()],
-        dummy,
-        outputs: [outputs[0].clone(), outputs[1].clone()],
-        identity: Identity::default(),
+    let deliveries = [deliveries[0].clone(), deliveries[1].clone()];
+    let (inputs, outputs) = ([inputs[0].clone(), inputs[1].clone()], [outputs[0].clone(), outputs[1].clone()]);
+    let (statement, witness) = match plan.version {
+        Version::V4 => {
+            let private = payment4::Private { token: asset_s.clone(), inputs, dummy, outputs, identity: Identity::default() };
+            let public = payment4::statement(TREE, &chain_s, &pool_s, deliveries, (recipient_s, w_amount), "0x0", &private)
+                .map_err(|e| Error::new("invalid_spend", e))?;
+            payment4::bridge_checks(&public).map_err(|e| Error::new("bridge_would_reject", e))?;
+            (Statement::V4(public), Witness::V4(private))
+        }
+        Version::V5 => {
+            let private = payment5::Private {
+                token: asset_s.clone(), account: felt::to_hex(&bound), inputs, dummy, outputs, identity: Identity::default(),
+            };
+            let public = payment5::statement(TREE, &chain_s, &pool_s, deliveries, (recipient_s, w_amount), "0x0", plan.valid_until, &private)
+                .map_err(|e| Error::new("invalid_spend", e))?;
+            payment5::bridge_checks(&public).map_err(|e| Error::new("bridge_would_reject", e))?;
+            (Statement::V5(public), Witness::V5(private))
+        }
     };
-    let public = payment4::statement(
-        TREE,
-        &chain_s,
-        &pool_s,
-        [deliveries[0].clone(), deliveries[1].clone()],
-        (recipient_s, w_amount),
-        "0x0",
-        &private,
-    )
-    .map_err(|e| Error::new("invalid_spend", e))?;
-    payment4::bridge_checks(&public).map_err(|e| Error::new("bridge_would_reject", e))?;
-    if public.root != plan.root {
+    if statement.root() != plan.root {
         return Err(Error::new("invalid_spend", "an input is not under the plan's root"));
     }
-    Ok((public, private))
+    Ok((statement, witness))
 }
 
 fn words_felts(d: &Digest) -> Vec<Felt32> {
@@ -407,7 +617,7 @@ fn words_felts(d: &Digest) -> Vec<Felt32> {
 }
 
 /// `Poseidon('TMR0_BIND_V4', …)` over a V4 statement (the bridge's and the pool's binding).
-pub fn binding(p: &Public) -> Result<Felt32> {
+pub fn binding(p: &payment4::Public) -> Result<Felt32> {
     let f = |s: &str| felt::parse(s);
     let mut b = vec![felt::from_short_string("TMR0_BIND_V4")?, f(&p.chain)?, f(&p.pool)?, f(&p.token_out)?];
     b.extend(words_felts(&p.root));
@@ -424,8 +634,46 @@ pub fn binding(p: &Public) -> Result<Felt32> {
     Ok(felt::poseidon(&b))
 }
 
+/// `Poseidon('TMR0_BIND_V5', …)`: V4's fields, then `valid_until`; never the account (spec §5.2).
+pub fn binding5(p: &payment5::Public) -> Result<Felt32> {
+    let f = |s: &str| felt::parse(s);
+    let mut b = vec![felt::from_short_string("TMR0_BIND_V5")?, f(&p.chain)?, f(&p.pool)?, f(&p.token_out)?];
+    b.extend(words_felts(&p.root));
+    b.extend(words_felts(&p.nullifiers[0]));
+    b.extend(words_felts(&p.nullifiers[1]));
+    b.extend(words_felts(&p.commitments[0]));
+    b.push(f(&p.deliveries[0])?);
+    b.extend(words_felts(&p.commitments[1]));
+    b.push(f(&p.deliveries[1])?);
+    b.push(f(&p.withdrawal_recipient)?);
+    b.push(felt::from_u128(p.withdrawal_amount));
+    b.push(f(&p.intent)?);
+    b.extend(words_felts(&p.identity));
+    b.push(felt::from_u128(p.valid_until as u128));
+    Ok(felt::poseidon(&b))
+}
+
+/// Pool V3's `apply_spend(spend, proof)` calldata: `spend5::Spend` (V4's fields, then
+/// `valid_until`, then the binding) and an empty `proof` span.
+pub fn calldata5(p: &payment5::Public, ciphertexts: &[Vec<String>; 2]) -> Result<Vec<String>> {
+    let v4 = payment4::Public {
+        chain: p.chain.clone(), pool: p.pool.clone(), token_out: p.token_out.clone(), root: p.root,
+        nullifiers: p.nullifiers, commitments: p.commitments, deliveries: p.deliveries.clone(),
+        withdrawal_recipient: p.withdrawal_recipient.clone(), withdrawal_amount: p.withdrawal_amount, intent: p.intent.clone(),
+        identity: p.identity,
+    };
+    let mut out = calldata(&v4, ciphertexts)?;
+    // V4's layout ends `…, identity₉, binding, 0x0` (the empty proof span).
+    let tail = out.split_off(out.len() - 2);
+    debug_assert_eq!(tail[1], "0x0");
+    out.push(format!("0x{:x}", p.valid_until));
+    out.push(felt::to_hex(&binding5(p)?));
+    out.push("0x0".into());
+    Ok(out)
+}
+
 /// `apply_spend(spend, proof)` calldata: the pool's `spend4::Spend` then an empty `proof` span.
-pub fn calldata(p: &Public, ciphertexts: &[Vec<String>; 2]) -> Result<Vec<String>> {
+pub fn calldata(p: &payment4::Public, ciphertexts: &[Vec<String>; 2]) -> Result<Vec<String>> {
     let f = |s: &str| felt::parse(s).map(|x| felt::to_hex(&x));
     let span = |d: &[u32]| -> Vec<String> {
         std::iter::once(format!("0x{:x}", d.len())).chain(d.iter().map(|w| format!("0x{w:x}"))).collect()
@@ -451,12 +699,13 @@ pub fn calldata(p: &Public, ciphertexts: &[Vec<String>; 2]) -> Result<Vec<String
 }
 
 /// A proved spend, ready for the prover server and the pool.
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize)]
 pub struct Proved {
+    pub version: Version,
     /// The client proof as the bridge's Cairo arguments (the server's `proof`).
     pub proof: Vec<String>,
     /// The public statement (the server's `statement`).
-    pub statement: Public,
+    pub statement: Statement,
     pub binding: String,
     pub calldata: Vec<String>,
     /// The client circuit hash, eight u32 little-endian words.
@@ -466,21 +715,33 @@ pub struct Proved {
 }
 
 /// Proves a plan: rebuilds and checks the witness, proves with a fresh blinding seed, checks the
-/// hiding budget and verifies the proof natively (spec §7.3).
-pub fn prove_plan(seed: &Seed, plan: &Plan, rng: &mut (impl RngCore + CryptoRng)) -> Result<Proved> {
-    let (public, private) = witness(seed, plan)?;
+/// hiding budget and verifies the proof natively (spec §7.3). A V5 plan needs `now`, the pool's
+/// rules and the latest block, and is refused when it can no longer land (AB-SM4).
+pub fn prove_plan(keys: &dyn KeySource, plan: &Plan, now: Option<&Expiry>, rng: &mut (impl RngCore + CryptoRng)) -> Result<Proved> {
+    match (plan.version, now) {
+        (Version::V5, Some(now)) => check_fresh(plan, now)?,
+        (Version::V5, None) => return Err(Error::input("proving a V5 plan needs the pool's expiry rules and the latest block")),
+        (Version::V4, _) => {}
+    }
+    let (statement, witness) = witness(keys, plan)?;
     let mut blinding = [0u8; 32];
     rng.fill_bytes(&mut blinding);
-    let proved = prove::prove(&R4(&public, &private), blinding, Some(MAX_FRI_COLUMNS)).map_err(|e| Error::new("proving", e))?;
+    let proved = match (&statement, &witness) {
+        (Statement::V4(public), Witness::V4(private)) => prove::prove(&R4(public, private), blinding, Some(MAX_FRI_COLUMNS)),
+        (Statement::V5(public), Witness::V5(private)) => prove::prove(&R5(public, private), blinding, Some(MAX_FRI_COLUMNS)),
+        _ => unreachable!("witness returns matching versions"),
+    }
+    .map_err(|e| Error::new("proving", e))?;
     let circuit_hash = prove::words(proved.circuit_hash);
     let proof = prove::cairo_arguments(proved);
     let ciphertexts = [plan.outputs[0].ciphertext.clone(), plan.outputs[1].ciphertext.clone()];
     Ok(Proved {
+        version: statement.version(),
         proof,
-        binding: felt::to_hex(&binding(&public)?),
-        calldata: calldata(&public, &ciphertexts)?,
+        binding: felt::to_hex(&statement.binding()?),
+        calldata: statement.calldata(&ciphertexts)?,
         circuit_hash,
-        nullifiers: public.nullifiers,
-        statement: public,
+        nullifiers: statement.nullifiers(),
+        statement,
     })
 }

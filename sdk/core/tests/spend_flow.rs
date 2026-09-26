@@ -50,7 +50,7 @@ fn refs(owned: &[scan::Owned]) -> Vec<NoteRef> {
 }
 
 fn publish(tree: &mut Tree, published: &mut Vec<Published>, proved: &spend::Proved, plan: &spend::Plan) {
-    for (cm, out) in proved.statement.commitments.iter().zip(&plan.outputs) {
+    for (cm, out) in proved.statement.commitments().iter().zip(&plan.outputs) {
         let words: Vec<Felt32> = out.ciphertext.iter().map(|w| felt::parse(w).unwrap()).collect();
         published.push(Published { index: tree.len(), commitment: *cm, digest: felt::parse(&out.delivery).unwrap(), words });
         tree.append(&[*cm]).unwrap();
@@ -94,7 +94,9 @@ fn deposit_transfer_scan_withdraw_nft() {
     // A hidden transfer of 600 to Bob, one input and a fresh companion.
     let plan = spend::plan(
         PlanInput {
-            seed: &alice,
+            keys: &alice,
+            version: spend::Version::V4,
+            expiry: None,
             chain: chain(),
             pool: pool(),
             request: Request::Transfer { asset: felt::to_hex(&token), amount: "600".into(), to: b_addr.encode().unwrap() },
@@ -110,8 +112,8 @@ fn deposit_transfer_scan_withdraw_nft() {
     assert_eq!(plan.inputs.len(), 1);
     assert!(plan.companion_is_new);
     let companion = (plan.inputs[0].index, plan.companion.clone().unwrap());
-    let proved = spend::prove_plan(&alice, &plan, &mut rng).unwrap();
-    assert_eq!(proved.statement.token_out, "0x0", "a transfer publishes no asset");
+    let proved = spend::prove_plan(&alice, &plan, None, &mut rng).unwrap();
+    assert_eq!(proved.statement.token_out(), "0x0", "a transfer publishes no asset");
     assert_eq!(proved.calldata.last().unwrap(), "0x0");
     save("transfer", &proved);
     publish(&mut tree, &mut published, &proved, &plan);
@@ -129,7 +131,9 @@ fn deposit_transfer_scan_withdraw_nft() {
     // A re-plan of the same note reuses its companion (sticky, SDK-M17).
     let again = spend::plan(
         PlanInput {
-            seed: &alice,
+            keys: &alice,
+            version: spend::Version::V4,
+            expiry: None,
             chain: chain(),
             pool: pool(),
             request: Request::Transfer { asset: felt::to_hex(&token), amount: "100".into(), to: b_addr.encode().unwrap() },
@@ -149,7 +153,9 @@ fn deposit_transfer_scan_withdraw_nft() {
     let nft_notes = refs(&alice_found[1..2]);
     let plan = spend::plan(
         PlanInput {
-            seed: &alice,
+            keys: &alice,
+            version: spend::Version::V4,
+            expiry: None,
             chain: chain(),
             pool: pool(),
             request: Request::Withdraw { asset: felt::to_hex(&nft), amount: "1".into(), recipient: "0xb0b".into() },
@@ -162,14 +168,14 @@ fn deposit_transfer_scan_withdraw_nft() {
         &mut rng,
     )
     .unwrap();
-    let proved = spend::prove_plan(&alice, &plan, &mut rng).unwrap();
-    assert_eq!(felt::parse(&proved.statement.token_out).unwrap(), nft);
+    let proved = spend::prove_plan(&alice, &plan, None, &mut rng).unwrap();
+    assert_eq!(felt::parse(proved.statement.token_out()).unwrap(), nft);
     save("withdraw-nft", &proved);
 
     // Refusals before proving.
     let plan_err = |request: Request, notes: &[NoteRef]| {
         spend::plan(
-            PlanInput { seed: &alice, chain: chain(), pool: pool(), request, notes, companions: &[], required_inputs: None,
+            PlanInput { keys: &alice, version: spend::Version::V4, expiry: None, chain: chain(), pool: pool(), request, notes, companions: &[], required_inputs: None,
             spent: &[], tree: &tree },
             &mut ChaCha20Rng::seed_from_u64(1),
         )
@@ -213,7 +219,7 @@ fn spend_rules() {
     let t = felt::to_hex(&token);
     let plan = |request: Request, spent: &[templar_core::Digest], required: Option<&[u64]>| {
         spend::plan(
-            PlanInput { seed: &alice, chain: chain(), pool: pool(), request, notes: &notes, companions: &[], required_inputs: required, spent, tree: &tree },
+            PlanInput { keys: &alice, version: spend::Version::V4, expiry: None, chain: chain(), pool: pool(), request, notes: &notes, companions: &[], required_inputs: required, spent, tree: &tree },
             &mut ChaCha20Rng::seed_from_u64(1),
         )
     };
@@ -232,10 +238,12 @@ fn spend_rules() {
     // IM4: a spent companion is refused.
     let single = plan(Request::Transfer { asset: t.clone(), amount: "6".into(), to: a0.encode().unwrap() }, &[], None).unwrap();
     let comp = single.companion.clone().unwrap();
-    let cnf = comp.nullifier(&chain(), &pool(), &token).unwrap();
+    let cnf = comp.nullifier(&chain(), &pool(), &token, &[0; 32]).unwrap();
     let err = spend::plan(
         PlanInput {
-            seed: &alice, chain: chain(), pool: pool(),
+            keys: &alice,
+            version: spend::Version::V4,
+            expiry: None, chain: chain(), pool: pool(),
             request: Request::Transfer { asset: t.clone(), amount: "6".into(), to: a0.encode().unwrap() },
             notes: &notes, companions: &[(single.inputs[0].index, comp)], required_inputs: None, spent: &[cnf], tree: &tree,
         },

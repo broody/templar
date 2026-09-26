@@ -81,7 +81,13 @@ impl Rpc {
     }
 
     pub async fn class_hash_at(&self, address: &str) -> Result<Felt> {
-        felt(self.call_raw("starknet_getClassHashAt", json!(["latest", address])).await?.as_str().context("class hash")?)
+        self.class_hash_at_block(None, address).await
+    }
+
+    /// The class hash at `block` (the latest when `None`).
+    pub async fn class_hash_at_block(&self, block: Option<u64>, address: &str) -> Result<Felt> {
+        let at = block.map_or(json!("latest"), |n| json!({"block_number": n}));
+        felt(self.call_raw("starknet_getClassHashAt", json!([at, address])).await?.as_str().context("class hash")?)
     }
 
     pub async fn storage_at(&self, address: &str, key: &Felt) -> Result<Felt> {
@@ -90,9 +96,24 @@ impl Rpc {
 
     /// A view call at the latest block.
     pub async fn call(&self, address: &str, function: &str, calldata: &[Felt]) -> Result<Vec<Felt>> {
+        self.call_at(None, address, function, calldata).await
+    }
+
+    /// A view call at `block` (the latest when `None`).
+    pub async fn call_at(&self, block: Option<u64>, address: &str, function: &str, calldata: &[Felt]) -> Result<Vec<Felt>> {
         let req = json!({"contract_address": address, "entry_point_selector": hex(&sn_keccak(function)),
                          "calldata": calldata.iter().map(hex).collect::<Vec<_>>()});
-        let r = self.call_raw("starknet_call", json!([req, "latest"])).await?;
+        let at = match block {
+            Some(n) => json!({"block_number": n}),
+            None => json!("latest"),
+        };
+        let r = self.call_raw("starknet_call", json!([req, at])).await?;
         r.as_array().context("call result")?.iter().map(|v| felt(v.as_str().context("felt")?)).collect()
+    }
+
+    /// The latest block's timestamp.
+    pub async fn latest_timestamp(&self) -> Result<u64> {
+        let b = self.call_raw("starknet_getBlockWithTxHashes", json!(["latest"])).await?;
+        b["timestamp"].as_u64().context("timestamp")
     }
 }

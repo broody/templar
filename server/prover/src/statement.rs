@@ -1,19 +1,25 @@
 //! A submission: the relation, the client proof (the wallet's `cairo-arguments.json`: a
 //! length-prefixed felt span) and the public statement (its `public.json`). Parsing is fallible
 //! and bounded; the statement's fields become the bridge's `main` arguments, exactly as the bench
-//! validators pass them (`validate_bridge_r4.py`, `validate_bridge_p1.py`).
+//! validators pass them (`validate_bridge_r4.py`, `validate_bridge_r5.py`, `validate_bridge_p1.py`).
+//!
+//! An R0 V5 job (`docs/account-bound-note-spec.md` §9) also carries the full pool calldata, so the
+//! service can settle what it proved (AB-P28), and in bound mode the salt and the account's
+//! signature, which go into the virtual transaction's calldata.
 use anyhow::{bail, Context, Result};
 use serde::Deserialize;
 use serde_json::Value;
 use starknet_types_core::felt::Felt;
 
 use crate::rpc::felt;
+use crate::v5::{PoolCall, StatementV5, MAX_SIGNATURE_FELTS};
 
 const P: u64 = (1 << 31) - 1;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Relation {
     R4,
+    R5,
     P1,
 }
 
@@ -21,16 +27,24 @@ impl Relation {
     pub fn parse(s: &str) -> Result<Relation> {
         match s {
             "r4" => Ok(Relation::R4),
+            "r5" => Ok(Relation::R5),
             "p1" => Ok(Relation::P1),
-            _ => bail!("relation must be r4 or p1"),
+            _ => bail!("relation must be r4, r5 or p1"),
         }
     }
     pub fn name(self) -> &'static str {
         match self {
             Relation::R4 => "r4",
+            Relation::R5 => "r5",
             Relation::P1 => "p1",
         }
     }
+}
+
+#[derive(Deserialize)]
+pub struct PoolCallJson {
+    pub entry_point: String,
+    pub calldata: Vec<String>,
 }
 
 #[derive(Deserialize)]
@@ -38,6 +52,27 @@ pub struct SubmissionJson {
     pub relation: String,
     pub proof: Vec<String>,
     pub statement: Value,
+    /// R0 V5: the pool call that settles the statement.
+    #[serde(default)]
+    pub pool_call: Option<PoolCallJson>,
+    /// R0 V5 bound mode: the salt of the signed binding commitment, and the account's signature.
+    #[serde(default)]
+    pub salt: Option<String>,
+    #[serde(default)]
+    pub signature: Option<Vec<String>>,
+    /// Tickets and refund requests, or a free full withdrawal's openings (spec §7.2, §9).
+    #[serde(default)]
+    pub payment: Option<Value>,
+}
+
+/// An R0 V5 job's extra parts.
+#[derive(Debug, Clone)]
+pub struct V5Job {
+    pub statement: StatementV5,
+    pub pool_call: PoolCall,
+    /// Zero and empty in ordinary mode.
+    pub salt: Felt,
+    pub signature: Vec<Felt>,
 }
 
 #[derive(Debug, Clone)]
@@ -52,6 +87,7 @@ pub struct Submission {
     pub nullifiers: Vec<Vec<Felt>>,
     /// The bridge's statement arguments (the proof span follows them).
     pub statement_args: Vec<Felt>,
+    pub v5: Option<V5Job>,
 }
 
 fn f(v: &Value, key: &str) -> Result<Felt> {
@@ -125,8 +161,9 @@ impl Submission {
         let pool = f(s, "pool")?;
         let root = digest(s, "root")?;
         let mut args = vec![chain, pool];
+        let mut v5 = None;
         let nullifiers = match relation {
-            Relation::R4 => {
+            Relation::R4 | Relation::R5 => {
                 let [n0, n1] = pair(s, "nullifiers")?;
                 let nfs = vec![words(n0, "nullifier")?, words(n1, "nullifier")?];
                 let [c0, c1] = pair(s, "commitments")?;
@@ -140,7 +177,37 @@ impl Submission {
                 args.push(f(s, "withdrawal_recipient")?);
                 args.push(int(s, "withdrawal_amount", 128)?);
                 args.push(f(s, "intent")?);
-                args.extend(span(&digest(s, "identity")?));
+                let identity = digest(s, "identity")?;
+                args.extend(span(&identity));
+                if relation == Relation::R5 {
+                    let account = f(s, "account")?;
+                    let valid_until = int(s, "valid_until", 56)?;
+                    args.push(account);
+                    args.push(valid_until);
+                    let statement = StatementV5 {
+                        chain, pool, token_out: f(s, "token_out")?, root: root.clone(), nullifiers: [nfs[0].clone(), nfs[1].clone()],
+                        commitments: [words(c0, "commitment")?, words(c1, "commitment")?], deliveries: [d(d0)?, d(d1)?],
+                        withdrawal_recipient: f(s, "withdrawal_recipient")?, withdrawal_amount: int(s, "withdrawal_amount", 128)?,
+                        intent: f(s, "intent")?, identity, account,
+                        valid_until: crate::v5::to_u64(&valid_until).context("valid_until")?,
+                    };
+                    let call = body.pool_call.as_ref().context("an r5 job carries its pool call")?;
+                    let calldata: Vec<Felt> = call.calldata.iter().map(|x| felt(x)).collect::<Result<_>>().context("pool_call.calldata")?;
+                    let pool_call = PoolCall::parse(&call.entry_point, calldata)?;
+                    let salt = body.salt.as_deref().map(felt).transpose().context("salt")?.unwrap_or(Felt::ZERO);
+                    let signature: Vec<Felt> =
+                        body.signature.iter().flatten().map(|x| felt(x)).collect::<Result<_>>().context("signature")?;
+                    if statement.bound() {
+                        if salt == Felt::ZERO || signature.is_empty() || signature.len() > MAX_SIGNATURE_FELTS {
+                            bail!("a bound spend carries a nonzero salt and a signature of 1 to {MAX_SIGNATURE_FELTS} felts");
+                        }
+                    } else if salt != Felt::ZERO || !signature.is_empty() {
+                        bail!("an ordinary spend carries no salt and no signature");
+                    }
+                    v5 = Some(V5Job { statement, pool_call, salt, signature });
+                } else if body.pool_call.is_some() || body.salt.is_some() || body.signature.is_some() {
+                    bail!("only r5 jobs carry a pool call, a salt or a signature");
+                }
                 nfs
             }
             Relation::P1 => {
@@ -167,10 +234,22 @@ impl Submission {
                 args.push(int(s, "kind", 8)?);
                 args.push(int(s, "x", 128)?);
                 args.push(f(s, "data")?);
+                if body.pool_call.is_some() || body.salt.is_some() || body.signature.is_some() {
+                    bail!("only r5 jobs carry a pool call, a salt or a signature");
+                }
                 vec![nf]
             }
         };
-        Ok(Submission { relation, proof, chain, pool, root, nullifiers, statement_args: args })
+        Ok(Submission { relation, proof, chain, pool, root, nullifiers, statement_args: args, v5 })
+    }
+
+    /// The statement account's `__execute__` calldata: `(proof_data, salt, signature)` for R0 V5
+    /// (spec §5.4), the proof span alone otherwise.
+    pub fn execute_calldata(&self) -> Vec<Felt> {
+        match &self.v5 {
+            Some(j) => [self.proof.clone(), vec![j.salt], span(&j.signature)].concat(),
+            None => self.proof.clone(),
+        }
     }
 
     /// The deduplication key: input 0's nullifier (R4) or the policy note's (P1).
@@ -193,6 +272,7 @@ mod tests {
         let d = json!([1, 2, 3, 4, 5, 6, 7, 8, 9]);
         SubmissionJson {
             relation: "r4".into(),
+            pool_call: None, salt: None, signature: None, payment: None,
             proof: proof.into_iter().map(String::from).collect(),
             statement: json!({"chain": "0x534e5f5345504f4c4941", "pool": "0x1", "token_out": "0x0", "root": d,
                 "nullifiers": [d, d], "commitments": [d, d], "deliveries": ["0x1", "0x2"],
@@ -217,6 +297,81 @@ mod tests {
         let too_big: Value = serde_json::from_str("340282366920938463463374607431768211456").unwrap(); // 2^128
         assert!(Submission::parse(r4(too_big, vec!["0x0"]), 10).is_err());
         assert!(Submission::parse(r4(json!("1180591620717411303424"), vec!["0x0"]), 10).is_ok());
+    }
+
+    /// An r5 submission: a V4-shaped statement plus `account` and `valid_until`, and a pool call
+    /// with the right structure (its match to the statement is the pre-check's, not parsing's).
+    fn r5(account: &str, salt: Option<&str>, signature: Option<Vec<&str>>) -> SubmissionJson {
+        let d = json!([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        let words: Vec<String> = (1..=9).map(|w| format!("0x{w:x}")).collect();
+        let mut call: Vec<String> = vec!["0x534e5f5345504f4c4941".into(), "0x1".into(), "0x0".into(), "0x9".into()];
+        call.extend(words.clone());
+        call.push("0x12".into());
+        call.extend(words.iter().chain(&words).cloned());
+        call.push("0x2".into());
+        for _ in 0..2 {
+            call.push("0x9".into());
+            call.extend(words.clone());
+            call.push("0xa".into());
+            call.extend((1..=10).map(|w| format!("0x{w:x}")));
+        }
+        call.extend(["0x0".into(), "0x0".into(), "0x0".into(), "0x9".into()]);
+        call.extend(std::iter::repeat_n("0x0".to_string(), 9));
+        call.extend(["0x1964".into(), "0x1".into(), "0x0".into()]);
+        SubmissionJson {
+            relation: "r5".into(),
+            proof: vec!["0x2".into(), "0x5".into(), "0x6".into()],
+            statement: json!({"chain": "0x534e5f5345504f4c4941", "pool": "0x1", "token_out": "0x0", "root": d,
+                "nullifiers": [d, d], "commitments": [d, d], "deliveries": ["0x1", "0x2"],
+                "withdrawal_recipient": "0x0", "withdrawal_amount": 0, "intent": "0x0", "identity": [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                "account": account, "valid_until": 6500}),
+            pool_call: Some(PoolCallJson { entry_point: "apply_spend".into(), calldata: call }),
+            salt: salt.map(String::from),
+            signature: signature.map(|s| s.into_iter().map(String::from).collect()),
+            payment: None,
+        }
+    }
+
+    #[test]
+    fn r5_ordinary_and_bound() {
+        let s = Submission::parse(r5("0x0", None, None), 10).unwrap();
+        let j = s.v5.as_ref().unwrap();
+        assert!(!j.statement.bound() && j.statement.valid_until == 6500);
+        // R4's arguments, then the account and valid_until, then the proof.
+        assert_eq!(s.statement_args.len(), 3 + 10 + 19 + 19 + 3 + 3 + 10 + 2);
+        assert_eq!(s.statement_args[s.statement_args.len() - 1], Felt::from(6500u64));
+        // `__execute__(proof_data, salt = 0, signature = [])`.
+        assert_eq!(s.execute_calldata(), [s.proof.clone(), vec![Felt::ZERO, Felt::ZERO]].concat());
+        let s = Submission::parse(r5("0x7e57b3c0", Some("0x5a17"), Some(vec!["0x1", "0x2"])), 10).unwrap();
+        assert!(s.v5.as_ref().unwrap().statement.bound());
+        assert_eq!(s.execute_calldata(), [s.proof.clone(), vec![Felt::from(0x5a17u64), Felt::TWO, Felt::ONE, Felt::TWO]].concat());
+    }
+
+    #[test]
+    fn r5_refusals() {
+        // Bound: a nonzero salt and 1..=32 signature felts. Ordinary: neither.
+        assert!(Submission::parse(r5("0x7e57b3c0", None, Some(vec!["0x1"])), 10).is_err(), "no salt");
+        assert!(Submission::parse(r5("0x7e57b3c0", Some("0x0"), Some(vec!["0x1"])), 10).is_err(), "zero salt");
+        assert!(Submission::parse(r5("0x7e57b3c0", Some("0x1"), None), 10).is_err(), "no signature");
+        assert!(Submission::parse(r5("0x7e57b3c0", Some("0x1"), Some(vec!["0x1"; 33])), 10).is_err(), "33 felts");
+        assert!(Submission::parse(r5("0x0", Some("0x1"), None), 10).is_err(), "ordinary with a salt");
+        assert!(Submission::parse(r5("0x0", None, Some(vec!["0x1"])), 10).is_err(), "ordinary with a signature");
+        let mut j = r5("0x0", None, None);
+        j.pool_call = None;
+        assert!(Submission::parse(j, 10).is_err(), "no pool call");
+        let mut j = r5("0x0", None, None);
+        j.statement["valid_until"] = json!(1u64 << 56);
+        assert!(Submission::parse(j, 10).is_err(), "valid_until at 2^56");
+        let mut j = r5("0x0", None, None);
+        j.pool_call.as_mut().unwrap().calldata.push("0x0".into());
+        assert!(Submission::parse(j, 10).is_err(), "trailing pool-call felt");
+        // Only r5 carries these parts.
+        let mut j = r4(json!(0), vec!["0x0"]);
+        j.salt = Some("0x1".into());
+        assert!(Submission::parse(j, 10).is_err(), "r4 with a salt");
+        let mut j = r4(json!(0), vec!["0x0"]);
+        j.pool_call = r5("0x0", None, None).pool_call;
+        assert!(Submission::parse(j, 10).is_err(), "r4 with a pool call");
     }
 
     #[test]

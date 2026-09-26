@@ -1,9 +1,9 @@
 // The wallet (spec §6, §7, §9): sync with completeness and reorg rollback, balances, deposits,
 // spends and their in-flight records. Protocol values come from the core; this layer moves data,
 // persists state and talks to starknet.js and the prover server.
-import type { Account, Call, RpcProvider } from 'starknet';
+import { RpcError, type Account, type Call, type RpcProvider } from 'starknet';
 
-import { SELECTORS, checkSpecVersion, checkVerifier, fetchPoolEvents, leafCountAndRoot, verifyPins, type PoolEvent } from './chain.js';
+import { SELECTORS, checkSpecVersion, checkVerifier, fetchPoolEvents, leafCountAndRoot, pendingProposals, verifyPins, type PoolEvent, type Proposal } from './chain.js';
 import {
   call,
   json,
@@ -13,17 +13,19 @@ import {
   type AssetKind,
   type Companion,
   type Digest,
+  type Expiry,
   type Hex,
   type NoteRef,
   type OwnedNote,
   type Plan,
   type Proved,
   type ServerResult,
+  type SpendMessage,
   type SpendRequest,
   type Window,
 } from './core.js';
 import { TemplarError, fail } from './errors.js';
-import { activePool, canon, pinsOf, sameFelt, type NetworkConstants, type PoolConstants } from './network.js';
+import { BOUND_ACCOUNT_CLASSES, activePool, canon, pinsOf, sameFelt, versionOf, type NetworkConstants, type PoolConstants } from './network.js';
 import { proveInWorker, type ProveOptions } from './prove.js';
 import { ProverClient, type ProverOptions } from './prover.js';
 import { WalletStore, type KV } from './store.js';
@@ -39,6 +41,37 @@ export const GAP = 3;
 export const EVICTION_LEAVES = 512;
 /** Blocks before `valid_until` after which a result is not sent. */
 export const WINDOW_MARGIN = 20;
+/** `'VALID'`, the only answer `is_valid_signature` may give (docs/account-bound-note-spec.md §5.4). */
+const VALID = 0x56414c4944n;
+
+/**
+ * The connected wallet of a bound account `A` (Ready, Braavos): it signs SNIP-12 typed data and
+ * returns the raw signature felts (docs/account-bound-note-spec.md §5.3). The SDK never gives it
+ * anything else to sign.
+ */
+export interface BoundSigner {
+  /** The connected wallet's account address: it must be the bound account `A` (AB-SP16). */
+  address: string;
+  signTypedData(typedData: object): Promise<string[]>;
+}
+
+/** A bound wallet's context: its account, its signer, and the provider for spend reads (§10). */
+interface Bound {
+  account: Hex;
+  signer: BoundSigner;
+  /**
+   * Spend-specific reads (latest block, the signature pre-check, recipient checks) go through a
+   * provider that has not seen the account in this session: the relayer or a separate provider
+   * over OHTTP (spec §10). The signature pre-check names `A` to it, so each of its requests must
+   * be unlinkable to the others: OHTTP or the relayer, never a plain node.
+   */
+  spendProvider: RpcProvider;
+  /**
+   * The account failed its class or signer checks at open: the wallet syncs and spends, but
+   * creates no address or deposit (AB-SP16 re-check).
+   */
+  issue?: TemplarError;
+}
 const CHUNK = 1024;
 
 const ISRC6_ID = '0x2ceccef7f994940b3962a6c67e0ba4fcd37df7d131417c604f91e03caecc1cd';
@@ -101,6 +134,8 @@ export type RecordStage = 'planned' | 'proved' | 'sent_to_server' | 'wrapped' | 
 export interface Attempt {
   plan: Plan;
   proved?: Proved;
+  /** A bound spend's authorization: the salt and the account's signature over its message. */
+  authorization?: { salt: Hex; hash: Hex; signature: Hex[] };
   server?: { url: string; jobId?: string; body: string };
   result?: ServerResult;
   window?: Window;
@@ -164,10 +199,10 @@ export class Templar {
   ) {}
 
   /** Loads the core and checks the RPC node and the chain against the pinned constants. */
-  static async connect(opts: { provider: RpcProvider; network: NetworkConstants; kv: KV; wasm?: BufferSource | string }): Promise<Templar> {
+  static async connect(opts: { provider: RpcProvider; network: NetworkConstants; kv: KV; wasm?: BufferSource | string; pool?: PoolConstants }): Promise<Templar> {
     await loadCore(opts.wasm);
     await checkSpecVersion(opts.provider);
-    const pool = activePool(opts.network);
+    const pool = opts.pool ?? activePool(opts.network);
     await verifyPins(opts.provider, opts.network, pool);
     return new Templar(opts.provider, opts.network, pool, opts.kv);
   }
@@ -183,9 +218,95 @@ export class Templar {
   }
 
   async wallet(seed: Uint8Array): Promise<Wallet> {
+    // A bound wallet's 60-byte keys would make a wallet without its bound context (AB-SP19).
+    if (seed.length !== 32) fail('bad_seed', 'a Templar wallet seed is 32 bytes; a bound wallet opens with boundWallet');
     const store = new WalletStore(this.kv, seed, this.network.chainId, this.pool.pool);
     await store.open();
     const w = new Wallet(this, seed, store);
+    await w.load();
+    return w;
+  }
+
+  // ------------------------------------------------------------------ bound wallets (product 1)
+
+  /** A bound wallet's seed: 28 random bytes from the core, backed up as 21 words (spec §6.1). */
+  static generateBoundSeed(): Uint8Array {
+    return call(() => wasm.bound_seed_generate());
+  }
+  /** Restores a bound seed from its 21 words; a Templar wallet's 24 words are refused. */
+  static boundSeedFromMnemonic(words: string): Uint8Array {
+    return call(() => wasm.bound_seed_from_mnemonic(words));
+  }
+  static boundMnemonic(seed: Uint8Array): string {
+    return call(() => wasm.bound_mnemonic(seed));
+  }
+
+  /**
+   * The setup checks before a bound seed is created (spec §6.3), at one fixed block through
+   * `starknet_call`, never simulation: `A` is deployed, its class is in the compatibility matrix and
+   * its signers pass the class's checks (no guardian, multisig or non-Stark signer at launch), and
+   * its `is_valid_signature` accepts a setup-check signature, rejects a tampered copy, and rejects
+   * the same signature over another hash. `A` must come from the connected wallet, never from
+   * typed input.
+   */
+  async boundSetupCheck(account: Hex, signer: BoundSigner): Promise<{ vendor: string; version: string }> {
+    if (versionOf(this.pool) !== 'v5') fail('wrong_relation', 'bound notes live only on a pool that settles R0 V5');
+    if (!sameFelt(signer.address, account)) fail('account_mismatch', 'the connected wallet is another account');
+    const block = (await this.provider.getBlockLatestAccepted()).block_number;
+    const entry = await this.accountChecks(account, block);
+    const m = json<SpendMessage>(() => wasm.setup_check_message(this.network.chainId, canon(account)));
+    const sig = (await signer.signTypedData(m.typed_data)).map(canon);
+    // A node that fails to answer is not an account that refused: transport errors fail the check.
+    const valid = (hash: Hex, s: Hex[]) => isValidSignature(this.provider, account, hash, s, block, true);
+    if (!(await valid(m.hash, sig))) fail('setup_signature', 'the account does not accept its own signature over the setup message');
+    const tampered = [...sig.slice(0, -1), canon(BigInt(sig[sig.length - 1] ?? 0) ^ 1n)];
+    if (await valid(m.hash, tampered)) fail('setup_signature', 'the account accepts a tampered signature');
+    if (await valid(canon(BigInt(m.hash) + 1n), sig)) fail('setup_signature', 'the account accepts the signature over another hash');
+    return { vendor: entry.vendor, version: entry.version };
+  }
+
+  /** `A` is deployed, its class is in the launch matrix, and its signers pass the class's checks. */
+  private async accountChecks(account: Hex, block: number): Promise<(typeof BOUND_ACCOUNT_CLASSES)[number]> {
+    let cls: string;
+    try {
+      cls = await this.provider.getClassHashAt(account, block);
+    } catch {
+      fail('account_not_deployed', 'the account is not deployed');
+    }
+    const entry = BOUND_ACCOUNT_CLASSES.find((c) => sameFelt(c.classHash, cls)) ?? fail('account_class', `account class ${cls} is not supported yet`);
+    for (const c of entry.checks) {
+      const r = await this.provider.callContract({ contractAddress: account, entrypoint: c.entrypoint, calldata: [] }, block);
+      const ok = r.length === c.expect.length && r.every((x, i) => c.expect[i] === '*' || sameFelt(x, c.expect[i]!));
+      if (!ok) fail('account_signers', `${entry.vendor}: ${c.entrypoint} — guardians, multisig and non-Stark signers are not supported yet`);
+    }
+    return entry;
+  }
+
+  /**
+   * A bound wallet for account `A` (product 1): its seed, the connected wallet that signs, and a
+   * provider for spend-specific reads that has not seen `A` (spec §10). Run `boundSetupCheck` first.
+   */
+  async boundWallet(seed: Uint8Array, account: Hex, signer: BoundSigner, opts: { spendProvider: RpcProvider }): Promise<Wallet> {
+    if (versionOf(this.pool) !== 'v5') fail('wrong_relation', 'bound notes live only on a pool that settles R0 V5');
+    if (!sameFelt(signer.address, account)) fail('account_mismatch', 'the connected wallet is another account');
+    const sp = opts.spendProvider;
+    if (sp === this.provider || sameNode(sp, this.provider)) fail('spend_provider', 'spend reads need a provider that has not seen the account (spec §10)');
+    if (!sameFelt(await sp.getChainId(), this.network.chainId)) fail('spend_provider', 'the spend provider is on another chain');
+    await checkSpecVersion(sp);
+    // The account may have changed since the setup check (a guardian added, the class upgraded).
+    // The wallet still opens, to sync, show balances and try spends (the account decides whether
+    // it signs), but creates no address or deposit until the checks pass again (AB-SP16).
+    let issue: TemplarError | undefined;
+    try {
+      await this.accountChecks(account, (await this.provider.getBlockLatestAccepted()).block_number);
+    } catch (e) {
+      if (!(e instanceof TemplarError)) throw e;
+      issue = e;
+    }
+    const keys = call(() => wasm.bound_keys(seed, canon(account)));
+    const store = new WalletStore(this.kv, keys, this.network.chainId, this.pool.pool);
+    await store.open();
+    const w = new Wallet(this, keys, store, { account: canon(account), signer, spendProvider: opts.spendProvider, issue });
     await w.load();
     return w;
   }
@@ -200,14 +321,28 @@ export class Wallet {
   private tree = new wasm.Tree();
   private chain: Hex;
   private pool: Hex;
+  private version: 'v4' | 'v5';
 
+  /** `keys`: a Templar wallet's 32-byte seed, or a bound wallet's seed and account (60 bytes). */
   constructor(
     private t: Templar,
-    private seed: Uint8Array,
+    private keys: Uint8Array,
     private store: WalletStore,
+    private bound?: Bound,
   ) {
     this.chain = t.network.chainId;
     this.pool = t.pool.pool;
+    this.version = versionOf(t.pool);
+  }
+
+  /** The bound account `A`, or `undefined` for a Templar wallet. */
+  get boundAccount(): Hex | undefined {
+    return this.bound?.account;
+  }
+
+  /** Why a bound wallet creates no address or deposit (its account failed the checks at open). */
+  get accountIssue(): TemplarError | undefined {
+    return this.bound?.issue;
   }
 
   // ------------------------------------------------------------------ state
@@ -266,8 +401,9 @@ export class Wallet {
 
   /** The receiving address of account `i` (refused past the gap limit). */
   async address(i = 0): Promise<AccountInfo> {
+    if (this.bound?.issue) throw this.bound.issue;
     // The gap limit counts from `u` only; `created` widens the scan, never the limit (SDK-IP1).
-    const info = json<AccountInfo>(() => wasm.account(this.seed, this.chain, this.pool, i, this.highestUsed()));
+    const info = json<AccountInfo>(() => wasm.account(this.keys, this.chain, this.pool, this.version, i, this.highestUsed()));
     if (i > this.state.created) {
       // Under the lock, on the stored state (SDK-IP16).
       await this.store.lock(async () => {
@@ -281,7 +417,7 @@ export class Wallet {
   }
 
   exportViewingKey(i: number, full: boolean): string {
-    return call(() => wasm.viewing_key_export(this.seed, this.chain, this.pool, i, full));
+    return call(() => wasm.viewing_key_export(this.keys, this.chain, this.pool, this.version, i, full));
   }
 
   // ------------------------------------------------------------------ sync
@@ -479,8 +615,9 @@ export class Wallet {
       registry: this.state.registry.map((r) => ({ asset: r.asset, standard: r.standard, contract: r.contract, id_low: r.idLow, id_high: r.idHigh })),
       registry_complete: registryComplete,
       settlements: this.state.settlements.map((s) => ({ first_index: s.firstIndex, x: s.x })),
+      version: this.version,
     };
-    const out = json<{ owned: OwnedNote[]; bad_digests: number[] }>(() => wasm.scan(this.seed, JSON.stringify(request)));
+    const out = json<{ owned: OwnedNote[]; bad_digests: number[] }>(() => wasm.scan(this.keys, JSON.stringify(request)));
     if (out.bad_digests.length) problems.push(`delivery digest mismatch at ${out.bad_digests.join(',')}`);
     return out.owned.map((o) => ({ ...o, block: blocks.get(o.index) ?? -1 }));
   }
@@ -562,7 +699,13 @@ export class Wallet {
    * (spec §7.1). Public: depositor, asset and amount.
    */
   async deposit(account: Account, spec: { asset: AssetSpec; amount: bigint; to?: string }): Promise<{ transactionHash: string; commitment: Digest; confirmed: boolean }> {
+    if (this.bound?.issue) throw this.bound.issue;
     await checkVerifier(this.t.provider, this.t.pool);
+    // No deposit while a verifier change is pending (spec §8.4, AB-PV2).
+    const pending = await this.proposals();
+    // A lapsed proposal can no longer apply: it is shown, but blocks nothing (AB-SP15).
+    const v = pending.find((p) => p.verifier && !p.lapsed);
+    if (v) fail('verifier_change_pending', `a verifier change can apply from ${new Date(v.eta * 1000).toISOString()}; withdraw instead`);
     const to = spec.to ?? (await this.address(0)).address;
     const { standard, contract, id = 0n } = spec.asset;
     const low = (x: bigint) => (x & ((1n << 128n) - 1n)).toString();
@@ -614,9 +757,11 @@ export class Wallet {
     const k = this.state.notes.find((n) => sameFelt(n.asset, asset))?.kind;
     if (!k || k === 'Unknown') fail('unknown_asset', 'the asset is not known from a complete sync; its standard cannot be checked');
     if (k === 'Erc20') return;
+    // A recipient check just before an exit is spend-specific (spec §10, AB-SP13).
+    const provider = this.bound?.spendProvider ?? this.t.provider;
     const supports = async (id: string) => {
       try {
-        const [r] = await this.t.provider.callContract({ contractAddress: recipient, entrypoint: 'supports_interface', calldata: [id] });
+        const [r] = await provider.callContract({ contractAddress: recipient, entrypoint: 'supports_interface', calldata: [id] });
         return r !== undefined && BigInt(r) === 1n;
       } catch {
         return false;
@@ -630,18 +775,33 @@ export class Wallet {
     }
   }
 
-  /** A plan through the core, with every spent nullifier so it refuses spent inputs (SDK-IM4). */
+  /** The pool's pending owner changes (pool V3): verifier changes and the given shadow classes. */
+  proposals(shadowClasses: Hex[] = []): Promise<Proposal[]> {
+    return pendingProposals(this.t.provider, this.t.pool, shadowClasses);
+  }
+
+  /** A V5 plan's expiry inputs at `latest` (the synced block for planning, AB-PV6). */
+  expiryAt(latest: number): Expiry {
+    const p = this.t.pool.parameters ?? fail('pin_mismatch', 'a pool V3 needs its pinned parameters');
+    return { latest_block: latest, window: p.expiryWindow, quantum: p.quantum };
+  }
+
+  /**
+   * A plan through the core, with every spent nullifier so it refuses spent inputs (SDK-IM4). A V5
+   * plan takes its root, paths and `valid_until` from the one synced block (AB-PV6).
+   */
   private planCore(request: SpendRequest, notes: NoteRef[], required: number[] | null): Plan {
     const companions = this.companions;
-    const req = { chain: this.chain, pool: this.pool, request, notes, companions, required_inputs: required, spent: this.spentList() };
-    return json<Plan>(() => wasm.plan_spend(this.seed, JSON.stringify(req), this.tree));
+    const v5 = this.version === 'v5' ? { version: 'v5', expiry: this.expiryAt(this.state.block) } : {};
+    const req = { chain: this.chain, pool: this.pool, request, notes, companions, required_inputs: required, spent: this.spentList(), ...v5 };
+    return json<Plan>(() => wasm.plan_spend(this.keys, JSON.stringify(req), this.tree));
   }
 
   private companions: [number, Companion][] = [];
 
   private async nullifiersOf(plan: Plan): Promise<Digest[]> {
     const nfs = plan.inputs.map((i) => this.state.notes.find((n) => n.index === i.index)?.nullifier ?? fail('record', `note ${i.index} unknown`));
-    if (plan.companion) nfs.push(json<Digest>(() => wasm.companion_nullifier(JSON.stringify(plan.companion), this.chain, this.pool, plan.asset)));
+    if (plan.companion) nfs.push(json<Digest>(() => wasm.companion_nullifier(this.keys, JSON.stringify(plan.companion), this.chain, this.pool, plan.asset)));
     return nfs;
   }
 
@@ -687,18 +847,20 @@ export class Wallet {
       this.companions = (await this.store.get<[number, Companion][]>('companions', 'all')) ?? [];
       const notes = rec.inputs.map((i) => this.state.notes.find((n) => n.index === i) ?? fail('record', `note ${i} unknown`)).map((n) => this.toRef(n));
       const plan = this.planCore(request, notes, rec.inputs);
-      const { plan: p, proved, server, result, window, tx } = rec;
+      const { plan: p, proved, authorization, server, result, window, tx } = rec;
+      // The authorization signs the old statement: the new one is authorized afresh (AB-SP12).
       const next: SpendRecord = {
         ...rec,
         request,
         plan,
         stage: 'planned',
         proved: undefined,
+        authorization: undefined,
         server: undefined,
         result: undefined,
         window: undefined,
         tx: undefined,
-        attempts: [...rec.attempts, { plan: p, proved, server, result, window, tx }],
+        attempts: [...rec.attempts, { plan: p, proved, authorization, server, result, window, tx }],
       };
       await this.writeRecord(next);
       return new Spend(this, id);
@@ -787,6 +949,13 @@ export class Wallet {
       }
       // Eviction is decided only on a complete sync (SDK-IP6).
       if (!r.left || !this.state.complete) continue;
+      // R0 V5: a record is dead once every attempt's `valid_until` is buried by `DEPTH` blocks
+      // (sdk-spec §9.1 as amended), whatever the leaf count.
+      if (r.plan.version === 'v5') {
+        const last = Math.max(r.plan.valid_until ?? 0, ...r.attempts.map((a) => a.plan.valid_until ?? 0));
+        if (this.state.block - last >= DEPTH) await this.writeRecord({ ...r, stage: 'dead', closed: 'expired' });
+        continue;
+      }
       const leafCount = Math.max(r.plan.leaf_count, ...r.attempts.map((a) => a.plan.leaf_count));
       const evictAt = leafCount + EVICTION_LEAVES;
       if (this.state.leaves >= evictAt) {
@@ -801,10 +970,13 @@ export class Wallet {
   get context() {
     return {
       t: this.t,
-      seed: this.seed,
+      keys: this.keys,
       chain: this.chain,
       pool: this.pool,
-      latest: () => this.t.provider.getBlockLatestAccepted(),
+      version: this.version,
+      bound: this.bound,
+      // In bound mode, spend-specific reads use the spend provider (spec §10).
+      latest: () => (this.bound?.spendProvider ?? this.t.provider).getBlockLatestAccepted(),
       spent: () => this.spentSet(),
     };
   }
@@ -852,13 +1024,15 @@ export class Spend {
     if (!LIVE(rec)) fail('record_closed', `record ${this.id} is ${rec.stage}${rec.closed ? ` (${rec.closed})` : ''}`);
     this.version ??= rec.version;
     if (rec.proved) return rec.proved;
-    const { seed, t, chain, pool, spent } = this.w.context;
+    const { keys, t, chain, pool, spent } = this.w.context;
     // The companion must still be unspent (spec §3.3).
     if (rec.plan.companion) {
-      const nf = json<Digest>(() => wasm.companion_nullifier(JSON.stringify(rec.plan.companion), chain, pool, rec.plan.asset));
+      const nf = json<Digest>(() => wasm.companion_nullifier(keys, JSON.stringify(rec.plan.companion), chain, pool, rec.plan.asset));
       if (spent().has(key(nf))) fail('companion_spent', 'the companion dummy was already spent');
     }
-    const proved = await proveInWorker(seed, JSON.stringify(rec.plan), opts);
+    // A V5 plan must still be able to land (AB-SM4); otherwise re-plan it.
+    const now = rec.plan.version === 'v5' ? JSON.stringify(this.w.expiryAt((await this.w.context.latest()).block_number)) : 'null';
+    const proved = await proveInWorker(keys, JSON.stringify(rec.plan), now, opts);
     // The client circuit must be the one the deployed bridge pins (spec §8, SDK-IM5, SDK-IP8).
     if (JSON.stringify(proved.circuit_hash) !== JSON.stringify(t.pool.circuitHash)) fail('circuit_mismatch', 'the client circuit differs from the pinned one');
     await this.step((r) => ({ ...r, stage: 'proved', proved }));
@@ -866,11 +1040,64 @@ export class Spend {
   }
 
   /**
+   * A bound spend's authorization (docs/account-bound-note-spec.md §5.3): a fresh salt, the SNIP-12
+   * message built by the core from the proved statement, the account's signature, and the SDK's
+   * own advisory `is_valid_signature` check through the spend provider (spec §9, §10). Nothing
+   * leaves the wallet here.
+   */
+  async authorize(opts: { fresh?: boolean } = {}): Promise<{ salt: Hex; hash: Hex; signature: Hex[] }> {
+    const { bound } = this.w.context;
+    if (!bound) fail('not_bound', 'only a bound wallet authorizes spends with its account');
+    const rec = await this.record();
+    // A closed or expiring record never prompts the wallet or names A (AB-SP17).
+    if (!LIVE(rec)) fail('record_closed', `record ${this.id} is ${rec.stage}${rec.closed ? ` (${rec.closed})` : ''}`);
+    this.version ??= rec.version;
+    const proved = rec.proved ?? fail('record', 'prove first');
+    const latest = (await bound.spendProvider.getBlockLatestAccepted()).block_number;
+    if (rec.plan.valid_until !== undefined && latest > rec.plan.valid_until - WINDOW_MARGIN) fail('replan', 'the statement expires too soon to be served; re-plan');
+    if (rec.authorization && !opts.fresh) return rec.authorization;
+    if (opts.fresh && rec.authorization) {
+      // Re-authorizing the same statement (after a signature refusal, e.g. a key rotation): the old
+      // authorization and the body carrying it join the history, and the next wrap sends a new body.
+      await this.step((r) => ({
+        ...r,
+        attempts: [...r.attempts, { plan: r.plan, proved: r.proved, authorization: r.authorization, server: r.server, result: r.result, window: r.window }],
+        authorization: undefined,
+        server: undefined,
+        result: undefined,
+        window: undefined,
+      }));
+    }
+    const salt = call(() => wasm.random_salt());
+    const m = json<SpendMessage>(() => wasm.spend_message(proved.statement_json, salt));
+    const signature = (await bound.signer.signTypedData(m.typed_data)).map(canon);
+    if (signature.length === 0 || signature.length > 32) fail('signature', 'the wallet returned no signature, or more than 32 felts');
+    if (!(await isValidSignature(bound.spendProvider, bound.account, m.hash, signature, latest))) {
+      fail('signature_refused', 'the account does not accept the signature; authorize again');
+    }
+    const authorization = { salt, hash: m.hash, signature };
+    await this.step((r) => ({ ...r, authorization }));
+    return authorization;
+  }
+
+  /**
+   * The free full withdrawal's payment (spec §7.2): both outputs' openings, shown to the prover
+   * server only, instead of a ticket. `undefined` unless the spend is a V5 full withdrawal.
+   */
+  async freeWithdrawalPayment(): Promise<object | undefined> {
+    const rec = await this.record();
+    const openings = json<Digest[] | null>(() => wasm.free_withdrawal_openings(JSON.stringify(rec.plan)));
+    return openings ? { free_full_withdrawal: { openings } } : undefined;
+  }
+
+  /**
    * Sends the statement and proof to a prover server and waits for the large proof. The server is
    * checked first; a finished job past its window, a failed job or a dropped job is re-wrapped
-   * with the identical body (spec §8, SDK-IP7).
+   * with the identical body (spec §8, SDK-IP7). An R0 V5 job carries its pool call, a bound one its
+   * authorization, and a paid one `payment` (tickets from the app's ticket wallet, or
+   * `freeWithdrawalPayment()`).
    */
-  async wrap(prover: ProverClient, opts: { url: string; onStatus?: (s: import('./prover.js').JobStatus) => void }): Promise<Window> {
+  async wrap(prover: ProverClient, opts: { url: string; onStatus?: (s: import('./prover.js').JobStatus) => void; payment?: object }): Promise<Window> {
     const { t } = this.w.context;
     const rec = await this.record();
     this.version ??= rec.version;
@@ -879,11 +1106,14 @@ export class Spend {
     await prover.info();
     const latestBlock = async () => (await this.w.context.latest()).block_number;
     let current = rec;
+    const until = current.plan.version === 'v5' ? BigInt(current.plan.valid_until ?? 0) : undefined;
+    // A statement whose own expiry is near cannot be helped by another job: re-plan (AB-SP18).
+    if (until !== undefined && (await latestBlock()) > Number(until) - WINDOW_MARGIN) fail('replan', 'the statement expires too soon; re-plan');
     let jobId = current.server?.url === opts.url ? current.server.jobId : undefined;
     if (jobId && current.window && (await latestBlock()) > current.window.valid_until - WINDOW_MARGIN) jobId = undefined;
     for (let round = 0; ; round++) {
       if (!jobId) {
-        const body = current.server?.body ?? `{"relation":"r4","proof":${JSON.stringify(proved.proof)},"statement":${proved.statement_json}}`;
+        const body = current.server?.body ?? this.body(current, proved, opts.payment);
         // The exact body is stored, and the record marked as left, before it is sent (spec §9.1).
         current = await this.step(async (r) => ({
           ...(await this.w.leaving(r)),
@@ -894,7 +1124,17 @@ export class Spend {
           window: undefined,
           stage: 'sent_to_server',
         }));
-        jobId = await prover.submit(body);
+        try {
+          jobId = await prover.submit(body);
+        } catch (e) {
+          // Refused at admission (malformed, payment, signature): the next wrap builds a new body,
+          // with new payment or a fresh authorization; the statement and proof stay (AB-SP18).
+          const code = (e as TemplarError).code;
+          if (code === 'prover_rejected' || code === 'prover_payment' || code === 'prover_forbidden' || code === 'prover_account_class') {
+            current = await this.step((r) => ({ ...r, server: undefined }));
+          }
+          throw e;
+        }
         current = await this.step((r) => ({ ...r, server: { ...r.server!, jobId } }));
       }
       let result: ServerResult;
@@ -909,8 +1149,15 @@ export class Spend {
         throw e;
       }
       const latest = await latestBlock();
-      const window = json<Window>(() => wasm.check_result(JSON.stringify(pinsOf(t.network, t.pool)), proved.binding, JSON.stringify(result), BigInt(latest)));
+      // R0 V5: the window ends at `send_deadline = min(valid_until, base + max_proof_age)`, and the
+      // server's pool call must be exactly the one the wallet built.
+      const window = json<Window>(() => wasm.check_result(JSON.stringify(pinsOf(t.network, t.pool)), proved.binding, JSON.stringify(result), BigInt(latest), until));
+      if (until !== undefined && (result.pool_call?.entry_point !== 'apply_spend' || JSON.stringify(result.pool_call?.calldata?.map(canon)) !== JSON.stringify(proved.calldata.map(canon)))) {
+        fail('bad_result', 'the server returned another pool call');
+      }
       if (latest > window.valid_until - WINDOW_MARGIN) {
+        // Re-wrapping helps only when the base block bounds the window, not the statement.
+        if (until !== undefined && window.valid_until === Number(until)) fail('replan', 'the statement expired; re-plan');
         if (round < 2) {
           jobId = undefined; // a stale result: re-wrap
           continue;
@@ -923,8 +1170,32 @@ export class Spend {
   }
 
   /**
+   * The job body (spec §8; docs/account-bound-note-spec.md §9). The statement is the core's own
+   * JSON text, never re-serialized: its u128 amount and `valid_until` would not survive a JS number.
+   */
+  private body(r: SpendRecord, proved: Proved, payment?: object): string {
+    if (r.plan.version !== 'v5') return `{"relation":"r4","proof":${JSON.stringify(proved.proof)},"statement":${proved.statement_json}}`;
+    const parts = [
+      `"relation":"r5"`,
+      `"proof":${JSON.stringify(proved.proof)}`,
+      `"statement":${proved.statement_json}`,
+      `"pool_call":${JSON.stringify({ entry_point: 'apply_spend', calldata: proved.calldata })}`,
+    ];
+    if (this.w.context.bound) {
+      const a = r.authorization ?? fail('record', 'a bound spend is authorized before it leaves the wallet');
+      // The authorization must sign this very statement (AB-SP12).
+      const m = json<SpendMessage>(() => wasm.spend_message(proved.statement_json, a.salt));
+      if (!sameFelt(m.hash, a.hash)) fail('reauthorize', 'the stored authorization signs another statement; authorize again');
+      parts.push(`"salt":${JSON.stringify(a.salt)}`, `"signature":${JSON.stringify(a.signature)}`);
+    }
+    if (payment) parts.push(`"payment":${JSON.stringify(payment)}`);
+    return `{${parts.join(',')}}`;
+  }
+
+  /**
    * Estimates, signs, simulates and sends the exact transaction from `account` (spec §9.2). The
-   * maximum fee must be confirmed; `linkable` is always true in v1: the account is public.
+   * maximum fee must be confirmed; `linkable` is always true in v1: the account is public. A bound
+   * wallet's own account never submits its spends (spec §7.4): this is the fallback submitter.
    */
   async submit(
     account: Account,
@@ -938,6 +1209,11 @@ export class Spend {
     const { result, window, proved } = rec;
     if (!result || !window || !proved) fail('record', 'wrap first');
     const provider = account.provider as RpcProvider;
+    const bound = this.w.context.bound;
+    if (bound && sameFelt(account.address, bound.account)) fail('owner_submits', 'the bound account must not submit its own spends; use the relayer or another account');
+    // Submission reads and sends through the submitter's provider, which must not be the one that
+    // has seen A (spec §10, AB-SP13).
+    if (bound && (provider === t.provider || sameNode(provider, t.provider))) fail('spend_provider', 'submit through a provider that has not seen the bound account');
     await checkSpecVersion(provider);
     const latest = (await provider.getBlockLatestAccepted()).block_number;
     if (latest < window.submit_after) fail('too_early', `wait until block ${window.submit_after}`);
@@ -961,6 +1237,35 @@ export class Spend {
     await this.step((r) => ({ ...r, tx: { ...r.tx!, hash: transactionHash } }));
     return { transactionHash, linkable: true, prepared, warnings };
   }
+}
+
+/**
+ * `is_valid_signature(hash, signature)` at `block` answers exactly `'VALID'` (a revert is a no).
+ * `strict`: an error that is not the node's answer (a transport failure) throws instead of reading
+ * as a refusal, so a flaky node cannot pass the setup check's rejection tests (AB-SP16).
+ */
+async function isValidSignature(provider: RpcProvider, account: Hex, hash: Hex, signature: Hex[], block: number, strict = false): Promise<boolean> {
+  try {
+    const r = await provider.callContract({ contractAddress: account, entrypoint: 'is_valid_signature', calldata: [hash, String(signature.length), ...signature] }, block);
+    return r.length === 1 && BigInt(r[0]!) === VALID;
+  } catch (e) {
+    if (strict && !(e instanceof RpcError)) fail('rpc_unavailable', `is_valid_signature: ${(e as Error).message ?? e}`);
+    return false;
+  }
+}
+
+/** Two providers pointing at the same node URL. */
+function sameNode(a: RpcProvider, b: RpcProvider): boolean {
+  const url = (p: RpcProvider) => {
+    const u = (p as { channel?: { nodeUrl?: string } }).channel?.nodeUrl;
+    if (u === undefined) return undefined;
+    try {
+      return new URL(u).href; // `http://node` and `http://node/` are one node
+    } catch {
+      return u;
+    }
+  };
+  return url(a) !== undefined && url(a) === url(b);
 }
 
 /** Accounts compiled with Sierra older than 1.7 pay Cairo-steps fees, about 2.7× (spec §9.2). */

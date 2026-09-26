@@ -9,6 +9,13 @@ max_concurrent_jobs = 1                      # each job needs `threads` cores an
 max_concurrent_checks = 2                    # pre-checks at once; more are refused (503)
 queue_capacity = 16
 trust_forwarded_for = false                  # true only behind a trusted reverse proxy
+# R0 V5 (pool V3) admission and jobs (docs/account-bound-note-spec.md §9):
+# blocks_per_job = 60                        # a statement needs valid_until ≥ latest + (jobs ahead + 1)·this + 11 + relay margin
+# relay_margin_blocks = 30
+# os_l2_gas = 450000000                      # the virtual transaction's L2 gas bound, from the measured __execute__ cost
+# bound_retention_secs = 600                 # a bound job's result is kept this long unless acknowledged (DELETE /v1/jobs/{id})
+# bound_data_dir = "/run/templar-bound"      # bound jobs' directories: a tmpfs (their inputs hold the account, salt and signature);
+#                                            # required with operator_node
 
 [limits]
 submissions_per_hour = 20                    # per IPv4 address or IPv6 /64
@@ -20,8 +27,16 @@ name = "sepolia"
 chain_id = "SN_SEPOLIA"
 rpc_url = "http://127.0.0.1:9545/rpc/v0_10"  # a local node is recommended (privacy and speed)
 pool = "0x02da0011f775d73885cf86c5145feb4cb9149d007f8546959cce32b51b5f37b9"
+# pool_version = 2                           # 2: pool V2 (r4, p1); 3: pool V3 (r5, p1), whose E, Q, W, T are read at startup
 os_program = "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1"
-max_proof_age = 4096
+max_proof_age = 4096                         # pool V3's R0 V5 adapter: 1024
+# operator_node = false                      # true only with an operator-controlled node: required to serve bound spends (AB-P10)
+# bound_account_classes = [                  # bound spends: the account classes served (their OS resources were measured);
+#   "0x073414441639dcd11d1846f287650a00c60c416b9d3ba45d31c651672125b2c2",  # Argent 0.5.0 (Ready)
+#   "0x03957f9f5a1cbfe918cedc2015c85200ca51a5f7506ecb6de98a5207b759bf8a",  # Braavos 1.2.0
+# ]                                          # required with operator_node
+# pending_margin_secs = 6144                 # default max_proof_age × 6. Pool V3: refuse jobs from this long before a verifier (or an invoke target's shadow
+#                                            # class) change can apply, until it is applied, cancelled or lapses (eta + T)
 
 [[relation]]
 name = "r4"
@@ -32,6 +47,9 @@ adapter = "0x031ca0ad5bb55c5502b0443decdd1711942e2a1cc39763f44edd7d326e5185fd"
 bridge_dir = "/opt/templar/bridges/r4"       # the bridge build the account was compiled from
 bridge_record_sha256 = "<sha256 of bridge_dir/build-record.json>"
 bridge_executable_sha256 = "<sha256 of bridge_dir/target/dev/templar_membership_bridge.executable.json>"
+
+# Pool V3 serves name = "r5" instead of "r4": account_tag = "TMPZR0_PAYMENT_V5", the R0 V5 statement
+# account, its adapter and the cairo-r5 bridge build.
 
 [[relation]]
 name = "p1"
@@ -56,6 +74,25 @@ check_seconds = 120
 os_seconds = 600
 prove_seconds = 1800
 no_network = ["unshare", "--user", "--net"]
+
+# Bounds on the virtual-OS run, checked before proving; a job over them is the client's fault and
+# keeps its tickets spent. P5 sets them from the bound transactions measured in the virtual OS.
+# [caps]
+# os_steps = 4000000
+# builtins = { range_check = 1200000, poseidon = 40000 }   # by name; unnamed builtins are not capped
+
+# Payment (docs/account-bound-note-spec.md §7.2, §9): absent, the service is free. P4 runs a test
+# issuer: `templar-prover issuer keygen DIR ID`, `issuer mint SECRET_KEY_PEM ID N`.
+# [payment]
+# required = true
+# spent_dir = "/var/lib/templar-prover/spent"  # the spent logs, never deleted: keep them off data_dir's volume
+# issuer_keys = [{ id = "test", public_key = "/etc/templar/issuer/test.pub.pem", not_after = 1800000000 }]
+# refund_key = { id = "test", secret_key = "/etc/templar/issuer/test.key.pem" }
+# costs = { transfer = 1, withdrawal = 1, invoke = 2, policy = 1 }
+# priced_assets = [{ asset = "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d", minimum = "1000000000000000000" }]
+# Free full withdrawals are best-effort: paid jobs always go first, and free jobs take at most
+# max_share_percent of the prover's time in any hour.
+# free = { queue_capacity = 4, per_hour = 30, per_address_per_hour = 4, per_account_per_day = 3, max_share_percent = 25 }
 
 [prover]
 cairo_fri_columns = 16

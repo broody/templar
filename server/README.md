@@ -90,6 +90,13 @@ builds may be mounted read-only; the server copies what it executes into its dat
 startup and hashes the copy. `--init` reaps step processes and forwards SIGTERM; on SIGTERM the
 server stops accepting work and kills running steps.
 
+**Bound spends** (pool V3, `operator_node = true`) keep each job's account, salt and signature in
+its directory until proving ends, so `bound_data_dir` must be a tmpfs (Docker: `--tmpfs
+/run/templar-bound:size=4g,mode=0700,uid=999`, more with `stream_commitments`) and swap must be off or encrypted; the `docker run`
+above sets `--memory-swap` equal to `--memory`, which disables it. With `[payment]`, put
+`spent_dir` on a volume apart from the job directories: a spend that cannot be synced fails the
+job, and the server takes no payment until the log is writable again.
+
 `templar-prover check CONFIG SUBMISSION_JSON` runs the pre-checks on one submission without the
 queue. `tests/check_bench_proofs.sh CONFIG PROOFS_DIR` runs every R0 V4 bench proof, honest and
 forged, through it and checks each verdict; `cargo test` in `prover/` covers parsing and address

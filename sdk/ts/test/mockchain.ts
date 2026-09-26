@@ -1,11 +1,12 @@
-// A mock RPC node serving a pool V2 (spec §12.5, §12.6): blocks of pool events, the leaf count and
-// root at any block (computed with the core's own tree), the adapter's pinned storage, reorgs, and
-// a trace of every call the SDK makes.
+// A mock RPC node serving a pool V2 or V3 (spec §12.5, §12.6): blocks of pool events, the leaf
+// count and root at any block (computed with the core's own tree), the adapter's pinned storage,
+// pool V3's views (verifier by kind, proposals, parameters), bound accounts, reorgs, and a trace of
+// every call the SDK makes.
 import { hash } from 'starknet';
 
 import * as wasm from '../wasm/templar.js';
 import { SEPOLIA, activePool, canon } from '../dist/index.js';
-import type { Plan, Proved } from '../dist/index.js';
+import type { Plan, PoolConstants, Proved } from '../dist/index.js';
 
 const SEL = {
   NotePublished: hash.getSelectorFromName('NotePublished'),
@@ -28,9 +29,22 @@ interface Block {
 
 const hx = (x: number | bigint | string) => canon(x);
 
+/** A deployed account (a bound wallet's `A`): its class, view answers and signature rule. */
+export interface MockAccount {
+  classHash: string;
+  views: Record<string, string[]>;
+  valid: (hash: string, signature: string[]) => boolean;
+}
+
 export class MockChain {
-  readonly pool = activePool(SEPOLIA);
-  readonly base = this.pool.deploymentBlock;
+  readonly pool: PoolConstants;
+  readonly base: number;
+  /** Pool V3: `get_parameters` (E, Q, W, T) and pending proposals by key (value, eta). */
+  parameters = ['0x5dc', '0x64', '0x1000', '0x15180'];
+  proposals = new Map<string, [string, number]>();
+  /** Every block's timestamp (proposals lapse by it). */
+  timestamp = 1_800_000_000;
+  accounts = new Map<string, MockAccount>();
   blocks: Block[] = [];
   fork = 0;
   calls: { method: string; args: unknown[] }[] = [];
@@ -44,7 +58,9 @@ export class MockChain {
   /** The account's STRK balance for fee checks. */
   strk = 10n ** 20n;
   /** Leaves in order with the block they were published in. */
-  constructor() {
+  constructor(pool: PoolConstants = activePool(SEPOLIA)) {
+    this.pool = pool;
+    this.base = pool.deploymentBlock;
     this.mine(1);
   }
 
@@ -192,8 +208,10 @@ export class MockChain {
         ),
       },
       getChainId: async () => (trace('getChainId', []), SEPOLIA.chainId),
-      getClassHashAt: async (a: string) => {
-        trace('getClassHashAt', [a]);
+      getClassHashAt: async (a: string, id?: unknown) => {
+        trace('getClassHashAt', [a, id]);
+        const acc = this.accounts.get(hx(a));
+        if (acc) return acc.classHash;
         if (BigInt(a) === BigInt(pool.adapter)) return pool.adapterClass;
         if (BigInt(a) === BigInt(pool.statement)) return pool.statementClass;
         throw new Error('no contract');
@@ -206,10 +224,30 @@ export class MockChain {
         trace('callContract', [c.contractAddress, c.entrypoint, c.calldata, id]);
         if (c.entrypoint === 'balance_of') return [hx(this.strk & ((1n << 128n) - 1n)), hx(this.strk >> 128n)];
         if (c.entrypoint === 'supports_interface') return [this.supports.get(hx(c.contractAddress)) === false ? '0x0' : '0x1'];
+        const acc = this.accounts.get(hx(c.contractAddress));
+        if (acc) {
+          if (c.entrypoint === 'is_valid_signature') {
+            const [h, n, ...sig] = c.calldata;
+            if (Number(BigInt(n!)) !== sig.length) throw new Error('bad span');
+            return acc.valid(h!, sig) ? ['0x56414c4944'] : ['0x0'];
+          }
+          const v = acc.views[c.entrypoint];
+          if (!v) throw new Error(`no entrypoint ${c.entrypoint}`);
+          return v;
+        }
         if (BigInt(c.contractAddress) !== BigInt(pool.pool)) return ['0x1'];
         switch (c.entrypoint) {
           case 'get_verifier':
+            // Pool V3 takes the verifier kind; pool V2 takes nothing.
+            if ((pool.version === 'v5') !== (c.calldata.length === 1)) throw new Error('get_verifier: wrong arguments for this pool');
             return [pool.adapter];
+          case 'get_parameters':
+            if (pool.version !== 'v5') throw new Error('no get_parameters on pool V2');
+            return this.parameters;
+          case 'get_proposal': {
+            const p = this.proposals.get(hx(c.calldata[0]!));
+            return p ? [p[0], hx(p[1])] : ['0x0', '0x0'];
+          }
           case 'get_leaf_count':
             return [hx(this.leafCount(blockOf(id)))];
           case 'get_root':
@@ -225,7 +263,7 @@ export class MockChain {
         trace('getBlockWithTxHashes', [id]);
         const b = this.blocks[id - this.base];
         if (!b) throw new Error('no block');
-        return { block_hash: b.hash, block_number: id, transactions: [] };
+        return { block_hash: b.hash, block_number: id, timestamp: this.timestamp, transactions: [] };
       },
       getEvents: async (f: { address: string; from_block: { block_number: number }; to_block: { block_number: number }; keys: string[][]; chunk_size: number; continuation_token?: string }) => {
         trace('getEvents', [f]);
@@ -258,6 +296,10 @@ export class MockProver {
   conflictNext = false;
   base = 0;
   binding = '';
+  /** Rewrites the pool call the server returns (a lying server). */
+  poolCall?: (c: unknown) => unknown;
+  /** The spend message's hashes the server publishes (the core's by default). */
+  domain = JSON.parse(wasm.spend_domain()) as { domain_type_hash: string; spend_type_hash: string };
   constructor(private chain: MockChain, private facts: (binding: string, base: number, hash: string) => string[]) {}
 
   fetch = async (url: string | URL, init?: { method?: string; body?: string }): Promise<Response> => {
@@ -267,8 +309,16 @@ export class MockProver {
     if (u.pathname === '/v1/info') {
       return reply(200, {
         network: { chain_id: 'SN_SEPOLIA', pool: p.pool, os_program: p.osProgram, max_proof_age: p.maxProofAge },
-        relations: [{ name: 'r4', statement_account: p.statement, statement_class: p.statementClass, account_tag: p.accountTag, adapter: p.adapter, circuit_hash_u32_le: p.circuitHash }],
+        relations: [{ name: p.version === 'v5' ? 'r5' : 'r4', statement_account: p.statement, statement_class: p.statementClass, account_tag: p.accountTag, adapter: p.adapter, circuit_hash_u32_le: p.circuitHash }],
         limits: { retention_secs: 3600 },
+        ...(p.version === 'v5'
+          ? {
+              r5: {
+                spend_message: { domain_type_hash: this.domain.domain_type_hash, spend_type_hash: this.domain.spend_type_hash },
+                pool_parameters: { expiry_window: p.parameters!.expiryWindow, quantum: p.parameters!.quantum, root_window: p.parameters!.rootWindow, timelock: p.parameters!.timelock },
+              },
+            }
+          : {}),
       });
     }
     if (u.pathname === '/v1/jobs' && init?.method === 'POST') {
@@ -291,7 +341,14 @@ export class MockProver {
       }
       const base = this.chain.latest - 1;
       const hash = this.chain.blocks[base - this.chain.base]!.hash;
-      return reply(200, { status: 'done', result: { proof: 'AAAA', proof_facts: this.facts(this.binding, base, hash), base_block: base, binding: this.binding } });
+      const result: Record<string, unknown> = { proof: 'AAAA', proof_facts: this.facts(this.binding, base, hash), base_block: base, binding: this.binding };
+      if (p.version === 'v5') {
+        // R0 V5: the deadline and the pool call the relayer settles, from the job's own body.
+        const body = JSON.parse(j.body) as { statement: { valid_until: number }; pool_call: unknown };
+        result.send_deadline = Math.min(body.statement.valid_until, base + p.maxProofAge);
+        result.pool_call = this.poolCall ? this.poolCall(body.pool_call) : body.pool_call;
+      }
+      return reply(200, { status: 'done', result });
     }
     return reply(404, {});
   };

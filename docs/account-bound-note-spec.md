@@ -399,12 +399,17 @@ actx        = felt₃₂(chain) ‖ felt₃₂(pool) ‖ felt₃₂(A)
 sk_w(i)     = wide9(HKDF-Expand(PRK_w, "TEMPLAR_BOUND_SPEND_V1"    ‖ actx ‖ u32₄(i), 144))
 ivk_w(i)    = clamp(HKDF-Expand(PRK_w, "TEMPLAR_BOUND_INCOMING_V1" ‖ actx ‖ u32₄(i), 32))
 kstore_w    = HKDF-Expand(PRK_w, "TEMPLAR_BOUND_STORE_V1" ‖ actx, 32)
+kstoreid_w  = HKDF-Expand(PRK_w, "TEMPLAR_BOUND_STORE_ID_V1" ‖ actx, 32)
 receiver(i) = H(OWNER, H(WAUTH, felt_limbs(A) ‖ sk_w(i)) ‖ H(NK, sk_w(i)))
 ```
 
+`u32₄(i)` is four big-endian bytes, as in sdk-spec §3.2. `kstoreid_w` names store records,
+separate from the encryption key, as sdk-spec's store id key does (SDK-IM11).
+
 - `A` is in every context, so one phrase used with two accounts gives unrelated spending,
   nullifier and viewing keys. Their notes cannot be linked through a shared `nk` or `ivk`.
-- A known-answer vector pins the derivation.
+- A known-answer vector pins the derivation (`sdk/vectors/keys.json`, `bound_seeds`), and
+  `sdk/vectors/check_keys.py` recomputes it independently of the core.
 - Account indexes, addresses (unchanged format; they do not reveal `A`), viewing keys and scanning
   follow sdk-spec §3–§6 with these keys.
 
@@ -803,6 +808,109 @@ the compress-only tree tables (F30), one generic timelock for all owner levers, 
   - the relation version, E and Q;
   - the ticket issuer keys and the cost table.
 
+**Implementation (P4, `server/prover`).**
+
+- **Job body:**
+
+  ```text
+  { relation: "r5", proof, statement,
+    pool_call: { entry_point: "apply_spend" | "apply_spend_with_invoke", calldata },
+    salt?, signature?,
+    payment?: { tickets, refund_requests } | { free_full_withdrawal: { openings: [inner₀, inner₁] } } }
+  ```
+
+- **The pool call** is pool V3's exact calldata, with an empty proof span. It is parsed strictly:
+  every length and range, and no trailing felts. It is then matched field by field to the
+  bridge-checked statement: each delivery digest is recomputed from its ciphertext, the binding
+  is recomputed and must equal the bridge's, and an invoke's intent preimage must hash to the
+  statement's intent.
+- **The virtual transaction's calldata** is `(proof_data, salt, signature)`. The L2 gas bound is
+  configurable (default 450M).
+- **Tickets:**
+  - RSABSSA-SHA384-PSS-Randomized over `"TEMPLAR_TICKET_V1" ‖ nonce₃₂`. The wire form is
+    `{key_id, nonce, randomizer, signature}` in hex.
+  - The spent set is keyed by nonce, and each issuer key's set is an fsynced append-only log in
+    `spent_dir`, on a volume apart from the job directories. Every log is reloaded at startup,
+    expired keys' included, so a clock set back cannot revive a spent ticket.
+  - A spend that cannot be synced fails closed: the job fails before the virtual OS runs and its
+    tickets are released, and the ledger takes no new reservation until the log is writable.
+  - One public key under two ids, and a zero priced asset or minimum, are refused at startup.
+  - A line torn by a failed write is skipped at load (that spend failed, so no job ran on it),
+    and the next append starts a fresh line. Consumed tickets whose spend failed stay held and
+    are spent first once the log is writable.
+  - Each issuer key signs tickets and refunds only: no other message format, and no decryption.
+    P4's test keys are 2048-bit; P7 fixes the production size (at least 2048, with 3072
+    considered).
+  - A job must present exactly its cost in tickets, each with one blinded refund request.
+  - Refunds are blind signatures by the test issuer's key (P4) on the job's own requests. They
+    are returned in the job status.
+- **Ticket states,** by the failure's cause, not its stage:
+  - A guard releases the reservation on any refusal.
+  - A bridge rejection (a Cairo panic in its output) or a calldata mismatch consumes it. A
+    pre-check that fails without a panic (killed for memory, the sandbox, a disk, a time-out) is
+    the server's and releases it. Either way the submission backs off, so a release cannot
+    become a loop: the note only when the bridge had accepted the proof (a mismatch), otherwise
+    the exact body, since anyone can name another's nullifier in a junk proof.
+  - A signature failure releases it.
+  - Job start spends it when the OS stage begins, once the spend is synced.
+  - After that, the client's faults keep it spent: the virtual transaction reverted or failed
+    execution (read from the runner's error), the message differs, or a cap is exceeded. Any
+    other failure (the node, the sandbox, a time-out, proving, the facts) is the server's own, and
+    is refunded. A job reaches proving only inside the caps.
+  - Any job failure releases the note, which then backs off, doubling per failure, whatever the
+    cause.
+- **Checks mirrored from the pool,** at admission and again at the base block, so the server
+  does not prove a spend the pool must refuse:
+  - `valid_until` nonzero and on the Q grid, and some block up to `send_deadline`, less the relay
+    margin, satisfying `valid_until ≤ block + E + Q`;
+  - an invoke's intent unexpired at `max(valid_until − E − Q, latest + blocks_per_job + 11)`
+    plus the relay margin (the first block that can settle it after the proof), its adapter
+    neither zero nor the pool, `COMPUTE ⇔ identity ≠ 0`, the spend's asset a known ERC20, no
+    destination a registered asset or an NFT contract, and the adapter's class a shadow class
+    exactly for `COMPUTE`; an invoke's `send_deadline` is also capped by its intent's expiry;
+  - no timelocked change due for the relation's verifier or the adapter's class: refused from
+    `pending_margin_secs` before `eta` until `eta + T` (or until applied or cancelled); a lapsed
+    proposal is none. A pending change at startup is a warning. During an armed window the
+    server refuses the relation's jobs, since the owner may switch at any moment.
+- **Bounds before proving:**
+  - bound spends only for the configured account classes (Argent 0.5.0 and Braavos 1.2.0 at
+    P4), checked at admission and at the base block, so the account code in the virtual OS is
+    code whose resources were measured;
+  - caps on virtual-OS steps (default 4M, P0b's 3.41M plus headroom) and on named builtins, from
+    `os-result.json`. The Blake compressions are fixed by the class allowlist for now; a Blake
+    and component-size check in the prover binary, and the final numbers, come with P5.
+- **Queues and allowances:**
+  - Only paid jobs count against `queue_capacity`. A paid job's expiry estimate counts the
+    running jobs and the queued paid ones; a free job's counts every queued job.
+  - Free jobs take at most `max_share_percent` (default 25) of the prover's time in any hour,
+    besides waiting for every paid job. Free exits are best-effort under paid load: a free job
+    held back by the share can expire in the queue, and its note then backs off.
+- **The free full withdrawal** recomputes each output's commitment with the Poseidon2-M31 note
+  hash, checked against the pool's vectors. Free jobs:
+  - take their own queue, which workers serve only when no paid job waits;
+  - take their allowances only when the job is queued, after the bridge, the calldata match, the
+    signature and the duplicate check, so a refused, duplicate or abandoned submission takes
+    nothing: the global hourly bucket, the address's (relays share the global bound only), and
+    for bound spends the account's daily count, kept under a keyed hash of the account.
+- **Retention:** `DELETE /v1/jobs/{id}` acknowledges a result and deletes it. A bound job's
+  directory lives in `bound_data_dir`, required with `operator_node` and checked at startup to be
+  a tmpfs, and is deleted when proving ends; its result goes after `bound_retention_secs`.
+- **P4 limitations:**
+  - One redeemer: the spent set is this process's files. A second server or a relayer needs a
+    shared, linearizable spent set, or issuer keys partitioned between redeemers (P7).
+  - A crash after job start loses that job's tickets: jobs and refund requests are in memory
+    only. A journal that turns them into refunds at restart comes with P7's issuer.
+  - The client side of tickets (blinding, finalizing, storing) comes with P7; in P4 the app
+    supplies the payment JSON.
+  - `DELETE /v1/jobs/{id}` drops a result at once. With the relayer (P4b), the relayer takes a
+    result when its job completes, before the client can acknowledge it.
+  - `pending_margin_secs` should cover a result's life (`max_proof_age` blocks): it defaults to
+    `max_proof_age × 6` seconds, and the server warns at startup when it is set lower.
+- **Tests:** the r5 admission path runs end to end against the real R5 bridge with SDK-made
+  proofs and a stub node, through every ticket state
+  (`server/prover/src/api.rs`, `admission_r5_with_tickets`, `#[ignore]`: it needs the built
+  bridge and a delegated cgroup). The virtual-OS run of the V5 account is P5.
+
 ## 10. Web-app RPC use (AB-P10)
 
 In bound mode, spend-specific reads never go through a provider that has seen the account in that
@@ -812,7 +920,10 @@ separate provider over OHTTP.
 
 ## 11. Amendments to other specs (AB-P15)
 
-Applied when the corresponding phase lands.
+Applied when the corresponding phase lands. **Applied in P4:** sdk-spec §3.4, §8, §9.1, §9.2
+(the owner-submit refusal), §10.2, §11 and §14; prover-server-spec §2, §4–§8 and §10;
+hidden-asset-spec §5.7. The relayer submission and the ticket wallet (sdk-spec §9.2) follow with
+P4b and P7.
 
 **sdk-spec.md:**
 

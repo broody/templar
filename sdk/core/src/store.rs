@@ -8,7 +8,7 @@ use rand_core::{CryptoRng, RngCore};
 use sha2::Sha256;
 
 use crate::felt::Felt32;
-use crate::keys::Seed;
+use crate::keys::StoreKeys;
 use crate::{Error, Result};
 
 pub const SCHEMA: u32 = 1;
@@ -26,7 +26,7 @@ fn ad(chain: &Felt32, pool: &Felt32, record_type: &str, record_key: &str) -> Vec
 }
 
 /// `nonce₂₄ ‖ ciphertext`.
-pub fn seal(seed: &Seed, chain: &Felt32, pool: &Felt32, record_type: &str, record_key: &str, plaintext: &[u8], rng: &mut (impl RngCore + CryptoRng)) -> Result<Vec<u8>> {
+pub fn seal(seed: &dyn StoreKeys, chain: &Felt32, pool: &Felt32, record_type: &str, record_key: &str, plaintext: &[u8], rng: &mut (impl RngCore + CryptoRng)) -> Result<Vec<u8>> {
     let key = seed.store_key(chain, pool);
     let cipher = XChaCha20Poly1305::new(key.as_ref().into());
     let mut nonce = [0u8; 24];
@@ -37,7 +37,7 @@ pub fn seal(seed: &Seed, chain: &Felt32, pool: &Felt32, record_type: &str, recor
     Ok([nonce.as_slice(), &ct].concat())
 }
 
-pub fn open(seed: &Seed, chain: &Felt32, pool: &Felt32, record_type: &str, record_key: &str, sealed: &[u8]) -> Result<Vec<u8>> {
+pub fn open(seed: &dyn StoreKeys, chain: &Felt32, pool: &Felt32, record_type: &str, record_key: &str, sealed: &[u8]) -> Result<Vec<u8>> {
     if sealed.len() < 24 + 16 {
         return Err(Error::new("store_corrupt", "record too short"));
     }
@@ -50,7 +50,7 @@ pub fn open(seed: &Seed, chain: &Felt32, pool: &Felt32, record_type: &str, recor
 
 /// The opaque name a record is stored under: `HMAC-SHA256(id key, len ‖ type ‖ len ‖ key)`, hex,
 /// with its own key and a length-prefixed (injective) encoding (SDK-IM11).
-pub fn record_id(seed: &Seed, chain: &Felt32, pool: &Felt32, record_type: &str, record_key: &str) -> String {
+pub fn record_id(seed: &dyn StoreKeys, chain: &Felt32, pool: &Felt32, record_type: &str, record_key: &str) -> String {
     let key = seed.store_id_key(chain, pool);
     let mut m = <Hmac<Sha256> as Mac>::new_from_slice(key.as_ref()).expect("any key length");
     for part in [record_type, record_key] {
@@ -63,6 +63,7 @@ pub fn record_id(seed: &Seed, chain: &Felt32, pool: &Felt32, record_type: &str, 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::keys::{BoundSeed, Seed};
     use rand_chacha::ChaCha20Rng;
     use rand_core::SeedableRng;
 
@@ -77,5 +78,13 @@ mod tests {
         assert!(open(&s, &c, &p, "record", "7", &sealed).is_err());
         assert!(open(&s, &c, &[3u8; 32], "note", "7", &sealed).is_err());
         assert_ne!(record_id(&s, &c, &p, "note", "7"), record_id(&s, &c, &p, "note", "8"));
+        // A bound wallet's store is its own: it cannot open the Templar wallet's records.
+        let mut account = [0u8; 32];
+        account[31] = 4;
+        let b = BoundSeed::from_bytes(&[2u8; 28]).unwrap().wallet(&account).unwrap();
+        assert!(open(&b, &c, &p, "note", "7", &sealed).is_err());
+        let sealed_b = seal(&b, &c, &p, "note", "7", b"hello", &mut rng).unwrap();
+        assert_eq!(open(&b, &c, &p, "note", "7", &sealed_b).unwrap(), b"hello");
+        assert_ne!(record_id(&b, &c, &p, "note", "7"), record_id(&s, &c, &p, "note", "7"));
     }
 }

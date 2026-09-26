@@ -5,15 +5,17 @@ import { call, loadCore, wasm } from './core.js';
 import { coreError } from './errors.js';
 
 interface Job {
-  seed: Uint8Array;
+  /** The wallet's key material (a Templar seed, or a bound seed and its account). */
+  keys: Uint8Array;
   plan: string;
+  now: string;
   wasm?: BufferSource | string;
 }
 
 async function run(job: Job): Promise<{ ok: true; proved: string } | { ok: false; code: string; message: string }> {
   try {
     await loadCore(job.wasm);
-    return { ok: true, proved: call(() => wasm.prove_spend(job.seed, job.plan)) };
+    return { ok: true, proved: call(() => wasm.prove_spend(job.keys, job.plan, job.now)) };
   } catch (e) {
     const err = coreError(e);
     return { ok: false, code: err.code, message: err.message };

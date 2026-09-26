@@ -54,7 +54,9 @@ pub fn message_hash(pins: &Pins, binding: &Felt32) -> Result<Felt32> {
     ]))
 }
 
-pub fn check(pins: &Pins, binding: &str, r: &ServerResult, latest_block: u64) -> Result<Window> {
+/// Checks a result and computes its window. For R0 V5, `statement_valid_until` caps it: the result
+/// may land until `min(valid_until, base + max_proof_age)`, the server's `send_deadline`.
+pub fn check(pins: &Pins, binding: &str, r: &ServerResult, latest_block: u64, statement_valid_until: Option<u64>) -> Result<Window> {
     let bad = |m: &str| Error::new("bad_result", m.to_string());
     let binding = felt::parse(binding)?;
     if felt::parse(&r.binding).map_err(|_| bad("binding"))? != binding {
@@ -90,6 +92,10 @@ pub fn check(pins: &Pins, binding: &str, r: &ServerResult, latest_block: u64) ->
         return Err(bad("proof size"));
     }
     let submit_after = r.base_block.checked_add(SUBMIT_DELAY).ok_or_else(|| bad("base block"))?;
-    let valid_until = r.base_block.checked_add(pins.max_proof_age).ok_or_else(|| bad("base block"))?;
+    let proof_age = r.base_block.checked_add(pins.max_proof_age).ok_or_else(|| bad("base block"))?;
+    let valid_until = statement_valid_until.map_or(proof_age, |v| v.min(proof_age));
+    if valid_until < submit_after {
+        return Err(bad("the result can never land: its deadline is before submit_after"));
+    }
     Ok(Window { submit_after, valid_until })
 }

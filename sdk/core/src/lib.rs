@@ -5,15 +5,18 @@ pub mod address;
 pub mod felt;
 pub mod keys;
 pub mod note;
+pub mod pool;
 pub mod ohttp;
 pub mod result;
 pub mod scan;
 pub mod sealbox;
+pub mod snip12;
 pub mod spend;
 pub mod store;
 pub mod tree;
 
 pub use templar_client_verifier_circuit::payment::Digest;
+pub use templar_client_verifier_circuit::{payment4, payment5};
 
 /// An error with a stable machine-readable code and a message.
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]

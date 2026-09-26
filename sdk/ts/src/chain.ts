@@ -3,7 +3,7 @@
 import { hash, type RpcProvider } from 'starknet';
 
 import { fail } from './errors.js';
-import { canon, sameFelt, type NetworkConstants, type PoolConstants } from './network.js';
+import { canon, sameFelt, versionOf, type NetworkConstants, type PoolConstants } from './network.js';
 import type { Digest, Hex } from './core.js';
 
 export const SELECTORS = {
@@ -29,6 +29,17 @@ export async function verifyPins(provider: RpcProvider, n: NetworkConstants, p: 
   const chain = await provider.getChainId();
   if (!sameFelt(chain, n.chainId)) fail('wrong_chain', `the RPC node is on ${chain}`);
   await checkVerifier(provider, p);
+  if (versionOf(p) === 'v5') {
+    // Pool V3's expiry and root rules are constructor constants (docs/account-bound-note-spec.md §8).
+    const want = p.parameters ?? fail('pin_mismatch', 'a pool V3 needs its pinned parameters');
+    const got = (await provider.callContract({ contractAddress: p.pool, entrypoint: 'get_parameters', calldata: [] })).map((x) => Number(BigInt(x)));
+    if (got[0] !== want.expiryWindow || got[1] !== want.quantum || got[2] !== want.rootWindow || got[3] !== want.timelock) fail('pin_mismatch', 'pool parameters');
+    // Mainnet floors (§8.4): owner changes wait at least 7 days, and a replaced root outlives any
+    // spend that could use it.
+    if (sameFelt(n.chainId, MAINNET) && (want.timelock < 7 * 86_400 || want.rootWindow < want.expiryWindow + want.quantum)) {
+      fail('pin_mismatch', 'pool parameters below the mainnet floors');
+    }
+  }
   if (!sameFelt(await provider.getClassHashAt(p.adapter), p.adapterClass)) fail('pin_mismatch', 'adapter class');
   if (!sameFelt(await provider.getClassHashAt(p.statement), p.statementClass)) fail('pin_mismatch', 'statement account class');
   const expect: [string, bigint][] = [
@@ -46,10 +57,55 @@ export async function verifyPins(provider: RpcProvider, n: NetworkConstants, p: 
   }
 }
 
+const MAINNET = canon(shortString('SN_MAIN'));
+
+/** Pool V3's verifier kinds (docs/account-bound-note-spec.md §8.4). */
+export const KIND_R0 = canon(shortString('R0'));
+export const KIND_P1 = canon(shortString('P1'));
+
 /** The pool's verifier must still be the pinned adapter (re-read before every simulation and deposit). */
 export async function checkVerifier(provider: RpcProvider, p: PoolConstants): Promise<void> {
-  const [v] = await provider.callContract({ contractAddress: p.pool, entrypoint: 'get_verifier', calldata: [] });
+  // Pool V3 reads `get_verifier(kind)` (AB-PV7).
+  const calldata = versionOf(p) === 'v5' ? [KIND_R0] : [];
+  const [v] = await provider.callContract({ contractAddress: p.pool, entrypoint: 'get_verifier', calldata });
   if (!v || !sameFelt(v, p.adapter)) fail('verifier_changed', 'the pool no longer uses the pinned adapter');
+}
+
+/** A pending owner change on pool V3: a verifier kind or a shadow class hash, its value and eta. */
+export interface Proposal {
+  key: Hex;
+  value: Hex;
+  /** Unix seconds from which the owner may apply it. */
+  eta: number;
+  /** Unix seconds after which it can no longer apply (`eta + T`). */
+  lapsesAt: number;
+  /** Past `lapsesAt` at the latest block: shown, but it blocks nothing (AB-SP15). */
+  lapsed: boolean;
+  /** A verifier change (`R0` or `P1`) rather than a shadow class. */
+  verifier: boolean;
+}
+
+/**
+ * The pending proposals for both verifiers and the given shadow classes (spec §8.4, AB-PV2): the SDK
+ * shows each, refuses deposits while a verifier change is pending, and stops the routes a pending
+ * shadow-class change would break.
+ */
+export async function pendingProposals(provider: RpcProvider, p: PoolConstants, shadowClasses: Hex[] = []): Promise<Proposal[]> {
+  if (versionOf(p) !== 'v5') return [];
+  const timelock = p.parameters?.timelock ?? fail('pin_mismatch', 'a pool V3 needs its pinned parameters');
+  // The pool keeps a lapsed proposal until it is replaced or cancelled: lapse is judged at the
+  // latest block's timestamp, the clock the pool uses.
+  const latest = await provider.getBlockLatestAccepted();
+  const block = await provider.getBlockWithTxHashes(latest.block_number);
+  const now = Number((block as { timestamp?: number }).timestamp ?? fail('bad_rpc', 'block timestamp'));
+  const out: Proposal[] = [];
+  for (const key of [KIND_R0, KIND_P1, ...shadowClasses.map(canon)]) {
+    const [value, eta] = await provider.callContract({ contractAddress: p.pool, entrypoint: 'get_proposal', calldata: [key] });
+    if (eta === undefined || BigInt(eta) === 0n) continue;
+    const e = Number(BigInt(eta));
+    out.push({ key, value: canon(value ?? 0), eta: e, lapsesAt: e + timelock, lapsed: now > e + timelock, verifier: key === KIND_R0 || key === KIND_P1 });
+  }
+  return out;
 }
 
 export type PoolEvent =

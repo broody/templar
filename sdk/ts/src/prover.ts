@@ -2,7 +2,7 @@
 // polling only; with OHTTP every request goes through the relay and none goes to the server.
 import { call, wasm, type ServerResult } from './core.js';
 import { TemplarError, fail } from './errors.js';
-import { sameFelt, type NetworkConstants, type PoolConstants } from './network.js';
+import { sameFelt, versionOf, type NetworkConstants, type PoolConstants } from './network.js';
 
 export interface OhttpConfig {
   /** The relay's URL; it must forward to this server's gateway and carry 4 MB requests. */
@@ -23,6 +23,8 @@ export interface JobStatus {
   position?: number;
   result?: ServerResult & Record<string, unknown>;
   error?: string;
+  /** Replacement tickets for a job the server failed: blind signatures on the job's requests. */
+  refund?: { key_id: string; blind_signatures: string[] } | { owed: number; error: string };
 }
 
 export interface ServerInfo {
@@ -79,7 +81,8 @@ export class ProverClient {
     const r = await this.request('GET', '/v1/info');
     if (r.status !== 200) fail('prover_info', `status ${r.status}`);
     const info = JSON.parse(r.text) as ServerInfo;
-    const rel = info.relations?.find((x) => x.name === 'r4');
+    // Pool V2 serves R0 V4 (`r4`); pool V3 R0 V5 (`r5`).
+    const rel = info.relations?.find((x) => x.name === (versionOf(this.pool) === 'v5' ? 'r5' : 'r4'));
     const p = this.pool;
     const agree =
       rel &&
@@ -93,6 +96,25 @@ export class ProverClient {
       rel.account_tag === p.accountTag &&
       JSON.stringify(rel.circuit_hash_u32_le) === JSON.stringify(p.circuitHash);
     if (!agree) fail('prover_mismatch', 'the server serves another pool, statement account or circuit than the pinned one');
+    if (versionOf(p) === 'v5') {
+      // R0 V5 (account-bound spec §9, Info): the spend message's hashes are the core's, and the pool
+      // parameters are the pinned ones (AB-SP19).
+      const r5 = info.r5 as { spend_message?: { domain_type_hash?: string; spend_type_hash?: string }; pool_parameters?: Record<string, number> } | undefined;
+      const d = JSON.parse(call(() => wasm.spend_domain())) as { domain_type_hash: string; spend_type_hash: string };
+      const pp = r5?.pool_parameters;
+      const want = p.parameters;
+      const ok =
+        r5?.spend_message?.domain_type_hash !== undefined &&
+        sameFelt(r5.spend_message.domain_type_hash, d.domain_type_hash) &&
+        r5.spend_message.spend_type_hash !== undefined &&
+        sameFelt(r5.spend_message.spend_type_hash, d.spend_type_hash) &&
+        want !== undefined &&
+        pp?.expiry_window === want.expiryWindow &&
+        pp?.quantum === want.quantum &&
+        pp?.root_window === want.rootWindow &&
+        pp?.timelock === want.timelock;
+      if (!ok) fail('prover_mismatch', 'the server publishes another spend message or pool parameters than the pinned ones');
+    }
     this.verified = true;
     return info;
   }
@@ -105,14 +127,22 @@ export class ProverClient {
     if (!this.verified) await this.info();
     const r = await this.request('POST', '/v1/jobs', body);
     if (r.status === 202) return (JSON.parse(r.text) as { id: string }).id;
-    const reason = (() => {
+    const parsed = (() => {
       try {
-        return (JSON.parse(r.text) as { error?: string }).error ?? r.text;
+        return JSON.parse(r.text) as { error?: string; reason?: string };
       } catch {
-        return r.text;
+        return {};
       }
     })();
-    const code = r.status === 409 ? 'prover_conflict' : r.status === 429 ? 'prover_rate_limited' : r.status === 400 ? 'prover_rejected' : 'prover_error';
+    const reason = parsed.error ?? r.text;
+    const code =
+      r.status === 409 ? 'prover_conflict'
+      : r.status === 429 ? 'prover_rate_limited'
+      : r.status === 400 ? 'prover_rejected'
+      : r.status === 402 ? 'prover_payment'
+      // 403: the account refused the signature (authorize again), or its class is not served.
+      : r.status === 403 ? (parsed.reason === 'account_class' ? 'prover_account_class' : 'prover_forbidden')
+      : 'prover_error';
     throw new TemplarError(code, `${r.status}: ${reason}`);
   }
 

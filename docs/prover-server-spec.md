@@ -2,6 +2,10 @@
 
 Status: **design, revision 3, after the design review and its re-review (`docs/reviews/prover-server-design-review.md`, CONDITIONAL GO; findings `PS-*` cited where they changed the text). Nothing is implemented.** A runnable wrapping server for the
 compact client-proof path, replacing the research scripts under `bench/` for serving proofs.
+**Revision 4 amendments** (`docs/account-bound-note-spec.md` §9, §11; P4 implemented in
+`server/prover` on `feat/account-bound`) add R0 V5 on pool V3, bound spends and payment: the
+"Pool V3 (R0 V5)" paragraphs in §2, §4, §5, §6, §7, §8 and §10. The normative detail is
+account-bound spec §9.
 
 ## 1. Purpose and scope
 
@@ -49,6 +53,13 @@ It does learn, as any relay would:
 It **cannot** submit the transaction itself: that needs the output ciphertexts, the execution
 intent's preimage or a policy's data, which the client never sends (only their digests are in
 the statement). It can refuse, delay or drop jobs.
+
+**Pool V3 (R0 V5; revision 4).** This replaces "cannot submit" (PS-7) for R0 V5. The job body
+carries pool V3's full calldata, so the server **can** settle the spend, and it chooses when, up
+to `send_deadline`. In bound mode it learns the account `A`, with the salt and the account's
+signature; a retained signature over a public binding is third-party-verifiable proof that `A`
+made the spend, so bound inputs are deleted when proving ends and results on acknowledgement. A
+free full withdrawal tells it that the spend empties its inputs.
 
 **Transport privacy.** The server accepts every request, submissions and job polling alike,
 over oblivious HTTP (OHTTP), with the same gateway layer the upstream transaction prover uses
@@ -114,6 +125,27 @@ under a CPU-time and memory limit, never in the front end (PS-4). In order, chea
 
 The authoritative checks remain in the proven execution and the pool.
 
+**Pool V3 (R0 V5; revision 4).** The admission order is account-bound spec §9's:
+
+1. parse (the body adds `pool_call`, parsed strictly, and for bound spends `salt` and
+   `signature`);
+2. configuration (a bound spend needs an operator-controlled node);
+3. payment: tickets verified and reserved, or the free full withdrawal's check, whose allowances
+   are taken only when the job is queued;
+4. deduplication and back-off;
+5. expiry: `valid_until ≥ latest + (jobs ahead + 1) · blocks_per_job + 11 + relay margin`, with
+   the queue counted per queue, and pool V3's `valid_until` rules;
+6. chain state: root and nullifiers, the root still accepted at `send_deadline`, the verifier
+   with no change due (`get_verifier('R0')`, `get_proposal('R0')`), an invoke's pool state, and
+   a bound account's class;
+7. the bridge, and the pool call matched field by field to the bridge-checked statement;
+8. the bound account's `is_valid_signature`, advisory, whose failure backs off the note (the
+   first is free), never the account.
+
+Ticket states: released on a refusal or a server-side failure before job start; consumed by a
+bridge rejection or a calldata mismatch; spent, once synced, when the OS stage begins; kept spent
+for the client's faults after that; refunded, blind, for the server's own.
+
 ## 5. The job
 
 1. **Re-check** the root and nullifiers (the job may have queued for a while).
@@ -139,6 +171,18 @@ The authoritative checks remain in the proven execution and the pool.
 
 A failed job reports its stage; resubmission is safe.
 
+**Pool V3 (R0 V5; revision 4).**
+
+- **Job start** repeats the expiry rule at the base block (proving time included), the root at
+  the deadline, the pool rules, and for a bound spend the account's class and signature.
+- **Transaction calldata** is `(proof_data, salt, signature)`, with a configurable L2 gas bound
+  (default 450M) in place of 10^9.
+- **Before proving,** the OS run's steps and named builtins must be within the configured caps
+  (a violation is the client's fault).
+- **Result:** `send_deadline = min(statement.valid_until, base_block + max_proof_age)` in place
+  of `valid_until`, and the `pool_call` the relayer settles. A failed job releases its note, which
+  backs off, doubling per failure.
+
 ## 6. API
 
 - `POST /v1/jobs` `{relation: "r4" | "p1", proof: [felt hex...], statement: {...}}` → `202
@@ -147,6 +191,13 @@ A failed job reports its stage; resubmission is safe.
   error?}`. Job ids are random 128-bit values; knowing one reveals only that job.
 - `GET /v1/info` → network, chain, pool, relations with their circuit hashes, statement accounts,
   classes and tags, OS program, limits, and the server's version and dependency revisions.
+- **Pool V3 (revision 4).** `POST /v1/jobs` also takes `{relation: "r5", proof, statement,
+  pool_call: {entry_point, calldata}, salt?, signature?, payment?}`; `402` means payment is
+  required or refused, and `403` that the account refused the signature or its class is not
+  served, told apart by `reason: "signature" | "account_class"`. `GET /v1/jobs/{id}` adds `refund` (blind signatures on the job's refund requests).
+  `DELETE /v1/jobs/{id}` acknowledges a finished job's result and deletes it. `/v1/info` adds the
+  `r5` section (spend domain and type hashes, `E`, `Q`, `W`, `T`, bound mode and classes, caps)
+  and `payment` (issuer keys, costs, priced assets, free bounds).
 
 Results are kept for a configured time (default one hour), then deleted with their inputs.
 
@@ -161,6 +212,11 @@ Results are kept for a configured time (default one hour), then deleted with the
   one.
 - **Time:** a per-stage timeout (OS run, proof).
 - Allowlists (IP or domain) are a later addition.
+- **Pool V3 (revision 4).** Caps on virtual-OS steps and builtins before proving; bound spends
+  only for configured account classes, whose resources were measured. Free full withdrawals have
+  their own queue, never count against the paid queue, and take at most a configured share of
+  the prover's time; they are rate-limited globally, per address and per bound account, debited
+  only when the job is queued.
 
 ## 8. Configuration
 
@@ -181,6 +237,13 @@ statement account, pinned by its sha256 in the config (PS-12). The file holds: n
 virtual OS), pool address; per relation the statement account, its class, account tag and pinned
 circuit hash; the OS program hash; prover settings (bounded columns, threads, memory cap); limits;
 result retention; listen address. `info` prints it with the dependency revisions.
+
+**Pool V3 (revision 4).** `pool_version = 3` serves `r5` (and `p1`) and reads `E`, `Q`, `W`, `T`
+at startup. New settings: `operator_node`, `bound_account_classes` and `bound_data_dir` (a tmpfs)
+for bound spends; `pending_margin_secs`; `blocks_per_job`, `relay_margin_blocks`, `os_l2_gas`,
+`bound_retention_secs`; `[caps]`; `[payment]` (issuer keys, refund key, costs, priced assets,
+free bounds, `spent_dir`). A pending verifier change at startup is a warning; jobs are refused
+while it is due.
 
 ## 9. Build and distribution
 
@@ -228,6 +291,12 @@ for rate limiting holds only counters and expires with the window. Worker and ru
 the job directory and are deleted with it at the end of retention. A reverse proxy in front of
 the server must be configured not to keep access logs with client addresses; the Docker
 compose example ships that way.
+
+**Pool V3 (revision 4).** Logs never contain a bound account, salt or signature. Bound job
+directories live on a tmpfs and are deleted when proving ends; swap is off or encrypted; results
+go on acknowledgement or after `bound_retention_secs`. The free-withdrawal counter keys bound
+accounts by a keyed hash. The spent-ticket logs are kept on their own volume and never deleted
+in P4.
 
 ## 11. Tests
 
