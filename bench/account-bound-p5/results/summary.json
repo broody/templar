@@ -1,0 +1,699 @@
+{
+ "statement_account": "0x07748e3ba3fca5228625cf754c0d0e7dd7e7bf3e9c426c5c7bc8dc08d88b6a81",
+ "class_hash": "0x06a2bd80203760b1eb0aee384ae835300c66a24f327b038315d628fbd92b830a",
+ "cases": {
+  "braavos-invoke": {
+   "account": "0x665f820f6f\u2026",
+   "bound": true,
+   "intent": true,
+   "block": 15650885,
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3556404,
+    "builtins": {
+     "ec_op_builtin": 3,
+     "output_builtin": 6,
+     "pedersen_builtin": 97,
+     "poseidon_builtin": 15188,
+     "range_check_builtin": 351854
+    },
+    "seconds": 18.40240496,
+    "rejection": null
+   },
+   "proof2": {
+    "verified": true,
+    "prove_seconds": 67.376852626,
+    "max_rss_kib": 30717748,
+    "proof_bytes": 255973
+   },
+   "trace": {
+    "max_log": 21,
+    "blake_total": 14990,
+    "blake_by_role": {
+     "bootloader": 1914,
+     "os": 9179,
+     "account": 3897
+    },
+    "component_log_sizes": {
+     "add_opcode": 19,
+     "add_opcode_small": 20,
+     "add_ap_opcode": 17,
+     "assert_eq_opcode": 19,
+     "assert_eq_opcode_imm": 18,
+     "assert_eq_opcode_double_deref": 20,
+     "blake_compress_opcode": 14,
+     "call_opcode_abs": 4,
+     "call_opcode_rel_imm": 17,
+     "jnz_opcode_non_taken": 16,
+     "jnz_opcode_taken": 19,
+     "jump_opcode_abs": 4,
+     "jump_opcode_double_deref": 4,
+     "jump_opcode_rel": 4,
+     "jump_opcode_rel_imm": 17,
+     "mul_opcode": 17,
+     "mul_opcode_small": 18,
+     "ret_opcode": 17,
+     "verify_instruction": 15,
+     "blake_round": 18,
+     "blake_g": 21,
+     "triple_xor_32": 17,
+     "bitwise_builtin": 4,
+     "pedersen_builtin_narrow_windows": 7,
+     "poseidon_builtin": 14,
+     "range_check_builtin": 19,
+     "pedersen_aggregator_window_bits_9": 7,
+     "partial_ec_mul_window_bits_9": 13,
+     "poseidon_aggregator": 14,
+     "poseidon_3_partial_rounds_chain": 19,
+     "poseidon_full_round_chain": 17,
+     "cube_252": 21,
+     "range_check_252_width_27": 21,
+     "memory_address_to_id": 18,
+     "memory_id_to_small": 20
+    }
+   }
+  },
+  "braavos-transfer": {
+   "account": "0x665f820f6f\u2026",
+   "bound": true,
+   "intent": false,
+   "block": 15650874,
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3606742,
+    "builtins": {
+     "ec_op_builtin": 3,
+     "output_builtin": 6,
+     "pedersen_builtin": 97,
+     "poseidon_builtin": 15610,
+     "range_check_builtin": 357590
+    },
+    "seconds": 17.382965998,
+    "rejection": null
+   },
+   "proof2": {
+    "verified": true,
+    "prove_seconds": 66.584713773,
+    "max_rss_kib": 30529788,
+    "proof_bytes": 253415
+   },
+   "trace": {
+    "max_log": 21,
+    "blake_total": 15097,
+    "blake_by_role": {
+     "bootloader": 1914,
+     "os": 9179,
+     "account": 4004
+    },
+    "component_log_sizes": {
+     "add_opcode": 19,
+     "add_opcode_small": 20,
+     "add_ap_opcode": 17,
+     "assert_eq_opcode": 19,
+     "assert_eq_opcode_imm": 18,
+     "assert_eq_opcode_double_deref": 20,
+     "blake_compress_opcode": 14,
+     "call_opcode_abs": 4,
+     "call_opcode_rel_imm": 17,
+     "jnz_opcode_non_taken": 16,
+     "jnz_opcode_taken": 19,
+     "jump_opcode_abs": 4,
+     "jump_opcode_double_deref": 4,
+     "jump_opcode_rel": 4,
+     "jump_opcode_rel_imm": 17,
+     "mul_opcode": 17,
+     "mul_opcode_small": 18,
+     "ret_opcode": 17,
+     "verify_instruction": 15,
+     "blake_round": 18,
+     "blake_g": 21,
+     "triple_xor_32": 17,
+     "bitwise_builtin": 4,
+     "pedersen_builtin_narrow_windows": 7,
+     "poseidon_builtin": 14,
+     "range_check_builtin": 19,
+     "pedersen_aggregator_window_bits_9": 7,
+     "partial_ec_mul_window_bits_9": 13,
+     "poseidon_aggregator": 14,
+     "poseidon_3_partial_rounds_chain": 19,
+     "poseidon_full_round_chain": 17,
+     "cube_252": 21,
+     "range_check_252_width_27": 21,
+     "memory_address_to_id": 19,
+     "memory_id_to_small": 20
+    }
+   }
+  },
+  "braavos-transfer-tampered": {
+   "account": "0x665f820f6f\u2026",
+   "bound": true,
+   "intent": false,
+   "block": 15650904,
+   "os": {
+    "exit": 1,
+    "message_ok": null,
+    "n_steps": null,
+    "builtins": {},
+    "seconds": null,
+    "rejection": "Error: virtual OS: Reverted transactions are not supported; hash: TransactionHash(0x6cc57c169eb8c0410174af6557ff94de8fd7"
+   },
+   "proof2": null,
+   "trace": null
+  },
+  "ordinary-invoke": {
+   "account": "0x0",
+   "bound": false,
+   "intent": true,
+   "block": 15650636,
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3449147,
+    "builtins": {
+     "output_builtin": 6,
+     "pedersen_builtin": 52,
+     "poseidon_builtin": 15316,
+     "range_check_builtin": 348127
+    },
+    "seconds": 11.739630183,
+    "rejection": null
+   },
+   "proof2": {
+    "verified": true,
+    "prove_seconds": 64.572324158,
+    "max_rss_kib": 31038176,
+    "proof_bytes": 245877
+   },
+   "trace": {
+    "max_log": 21,
+    "blake_total": 14038,
+    "blake_by_role": {
+     "bootloader": 1914,
+     "os": 8182,
+     "account": 3942
+    },
+    "component_log_sizes": {
+     "add_opcode": 19,
+     "add_opcode_small": 20,
+     "add_ap_opcode": 17,
+     "assert_eq_opcode": 19,
+     "assert_eq_opcode_imm": 18,
+     "assert_eq_opcode_double_deref": 20,
+     "blake_compress_opcode": 14,
+     "call_opcode_abs": 4,
+     "call_opcode_rel_imm": 17,
+     "jnz_opcode_non_taken": 16,
+     "jnz_opcode_taken": 19,
+     "jump_opcode_abs": 4,
+     "jump_opcode_double_deref": 4,
+     "jump_opcode_rel": 4,
+     "jump_opcode_rel_imm": 17,
+     "mul_opcode": 17,
+     "mul_opcode_small": 18,
+     "ret_opcode": 17,
+     "verify_instruction": 15,
+     "blake_round": 18,
+     "blake_g": 21,
+     "triple_xor_32": 17,
+     "bitwise_builtin": 4,
+     "pedersen_builtin_narrow_windows": 6,
+     "poseidon_builtin": 14,
+     "range_check_builtin": 19,
+     "pedersen_aggregator_window_bits_9": 6,
+     "partial_ec_mul_window_bits_9": 12,
+     "poseidon_aggregator": 14,
+     "poseidon_3_partial_rounds_chain": 19,
+     "poseidon_full_round_chain": 17,
+     "cube_252": 21,
+     "range_check_252_width_27": 21,
+     "memory_address_to_id": 18,
+     "memory_id_to_small": 20
+    }
+   }
+  },
+  "ordinary-transfer": {
+   "account": "0x0",
+   "bound": false,
+   "intent": false,
+   "block": 15650622,
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3341550,
+    "builtins": {
+     "output_builtin": 6,
+     "pedersen_builtin": 52,
+     "poseidon_builtin": 14538,
+     "range_check_builtin": 335717
+    },
+    "seconds": 11.667750234,
+    "rejection": null
+   },
+   "proof2": {
+    "verified": true,
+    "prove_seconds": 67.094176818,
+    "max_rss_kib": 31663436,
+    "proof_bytes": 250374
+   },
+   "trace": {
+    "max_log": 21,
+    "blake_total": 13840,
+    "blake_by_role": {
+     "bootloader": 1914,
+     "os": 8182,
+     "account": 3744
+    },
+    "component_log_sizes": {
+     "add_opcode": 19,
+     "add_opcode_small": 20,
+     "add_ap_opcode": 17,
+     "assert_eq_opcode": 19,
+     "assert_eq_opcode_imm": 18,
+     "assert_eq_opcode_double_deref": 20,
+     "blake_compress_opcode": 14,
+     "call_opcode_abs": 4,
+     "call_opcode_rel_imm": 17,
+     "jnz_opcode_non_taken": 16,
+     "jnz_opcode_taken": 19,
+     "jump_opcode_abs": 4,
+     "jump_opcode_double_deref": 4,
+     "jump_opcode_rel": 4,
+     "jump_opcode_rel_imm": 17,
+     "mul_opcode": 17,
+     "mul_opcode_small": 18,
+     "ret_opcode": 17,
+     "verify_instruction": 15,
+     "blake_round": 18,
+     "blake_g": 21,
+     "triple_xor_32": 17,
+     "bitwise_builtin": 4,
+     "pedersen_builtin_narrow_windows": 6,
+     "poseidon_builtin": 14,
+     "range_check_builtin": 19,
+     "pedersen_aggregator_window_bits_9": 6,
+     "partial_ec_mul_window_bits_9": 12,
+     "poseidon_aggregator": 14,
+     "poseidon_3_partial_rounds_chain": 19,
+     "poseidon_full_round_chain": 17,
+     "cube_252": 21,
+     "range_check_252_width_27": 21,
+     "memory_address_to_id": 18,
+     "memory_id_to_small": 20
+    }
+   }
+  },
+  "p3-braavos-partial": {
+   "account": "0x665f820f6f\u2026",
+   "bound": true,
+   "intent": false,
+   "block": 15650656,
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3550233,
+    "builtins": {
+     "ec_op_builtin": 3,
+     "output_builtin": 6,
+     "pedersen_builtin": 97,
+     "poseidon_builtin": 15108,
+     "range_check_builtin": 351421
+    },
+    "seconds": 18.8448453,
+    "rejection": null
+   },
+   "proof2": {
+    "verified": true,
+    "prove_seconds": 64.097103781,
+    "max_rss_kib": 30507760,
+    "proof_bytes": 243306
+   },
+   "trace": {
+    "max_log": 21,
+    "blake_total": 14970,
+    "blake_by_role": {
+     "bootloader": 1914,
+     "os": 9179,
+     "account": 3877
+    },
+    "component_log_sizes": {
+     "add_opcode": 19,
+     "add_opcode_small": 20,
+     "add_ap_opcode": 17,
+     "assert_eq_opcode": 19,
+     "assert_eq_opcode_imm": 18,
+     "assert_eq_opcode_double_deref": 20,
+     "blake_compress_opcode": 14,
+     "call_opcode_abs": 4,
+     "call_opcode_rel_imm": 17,
+     "jnz_opcode_non_taken": 16,
+     "jnz_opcode_taken": 19,
+     "jump_opcode_abs": 4,
+     "jump_opcode_double_deref": 4,
+     "jump_opcode_rel": 4,
+     "jump_opcode_rel_imm": 17,
+     "mul_opcode": 17,
+     "mul_opcode_small": 18,
+     "ret_opcode": 17,
+     "verify_instruction": 15,
+     "blake_round": 18,
+     "blake_g": 21,
+     "triple_xor_32": 17,
+     "bitwise_builtin": 4,
+     "pedersen_builtin_narrow_windows": 7,
+     "poseidon_builtin": 14,
+     "range_check_builtin": 19,
+     "pedersen_aggregator_window_bits_9": 7,
+     "partial_ec_mul_window_bits_9": 13,
+     "poseidon_aggregator": 14,
+     "poseidon_3_partial_rounds_chain": 19,
+     "poseidon_full_round_chain": 17,
+     "cube_252": 21,
+     "range_check_252_width_27": 21,
+     "memory_address_to_id": 18,
+     "memory_id_to_small": 20
+    }
+   }
+  },
+  "p3-ready-partial": {
+   "account": "0x54f2b25070\u2026",
+   "bound": true,
+   "intent": false,
+   "block": 15650644,
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3558384,
+    "builtins": {
+     "ec_op_builtin": 3,
+     "output_builtin": 6,
+     "pedersen_builtin": 109,
+     "poseidon_builtin": 15013,
+     "range_check_builtin": 351495
+    },
+    "seconds": 17.608279468,
+    "rejection": null
+   },
+   "proof2": {
+    "verified": true,
+    "prove_seconds": 63.95820093,
+    "max_rss_kib": 30987480,
+    "proof_bytes": 256440
+   },
+   "trace": {
+    "max_log": 21,
+    "blake_total": 15027,
+    "blake_by_role": {
+     "bootloader": 1914,
+     "os": 9258,
+     "account": 3855
+    },
+    "component_log_sizes": {
+     "add_opcode": 19,
+     "add_opcode_small": 20,
+     "add_ap_opcode": 17,
+     "assert_eq_opcode": 19,
+     "assert_eq_opcode_imm": 18,
+     "assert_eq_opcode_double_deref": 20,
+     "blake_compress_opcode": 14,
+     "call_opcode_abs": 4,
+     "call_opcode_rel_imm": 17,
+     "jnz_opcode_non_taken": 16,
+     "jnz_opcode_taken": 19,
+     "jump_opcode_abs": 4,
+     "jump_opcode_double_deref": 4,
+     "jump_opcode_rel": 4,
+     "jump_opcode_rel_imm": 17,
+     "mul_opcode": 17,
+     "mul_opcode_small": 18,
+     "ret_opcode": 17,
+     "verify_instruction": 15,
+     "blake_round": 18,
+     "blake_g": 21,
+     "triple_xor_32": 17,
+     "bitwise_builtin": 4,
+     "pedersen_builtin_narrow_windows": 7,
+     "poseidon_builtin": 14,
+     "range_check_builtin": 19,
+     "pedersen_aggregator_window_bits_9": 7,
+     "partial_ec_mul_window_bits_9": 13,
+     "poseidon_aggregator": 14,
+     "poseidon_3_partial_rounds_chain": 19,
+     "poseidon_full_round_chain": 17,
+     "cube_252": 21,
+     "range_check_252_width_27": 21,
+     "memory_address_to_id": 19,
+     "memory_id_to_small": 20
+    }
+   }
+  },
+  "p3-ready-partial-tampered": {
+   "account": "0x54f2b25070\u2026",
+   "bound": true,
+   "intent": false,
+   "block": 15650897,
+   "os": {
+    "exit": 1,
+    "message_ok": null,
+    "n_steps": null,
+    "builtins": {},
+    "seconds": null,
+    "rejection": "Error: virtual OS: Reverted transactions are not supported; hash: TransactionHash(0xd2ec59139747c05d1201ebaee6f83e1dcead"
+   },
+   "proof2": null,
+   "trace": null
+  },
+  "ready-invoke": {
+   "account": "0x54f2b25070\u2026",
+   "bound": true,
+   "intent": true,
+   "block": 15650935,
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3552516,
+    "builtins": {
+     "ec_op_builtin": 3,
+     "output_builtin": 6,
+     "pedersen_builtin": 109,
+     "poseidon_builtin": 15099,
+     "range_check_builtin": 350682
+    },
+    "seconds": 18.873484622,
+    "rejection": null
+   },
+   "proof2": {
+    "verified": true,
+    "prove_seconds": 64.328095245,
+    "max_rss_kib": 30917308,
+    "proof_bytes": 255791
+   },
+   "trace": {
+    "max_log": 21,
+    "blake_total": 15048,
+    "blake_by_role": {
+     "bootloader": 1914,
+     "os": 9258,
+     "account": 3876
+    },
+    "component_log_sizes": {
+     "add_opcode": 19,
+     "add_opcode_small": 20,
+     "add_ap_opcode": 17,
+     "assert_eq_opcode": 19,
+     "assert_eq_opcode_imm": 18,
+     "assert_eq_opcode_double_deref": 20,
+     "blake_compress_opcode": 14,
+     "call_opcode_abs": 4,
+     "call_opcode_rel_imm": 17,
+     "jnz_opcode_non_taken": 16,
+     "jnz_opcode_taken": 19,
+     "jump_opcode_abs": 4,
+     "jump_opcode_double_deref": 4,
+     "jump_opcode_rel": 4,
+     "jump_opcode_rel_imm": 17,
+     "mul_opcode": 17,
+     "mul_opcode_small": 18,
+     "ret_opcode": 17,
+     "verify_instruction": 15,
+     "blake_round": 18,
+     "blake_g": 21,
+     "triple_xor_32": 17,
+     "bitwise_builtin": 4,
+     "pedersen_builtin_narrow_windows": 7,
+     "poseidon_builtin": 14,
+     "range_check_builtin": 19,
+     "pedersen_aggregator_window_bits_9": 7,
+     "partial_ec_mul_window_bits_9": 13,
+     "poseidon_aggregator": 14,
+     "poseidon_3_partial_rounds_chain": 19,
+     "poseidon_full_round_chain": 17,
+     "cube_252": 21,
+     "range_check_252_width_27": 21,
+     "memory_address_to_id": 19,
+     "memory_id_to_small": 20
+    }
+   }
+  },
+  "ready-transfer": {
+   "account": "0x54f2b25070\u2026",
+   "bound": true,
+   "intent": false,
+   "block": 15650924,
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3554086,
+    "builtins": {
+     "ec_op_builtin": 3,
+     "output_builtin": 6,
+     "pedersen_builtin": 109,
+     "poseidon_builtin": 15091,
+     "range_check_builtin": 350801
+    },
+    "seconds": 18.122166428,
+    "rejection": null
+   },
+   "proof2": {
+    "verified": true,
+    "prove_seconds": 63.76744561,
+    "max_rss_kib": 31132868,
+    "proof_bytes": 251384
+   },
+   "trace": {
+    "max_log": 21,
+    "blake_total": 15046,
+    "blake_by_role": {
+     "bootloader": 1914,
+     "os": 9258,
+     "account": 3874
+    },
+    "component_log_sizes": {
+     "add_opcode": 19,
+     "add_opcode_small": 20,
+     "add_ap_opcode": 17,
+     "assert_eq_opcode": 19,
+     "assert_eq_opcode_imm": 18,
+     "assert_eq_opcode_double_deref": 20,
+     "blake_compress_opcode": 14,
+     "call_opcode_abs": 4,
+     "call_opcode_rel_imm": 17,
+     "jnz_opcode_non_taken": 16,
+     "jnz_opcode_taken": 19,
+     "jump_opcode_abs": 4,
+     "jump_opcode_double_deref": 4,
+     "jump_opcode_rel": 4,
+     "jump_opcode_rel_imm": 17,
+     "mul_opcode": 17,
+     "mul_opcode_small": 18,
+     "ret_opcode": 17,
+     "verify_instruction": 15,
+     "blake_round": 18,
+     "blake_g": 21,
+     "triple_xor_32": 17,
+     "bitwise_builtin": 4,
+     "pedersen_builtin_narrow_windows": 7,
+     "poseidon_builtin": 14,
+     "range_check_builtin": 19,
+     "pedersen_aggregator_window_bits_9": 7,
+     "partial_ec_mul_window_bits_9": 13,
+     "poseidon_aggregator": 14,
+     "poseidon_3_partial_rounds_chain": 19,
+     "poseidon_full_round_chain": 17,
+     "cube_252": 21,
+     "range_check_252_width_27": 21,
+     "memory_address_to_id": 19,
+     "memory_id_to_small": 20
+    }
+   }
+  }
+ },
+ "uniformity_gate": {
+  "same_component_log_sizes": false,
+  "differences_from_first": {
+   "braavos-transfer": {
+    "memory_address_to_id": [
+     18,
+     19
+    ]
+   },
+   "ordinary-invoke": {
+    "pedersen_builtin_narrow_windows": [
+     7,
+     6
+    ],
+    "pedersen_aggregator_window_bits_9": [
+     7,
+     6
+    ],
+    "partial_ec_mul_window_bits_9": [
+     13,
+     12
+    ]
+   },
+   "ordinary-transfer": {
+    "pedersen_builtin_narrow_windows": [
+     7,
+     6
+    ],
+    "pedersen_aggregator_window_bits_9": [
+     7,
+     6
+    ],
+    "partial_ec_mul_window_bits_9": [
+     13,
+     12
+    ]
+   },
+   "p3-ready-partial": {
+    "memory_address_to_id": [
+     18,
+     19
+    ]
+   },
+   "ready-invoke": {
+    "memory_address_to_id": [
+     18,
+     19
+    ]
+   },
+   "ready-transfer": {
+    "memory_address_to_id": [
+     18,
+     19
+    ]
+   }
+  },
+  "max_log": {
+   "braavos-invoke": 21,
+   "braavos-transfer": 21,
+   "ordinary-invoke": 21,
+   "ordinary-transfer": 21,
+   "p3-braavos-partial": 21,
+   "p3-ready-partial": 21,
+   "ready-invoke": 21,
+   "ready-transfer": 21
+  }
+ },
+ "wasm": {
+  "v4": {
+   "browser": "chromium 153.0.8010.47",
+   "prove_ms": [
+    5679,
+    5596,
+    5539
+   ],
+   "linear_memory_mib": 256.875
+  },
+  "v5-bound": {
+   "browser": "chromium 153.0.8010.47",
+   "prove_ms": [
+    4752,
+    7760,
+    6199
+   ],
+   "linear_memory_mib": 256.875
+  }
+ }
+}

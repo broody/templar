@@ -1,10 +1,12 @@
 <!doctype html><meta charset="utf-8"><title>templar sdk proof bench</title>
 <script type="module">
-const runs = Number(new URLSearchParams(location.search).get('runs') ?? 3);
+const q = new URLSearchParams(location.search);
+const runs = Number(q.get('runs') ?? 3);
+const mode = q.get('mode') ?? 'v4';
 const out = [];
 for (let i = 0; i < runs; i++) {
   const w = new Worker('/bench/web/worker.js', { type: 'module' });
-  out.push(await new Promise((resolve) => { w.onmessage = (e) => resolve(e.data); w.onerror = (e) => resolve({ error: e.message }); w.postMessage({}); }));
+  out.push(await new Promise((resolve) => { w.onmessage = (e) => resolve(e.data); w.onerror = (e) => resolve({ error: e.message }); w.postMessage({ mode }); }));
   w.terminate();
 }
 await fetch('/result', { method: 'POST', body: JSON.stringify(out) });

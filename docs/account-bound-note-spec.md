@@ -934,9 +934,11 @@ the compress-only tree tables (F30), one generic timelock for all owner levers, 
   - bound spends only for the configured account classes (Argent 0.5.0 and Braavos 1.2.0 at
     P4), checked at admission and at the base block, so the account code in the virtual OS is
     code whose resources were measured;
-  - caps on virtual-OS steps (default 4M, P0b's 3.41M plus headroom) and on named builtins, from
-    `os-result.json`. The Blake compressions are fixed by the class allowlist for now; a Blake
-    and component-size check in the prover binary, and the final numbers, come with P5.
+  - caps on virtual-OS steps (default 4M) and on named builtins, from `os-result.json`. P5
+    measured at most 3.61M steps, and `range_check` 357,590, `poseidon` 15,610, `pedersen` 109,
+    `ec_op` 3, `output` 6 (the example configuration caps them at about +25%). Blake, at most
+    15,097, is fixed by the class allowlist. A Blake and component-size check in the prover binary
+    comes with the padding (§12).
 - **Queues and allowances:**
   - Only paid jobs count against `queue_capacity`. A paid job's expiry estimate counts the
     running jobs and the queued paid ones; a free job's counts every queued job.
@@ -1060,6 +1062,16 @@ no fees or gating.
   and the same component log sizes. Otherwise every mode is padded to the maximum before
   production.
 
+  **Result (P5, 2026-09-26, `bench/account-bound-p5`): fails.**
+  - Every spend has the same largest component (log 21), so the same leaf bucket.
+  - The Stark ECDSA check of a bound spend raises `partial_ec_mul_window_bits_9` from 12 to 13, and
+    both Pedersen components from 6 to 7.
+  - `memory_address_to_id` is 18 or 19 by vendor and shape.
+  - Ready and Braavos are not otherwise told apart.
+
+  Until every mode is padded to those maxima, the PROOF2 object shows the gateway and sequencer
+  whether a spend is bound. On-chain data is unaffected.
+
 ## 13. Compatibility matrix
 
 A regression harness per supported class records:
@@ -1098,7 +1110,9 @@ One asset's exits also stop if its token starts charging the sender or rebases (
 Other liveness limits:
 
 - **The log20 small path** (ADR-0024's fallback) moves further away with V5: about +171k steps and
-  +1.2k Blake for the account call, and a 35-output statement. Its fit is measured in P5.
+  +1.2k Blake for the account call, and a 35-output statement. Measured in P5: no mode fits, since
+  three components (`blake_g`, `cube_252`, `range_check_252_width_27`) are at log 21 in every
+  spend, ordinary ones included.
 - **Block-denominated constants.** `E`, `Q`, `W` and `max_proof_age` are counted in blocks. A
   faster block time shrinks every window, and changing them needs a new adapter or pool.
 
@@ -1168,7 +1182,15 @@ Losing the account's keys entirely is the same as for the wallet's public funds.
   - the uniformity gate (§12);
   - the expiry rate against `E`;
   - WASM proof time and small-path fit.
-- **P6 Sepolia:** declare and deploy pool V3, the statement account, the adapters, and run
+
+  Measured 2026-09-26 (`bench/account-bound-p5`):
+  - The statement account was declared and deployed on Sepolia (user-approved).
+  - Real Ready X 5.33.11 (Argent 0.5.0) and Braavos 4.19.6 (1.2.0) accounts authorized transfers,
+    invokes and withdrawals inside the pinned virtual OS on live state; tampered signatures were
+    refused.
+  - Every PROOF2 verifies: 64–67 s, about 30 GiB.
+  - The V5 WASM proof takes a median 6.2 s in Chrome.
+  - The uniformity gate fails (§12), so padding comes before production.- **P6 Sepolia:** declare and deploy pool V3, the statement account, the adapters, and run
   `initialize` with the first shadow-class allowlist. The deployment record states `E`, `Q`,
   `W` and `T` against §8.4's floors (AB-PV8). The user approves every on-chain action.
 - **P7 paying for the service:**

@@ -79,7 +79,9 @@ no_network = ["unshare", "--user", "--net"]
 # keeps its tickets spent. P5 sets them from the bound transactions measured in the virtual OS.
 # [caps]
 # os_steps = 4000000
-# builtins = { range_check = 1200000, poseidon = 40000 }   # by name; unnamed builtins are not capped
+# Measured for R0 V5 on Sepolia (bench/account-bound-p5): at most range_check 357,590, poseidon
+# 15,610, pedersen 109, ec_op 3, output 6; these caps leave about 25%. P1 is not measured yet.
+# builtins = { range_check_builtin = 450000, poseidon_builtin = 20000, pedersen_builtin = 150, ec_op_builtin = 5, output_builtin = 8 }
 
 # The relayer's handoff (docs/account-bound-note-spec.md §7.3, P4b): finished R0 V5 results wait
 # here for server/relayer, which submits them and answers each job. Its own listener, never the

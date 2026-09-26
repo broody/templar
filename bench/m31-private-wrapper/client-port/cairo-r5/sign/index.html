@@ -175,25 +175,41 @@ function row(label, html) {
 }
 const badge = (ok, yes, no) => Object.assign(document.createElement('span'), { className: ok ? 'ok' : 'bad', textContent: ok ? yes : no });
 
+// One request per account (P3), or a list signed in turn (P5: an in-pool transfer and an invoke).
+async function signOne(req) {
+  const hash = SN.typedData.getMessageHash(req.typedData, account);
+  if (req.proof) row('spend', req.proof);
+  row('message hash (page)', hash);
+  row('message hash (prepared)', req.messageHash);
+  const same = BigInt(hash) === BigInt(req.messageHash);
+  row('hashes agree', badge(same, 'yes', 'NO'));
+  log(`asking wallet to sign the spend message${req.proof ? ' for ' + req.proof : ''}…`);
+  const sig = await sign(req.typedData);
+  const v = await isValid(hash, sig);
+  row('signature', sig.join(', '));
+  row('is_valid_signature (Sepolia, read-only)', badge(v.valid, 'VALID', v.error || JSON.stringify(v.result)));
+  return { request: req, messageHash: hash, signature: sig, isValidSignature: v, ok: same && v.valid };
+}
+
 async function run() {
   $('sign').disabled = true; $('rows').textContent = ''; $('summary').textContent = ''; $('saved').textContent = '';
   $('res').hidden = false;
   const req = requests[SN.num.toHex(account)];
   if (!req) { $('summary').replaceChildren(badge(false, '', 'No spend message was prepared for this account.')); return; }
-  const hash = SN.typedData.getMessageHash(req.typedData, account);
-  row('message hash (page)', hash);
-  row('message hash (prepared)', req.messageHash);
-  const same = BigInt(hash) === BigInt(req.messageHash);
-  row('hashes agree', badge(same, 'yes', 'NO'));
-  log('asking wallet to sign the spend message…');
-  const sig = await sign(req.typedData);
-  const v = await isValid(hash, sig);
-  row('signature', sig.join(', '));
-  row('is_valid_signature (Sepolia, read-only)', badge(v.valid, 'VALID', v.error || JSON.stringify(v.result)));
-  result = { page: 'templar-r5-sign-v1', at: new Date().toISOString(),
-    wallet: { id: wallet.id, name: wallet.name, version: wallet.version }, account, chainId: chain, classHash,
-    request: req, messageHash: hash, signature: sig, isValidSignature: v };
-  $('summary').replaceChildren(badge(same && v.valid, 'The wallet signed the V5 spend message and the account accepts it.', 'The signature did not verify — see above.'));
+  const base = { page: 'templar-r5-sign-v1', at: new Date().toISOString(),
+    wallet: { id: wallet.id, name: wallet.name, version: wallet.version }, account, chainId: chain, classHash };
+  let ok;
+  if (Array.isArray(req)) {
+    const results = [];
+    for (const r of req) results.push(await signOne(r));
+    ok = results.every((r) => r.ok);
+    result = { ...base, results: results.map(({ ok: _, ...r }) => r) };
+  } else {
+    const { ok: one, ...r } = await signOne(req);
+    ok = one;
+    result = { ...base, ...r };
+  }
+  $('summary').replaceChildren(badge(ok, 'The wallet signed the V5 spend message' + (Array.isArray(req) ? 's' : '') + ' and the account accepts ' + (Array.isArray(req) ? 'them.' : 'it.'), 'A signature did not verify — see above.'));
   $('save').disabled = false; $('copy').disabled = false; $('sign').disabled = false;
   await save();
 }

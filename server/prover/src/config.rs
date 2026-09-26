@@ -39,9 +39,9 @@ pub struct Relay {
 
 /// Bounds on the virtual-OS run, checked before proving (spec §9, AB-SP4): a job over them is the
 /// client's fault. With the bound account classes they keep an accepted job in the measured leaf
-/// bucket and within `job_memory`. The defaults are P0b's measurements (3.41M steps for the R0
-/// transaction with an inline signature check, at most 172k for a real account's call) with about
-/// 10% headroom; P5 sets them from the bound transactions measured in the virtual OS.
+/// bucket and within `job_memory`. P5 measured R0 V5 in the virtual OS with real Ready and Braavos
+/// accounts at most 3.61M steps (bench/account-bound-p5); the builtin caps it measured are in the
+/// example configuration.
 #[derive(Debug, Clone, Deserialize)]
 pub struct Caps {
     #[serde(default = "d_os_steps")]
