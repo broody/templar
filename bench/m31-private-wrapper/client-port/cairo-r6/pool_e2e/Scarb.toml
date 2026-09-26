@@ -1,0 +1,32 @@
+# snforge end to end of R0 V6 against M31 pool V3 (docs/pool-v3-spec.md §15 C): real client proofs
+# spending notes the pool holds, the real V6 statement account's message, the routing adapter and
+# the pool. `bench/m31-pool/v6_pool_e2e.py` assembles it in a built bridge work directory (the pool
+# package copied in as `m31_pool`) and writes fixtures/; run with `snforge test --profile contract`.
+[package]
+name = "templar_pool_e2e"
+version = "0.1.0"
+edition = "2024_07"
+
+[dependencies]
+starknet = "2.18.0"
+templar_membership_account = { path = "../account" }
+templar_account_tests = { path = "../account_tests" }
+m31_pool = { path = "../m31_pool" }
+
+[dev-dependencies]
+snforge_std = "0.63.0"
+assert_macros = "2.18.0"
+
+[[target.starknet-contract]]
+sierra = true
+casm = true
+build-external-contracts = [
+    "templar_membership_account::PaymentVerifierAccount",
+    "m31_pool::pool_v3::M31PoolV3",
+    "m31_pool::routing_adapter::RoutingAdapter",
+    "m31_pool::spend::MockVerifier",
+    "m31_pool::test_token::E2EToken",
+]
+
+[scripts]
+test = "snforge test --profile contract"

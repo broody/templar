@@ -109,7 +109,7 @@ export type SpendRequest =
 
 export interface Plan {
   /** R0 V5 plans carry these; a V4 plan omits them. */
-  version?: 'v4' | 'v5';
+  version?: 'v4' | 'v5' | 'v6';
   valid_until?: number;
   chain: Hex;
   pool: Hex;
@@ -151,7 +151,7 @@ export interface Expiry {
 }
 
 export interface Proved {
-  version?: 'v4' | 'v5';
+  version?: 'v4' | 'v5' | 'v6';
   /** The statement exactly as the core serialized it (send this, never a re-serialization). */
   statement_json: string;
   proof: Hex[];
@@ -171,6 +171,10 @@ export interface Pins {
   os_program: Hex;
   config_hash: Hex;
   max_proof_age: number;
+  /** The route's `facts[0]`, `facts[1]`, `facts[3]` (docs/pool-v3-spec.md §6.1); PROOF2's by default. */
+  proof_version?: string;
+  proof_variant?: string;
+  output_version?: string;
 }
 
 export interface ServerResult {
@@ -178,9 +182,12 @@ export interface ServerResult {
   proof_facts: Hex[];
   base_block: number;
   binding: Hex;
-  /** R0 V5: the last block the result may land in, and the pool call the relayer settles. */
+  /** R0 V5 and V6: the last block the result may land in, and the pool call the relayer settles. */
   send_deadline?: number;
   pool_call?: { entry_point: string; calldata: Hex[] };
+  /** The route key (docs/pool-v3-spec.md §9.5): the statement account whose message the proof carries. */
+  statement?: Hex;
+  relation?: string;
 }
 
 export interface Window {

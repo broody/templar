@@ -9,7 +9,22 @@ import { SEPOLIA, activePool, canon } from '../dist/index.js';
 
 /** Sepolia with only pool V2 (R0 V4): the network the V4 wallet tests run against. */
 export const SEPOLIA_V2 = { ...SEPOLIA, pools: [SEPOLIA.pools[0]!] };
-import type { Plan, PoolConstants, Proved } from '../dist/index.js';
+import type { Plan, PoolConstants, Proved, Route } from '../dist/index.js';
+
+/** A routing adapter on the mock chain (docs/pool-v3-spec.md §6): its class, pool, kind, routes and proposals. */
+export interface MockAdapter {
+  class: string;
+  pool: string;
+  kind: 'R0' | 'P1';
+  routes: Route[];
+  proposals: { statement: string; route: Route | null; eta: number }[];
+}
+
+const short = (x: string) => BigInt('0x' + Buffer.from(x).toString('hex'));
+/** A route's eight felts in the adapter's Serde order. */
+export const routeFelts = (r: Route): string[] =>
+  [BigInt(r.statement), BigInt(r.statementClass), short(r.accountTag), BigInt(r.osProgram), short(r.proofVersion ?? 'PROOF2'),
+   short(r.proofVariant ?? 'VIRTUAL_SNOS'), short(r.outputVersion ?? 'VIRTUAL_SNOS0'), BigInt(r.maxProofAge)].map((x) => '0x' + x.toString(16));
 
 const SEL = {
   NotePublished: hash.getSelectorFromName('NotePublished'),
@@ -38,12 +53,20 @@ export class MockChain {
   /** Pool V3: `get_parameters` (E, Q, W, T) and pending proposals by key (value, eta). */
   parameters = ['0x5dc', '0x64', '0x1000', '0x15180'];
   proposals = new Map<string, [string, number]>();
+  /** Pool V3: the verifier by kind (`R0`, `P1` as short strings); R0 defaults to the pinned adapter. */
+  verifiers = new Map<string, string>();
+  /** Routing adapters by address. */
+  adapters = new Map<string, MockAdapter>();
+  /** Class hashes of other deployed contracts (route statements, routing adapters). */
+  classes = new Map<string, string>();
   /** Every block's timestamp (proposals lapse by it). */
   timestamp = 1_800_000_000;
   /** Overrides the timestamp blocks report (a lagging node). */
   blockTime?: number;
   /** `getTransactionStatus` answers by hash; an unknown hash is RPC error 29 ("not found"). */
   txStatus = new Map<string, { finality_status: string; execution_status?: string }>();
+  /** `getTransactionReceipt`'s revert reason by hash (a reverted transaction's). */
+  txRevert = new Map<string, string>();
   /** The next `getTransactionStatus` fails like a transport error. */
   statusFailNext = false;
   /** The chain's nonce for every account at `pre_confirmed`. */
@@ -225,6 +248,11 @@ export class MockChain {
         trace('getClassHashAt', [a, id]);
         if (BigInt(a) === BigInt(pool.adapter)) return pool.adapterClass;
         if (BigInt(a) === BigInt(pool.statement)) return pool.statementClass;
+        const ad = this.adapters.get(hx(a));
+        if (ad) return ad.class;
+        const cls = this.classes.get(hx(a));
+        if (cls) return cls;
+        if (pool.p1Adapter && BigInt(a) === BigInt(pool.p1Adapter.adapter)) return pool.p1Adapter.adapterClass;
         throw new Error('no contract');
       },
       getStorageAt: async (a: string, k: string) => {
@@ -235,12 +263,35 @@ export class MockChain {
         trace('callContract', [c.contractAddress, c.entrypoint, c.calldata, id]);
         if (c.entrypoint === 'balance_of') return [hx(this.strk & ((1n << 128n) - 1n)), hx(this.strk >> 128n)];
         if (c.entrypoint === 'supports_interface') return [this.supports.get(hx(c.contractAddress)) === false ? '0x0' : '0x1'];
+        const ad = this.adapters.get(hx(c.contractAddress));
+        if (ad) {
+          switch (c.entrypoint) {
+            case 'get_pool':
+              return [ad.pool];
+            case 'get_kind':
+              return [hx(short(ad.kind))];
+            case 'get_routes':
+              return [hx(ad.routes.length), ...ad.routes.flatMap(routeFelts)];
+            case 'get_route': {
+              const r = ad.routes.find((x) => BigInt(x.statement) === BigInt(c.calldata[0]!));
+              return r ? ['0x0', ...routeFelts(r)] : ['0x1'];
+            }
+            case 'get_route_proposals':
+              return [hx(ad.proposals.length), ...ad.proposals.flatMap((x) => [hx(BigInt(x.statement)), ...(x.route ? ['0x0', ...routeFelts(x.route)] : ['0x1']), hx(x.eta)])];
+          }
+          throw new Error(`unexpected adapter entrypoint ${c.entrypoint}`);
+        }
         if (BigInt(c.contractAddress) !== BigInt(pool.pool)) return ['0x1'];
         switch (c.entrypoint) {
-          case 'get_verifier':
+          case 'get_verifier': {
             // Pool V3 takes the verifier kind; pool V2 takes nothing.
             if ((pool.version === 'v5') !== (c.calldata.length === 1)) throw new Error('get_verifier: wrong arguments for this pool');
+            const kind = c.calldata[0] === undefined ? undefined : hx(c.calldata[0]);
+            const set = kind === undefined ? undefined : this.verifiers.get(kind);
+            if (set) return [set];
+            if (kind !== undefined && kind === hx(short('P1'))) return [pool.p1Adapter?.adapter ?? '0x0'];
             return [pool.adapter];
+          }
           case 'get_parameters':
             if (pool.version !== 'v5') throw new Error('no get_parameters on pool V2');
             return this.parameters;
@@ -274,6 +325,12 @@ export class MockChain {
         const s = this.txStatus.get(hx(h));
         if (!s) throw new RpcError({ code: 29, message: 'Transaction hash not found' } as never, 'starknet_getTransactionStatus', {});
         return s;
+      },
+      getTransactionReceipt: async (h: string) => {
+        trace('getTransactionReceipt', [h]);
+        const s = this.txStatus.get(hx(h));
+        if (!s) throw new RpcError({ code: 29, message: 'Transaction hash not found' } as never, 'starknet_getTransactionReceipt', {});
+        return { ...s, revert_reason: this.txRevert.get(hx(h)) };
       },
       getNonceForAddress: async (a: string, id?: unknown) => (trace('getNonceForAddress', [a, id]), hx(this.nonce)),
       getClassAt: async () => ({ sierra_program: ['0x1', '0x7', '0x0'] }),
@@ -337,6 +394,10 @@ export class MockProver {
   refuseClaims = false;
   /** Overrides the pool parameters the server publishes (the pinned ones by default). */
   poolParameters?: Record<string, number>;
+  /** Overrides the relations `/v1/info` lists (a dual-version server lists r5 and r6). */
+  relations?: Record<string, unknown>[];
+  /** Results name this route key and use its age (docs/pool-v3-spec.md §9.5); legacy results name none. */
+  route?: { statement: string; maxProofAge: number };
   constructor(private chain: MockChain, private facts: (binding: string, base: number, hash: string) => string[]) {}
 
   fetch = async (url: string | URL, init?: { method?: string; body?: string }): Promise<Response> => {
@@ -346,7 +407,7 @@ export class MockProver {
     if (u.pathname === '/v1/info') {
       return reply(200, {
         network: { chain_id: 'SN_SEPOLIA', pool: p.pool, os_program: p.osProgram, max_proof_age: p.maxProofAge },
-        relations: [{ name: p.version === 'v5' ? 'r5' : 'r4', statement_account: p.statement, statement_class: p.statementClass, account_tag: p.accountTag, adapter: p.adapter, circuit_hash_u32_le: p.circuitHash }],
+        relations: this.relations ?? [{ name: p.version === 'v5' ? 'r5' : 'r4', statement_account: p.statement, statement_class: p.statementClass, account_tag: p.accountTag, adapter: p.adapter, circuit_hash_u32_le: p.circuitHash }],
         limits: { retention_secs: 3600 },
         relay: { enabled: this.relayEnabled },
         ...(p.version === 'v5'
@@ -394,8 +455,10 @@ export class MockProver {
     if (p.version === 'v5') {
       // R0 V5: the deadline and the pool call the relayer settles, from the job's own body.
       const body = JSON.parse(j.body) as { statement: { valid_until: number }; pool_call: unknown };
-      result.send_deadline = Math.min(body.statement.valid_until, base + p.maxProofAge);
+      result.send_deadline = Math.min(body.statement.valid_until, base + (this.route?.maxProofAge ?? p.maxProofAge));
       result.pool_call = body.pool_call;
+      result.relation = (JSON.parse(j.body) as { relation: string }).relation;
+      if (this.route) result.statement = this.route.statement;
     }
     j.result = result;
     return result;
@@ -411,7 +474,7 @@ export class MockProver {
         .map(([id, j]) => {
           const result = this.resultOf(j);
           const st = (JSON.parse(j.body) as { statement: { nullifiers: number[][]; root: number[] } }).statement;
-          return { id, result, nullifiers: st.nullifiers.map((n) => n.map(hx)), root: st.root.map(hx), send_deadline: result.send_deadline };
+          return { id, relation: result.relation, statement: result.statement, result, nullifiers: st.nullifiers.map((n) => n.map(hx)), root: st.root.map(hx), send_deadline: result.send_deadline };
         });
       return reply(200, { jobs, relay_margin_blocks: 60 });
     }

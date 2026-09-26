@@ -23,6 +23,7 @@ pub mod policy_escrow;
 pub mod pool;
 pub mod pool_v2;
 pub mod pool_v3;
+pub mod routing_adapter;
 pub mod spend;
 pub mod spend4;
 pub mod spend5;

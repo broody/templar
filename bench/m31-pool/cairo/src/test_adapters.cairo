@@ -323,3 +323,49 @@ pub mod FeeOnTopToken {
         }
     }
 }
+
+#[starknet::interface]
+pub trait IReplaceable<T> {
+    fn replace(ref self: T, class_hash: starknet::ClassHash);
+}
+
+/// A stand-in statement account whose class can change after a route proposal names it (the
+/// routing adapter's class re-check at apply, `docs/pool-v3-spec.md` §6.3). Tests only.
+#[starknet::contract]
+pub mod ReplaceableStatement {
+    use starknet::SyscallResultTrait;
+    use starknet::syscalls::replace_class_syscall;
+
+    #[storage]
+    struct Storage {}
+
+    #[abi(embed_v0)]
+    impl ReplaceableImpl of super::IReplaceable<ContractState> {
+        fn replace(ref self: ContractState, class_hash: starknet::ClassHash) {
+            replace_class_syscall(class_hash).unwrap_syscall();
+        }
+    }
+}
+
+/// A second replaceable class, so a test can swap a statement's class away and back.
+#[starknet::contract]
+pub mod ReplaceableStatementB {
+    use starknet::SyscallResultTrait;
+    use starknet::syscalls::replace_class_syscall;
+
+    #[storage]
+    struct Storage {}
+
+    #[abi(embed_v0)]
+    impl ReplaceableImpl of super::IReplaceable<ContractState> {
+        fn replace(ref self: ContractState, class_hash: starknet::ClassHash) {
+            replace_class_syscall(class_hash).unwrap_syscall();
+        }
+    }
+
+    /// Makes the class hash differ from `ReplaceableStatement`'s.
+    #[external(v0)]
+    fn which(self: @ContractState) -> felt252 {
+        'B'
+    }
+}

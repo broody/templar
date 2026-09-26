@@ -156,32 +156,55 @@ fn verifier_kind(rel: &RelationConfig) -> Result<Felt> {
     short_string(if rel.name == "p1" { "P1" } else { "R0" })
 }
 
+/// How the relation is served now: through its routing adapter, or through a pre-cutover adapter
+/// (a legacy relation, or P1's `legacy_adapter` during the cutover).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Serving {
+    Routed,
+    Legacy,
+}
+
 /// The pool's current verifier for the relation must still be the configured adapter (PS-12),
-/// and on pool V3 no verifier change may be due ([`change_due`]).
+/// and on pool V3 no verifier change may be due ([`change_due`]); through a routing adapter, the
+/// route pins hold and no change of the own route is due (pool-v3-spec §9.2, §9.5).
 pub async fn verifier_unchanged(rpc: &Rpc, cfg: &Config, rel: &RelationConfig) -> Result<()> {
-    verifier_current(rpc, cfg, rel).await?;
+    let serving = verifier_current(rpc, cfg, rel).await?;
     if cfg.network.pool_version == 3 {
         change_due(rpc, cfg, verifier_kind(rel)?, &format!("the pool's {} verifier", rel.name)).await?;
+        if serving == Serving::Routed {
+            crate::routes::own_route_change_due(rpc, cfg, rel).await?;
+        }
     }
     Ok(())
 }
 
-/// The pool's current verifier for the relation is the configured adapter.
-pub async fn verifier_current(rpc: &Rpc, cfg: &Config, rel: &RelationConfig) -> Result<()> {
+/// The pool's current verifier for the relation is the configured adapter (with its route pins),
+/// or P1's legacy adapter during the cutover. Any other verifier leaves the relation dormant
+/// (§9.5): its jobs are refused until the pool switches to it.
+pub async fn verifier_current(rpc: &Rpc, cfg: &Config, rel: &RelationConfig) -> Result<Serving> {
     let adapter = felt(&rel.adapter)?;
     if cfg.network.pool_version == 3 {
-        let v = rpc.call(&cfg.network.pool, "get_verifier", &[verifier_kind(rel)?]).await?;
-        if v.first() != Some(&adapter) {
-            bail!("the pool's {} verifier is no longer the configured adapter", rel.name);
+        let kind = verifier_kind(rel)?;
+        let v = rpc.call(&cfg.network.pool, "get_verifier", &[kind]).await?;
+        let v = *v.first().context("get_verifier")?;
+        if v == adapter {
+            if rel.is_routed() {
+                crate::routes::check_pins(rpc, cfg, rel, kind).await?;
+                return Ok(Serving::Routed);
+            }
+            return Ok(Serving::Legacy);
         }
-        return Ok(());
+        if rel.legacy_adapter.as_deref().map(felt).transpose()? == Some(v) {
+            return Ok(Serving::Legacy);
+        }
+        return Err(crate::routes::dormant(rel));
     }
     let getter = if rel.name == "r4" { "get_verifier" } else { "get_policy_verifier" };
     let v = rpc.call(&cfg.network.pool, getter, &[]).await?;
     if v.first() != Some(&adapter) {
         bail!("the pool's {getter} is no longer the configured adapter");
     }
-    Ok(())
+    Ok(Serving::Legacy)
 }
 
 /// Whether a timelocked change under `key` is due (spec §8.4, AB-PV7, AB-SP1): a proposal applies
@@ -194,7 +217,7 @@ pub async fn change_due(rpc: &Rpc, cfg: &Config, key: Felt, what: &str) -> Resul
     let p = rpc.call(&cfg.network.pool, "get_proposal", &[key]).await?;
     let eta = p.get(1).and_then(crate::v5::to_u64).context("get_proposal")?;
     let now = rpc.latest_timestamp().await?;
-    if proposal_live(eta, now, cfg.network.pending_margin(), t) {
+    if proposal_live(eta, now, cfg.pending_margin(), t) {
         bail!("a change of {what} can apply between {} and {}; retry after it is applied, cancelled or lapsed",
               eta, eta.saturating_add(t));
     }
@@ -213,6 +236,11 @@ pub async fn warn_pending(rpc: &Rpc, cfg: &Config, rel: &RelationConfig) {
     }
     if let Ok(kind) = verifier_kind(rel) {
         if let Err(e) = change_due(rpc, cfg, kind, &format!("the pool's {} verifier", rel.name)).await {
+            tracing::warn!("{e:#}");
+        }
+    }
+    if rel.is_routed() {
+        if let Err(e) = crate::routes::own_route_change_due(rpc, cfg, rel).await {
             tracing::warn!("{e:#}");
         }
     }
@@ -283,6 +311,45 @@ pub async fn invoke_state(rpc: &Rpc, cfg: &Config, sub: &Submission) -> Result<(
     change_due(rpc, cfg, class, "the adapter class's shadow status").await
 }
 
+/// A bucket check's result: the leaf trace log size and the run's time.
+#[derive(Debug)]
+pub struct Bucket {
+    pub trace_log_size: u32,
+    pub largest_component_log_size: u32,
+    pub seconds: f64,
+}
+
+/// `bucket.json` names the pinned bucket (pool-v3-spec §9.3). A miss is the server's fault.
+pub fn bucket_fits(cfg: &Config, v: &Value) -> Result<(u32, u32)> {
+    let size = v["trace_log_size"].as_u64().context("bucket: no trace log size")? as u32;
+    let largest = v["largest_component_log_size"].as_u64().context("bucket: no component size")? as u32;
+    if size != cfg.prover.bucket_log_size {
+        bail!("bucket: the job's leaf trace is 2^{size} (largest component 2^{largest}), not the pinned 2^{}", cfg.prover.bucket_log_size);
+    }
+    Ok((size, largest))
+}
+
+/// The proof's header names the pinned bucket (`prove-result.json`'s `leaf_trace_log_size`).
+pub fn header_in_bucket(cfg: &Config, result: &Value) -> Result<()> {
+    match result["leaf_trace_log_size"].as_u64() {
+        Some(s) if s == cfg.prover.bucket_log_size as u64 => Ok(()),
+        other => bail!("bucket: the proof's header names leaf size {other:?}, not the pinned {}", cfg.prover.bucket_log_size),
+    }
+}
+
+/// Runs `templar-prove bucket DIR` in the sandbox and checks its result.
+pub async fn run_bucket(cfg: &Config, dir: &Path, unit: &str, limits: Limits) -> Result<Bucket> {
+    let b = sandbox::run(&cfg.sandbox, unit, &cfg.binaries.prove, &["bucket".into(), dir.display().to_string()],
+                         &[("RAYON_NUM_THREADS", cfg.prover.threads.to_string())], limits).await?;
+    std::fs::write(dir.join("bucket.log"), [b.stdout.as_slice(), b.stderr.as_slice()].concat())?;
+    if !b.success {
+        bail!("the bucket check failed{}", if b.timed_out { " (timed out)" } else { "" });
+    }
+    let v: Value = serde_json::from_slice(&std::fs::read(dir.join("bucket.json"))?)?;
+    let (trace_log_size, largest_component_log_size) = bucket_fits(cfg, &v)?;
+    Ok(Bucket { trace_log_size, largest_component_log_size, seconds: b.seconds })
+}
+
 /// The virtual-OS resources within the caps (spec §9 bounds before proving, AB-SP4).
 pub fn within_caps(cfg: &Config, resources: &Value) -> Result<()> {
     let steps = resources["n_steps"].as_u64().context("os: n_steps")?;
@@ -325,7 +392,9 @@ pub fn expiry_admits(cfg: &Config, valid_until: u64, latest: u64, jobs_ahead: us
 /// The last block a result may land in: `min(valid_until, base + max_proof_age)` (spec §9), and
 /// for an invoke no later than its intent's expiry (recheck N4).
 pub fn send_deadline(cfg: &Config, sub: &Submission, base: u64) -> u64 {
-    let proof_age = base + cfg.network.max_proof_age;
+    // The relation's own route's age for a routed relation (pool-v3-spec §9.5), else the network's.
+    let age = cfg.relation(sub.relation.name()).map_or(cfg.network.max_proof_age, |r| r.max_proof_age(&cfg.network));
+    let proof_age = base + age;
     sub.v5.as_ref().map_or(proof_age, |j| {
         let intent = j.pool_call.intent.as_ref().map_or(u64::MAX, |i| i.expiry);
         j.statement.valid_until.min(proof_age).min(intent)
@@ -405,6 +474,17 @@ pub async fn run(cfg: &Config, rpc: &Rpc, rel: &RelationConfig, sub: &Submission
     }
     within_caps(cfg, &result["resources"])?;
     let os_steps = result["resources"]["n_steps"].as_u64();
+    // The bucket check (pool-v3-spec §9.3), for routed relations: the leaf bootloader's base trace
+    // must land in the pinned PROOF2 leaf bucket. The bridge pre-check already fixed the proof's
+    // structure, so a miss is the server's fault (PR2-12) and its tickets are refunded.
+    let bucket = if rel.is_routed() {
+        stage("bucket")?;
+        // About as long as the OS run (~15 s for a V5-sized job), not a proof.
+        let limits = Limits { memory: cfg.sandbox.job_memory.clone(), cpus: cfg.prover.threads, seconds: cfg.sandbox.os_seconds, network: false };
+        Some(run_bucket(cfg, dir, &format!("bucket-{id}"), limits).await?)
+    } else {
+        None
+    };
     stage("prove")?;
     std::fs::write(dir.join("prove-job.json"), serde_json::to_vec(&json!({
         "cairo_fri_columns": cfg.prover.cairo_fri_columns, "circuit_fri_columns": cfg.prover.circuit_fri_columns,
@@ -417,17 +497,28 @@ pub async fn run(cfg: &Config, rpc: &Rpc, rel: &RelationConfig, sub: &Submission
     if !pr.success {
         bail!("proving failed{}", if pr.timed_out { " (timed out)" } else { "" });
     }
+    if bucket.is_some() {
+        // The header the proof actually carries: never deliver a proof outside the bucket.
+        let result: Value = serde_json::from_slice(&std::fs::read(dir.join("prove-result.json"))?)?;
+        header_in_bucket(cfg, &result)?;
+    }
     stage("facts")?;
     let preimage: Vec<String> = serde_json::from_slice(&std::fs::read(dir.join("output-preimage.json"))?)?;
-    let mut facts = vec![short_string("PROOF2")?, short_string("VIRTUAL_SNOS")?];
+    // The proof version, variant, OS program and output version the relation's route pins
+    // (pool-v3-spec §6.2), or a pre-cutover adapter's fixed ones.
+    let own = rel.own_route();
+    let (version, variant, output) = own.map_or(("PROOF2", "VIRTUAL_SNOS", "VIRTUAL_SNOS0"), |r| {
+        (r.proof_version.as_str(), r.proof_variant.as_str(), r.output_version.as_str())
+    });
+    let mut facts = vec![short_string(version)?, short_string(variant)?];
     for p in &preimage {
         facts.push(felt(p)?);
     }
     // Every field the adapter checks (PS-9).
     let message_hash = Poseidon::hash_array(&[vec![felt(&rel.statement_account)?, Felt::ZERO, Felt::from(5u64)], payload.clone()].concat());
     if facts.len() != 9
-        || facts[2] != felt(&cfg.network.os_program)?
-        || facts[3] != short_string("VIRTUAL_SNOS0")?
+        || facts[2] != felt(rel.os_program(&cfg.network))?
+        || facts[3] != short_string(output)?
         || facts[4] != Felt::from(base)
         || facts[5] != base_hash
         || facts[7] != Felt::ONE
@@ -439,13 +530,16 @@ pub async fn run(cfg: &Config, rpc: &Rpc, rel: &RelationConfig, sub: &Submission
     use base64::Engine;
     let mut value = json!({
         "relation": sub.relation.name(),
+        // The route key (pool-v3-spec §9.5, PR2-3): the statement account whose message the proof carries.
+        "statement": rel.statement_account,
         "proof": base64::engine::general_purpose::STANDARD.encode(&proof),
         "proof_facts": facts.iter().map(hex).collect::<Vec<_>>(),
         "base_block": base, "submit_after": base + 11,
         "binding": hex(&bridge.binding), "message_hash": hex(&message_hash),
-        "asset": if matches!(sub.relation, Relation::R4 | Relation::R5) { Some(hex(&bridge.token)) } else { None },
+        "asset": if matches!(sub.relation, Relation::R4 | Relation::R5 | Relation::R6) { Some(hex(&bridge.token)) } else { None },
         "timings": {"check_seconds": bridge.seconds, "os_seconds": os.seconds, "prove_seconds": pr.seconds,
-                    "os_steps": os_steps, "prove_peak_memory_bytes": pr.peak_memory_bytes},
+                    "os_steps": os_steps, "prove_peak_memory_bytes": pr.peak_memory_bytes,
+                    "bucket_seconds": bucket.as_ref().map(|b| b.seconds)},
         "proof_bytes": proof.len(),
     });
     match &sub.v5 {
@@ -513,6 +607,111 @@ mod tests {
         c
     }
 
+/// A routed r6 relation on the example configuration: adapter 0xada6 (class 0xc1a55, which
+    /// the stub answers for every address), its own route 0x5a7e (age 512) and a planned 0x5a7f.
+    fn routed() -> (Config, RelationConfig, crate::config::RoutePin, crate::config::RoutePin) {
+        let mut cfg = v3_config();
+        let mut rel = cfg.relations[0].clone();
+        rel.name = "r6".into();
+        rel.account_tag = "TMPZR0_PAYMENT_V6".into();
+        rel.statement_account = "0x5a7e".into();
+        rel.statement_class = "0xc1a55".into();
+        rel.adapter = "0xada6".into();
+        rel.adapter_class = Some("0xc1a55".into());
+        let own = crate::config::RoutePin {
+            statement: "0x5a7e".into(), statement_class: "0xc1a55".into(), account_tag: "TMPZR0_PAYMENT_V6".into(),
+            os_program: cfg.network.os_program.clone(), proof_version: "PROOF2".into(), proof_variant: "VIRTUAL_SNOS".into(),
+            output_version: "VIRTUAL_SNOS0".into(), max_proof_age: 512,
+        };
+        let planned = crate::config::RoutePin { statement: "0x5a7f".into(), ..own.clone() };
+        rel.routes = vec![own.clone(), planned.clone()];
+        rel.route_states = vec![vec!["0x5a7e".into()], vec!["0x5a7e".into(), "0x5a7f".into()]];
+        cfg.relations = vec![rel.clone()];
+        (cfg, rel, own, planned)
+    }
+
+    /// The routed verifier checks (pool-v3-spec §9.2, §9.5): pins through the views, the pinned
+    /// route-set states, the own route, dormancy, P1's legacy adapter, and own-route changes.
+    #[tokio::test]
+    async fn routed_verifier_pins_dormancy_and_own_route() {
+        let (cfg, rel, own, planned) = routed();
+        let f = |r: &crate::config::RoutePin| crate::routes::route_felts(r).unwrap().to_vec();
+        let sel = sn_keccak;
+        let base = |routes: Vec<Felt>, props: Vec<Felt>| HashMap::from([
+            (sel("get_verifier"), vec![felt("0xada6").unwrap()]),
+            (sel("get_proposal"), vec![Felt::ZERO, Felt::ZERO]),
+            (sel("get_pool"), vec![felt(&cfg.network.pool).unwrap()]),
+            (sel("get_kind"), vec![short_string("R0").unwrap()]),
+            (sel("get_routes"), routes),
+            (sel("get_route_proposals"), props),
+        ]);
+        let by_arg = |r: &crate::config::RoutePin| HashMap::from([((sel("get_route"), felt(&r.statement).unwrap()), [vec![Felt::ZERO], f(r)].concat())]);
+        let one = [vec![Felt::ONE], f(&own)].concat();
+        let rpc = stub_args(base(one.clone(), vec![Felt::ZERO]), by_arg(&own), 1000).await;
+        assert_eq!(verifier_current(&rpc, &cfg, &rel).await.unwrap(), Serving::Routed);
+        verifier_unchanged(&rpc, &cfg, &rel).await.unwrap();
+        // The per-route age bounds results.
+        assert_eq!(rel.max_proof_age(&cfg.network), 512);
+        let mut sub = v5_sub(statement(u64::MAX >> 8), None);
+        sub.relation = Relation::R6;
+        assert_eq!(send_deadline(&cfg, &sub, 5000), 5512);
+        // The planned state (two routes) is pinned too.
+        let two = [vec![Felt::TWO], f(&own), f(&planned)].concat();
+        verifier_unchanged(&stub_args(base(two, vec![Felt::ZERO]), by_arg(&own), 1000).await, &cfg, &rel).await.unwrap();
+        // An unpinned state, an own route that differs, the wrong kind, pool or class: refused.
+        let stranger = crate::config::RoutePin { statement: "0x5a80".into(), ..own.clone() };
+        let three = [vec![Felt::from(3u64)], f(&own), f(&planned), f(&stranger)].concat();
+        assert!(verifier_current(&stub_args(base(three, vec![Felt::ZERO]), by_arg(&own), 1000).await, &cfg, &rel).await.is_err());
+        let aged = crate::config::RoutePin { max_proof_age: 513, ..own.clone() };
+        let differs = [vec![Felt::ONE], f(&aged)].concat();
+        assert!(verifier_current(&stub_args(base(differs, vec![Felt::ZERO]), by_arg(&aged), 1000).await, &cfg, &rel).await.is_err());
+        let mut calls = base(one.clone(), vec![Felt::ZERO]);
+        calls.insert(sel("get_kind"), vec![short_string("P1").unwrap()]);
+        assert!(verifier_current(&stub_args(calls, by_arg(&own), 1000).await, &cfg, &rel).await.is_err(), "kind");
+        let mut calls = base(one.clone(), vec![Felt::ZERO]);
+        calls.insert(sel("get_pool"), vec![Felt::from(0x999u64)]);
+        assert!(verifier_current(&stub_args(calls, by_arg(&own), 1000).await, &cfg, &rel).await.is_err(), "pool");
+        let mut other_class = rel.clone();
+        other_class.adapter_class = Some("0x1".into());
+        assert!(verifier_current(&rpc, &cfg, &other_class).await.is_err(), "adapter class");
+        // Another verifier: dormant, not a failure of the pins.
+        let mut calls = base(one.clone(), vec![Felt::ZERO]);
+        calls.insert(sel("get_verifier"), vec![felt("0xada5").unwrap()]);
+        let dormant = stub_args(calls, by_arg(&own), 1000).await;
+        let e = verifier_current(&dormant, &cfg, &rel).await.unwrap_err();
+        assert!(e.downcast_ref::<crate::routes::Dormant>().is_some(), "{e:#}");
+        // P1 during the cutover: its legacy adapter still serving.
+        let mut p1 = rel.clone();
+        p1.legacy_adapter = Some("0xada5".into());
+        assert_eq!(verifier_current(&dormant, &cfg, &p1).await.unwrap(), Serving::Legacy);
+        // Its own route must carry the legacy adapter's OS program and age (PR-RC-2).
+        let mut legacy_cfg = p1.clone();
+        legacy_cfg.name = "p1".into();
+        let net = &cfg.network;
+        let mut matching = legacy_cfg.clone();
+        for r in matching.routes.iter_mut() {
+            r.os_program = net.os_program.clone();
+            r.max_proof_age = net.max_proof_age;
+        }
+        crate::config::check_relation(net, &matching).unwrap();
+        let mut aged_p1 = matching.clone();
+        aged_p1.routes.iter_mut().for_each(|r| r.max_proof_age = net.max_proof_age + 1);
+        assert!(crate::config::check_relation(net, &aged_p1).is_err(), "a route age other than the legacy adapter's");
+        let mut os_p1 = matching.clone();
+        os_p1.routes.iter_mut().for_each(|r| r.os_program = "0x1234".into());
+        assert!(crate::config::check_relation(net, &os_p1).is_err(), "another OS program");
+        // A change of the own route due (a removal at eta 1100, margin 3600): refused. A route
+        // addition under another key: served.
+        let removal = vec![Felt::ONE, felt("0x5a7e").unwrap(), Felt::ONE, Felt::from(1100u64)];
+        let due = stub_args(base(one.clone(), removal), by_arg(&own), 1000).await;
+        assert!(verifier_unchanged(&due, &cfg, &rel).await.is_err());
+        let addition = [vec![Felt::ONE, felt("0x5a7f").unwrap(), Felt::ZERO], f(&planned), vec![Felt::from(1100u64)]].concat();
+        verifier_unchanged(&stub_args(base(one.clone(), addition), by_arg(&own), 1000).await, &cfg, &rel).await.unwrap();
+        // A lapsed own-route change (past eta + T) no longer stops the server.
+        let lapsed = vec![Felt::ONE, felt("0x5a7e").unwrap(), Felt::ONE, Felt::from(1u64)];
+        verifier_unchanged(&stub_args(base(one, lapsed), by_arg(&own), 100000).await, &cfg, &rel).await.unwrap();
+    }
+
     fn sub_with_root() -> Submission {
         Submission {
             relation: Relation::R5, proof: vec![Felt::ZERO], chain: Felt::ONE, pool: Felt::ONE, root: vec![Felt::ONE; 9],
@@ -568,6 +767,21 @@ mod tests {
         assert!(is_client_fault(&e) && !is_proven_fault(&e));
         assert!(is_proven_fault(&proven_client("pool call: mismatch").context("admission")));
         assert!(!is_client_fault(&anyhow::anyhow!("sandbox: spawn failed")));
+    }
+
+    #[test]
+    fn bucket_rules() {
+        let mut cfg = Config::load(std::path::Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../deploy/prover.example.toml"))).unwrap();
+        assert_eq!(cfg.prover.bucket_log_size, 25);
+        assert_eq!(bucket_fits(&cfg, &json!({"trace_log_size": 25, "largest_component_log_size": 23})).unwrap(), (25, 23));
+        let miss = bucket_fits(&cfg, &json!({"trace_log_size": 26, "largest_component_log_size": 26})).unwrap_err();
+        assert!(!is_client_fault(&miss), "a miss is the server's fault");
+        assert!(bucket_fits(&cfg, &json!({})).is_err());
+        header_in_bucket(&cfg, &json!({"leaf_trace_log_size": 25})).unwrap();
+        assert!(header_in_bucket(&cfg, &json!({"leaf_trace_log_size": 26})).is_err());
+        assert!(header_in_bucket(&cfg, &json!({"leaf_trace_log_size": null})).is_err());
+        cfg.prover.bucket_log_size = 26;
+        assert!(bucket_fits(&cfg, &json!({"trace_log_size": 25, "largest_component_log_size": 23})).is_err());
     }
 
     #[test]

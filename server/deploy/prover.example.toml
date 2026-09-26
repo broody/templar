@@ -43,6 +43,34 @@ bridge_executable_sha256 = "<sha256 of bridge_dir/target/dev/templar_membership_
 # Pool V3 serves name = "r5" instead of "r4": account_tag = "TMPZR0_PAYMENT_V5", the R0 V5 statement
 # account, its adapter and the cairo-r5 bridge build.
 
+# After ADR-0027's cutover pool V3 serves name = "r6" through a routing adapter (docs/pool-v3-spec.md
+# §6, §9.2): the V6 statement account and the cairo-r6 bridge build, plus the adapter's pinned class,
+# every route this release knows (the own route is the one keyed by statement_account; its
+# os_program and max_proof_age replace [network]'s for this relation) and the pinned states of the
+# adapter's route set. A routed relation whose adapter is not the pool's verifier stays dormant and
+# refuses its jobs until the pool switches to it, so r5 and r6 can be configured together across
+# the cutover.
+# [[relation]]
+# name = "r6"
+# statement_account = "<the V6 statement account>"
+# statement_class = "<its class hash>"
+# account_tag = "TMPZR0_PAYMENT_V6"
+# adapter = "<the R0 routing adapter>"
+# adapter_class = "<the RoutingAdapter class hash>"
+# route_states = [["<the V6 statement account>"]]     # default: the own route alone
+# bridge_dir = "/opt/templar/bridges/r6"
+# bridge_record_sha256 = "<sha256 of bridge_dir/build-record.json>"
+# bridge_executable_sha256 = "<sha256 of bridge_dir/target/dev/templar_membership_bridge.executable.json>"
+# [[relation.routes]]
+# statement = "<the V6 statement account>"
+# statement_class = "<its class hash>"
+# account_tag = "TMPZR0_PAYMENT_V6"
+# os_program = "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1"
+# max_proof_age = 1024                                # proof_version, proof_variant, output_version default to PROOF2's
+
+# P1 routes the same way after the cutover: adapter becomes the P1 routing adapter (with
+# adapter_class and routes), and legacy_adapter names the pre-cutover P1 adapter, served while it is
+# still the pool's P1 verifier.
 [[relation]]
 name = "p1"
 statement_account = "0x052828eb2a0d2095a0fa70d514b08a6ae4a2cb1ec38f72d2d843f1bf2a12d70a"
@@ -102,6 +130,12 @@ cairo_fri_columns = 16
 circuit_fri_columns = 16
 stream_commitments = false                    # true: ~22 GiB, ~30% slower
 threads = 16                                  # ~65 s per proof; 4: ~126 s; more than 16 barely helps
+# The bucket check (docs/pool-v3-spec.md §9.3), for routed relations (r6, routed p1): before proving,
+# `templar-prove bucket` writes the leaf bootloader's base trace (~15 GiB, ~15 s for a V5-sized job)
+# and the job must land in this PROOF2 leaf bucket, so every spend has the same public proof header;
+# after proving, the header is checked again. A miss is the server's fault (refunded).
+# bucket_log_size = 25
+# bucket_reference = "/var/lib/templar-prover/bucket-reference"   # required for routed relations: a routed spend's os.pie.zip (the largest shape), checked at startup
 
 # Oblivious HTTP (optional): clients reach the server through an OHTTP relay, which hides their
 # address. The key file holds a hex X25519 private key (64 hex characters), e.g.

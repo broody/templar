@@ -1,0 +1,40 @@
+{
+  "pool_class": "0x13168dfd5b7258135a02a0ac87323df93222c5a30c103e3e9f7a4a4098bcfdf",
+  "valid_until": 6500,
+  "proofs": {
+    "s1": {
+      "trace_log_size": 18,
+      "proof_felts": 29746,
+      "binding": "0x79dbcfd1903ff9f69b2ff0283b7acfcd542415d165559a21441e0041c1084b7"
+    },
+    "s2": {
+      "trace_log_size": 18,
+      "proof_felts": 29466,
+      "binding": "0x271e94256d95402071d27aef9456fb8edf1e2534e8a277d41f39b399803b9d1"
+    },
+    "s3": {
+      "trace_log_size": 18,
+      "proof_felts": 29390,
+      "binding": "0x55a4acd71223519d5ac2c700a11d31b0a27208069f817acac9f4a171dea5726"
+    }
+  },
+  "tests": [
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::v5_message_rejected (l1_gas: ~0, l1_data_gas: ~11136, l2_gas: ~294849251)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::redirected_withdrawal_rejected (l1_gas: ~32284, l1_data_gas: ~11136, l2_gas: ~656617003)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::another_spends_facts_rejected (l1_gas: ~32284, l1_data_gas: ~11136, l2_gas: ~653346564)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::moved_expiry_rejected (l1_gas: ~32284, l1_data_gas: ~11136, l2_gas: ~657528965)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::expired_spend_rejected (l1_gas: ~32284, l1_data_gas: ~11136, l2_gas: ~656103995)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::stale_proof_rejected (l1_gas: ~32284, l1_data_gas: ~11136, l2_gas: ~657096338)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::two_input_spend (l1_gas: ~32284, l1_data_gas: ~12480, l2_gas: ~714757961)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::replay_rejected (l1_gas: ~32284, l1_data_gas: ~12480, l2_gas: ~719251053)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::withdrawal_lands_at_valid_until (l1_gas: ~32284, l1_data_gas: ~12480, l2_gas: ~716983691)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::two_input_spend_after_others (l1_gas: ~64568, l1_data_gas: ~13536, l2_gas: ~1137888764)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::withdrawal_then_transfer (l1_gas: ~64568, l1_data_gas: ~13536, l2_gas: ~1137493760)"
+  ],
+  "gas": [
+    "GAS apply_spend v6 two-input routing_adapter=55404096",
+    "GAS apply_spend v6 withdrawal routing_adapter=55404096",
+    "GAS apply_spend v6 transfer routing_adapter=54462596"
+  ],
+  "result": "Tests: 11 passed, 0 failed, 0 ignored, 0 filtered out"
+}

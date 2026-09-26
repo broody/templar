@@ -11,6 +11,7 @@ mod api;
 mod config;
 mod ohttp;
 mod pipeline;
+mod routes;
 mod rpc;
 mod sandbox;
 mod statement;
@@ -89,23 +90,37 @@ async fn startup(cfg: &Config, rpc: &Rpc) -> Result<Value> {
         if class != felt(&rel.statement_class)? {
             bail!("{}: the statement account's class is {} not the configured one", rel.name, hex(&class));
         }
-        // The adapter's configuration, read from its storage.
-        let expect = [
-            ("pool", felt(&cfg.network.pool)?),
-            ("statement", felt(&rel.statement_account)?),
-            ("statement_class", felt(&rel.statement_class)?),
-            ("os_program", felt(&cfg.network.os_program)?),
-            ("max_proof_age", cfg.network.max_proof_age.into()),
-            ("account_tag", short_string(&rel.account_tag)?),
-        ];
-        for (name, want) in expect {
-            let got = rpc.storage_at(&rel.adapter, &sn_keccak(name)).await?;
-            if got != want {
-                bail!("{}: the adapter's {name} is {} not {}", rel.name, hex(&got), hex(&want));
+        // A pre-cutover adapter's configuration, read from its storage: the relation's own adapter,
+        // or P1's legacy adapter during the cutover. A routing adapter is checked through its views
+        // while it is the pool's verifier (pipeline::verifier_current).
+        let legacy = if rel.is_routed() { rel.legacy_adapter.as_deref() } else { Some(rel.adapter.as_str()) };
+        if let Some(legacy) = legacy {
+            let expect = [
+                ("pool", felt(&cfg.network.pool)?),
+                ("statement", felt(&rel.statement_account)?),
+                ("statement_class", felt(&rel.statement_class)?),
+                ("os_program", felt(&cfg.network.os_program)?),
+                ("max_proof_age", cfg.network.max_proof_age.into()),
+                ("account_tag", short_string(&rel.account_tag)?),
+            ];
+            for (name, want) in expect {
+                let got = rpc.storage_at(legacy, &sn_keccak(name)).await?;
+                if got != want {
+                    bail!("{}: the adapter's {name} is {} not {}", rel.name, hex(&got), hex(&want));
+                }
             }
         }
-        // A pending change is logged, not fatal: jobs are refused only while it is due (AB-SP1).
-        pipeline::verifier_current(rpc, cfg, rel).await?;
+        // A dormant relation (its adapter is not the pool's verifier yet, or any more) is logged,
+        // not fatal (pool-v3-spec §9.5); so is a pending change: jobs are refused only while it is
+        // due (AB-SP1).
+        let status = match pipeline::verifier_current(rpc, cfg, rel).await {
+            Ok(s) => format!("{s:?}").to_lowercase(),
+            Err(e) if e.downcast_ref::<routes::Dormant>().is_some() => {
+                tracing::warn!("{e:#}");
+                "dormant".to_string()
+            }
+            Err(e) => return Err(e),
+        };
         pipeline::warn_pending(rpc, cfg, rel).await;
         let record = std::fs::read(rel.bridge_dir.join("build-record.json")).context("the bridge build record")?;
         let sha = format!("{:x}", Sha256::digest(&record));
@@ -123,10 +138,19 @@ async fn startup(cfg: &Config, rpc: &Rpc) -> Result<Value> {
         if record["message_tag"].as_str() != Some(rel.account_tag.as_str()) {
             bail!("{}: the bridge build is for another account tag", rel.name);
         }
+        let own = rel.own_route();
         relations.push(json!({
             "name": rel.name, "statement_account": rel.statement_account, "statement_class": rel.statement_class,
             "account_tag": rel.account_tag, "adapter": rel.adapter, "circuit_hash_u32_le": record["circuit_hash_u32_le"],
             "bridge_record_sha256": rel.bridge_record_sha256, "bridge_executable_sha256": rel.bridge_executable_sha256,
+            "adapter_class": rel.adapter_class, "legacy_adapter": rel.legacy_adapter,
+            "route": own.map(|r| json!({
+                "statement": r.statement, "statement_class": r.statement_class, "account_tag": r.account_tag,
+                "os_program": r.os_program, "proof_version": r.proof_version, "proof_variant": r.proof_variant,
+                "output_version": r.output_version, "max_proof_age": r.max_proof_age,
+            })),
+            "max_proof_age": rel.max_proof_age(&cfg.network),
+            "status_at_startup": status,
         }));
     }
     let version = |bin: &Path| -> Result<Value> {
@@ -134,8 +158,11 @@ async fn startup(cfg: &Config, rpc: &Rpc) -> Result<Value> {
         serde_json::from_slice(&out.stdout).with_context(|| format!("{} version", bin.display()))
     };
     let os_runner = version(&cfg.binaries.os_runner)?;
-    if os_runner["virtual_os_program"].as_str().map(felt).transpose()? != Some(felt(&cfg.network.os_program)?) {
-        bail!("templar-os-runner embeds another virtual OS program than the adapters pin");
+    let runner_program = os_runner["virtual_os_program"].as_str().map(felt).transpose()?;
+    for rel in &cfg.relations {
+        if runner_program != Some(felt(rel.os_program(&cfg.network))?) {
+            bail!("{}: templar-os-runner embeds another virtual OS program than the relation's adapter or route pins", rel.name);
+        }
     }
     // R0 V5 (spec §9, Info): the relation and the pool's expiry rules. Ordinary spends only
     // (ADR-0027): the statement names no account.
@@ -146,12 +173,24 @@ async fn startup(cfg: &Config, rpc: &Rpc) -> Result<Value> {
         "admission": {"blocks_per_job": cfg.server.blocks_per_job, "relay_margin_blocks": cfg.server.relay_margin_blocks},
         "result": {"send_deadline": "min(statement.valid_until, base_block + max_proof_age)"},
     }));
+    // R0 V6 (pool-v3-spec §9.5, Info): the pool parameters, the adapter, the server's route and the
+    // circuit hash (in `relations`). No spend-message hashes.
+    let v6 = cfg.relation("r6").map(|r| json!({
+        "relation": "R0 V6", "binding": "TMR0_BIND_V5", "account_tag": r.account_tag,
+        "pool_parameters": cfg.network.parameters, "adapter": r.adapter, "adapter_class": r.adapter_class,
+        "route": r.own_route().map(|o| o.statement.clone()), "max_proof_age": r.max_proof_age(&cfg.network),
+        "caps": {"os_steps": cfg.caps.os_steps, "builtins": cfg.caps.builtins},
+        "admission": {"blocks_per_job": cfg.server.blocks_per_job, "relay_margin_blocks": cfg.server.relay_margin_blocks},
+        "result": {"send_deadline": "min(statement.valid_until, base_block + route.max_proof_age)", "statement": "the route key"},
+        "bucket_log_size": cfg.prover.bucket_log_size,
+    }));
     Ok(json!({
         "server": {"binary": "templar-prover", "version": env!("CARGO_PKG_VERSION")},
         "network": {"name": cfg.network.name, "chain_id": cfg.network.chain_id, "pool": cfg.network.pool,
                     "pool_version": cfg.network.pool_version,
                     "os_program": cfg.network.os_program, "max_proof_age": cfg.network.max_proof_age},
         "r5": v5,
+        "r6": v6,
         "relations": relations,
         "dependencies": {"os_runner": os_runner, "prove": version(&cfg.binaries.prove)?},
         "limits": {"max_body_bytes": cfg.server.max_body_bytes, "max_proof_felts": cfg.server.max_proof_felts,
@@ -228,12 +267,29 @@ async fn main() -> Result<()> {
             }
             // A result lives up to max_proof_age blocks (about 6 s each at most); a verifier change
             // that can apply sooner than that after a job starts could strand it (recheck N7).
-            if cfg.network.pool_version == 3 && cfg.network.pending_margin() < cfg.network.max_proof_age * 6 {
-                tracing::warn!(margin = cfg.network.pending_margin(), "pending_margin_secs is below max_proof_age × 6 s: a verifier change could apply before a result lands");
+            let largest = cfg.relations.iter().map(|r| r.max_proof_age(&cfg.network)).max().unwrap_or(0).max(cfg.network.max_proof_age);
+            if cfg.network.pool_version == 3 && cfg.pending_margin() < largest * 6 {
+                tracing::warn!(margin = cfg.pending_margin(), "pending_margin_secs is below the largest max_proof_age × 6 s: a verifier change could apply before a result lands");
             }
             tracing::info!(purged, "cleared state from a previous run");
             sandbox::self_test(&cfg.sandbox).await.context("the sandbox self-test (spec §9): a delegated cgroup v2 subtree is required")?;
             let mut info = startup(&cfg, &rpc).await?;
+            // The bucket check on the reference job (pool-v3-spec §9.3): every routed relation's
+            // jobs must land in the pinned PROOF2 leaf bucket.
+            if cfg.relations.iter().any(|r| r.is_routed()) {
+                match &cfg.prover.bucket_reference {
+                    Some(reference) => {
+                        let dir = cfg.server.data_dir.join("bucket-reference");
+                        std::fs::create_dir_all(&dir)?;
+                        std::fs::copy(reference.join("os.pie.zip"), dir.join("os.pie.zip")).context("the bucket reference's os.pie.zip")?;
+                        let limits = sandbox::Limits { memory: cfg.sandbox.job_memory.clone(), cpus: cfg.prover.threads, seconds: cfg.sandbox.os_seconds, network: false };
+                        let b = pipeline::run_bucket(&cfg, &dir, "bucket-reference", limits).await.context("the bucket check on the reference job")?;
+                        tracing::info!(trace_log_size = b.trace_log_size, largest_component = b.largest_component_log_size, seconds = b.seconds, "the reference job lands in the pinned bucket");
+                        info["bucket"] = json!({"log_size": cfg.prover.bucket_log_size, "reference_largest_component": b.largest_component_log_size});
+                    }
+                    None => bail!("a routed relation needs prover.bucket_reference: a reference job for the bucket check (pool-v3-spec §9.3)"),
+                }
+            }
             let now = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH)?.as_secs();
             let tickets = match cfg.payment.clone() {
                 Some(p) => Some(Arc::new(tickets::Tickets::load(p, &cfg.server.data_dir, now).context("the payment configuration")?)),

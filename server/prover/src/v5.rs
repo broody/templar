@@ -324,6 +324,24 @@ mod tests {
         }
     }
 
+    /// R0 V6 uses the same binding with no account (`docs/pool-v3-spec.md` §4.4, MR-V6C-4): all
+    /// eight `cairo-r6/kat` vectors, `valid_until` 1 and 2^56 − 1, a nonzero identity and the
+    /// ciphertext-derived delivery digests included.
+    #[test]
+    fn r6_binding_matches_starknet_js() {
+        let kat: Value = serde_json::from_str(include_str!("../../../bench/m31-private-wrapper/client-port/cairo-r6/kat/kat.json")).unwrap();
+        let bindings = kat["bindings"].as_array().unwrap();
+        assert_eq!(bindings.len(), 8);
+        let mut seen = (false, false);
+        for b in bindings {
+            let st = statement(&b["statement"], Felt::ZERO);
+            seen.0 |= st.valid_until == 1;
+            seen.1 |= st.valid_until == (1 << 56) - 1 && st.identity.iter().any(|w| *w != Felt::ZERO);
+            assert_eq!(st.binding(), fv(&b["binding"]), "{}", b["name"]);
+        }
+        assert!(seen.0 && seen.1, "the valid_until extremes and a nonzero identity");
+    }
+
     fn span(xs: &[Felt]) -> Vec<Felt> {
         [vec![Felt::from(xs.len() as u64)], xs.to_vec()].concat()
     }

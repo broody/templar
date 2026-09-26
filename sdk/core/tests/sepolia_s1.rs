@@ -38,8 +38,7 @@ fn binding_calldata_and_result() {
         proof: "AAAA".into(),
         proof_facts: server["facts"].as_array().unwrap().iter().map(|v| v.as_str().unwrap().to_string()).collect(),
         base_block: server["base_block"].as_u64().unwrap(),
-        binding: server["binding"].as_str().unwrap().into(),
-    };
+        binding: server["binding"].as_str().unwrap().into(), statement: None };
     let p: Pins = serde_json::from_value(v["pins"].clone()).unwrap();
     assert_eq!(templar_core::felt::to_hex(&result::message_hash(&p, &binding).unwrap()), norm(server["message_hash"].as_str().unwrap()));
     let w = result::check(&p, server["binding"].as_str().unwrap(), &r, r.base_block + 20, None).unwrap();

@@ -1,0 +1,26 @@
+# snforge tests of the R0 V6 statement account on real client proofs (docs/pool-v3-spec.md §5.3).
+# Run in a built work directory after `node kat/gen_fixtures.cjs WORK PROOFS` has written
+# fixtures/: `snforge test` from here.
+[package]
+name = "templar_account_tests"
+version = "0.1.0"
+edition = "2024_07"
+
+# The lib target lets pool_e2e use the statement account's interface.
+[lib]
+
+[dependencies]
+starknet = "2.18.0"
+templar_membership_account = { path = "../account" }
+
+[dev-dependencies]
+snforge_std = "0.63.0"
+assert_macros = "2.18.0"
+
+[[target.starknet-contract]]
+sierra = true
+casm = true
+build-external-contracts = ["templar_membership_account::PaymentVerifierAccount"]
+
+[scripts]
+test = "snforge test"

@@ -1,0 +1,70 @@
+{
+ "pts-r6-single": {
+  "blinding_iterations": 2390,
+  "classes": {
+   "eq_yield": 2390,
+   "m31_variables": 19120,
+   "mul": 2390,
+   "rows_changed": 11950,
+   "x_plus_zero": 2390,
+   "y_vars": 2390,
+   "z_plus_zero": 2390,
+   "zero_plus_y": 2390
+  },
+  "relation": "r6 single",
+  "results": [
+   {
+    "full_rank": true,
+    "functionals": 468,
+    "lde_points": 35,
+    "oods_points": 1,
+    "rank": 468,
+    "seconds": 3.653388095
+   },
+   {
+    "full_rank": true,
+    "functionals": 6768,
+    "lde_points": 560,
+    "oods_points": 1,
+    "rank": 6768,
+    "seconds": 423.997034627
+   }
+  ],
+  "scope": "per-point rank test, qm31_ops base columns, R0 V2 transfer, fork 4de7408a6 blinding; conditioned on x and eq yields",
+  "trace_log_size": 18
+ },
+ "pts-r6-transfer": {
+  "blinding_iterations": 2390,
+  "classes": {
+   "eq_yield": 2390,
+   "m31_variables": 19120,
+   "mul": 2390,
+   "rows_changed": 11950,
+   "x_plus_zero": 2390,
+   "y_vars": 2390,
+   "z_plus_zero": 2390,
+   "zero_plus_y": 2390
+  },
+  "relation": "r6 transfer",
+  "results": [
+   {
+    "full_rank": true,
+    "functionals": 468,
+    "lde_points": 35,
+    "oods_points": 1,
+    "rank": 468,
+    "seconds": 2.451573448
+   },
+   {
+    "full_rank": true,
+    "functionals": 6768,
+    "lde_points": 560,
+    "oods_points": 1,
+    "rank": 6768,
+    "seconds": 370.393316453
+   }
+  ],
+  "scope": "per-point rank test, qm31_ops base columns, R0 V2 transfer, fork 4de7408a6 blinding; conditioned on x and eq yields",
+  "trace_log_size": 18
+ }
+}

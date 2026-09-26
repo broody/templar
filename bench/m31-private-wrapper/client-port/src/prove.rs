@@ -21,7 +21,7 @@ use stwo::core::vcs_lifted::blake2_merkle::{Blake2sMerkleChannel, Blake2sMerkleH
 
 use crate::membership::Lanes;
 use crate::payment::Tree;
-use crate::{payment, payment4, payment5, policy};
+use crate::{payment, payment4, payment5, payment6, policy};
 
 pub type MC = Blake2sMerkleChannel;
 
@@ -105,6 +105,8 @@ pub trait Relation {
     fn build<V: Lanes>(&self, c: &mut Context<V>) -> Vec<Var>;
 }
 
+/// R0 V6 (`payment6`).
+pub struct R6<'a>(pub &'a payment6::Public, pub &'a payment6::Private);
 /// R0 V5 (`payment5`).
 pub struct R5<'a>(pub &'a payment5::Public, pub &'a payment5::Private);
 /// R0 V4 (`payment4`).
@@ -113,6 +115,18 @@ pub struct R4<'a>(pub &'a payment4::Public, pub &'a payment4::Private);
 pub struct R0<'a>(pub &'a payment::Public, pub &'a payment::Private);
 /// P1 (`policy`).
 pub struct P1<'a>(pub &'a policy::Public, pub &'a policy::Private);
+
+impl Relation for R6<'_> {
+    fn n_outputs(&self) -> usize {
+        payment6::N_OUTPUTS
+    }
+    fn limbs(&self) -> Vec<u32> {
+        payment6::statement_limbs(TREE, self.0)
+    }
+    fn build<V: Lanes>(&self, c: &mut Context<V>) -> Vec<Var> {
+        payment6::build(c, TREE, self.0, self.1)
+    }
+}
 
 impl Relation for R5<'_> {
     fn n_outputs(&self) -> usize {

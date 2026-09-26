@@ -11,7 +11,7 @@
 import { readFileSync, writeFileSync, renameSync } from 'node:fs';
 import { Account, RpcProvider, Signer } from 'starknet';
 
-import { checkSpecVersion, checkVerifier } from './chain.js';
+import { checkSpecVersion, currentGeneration } from './chain.js';
 import type { Hex, ServerResult } from './core.js';
 import { TemplarError, fail } from './errors.js';
 import { canon, sameFelt, versionOf, type PoolConstants } from './network.js';
@@ -21,6 +21,9 @@ import { FALLBACK_MARGIN } from './wallet.js';
 /** One result waiting at the prover server's handoff (`GET /relay/v1/jobs`). */
 export interface RelayItem {
   id: string;
+  /** The job's relation and route key (docs/pool-v3-spec.md §7.3, §9.5): `r5` or `r6`, and its statement account. */
+  relation?: string;
+  statement?: Hex;
   result: ServerResult;
   nullifiers: Hex[][];
   root: Hex[];
@@ -165,7 +168,9 @@ export class Relayer {
   }
 
   /**
-   * Its own transactions not yet final: a revert denies those notes for good (AB-RL7); a
+   * Its own transactions not yet final: a revert denies those notes for good (AB-RL7), unless the
+   * revert is a verifier or route rejection (docs/pool-v3-spec.md §7.3): the pool's verifier or its
+   * routes changed under the spend, which says nothing about the notes; a
    * rejection or a transaction the node lost resets the nonce; one pending past `stuckBlocks`
    * makes new jobs wait (AB-RL4). Returns whether one is stuck.
    */
@@ -180,7 +185,10 @@ export class Relayer {
       }
       const old = latest - t.sentAt > (this.o.stuckBlocks ?? 20);
       if (st?.execution_status === 'REVERTED') {
-        for (const k of t.keys) this.s.denied[k] = true;
+        const reason = await this.revertReason(tx);
+        if (reason === undefined) continue; // read again next pass
+        if (!isVerifierRejection(reason)) for (const k of t.keys) this.s.denied[k] = true;
+        else this.o.log?.(`a relayed spend reverted in the verifier (${reason.slice(0, 120)}): its notes are not denied`);
         delete this.s.inflight[tx];
       } else if (st?.finality_status === 'ACCEPTED_ON_L2' || st?.finality_status === 'ACCEPTED_ON_L1') {
         delete this.s.inflight[tx];
@@ -194,6 +202,16 @@ export class Relayer {
     for (const [k, v] of Object.entries(this.s.submitted)) if (v.deadline < latest) delete this.s.submitted[k];
     this.save();
     return stuck;
+  }
+
+  /** A reverted transaction's revert reason, or `undefined` when the receipt cannot be read. */
+  private async revertReason(tx: string): Promise<string | undefined> {
+    try {
+      const r = (await this.o.provider.getTransactionReceipt(tx)) as { revert_reason?: string; value?: { revert_reason?: string } };
+      return r.revert_reason ?? r.value?.revert_reason ?? '';
+    } catch {
+      return undefined;
+    }
   }
 
   /**
@@ -275,10 +293,17 @@ export class Relayer {
     if (BigInt(asset) !== 0n && !this.o.assets.some((a) => sameFelt(a, asset))) return refuse('exits of this asset are not relayed');
     if (item.send_deadline < latest + this.margin) return refuse(`the deadline ${item.send_deadline} is too close to the latest block ${latest}`);
     if (latest < res.base_block + SUBMIT_DELAY) return undefined;
+    // The pool's R0 verifier is a pinned generation with its pins, the item's relation is that
+    // generation's, and the item's route is one of its active routes (pool-v3-spec §7.3, PV3-A8). A
+    // mismatch is "retry later", never a refusal: during the cutover an item of the other
+    // generation waits, and expires if the pool never settles it.
     try {
-      await checkVerifier(provider, pool);
-    } catch (e) {
-      return refuse((e as Error).message);
+      const { generation, routes } = await currentGeneration(provider, pool, 'R0');
+      const relation = item.relation ?? res.relation ?? 'r5';
+      const statement = item.statement ?? res.statement ?? generation.primary;
+      if (generation.relation !== relation || !routes.some((r) => sameFelt(r.statement, statement))) return undefined;
+    } catch {
+      return undefined;
     }
     // The root the pool still accepts in the blocks the spend can land in (§8.3).
     const [known] = await provider.callContract({ contractAddress: pool.pool, entrypoint: 'root_is_known', calldata: span(item.root) });
@@ -371,5 +396,24 @@ export async function createRelayer(config: RelayerConfig, log?: (line: string) 
     ...(config.staleSecs !== undefined ? { staleSecs: config.staleSecs } : {}),
     ...(config.stuckBlocks !== undefined ? { stuckBlocks: config.stuckBlocks } : {}),
     ...(log ? { log } : {}),
+  });
+}
+
+/**
+ * The revert reasons of pool V3's verifiers (the routing adapter and the pre-cutover adapter, in
+ * `verify`): a verifier or route rejection (docs/pool-v3-spec.md §7.3). Matched as text or as the
+ * short string's hex, as nodes render Cairo panics either way.
+ */
+export const VERIFIER_REJECTIONS = [
+  'NO_ROUTE', 'ROUTE_CLASS', 'PROOF_AGE', 'BASE_BLOCK', 'MESSAGE_COUNT', 'PROOF_FACTS_LENGTH', 'PROOF_IN_TX_ONLY',
+  'ONLY_POOL', 'PUBLIC_LENGTH', 'WRONG_CHAIN', 'WRONG_POOL', 'PROOF_VERSION', 'PROOF_VARIANT', 'OS_PROGRAM',
+  'OUTPUT_VERSION', 'PROOF_BINDING',
+] as const;
+
+export function isVerifierRejection(reason: string): boolean {
+  const text = reason.toLowerCase();
+  return VERIFIER_REJECTIONS.some((r) => {
+    const hex = [...new TextEncoder().encode(r)].map((b) => b.toString(16).padStart(2, '0')).join('');
+    return new RegExp(`\\b${r.toLowerCase()}\\b`).test(text) || text.includes(`0x${hex}`);
   });
 }

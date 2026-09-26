@@ -3,9 +3,10 @@
 //! and bounded; the statement's fields become the bridge's `main` arguments, exactly as the bench
 //! validators pass them (`validate_bridge_r4.py`, `validate_bridge_r5.py`, `validate_bridge_p1.py`).
 //!
-//! An R0 V5 job (`docs/account-bound-note-spec.md` §9) also carries the full pool calldata, so the
-//! service can settle what it proved (AB-P28). Bound spends are not served (ADR-0027): an r5
-//! statement must name no account, and a body with a salt or a signature is refused.
+//! An R0 V5 or V6 job (`docs/account-bound-note-spec.md` §9, `docs/pool-v3-spec.md` §9.1) also
+//! carries the full pool calldata, so the service can settle what it proved (AB-P28). Bound spends
+//! are not served (ADR-0027): an r5 statement must name no account, an r6 statement has none, and
+//! a body with a salt or a signature is refused.
 use anyhow::{bail, Context, Result};
 use serde::Deserialize;
 use serde_json::Value;
@@ -20,6 +21,7 @@ const P: u64 = (1 << 31) - 1;
 pub enum Relation {
     R4,
     R5,
+    R6,
     P1,
 }
 
@@ -28,14 +30,16 @@ impl Relation {
         match s {
             "r4" => Ok(Relation::R4),
             "r5" => Ok(Relation::R5),
+            "r6" => Ok(Relation::R6),
             "p1" => Ok(Relation::P1),
-            _ => bail!("relation must be r4, r5 or p1"),
+            _ => bail!("relation must be r4, r5, r6 or p1"),
         }
     }
     pub fn name(self) -> &'static str {
         match self {
             Relation::R4 => "r4",
             Relation::R5 => "r5",
+            Relation::R6 => "r6",
             Relation::P1 => "p1",
         }
     }
@@ -52,7 +56,7 @@ pub struct SubmissionJson {
     pub relation: String,
     pub proof: Vec<String>,
     pub statement: Value,
-    /// R0 V5: the pool call that settles the statement.
+    /// R0 V5 and V6: the pool call that settles the statement.
     #[serde(default)]
     pub pool_call: Option<PoolCallJson>,
     /// R0 V5 bound mode, no longer served (ADR-0027): kept only so a body that carries them is
@@ -66,7 +70,7 @@ pub struct SubmissionJson {
     pub payment: Option<Value>,
 }
 
-/// An R0 V5 job's extra parts.
+/// An R0 V5 or V6 job's extra parts (a V6 statement has no account: it is zero here).
 #[derive(Debug, Clone)]
 pub struct V5Job {
     pub statement: StatementV5,
@@ -161,7 +165,7 @@ impl Submission {
         let mut args = vec![chain, pool];
         let mut v5 = None;
         let nullifiers = match relation {
-            Relation::R4 | Relation::R5 => {
+            Relation::R4 | Relation::R5 | Relation::R6 => {
                 let [n0, n1] = pair(s, "nullifiers")?;
                 let nfs = vec![words(n0, "nullifier")?, words(n1, "nullifier")?];
                 let [c0, c1] = pair(s, "commitments")?;
@@ -177,10 +181,21 @@ impl Submission {
                 args.push(f(s, "intent")?);
                 let identity = digest(s, "identity")?;
                 args.extend(span(&identity));
-                if relation == Relation::R5 {
-                    let account = f(s, "account")?;
+                if relation == Relation::R5 || relation == Relation::R6 {
+                    // V6 (pool-v3-spec §4.1) has no account field: one that names it is not a V6
+                    // statement. V5's must be zero (below).
+                    let account = if relation == Relation::R5 {
+                        f(s, "account")?
+                    } else {
+                        if s.get("account").is_some() {
+                            bail!("an r6 statement has no account field");
+                        }
+                        Felt::ZERO
+                    };
                     let valid_until = int(s, "valid_until", 56)?;
-                    args.push(account);
+                    if relation == Relation::R5 {
+                        args.push(account);
+                    }
                     args.push(valid_until);
                     let statement = StatementV5 {
                         chain, pool, token_out: f(s, "token_out")?, root: root.clone(), nullifiers: [nfs[0].clone(), nfs[1].clone()],
@@ -189,7 +204,7 @@ impl Submission {
                         intent: f(s, "intent")?, identity, account,
                         valid_until: crate::v5::to_u64(&valid_until).context("valid_until")?,
                     };
-                    let call = body.pool_call.as_ref().context("an r5 job carries its pool call")?;
+                    let call = body.pool_call.as_ref().context("an r5 or r6 job carries its pool call")?;
                     let calldata: Vec<Felt> = call.calldata.iter().map(|x| felt(x)).collect::<Result<_>>().context("pool_call.calldata")?;
                     let pool_call = PoolCall::parse(&call.entry_point, calldata)?;
                     // Bound spends are not served (ADR-0027, pool-v3-spec §15 B). Refused here,
@@ -203,7 +218,7 @@ impl Submission {
                     }
                     v5 = Some(V5Job { statement, pool_call });
                 } else if body.pool_call.is_some() || body.salt.is_some() || body.signature.is_some() {
-                    bail!("only r5 jobs carry a pool call, a salt or a signature");
+                    bail!("only r5 and r6 jobs carry a pool call; no job carries a salt or a signature");
                 }
                 nfs
             }
@@ -232,7 +247,7 @@ impl Submission {
                 args.push(int(s, "x", 128)?);
                 args.push(f(s, "data")?);
                 if body.pool_call.is_some() || body.salt.is_some() || body.signature.is_some() {
-                    bail!("only r5 jobs carry a pool call, a salt or a signature");
+                    bail!("only r5 and r6 jobs carry a pool call; no job carries a salt or a signature");
                 }
                 vec![nf]
             }
@@ -242,11 +257,11 @@ impl Submission {
 
     /// The statement account's `__execute__` calldata: `(proof_data, salt = 0, signature = [])`
     /// for the deployed R0 V5 account (spec §5.4; ordinary spends only, ADR-0027), the proof span
-    /// alone otherwise.
+    /// alone otherwise (R0 V6's `(proof_data)`, pool-v3-spec §5.3; R4 and P1).
     pub fn execute_calldata(&self) -> Vec<Felt> {
-        match &self.v5 {
-            Some(_) => [self.proof.clone(), vec![Felt::ZERO], span(&[])].concat(),
-            None => self.proof.clone(),
+        match self.relation {
+            Relation::R5 => [self.proof.clone(), vec![Felt::ZERO], span(&[])].concat(),
+            _ => self.proof.clone(),
         }
     }
 
@@ -368,6 +383,50 @@ mod tests {
         let mut j = r4(json!(0), vec!["0x0"]);
         j.pool_call = r5("0x0", None, None).pool_call;
         assert!(Submission::parse(j, 10).is_err(), "r4 with a pool call");
+    }
+
+    /// An r6 submission: r5's without the account field (pool-v3-spec §4.1, §9.1).
+    fn r6() -> SubmissionJson {
+        let mut j = r5("0x0", None, None);
+        j.relation = "r6".into();
+        j.statement.as_object_mut().unwrap().remove("account");
+        j
+    }
+
+    #[test]
+    fn r6_ordinary() {
+        let s = Submission::parse(r6(), 10).unwrap();
+        assert_eq!(s.relation, Relation::R6);
+        let j = s.v5.as_ref().unwrap();
+        assert!(j.statement.account == Felt::ZERO && j.statement.valid_until == 6500);
+        // R4's arguments, then valid_until (no account), then the proof: the V6 bridge's `main`.
+        assert_eq!(s.statement_args.len(), 3 + 10 + 19 + 19 + 3 + 3 + 10 + 1);
+        assert_eq!(s.statement_args[s.statement_args.len() - 1], Felt::from(6500u64));
+        // `__execute__(proof_data)`: the proof span alone.
+        assert_eq!(s.execute_calldata(), s.proof);
+        // The same binding as the r5 parse of the same fields (TMR0_BIND_V5, unchanged).
+        let s5 = Submission::parse(r5("0x0", None, None), 10).unwrap();
+        assert_eq!(j.statement.binding(), s5.v5.as_ref().unwrap().statement.binding());
+    }
+
+    #[test]
+    fn r6_refusals() {
+        let mut j = r6();
+        j.statement["account"] = json!("0x0");
+        let e = Submission::parse(j, 10).err().unwrap().to_string();
+        assert!(e.contains("no account field"), "{e}");
+        let mut j = r6();
+        j.salt = Some("0x1".into());
+        assert!(Submission::parse(j, 10).is_err(), "a salt");
+        let mut j = r6();
+        j.signature = Some(vec![]);
+        assert!(Submission::parse(j, 10).is_err(), "a signature");
+        let mut j = r6();
+        j.pool_call = None;
+        assert!(Submission::parse(j, 10).is_err(), "no pool call");
+        let mut j = r6();
+        j.statement.as_object_mut().unwrap().remove("valid_until");
+        assert!(Submission::parse(j, 10).is_err(), "no valid_until");
     }
 
     #[test]

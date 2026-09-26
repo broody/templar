@@ -36,7 +36,7 @@ use templar_client_verifier_circuit::payment::{
     self, Digest, INNER, Identity, Input, NOTE, Output, Private, Public, Tree, amount_limbs, felt_limbs, h, receiver_of,
     tree_paths,
 };
-use templar_client_verifier_circuit::{payment4, payment5, policy, prove};
+use templar_client_verifier_circuit::{payment4, payment5, payment6, policy, prove};
 
 const TREE: Tree = Tree::Compress;
 
@@ -86,6 +86,7 @@ enum Relation {
     R0(Public, Private),
     R4(payment4::Public, payment4::Private),
     R5(payment5::Public, payment5::Private),
+    R6(payment6::Public, payment6::Private),
     P1(policy::Public, policy::Private),
 }
 
@@ -95,6 +96,7 @@ impl Relation {
             Relation::R0(..) => "tmpzr0-client-payment",
             Relation::R4(..) => "tmpzr4-client-payment",
             Relation::R5(..) => "tmpzr5-client-payment",
+            Relation::R6(..) => "tmpzr6-client-payment",
             Relation::P1(..) => "tmpzp1-client-policy",
         }
     }
@@ -104,6 +106,7 @@ impl Relation {
             Relation::R0(..) => payment::statement_tag(TREE),
             Relation::R4(..) => payment4::statement_tag(TREE),
             Relation::R5(..) => payment5::statement_tag(TREE),
+            Relation::R6(..) => payment6::statement_tag(TREE),
             Relation::P1(..) => policy::statement_tag(TREE),
         }
     }
@@ -113,6 +116,7 @@ impl Relation {
             Relation::R0(p, _) => serde_json::to_vec_pretty(p).unwrap(),
             Relation::R4(p, _) => serde_json::to_vec_pretty(p).unwrap(),
             Relation::R5(p, _) => serde_json::to_vec_pretty(p).unwrap(),
+            Relation::R6(p, _) => serde_json::to_vec_pretty(p).unwrap(),
             Relation::P1(p, _) => serde_json::to_vec_pretty(p).unwrap(),
         }
     }
@@ -277,6 +281,55 @@ fn prove5(spec: SpendJson5, out: &Path, max_fri_columns: Option<usize>) {
 }
 
 #[derive(Deserialize)]
+struct SpendJson6 {
+    #[serde(flatten)]
+    v4: SpendJson4,
+    valid_until: u64,
+}
+
+/// An R0 V6 spend (`docs/pool-v3-spec.md` §4): ordinary notes, a public expiry, no account.
+fn prove6(spec: SpendJson6, out: &Path, max_fri_columns: Option<usize>) {
+    fs::create_dir_all(out).unwrap();
+    let SpendJson6 { v4: spec, valid_until } = spec;
+    let u128_of = |s: &str| s.parse::<u128>().expect("decimal u128");
+    assert!(spec.inputs.len() == 1 || spec.inputs.len() == 2, "one or two inputs");
+    let positions: Vec<u32> = spec.inputs.iter().map(|i| i.position).collect();
+    let (root, paths) = tree_paths(TREE, &spec.leaves, &positions);
+    let mut inputs: Vec<Input> = spec
+        .inputs
+        .iter()
+        .zip(paths)
+        .map(|(i, siblings)| Input { sk: i.sk, rho: i.rho, amount: u128_of(&i.amount), position: i.position, siblings })
+        .collect();
+    let dummy = inputs.len() == 1;
+    if dummy {
+        let position = rand::RngCore::next_u32(&mut rand::rngs::OsRng);
+        let siblings = (0..payment::DEPTH).map(|_| fresh_digest()).collect();
+        inputs.push(Input { sk: fresh_digest(), rho: fresh_digest(), amount: 0, position, siblings });
+    }
+    let private = payment6::Private {
+        token: spec.token.clone(),
+        inputs: [inputs[0].clone(), inputs[1].clone()],
+        dummy,
+        outputs: std::array::from_fn(|j| payment4::Output {
+            receiver: spec.outputs[j].receiver,
+            rho: spec.outputs[j].rho,
+            amount: u128_of(&spec.outputs[j].amount),
+        }),
+        identity: Identity { active: spec.identity_scope.is_some(), scope: spec.identity_scope.unwrap_or([0; 9]) },
+    };
+    let deliveries = [spec.outputs[0].delivery.clone(), spec.outputs[1].delivery.clone()];
+    let public = payment6::statement(
+        TREE, &spec.chain, &spec.pool, deliveries,
+        (spec.withdrawal.recipient.clone(), u128_of(&spec.withdrawal.amount)), &spec.intent, valid_until, &private,
+    )
+    .unwrap_or_else(|e| panic!("invalid spend: {e}"));
+    payment6::bridge_checks(&public).unwrap_or_else(|e| panic!("the bridge would reject: {e}"));
+    assert_eq!(public.root, root);
+    prove_relation(Relation::R6(public, private), out, max_fri_columns);
+}
+
+#[derive(Deserialize)]
 struct PolicyNoteIn {
     cap: Digest,
     rho: Digest,
@@ -356,6 +409,7 @@ fn prove_relation(rel: Relation, out: &Path, max_fri_columns: Option<usize>) {
         Relation::R0(p, w) => prove::prove(&prove::R0(p, w), seed, max_fri_columns),
         Relation::R4(p, w) => prove::prove(&prove::R4(p, w), seed, max_fri_columns),
         Relation::R5(p, w) => prove::prove(&prove::R5(p, w), seed, max_fri_columns),
+        Relation::R6(p, w) => prove::prove(&prove::R6(p, w), seed, max_fri_columns),
         Relation::P1(p, w) => prove::prove(&prove::P1(p, w), seed, max_fri_columns),
     };
     let mut proved = proved.unwrap_or_else(|e| panic!("{e}"));
@@ -461,10 +515,14 @@ fn main() {
             let spec: SpendJson5 = serde_json::from_slice(&fs::read(&a[2]).unwrap()).unwrap();
             prove5(spec, Path::new(&a[3]), a.get(4).map(|n| n.parse().unwrap()));
         }
+        Some("prove6") => {
+            let spec: SpendJson6 = serde_json::from_slice(&fs::read(&a[2]).unwrap()).unwrap();
+            prove6(spec, Path::new(&a[3]), a.get(4).map(|n| n.parse().unwrap()));
+        }
         Some("prove-policy") => {
             let spec: PolicySpendJson = serde_json::from_slice(&fs::read(&a[2]).unwrap()).unwrap();
             prove_policy(spec, Path::new(&a[3]), a.get(4).map(|n| n.parse().unwrap()));
         }
-        _ => panic!("wallet keys|keys5|inner|commitment|prove|prove4|prove5|policy-note|prove-policy ..."),
+        _ => panic!("wallet keys|keys5|inner|commitment|prove|prove4|prove5|prove6|policy-note|prove-policy ..."),
     }
 }

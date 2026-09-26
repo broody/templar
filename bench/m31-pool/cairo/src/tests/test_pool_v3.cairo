@@ -7,7 +7,7 @@ use core::poseidon::poseidon_hash_span;
 use snforge_std::{
     ContractClassTrait, DeclareResultTrait, EventSpyAssertionsTrait, declare, spy_events,
     start_cheat_block_number_global, start_cheat_block_timestamp_global, start_cheat_caller_address,
-    stop_cheat_caller_address, store, test_address,
+    start_cheat_proof_facts, stop_cheat_caller_address, store, test_address,
 };
 use starknet::storage::StoragePointerReadAccess;
 use starknet::syscalls::get_class_hash_at_syscall;
@@ -24,6 +24,7 @@ use m31_pool::pool_v3::{
     IM31PoolV3Dispatcher, IM31PoolV3DispatcherTrait, IM31PoolV3SafeDispatcher, IM31PoolV3SafeDispatcherTrait, P1,
     Parameters, R0,
 };
+use m31_pool::routing_adapter::Route;
 use m31_pool::spend::{IERC20Dispatcher, IERC20DispatcherTrait, Output, Withdrawal};
 use m31_pool::spend5::{Spend, compute_binding};
 use m31_pool::test_adapters::{IFeeOnTopDispatcher, IFeeOnTopDispatcherTrait, Proceeds};
@@ -537,6 +538,52 @@ fn policy_spends_use_the_root_rule() {
     assert_eq!(reason(e.safe.apply_policy_spend(stale, data, no_ct, array![].span())), 'UNKNOWN_ROOT');
     at_block(replaced + W);
     e.pool.apply_policy_spend(fresh_, data, no_ct, array![].span());
+    assert_eq!(e.erc20.balance_of(addr(RECIPIENT)), 1);
+}
+
+/// The P1 path through a routing adapter (`docs/pool-v3-spec.md` §6, §9.2): with a P1 routing
+/// adapter in the pool's P1 slot, `apply_policy_spend` settles on facts of the route's statement
+/// emitting `[class, 'TMPZP1_POLICY_V1', chain, pool, policy_binding(spend)]`. An R0 V6 message,
+/// a wrong binding and a proof older than the route's age are refused, and the good facts still
+/// settle afterwards.
+#[test]
+#[feature("safe_dispatcher")]
+fn policy_spends_through_a_p1_routing_adapter() {
+    let e = fresh(true);
+    let statement = deploy("MockVerifier", array![1]);
+    let class: felt252 = get_class_hash_at_syscall(statement).unwrap_syscall().into();
+    let route = Route {
+        statement, statement_class: class, account_tag: 'TMPZP1_POLICY_V1', os_program: 0x05, proof_version: 'PROOF2',
+        proof_variant: 'VIRTUAL_SNOS', output_version: 'VIRTUAL_SNOS0', max_proof_age: 50,
+    };
+    let mut args = array![e.pool.contract_address.into(), P1];
+    array![route].span().serialize(ref args);
+    let adapter = deploy("RoutingAdapter", args);
+    e.pool.initialize(deploy("MockVerifier", array![0]), adapter, array![].span());
+    e.pool.deposit(e.erc20.contract_address, 1000, digest(7), payload(1));
+    let escrow = escrow_for(e);
+    let no_ct = array![array![].span(), array![].span()].span();
+    let (sp, data) = policy_spend(e, 3000, escrow);
+    let chain = get_tx_info().unbox().chain_id;
+    let facts = |tag: felt252, binding: felt252, base: u64| -> Span<felt252> {
+        let message = array![statement.into(), 0, 5, class, tag, chain, e.pool.contract_address.into(), binding];
+        array!['PROOF2', 'VIRTUAL_SNOS', 0x05, 'VIRTUAL_SNOS0', base.into(), 0xb10c, 0, 1, poseidon_hash_span(message.span())]
+            .span()
+    };
+    let (base, binding) = (START - 10, sp.binding);
+    // The same spend each attempt (`policy_spend` is deterministic).
+    let again = || {
+        let (s, _) = policy_spend(e, 3000, escrow);
+        s
+    };
+    start_cheat_proof_facts(adapter, facts('TMPZR0_PAYMENT_V6', binding, base));
+    assert_eq!(reason(e.safe.apply_policy_spend(again(), data, no_ct, array![].span())), 'NO_ROUTE');
+    start_cheat_proof_facts(adapter, facts('TMPZP1_POLICY_V1', binding + 1, base));
+    assert_eq!(reason(e.safe.apply_policy_spend(again(), data, no_ct, array![].span())), 'NO_ROUTE');
+    start_cheat_proof_facts(adapter, facts('TMPZP1_POLICY_V1', binding, START - 51));
+    assert_eq!(reason(e.safe.apply_policy_spend(again(), data, no_ct, array![].span())), 'PROOF_AGE');
+    start_cheat_proof_facts(adapter, facts('TMPZP1_POLICY_V1', binding, START - 50));
+    e.pool.apply_policy_spend(sp, data, no_ct, array![].span());
     assert_eq!(e.erc20.balance_of(addr(RECIPIENT)), 1);
 }
 

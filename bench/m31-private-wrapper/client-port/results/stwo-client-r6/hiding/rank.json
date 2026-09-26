@@ -1,0 +1,634 @@
+{
+ "rank-r6-full": {
+  "base": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 2390,
+    "tree": "base",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 12,
+    "rows_changed_by_seed": 11950,
+    "tree": "base",
+    "unblinded_combinations": 0
+   }
+  ],
+  "blinding_iterations": 2390,
+  "interaction": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 4095,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 8,
+    "rows_changed_by_seed": 262143,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   }
+  ],
+  "relation": "r6 full",
+  "scope": "R0 V2 transfer, arithmetic profile; two blinding seeds, same interaction elements; per component and tree",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r6-invoke": {
+  "base": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 2390,
+    "tree": "base",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 12,
+    "rows_changed_by_seed": 11950,
+    "tree": "base",
+    "unblinded_combinations": 0
+   }
+  ],
+  "blinding_iterations": 2390,
+  "interaction": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 4095,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 8,
+    "rows_changed_by_seed": 262143,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   }
+  ],
+  "relation": "r6 invoke",
+  "scope": "R0 V2 transfer, arithmetic profile; two blinding seeds, same interaction elements; per component and tree",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r6-nft": {
+  "base": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 2390,
+    "tree": "base",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 12,
+    "rows_changed_by_seed": 11950,
+    "tree": "base",
+    "unblinded_combinations": 0
+   }
+  ],
+  "blinding_iterations": 2390,
+  "interaction": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 4095,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 8,
+    "rows_changed_by_seed": 262143,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   }
+  ],
+  "relation": "r6 nft",
+  "scope": "R0 V2 transfer, arithmetic profile; two blinding seeds, same interaction elements; per component and tree",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r6-one-out": {
+  "base": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 2390,
+    "tree": "base",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 12,
+    "rows_changed_by_seed": 11950,
+    "tree": "base",
+    "unblinded_combinations": 0
+   }
+  ],
+  "blinding_iterations": 2390,
+  "interaction": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 4095,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 8,
+    "rows_changed_by_seed": 262143,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   }
+  ],
+  "relation": "r6 one-out",
+  "scope": "R0 V2 transfer, arithmetic profile; two blinding seeds, same interaction elements; per component and tree",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r6-partial": {
+  "base": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 2390,
+    "tree": "base",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 12,
+    "rows_changed_by_seed": 11950,
+    "tree": "base",
+    "unblinded_combinations": 0
+   }
+  ],
+  "blinding_iterations": 2390,
+  "interaction": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 4095,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 8,
+    "rows_changed_by_seed": 262143,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   }
+  ],
+  "relation": "r6 partial",
+  "scope": "R0 V2 transfer, arithmetic profile; two blinding seeds, same interaction elements; per component and tree",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r6-shadow": {
+  "base": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 2390,
+    "tree": "base",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 12,
+    "rows_changed_by_seed": 11950,
+    "tree": "base",
+    "unblinded_combinations": 0
+   }
+  ],
+  "blinding_iterations": 2390,
+  "interaction": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 4095,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 8,
+    "rows_changed_by_seed": 262143,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   }
+  ],
+  "relation": "r6 shadow",
+  "scope": "R0 V2 transfer, arithmetic profile; two blinding seeds, same interaction elements; per component and tree",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r6-single": {
+  "base": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 2390,
+    "tree": "base",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 12,
+    "rows_changed_by_seed": 11950,
+    "tree": "base",
+    "unblinded_combinations": 0
+   }
+  ],
+  "blinding_iterations": 2390,
+  "interaction": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 4095,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 8,
+    "rows_changed_by_seed": 262143,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   }
+  ],
+  "relation": "r6 single",
+  "scope": "R0 V2 transfer, arithmetic profile; two blinding seeds, same interaction elements; per component and tree",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ },
+ "rank-r6-transfer": {
+  "base": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 2390,
+    "tree": "base",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 12,
+    "rows_changed_by_seed": 11950,
+    "tree": "base",
+    "unblinded_combinations": 0
+   }
+  ],
+  "blinding_iterations": 2390,
+  "interaction": [
+   {
+    "columns": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "kernel_basis": [],
+    "log_size": 12,
+    "rank": 4,
+    "rows_changed_by_seed": 4095,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   },
+   {
+    "columns": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "kernel_basis": [],
+    "log_size": 18,
+    "rank": 8,
+    "rows_changed_by_seed": 262143,
+    "tree": "interaction",
+    "unblinded_combinations": 0
+   }
+  ],
+  "relation": "r6 transfer",
+  "scope": "R0 V2 transfer, arithmetic profile; two blinding seeds, same interaction elements; per component and tree",
+  "trace_log_size": 18,
+  "unblinded_combinations_total": 0
+ }
+}

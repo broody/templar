@@ -4337,11 +4337,14 @@ name = "templar-prove"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "cairo-program-runner-lib",
  "cairo-vm",
  "leaf-prover",
  "privacy-circuit-verify",
  "privacy-prove",
  "serde_json",
+ "stwo-cairo-adapter",
+ "stwo-cairo-prover",
 ]
 
 [[package]]

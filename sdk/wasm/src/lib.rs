@@ -46,7 +46,8 @@ fn version_of(v: &str) -> Out<Version> {
     match v {
         "v4" => Ok(Version::V4),
         "v5" => Ok(Version::V5),
-        _ => Err(bad("pool version: v4 or v5")),
+        "v6" => Ok(Version::V6),
+        _ => Err(bad("pool version: v4, v5 or v6")),
     }
 }
 
@@ -479,7 +480,7 @@ pub fn test_expected_facts(pins: &str, binding: &str, base_block: u64, base_hash
     let p: Pins = parse(pins, "pins")?;
     let mh = result::message_hash(&p, &f(binding)?).map_err(err)?;
     let s = |x: &str| felt::from_short_string(x).map(|v| felt::to_hex(&v)).map_err(err);
-    to_json(&vec![s("PROOF2")?, s("VIRTUAL_SNOS")?, p.os_program.clone(), s("VIRTUAL_SNOS0")?, format!("0x{base_block:x}"),
+    to_json(&vec![s(&p.proof_version)?, s(&p.proof_variant)?, p.os_program.clone(), s(&p.output_version)?, format!("0x{base_block:x}"),
                   base_hash.to_string(), p.config_hash.clone(), "0x1".into(), felt::to_hex(&mh)])
 }
 

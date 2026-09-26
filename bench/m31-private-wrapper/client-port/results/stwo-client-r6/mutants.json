@@ -1,0 +1,737 @@
+{
+ "scope": "R0 V6 mutation table (pool-v3-spec \u00a74.4, re-check F7); the F38 pinned-hash test is skipped",
+ "mutants": [
+  {
+   "mutant": "identity over sk0 (V4 handle)",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "circuit_statement_matches_native_and_topology_is_fixed",
+    "identity_handle_is_over_the_in_circuit_ak",
+    "v5_ordinary_equals_v6_under_phi",
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "idle sum1*(1-e1) deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "attacker_mutations_fail_the_circuit",
+    "e1_one_on_dummy_path_and_zero_on_real_input"
+   ]
+  },
+  {
+   "mutant": "(1-x)*withdrawn deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "x_zero_with_exit_and_non_boolean"
+   ]
+  },
+  {
+   "mutant": "(1-x)*intent deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "exit_bit_is_forced_by_an_intent_alone"
+   ]
+  },
+  {
+   "mutant": "identity-flag booleanity deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "identity_flag_is_boolean"
+   ]
+  },
+  {
+   "mutant": "e1 booleanity deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [],
+   "equivalent": "With e1 outside {0, 1}: sum1*(1 - e1) = 0 forces sum1 = 0, so amount1 = 0 (its limbs are range-checked), and e1*(b - a) = 0 with e1 != 0 forces input 1 onto the published root. That is an enabled zero-value input, which e1 = 1 already admits; e1 is not published. The accepted set is unchanged (V5 has the same gadget and no booleanity test either)."
+  },
+  {
+   "mutant": "x booleanity deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "x_zero_with_exit_and_non_boolean"
+   ]
+  },
+  {
+   "mutant": "enabled input 1 root gap deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "attacker_mutations_fail_the_circuit",
+    "e1_one_on_dummy_path_and_zero_on_real_input",
+    "inputs_under_two_assets_are_rejected"
+   ]
+  },
+  {
+   "mutant": "input 0 amount nonzero deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "zero_real_input_fails_on_a_consistent_tree"
+   ]
+  },
+  {
+   "mutant": "token nonzero deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "zero_asset_fails_on_a_consistent_tree"
+   ]
+  },
+  {
+   "mutant": "output receiver nonzero deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "attacker_mutations_fail_the_circuit"
+   ]
+  },
+  {
+   "mutant": "output rho nonzero deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "attacker_mutations_fail_the_circuit"
+   ]
+  },
+  {
+   "mutant": "input sk nonzero deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "zero_input_key_or_randomness_fails_on_a_consistent_tree"
+   ]
+  },
+  {
+   "mutant": "input rho nonzero deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "zero_input_key_or_randomness_fails_on_a_consistent_tree"
+   ]
+  },
+  {
+   "mutant": "shared carry range deleted (payment.rs)",
+   "file": "src/payment.rs",
+   "built": true,
+   "killed_by": [
+    "carry_range_stops_a_mod_p_mint"
+   ]
+  },
+  {
+   "mutant": "shared guess_bits booleanity deleted (merkle.rs)",
+   "file": "src/merkle.rs",
+   "built": true,
+   "killed_by": [
+    "amount_bit_booleanity_stops_a_dummy_that_carries_value",
+    "amount_bit_booleanity_stops_a_limb_at_2_16",
+    "amount_bit_booleanity_stops_a_negative_limb",
+    "identity_flag_is_boolean",
+    "position_bit_booleanity_stops_a_second_nullifier"
+   ]
+  },
+  {
+   "mutant": "mirror: amount-limb range deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "bridge_only_rules"
+   ]
+  },
+  {
+   "mutant": "mirror: valid_until limb range deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "bridge_only_rules",
+    "non_canonical_valid_until_limbs_are_left_to_the_bridge"
+   ]
+  },
+  {
+   "mutant": "mirror: padding deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "bridge_only_rules"
+   ]
+  },
+  {
+   "mutant": "mirror: valid_until != 0 deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "bridge_only_rules",
+    "non_canonical_valid_until_limbs_are_left_to_the_bridge"
+   ]
+  },
+  {
+   "mutant": "mirror: R0C6 tag check deleted",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "bridge_only_rules"
+   ]
+  },
+  {
+   "mutant": "mirror: valid_until at V5 offset (136)",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "bridge_only_rules",
+    "circuit_statement_matches_native_and_topology_is_fixed",
+    "expiry_extremes",
+    "non_canonical_valid_until_limbs_are_left_to_the_bridge"
+   ]
+  },
+  {
+   "mutant": "guessed ak copy (all consumers)",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "guessed ak1 copy",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "guessed ak copy into IDENTITY only (MR-V6-1)",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "guessed ak copy into OWNER0 only",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "guessed nk copy into OWNER0",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "guessed nk copy into OWNER1",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "guessed nk copy into NF0",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "guessed nk copy into NF1",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "guessed sk0 copy into AUTH0",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "guessed sk0 copy into NK0",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "guessed sk1 copy into AUTH1",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: owner0 out into INNER0",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: rho0 into INNER0",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: recv_out0 into INNER_out0",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: inner0 out into NOTE0",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: inner_out0 into NOTE2",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: amount in0 into NOTE0",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: amount out0 into NOTE2",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: token into NOTE1 context",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: pub_ctx into NOTE3 context",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: note0 out into the path leaf",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: note1 out into the path leaf",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: note out into NF cm",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: pack lo into NF",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: position bits into pack",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: position bit into the path",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: withdrawn into conservation",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: amounts into conservation",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: withdrawn into the x gate",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: withdrawn into the published limbs",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: token into token_out",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: pub_ctx into the published limbs",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: root into the published limbs",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: nf into the published limbs",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: cm into the published limbs",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: identity handle into the published limbs",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: e1 into the root gap",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: root into the root gap",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: e1 into idle",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: x into token_out",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: x into the hidden gate",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: root1 into the root gap",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: sum1 into idle",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: token_out into the published limbs",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: identity into the published limbs (MR-V6-1 outcome)",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: path0 node after level 10",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: path1 node after level 10",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: path0 last node into the root",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: path1 node into the next level request",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: intent into the x gate",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: owner1 out into INNER1",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: rho1 into INNER1",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: recv_out1 into INNER_out1",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: rho_out0 into INNER_out0",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: inner1 out into NOTE1",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: inner_out1 into NOTE3",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: amount in1 into NOTE1",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: amount out1 into NOTE3",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: level request into the level hash (NF-M1)",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: published limbs into the outputs (NF-M1)",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "tag limbs guessed, not constants (NF-M2)",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "guessed sk1 copy into NK1",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: pack hi into NF",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: limbs inside publish after the record (A3b)",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: requests inside level_hash after the payload record (A10b)",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "NODE1 domain constants guessed (A8)",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  },
+  {
+   "mutant": "copy: identity flag",
+   "file": "src/payment6.rs",
+   "built": true,
+   "killed_by": [
+    "wiring_uses_the_same_variables"
+   ]
+  }
+ ],
+ "survivors": [],
+ "equivalent": [
+  "e1 booleanity deleted"
+ ],
+ "unbuilt": [],
+ "wiring_misses": []
+}

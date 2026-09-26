@@ -15,7 +15,7 @@ pub mod store;
 pub mod tree;
 
 pub use templar_client_verifier_circuit::payment::Digest;
-pub use templar_client_verifier_circuit::{payment4, payment5};
+pub use templar_client_verifier_circuit::{payment4, payment5, payment6};
 
 /// An error with a stable machine-readable code and a message.
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]

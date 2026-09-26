@@ -24,7 +24,7 @@ import {
   type Window,
 } from './core.js';
 import { TemplarError, fail } from './errors.js';
-import { activePool, canon, pinsOf, sameFelt, versionOf, type NetworkConstants, type PoolConstants } from './network.js';
+import { activePool, canon, r0Generations, routeOf, routePins, sameFelt, versionOf, type Generation, type NetworkConstants, type PoolConstants } from './network.js';
 import { proveInWorker, type ProveOptions } from './prove.js';
 import { ProverClient, type ProverOptions, type RelayStatus } from './prover.js';
 import { WalletStore, type KV } from './store.js';
@@ -107,6 +107,11 @@ export type RecordStage = 'planned' | 'proved' | 'sent_to_server' | 'wrapped' | 
 /** One attempt of a record: a plan, its proof, its server job and its transaction. */
 export interface Attempt {
   plan: Plan;
+  /**
+   * The R0 generation's adapter the plan was made under (docs/pool-v3-spec.md §10.2): its circuit,
+   * relation and route pins. Absent on records from before generations: the pool's first adapter.
+   */
+  adapter?: Hex;
   proved?: Proved;
   server?: { url: string; jobId?: string; body: string };
   result?: ServerResult;
@@ -135,6 +140,16 @@ export interface SpendRecord extends Attempt {
 }
 
 const LIVE = (r: SpendRecord) => r.stage !== 'settled' && r.stage !== 'dead';
+
+/** V5 and V6 plans carry a public `valid_until`. */
+const expiring = (v: Plan['version']): boolean => v === 'v5' || v === 'v6';
+
+/** The R0 generation an attempt was planned under: by its adapter, else the pool's first. */
+export function generationOf(p: PoolConstants, a: Attempt): Generation {
+  const gens = r0Generations(p);
+  if (a.adapter === undefined) return gens[0]!;
+  return gens.find((g) => sameFelt(g.adapter, a.adapter!)) ?? fail('record', 'the record was planned under a generation this release does not pin');
+}
 
 export interface Balance {
   asset: Hex;
@@ -577,11 +592,13 @@ export class Wallet {
    */
   async deposit(account: Account, spec: { asset: AssetSpec; amount: bigint; to?: string }): Promise<{ transactionHash: string; commitment: Digest; confirmed: boolean }> {
     await checkVerifier(this.t.provider, this.t.pool);
-    // No deposit while a verifier change is pending (spec §8.4, AB-PV2).
+    // No deposit while a verifier or route change is pending on either kind (spec §8.4, AB-PV2;
+    // pool-v3-spec §10.3), unless this release pins it as planned (a notice, PV3-8). A route is as
+    // strong as a verifier. A lapsed proposal can no longer apply: it is shown, but blocks nothing
+    // (AB-SP15).
     const pending = await this.proposals();
-    // A lapsed proposal can no longer apply: it is shown, but blocks nothing (AB-SP15).
-    const v = pending.find((p) => p.verifier && !p.lapsed);
-    if (v) fail('verifier_change_pending', `a verifier change can apply from ${new Date(v.eta * 1000).toISOString()}; withdraw instead`);
+    const v = pending.find((p) => (p.verifier || p.route) && !p.lapsed && !p.pinned);
+    if (v) fail('verifier_change_pending', `a ${v.route ? 'route' : 'verifier'} change can apply from ${new Date(v.eta * 1000).toISOString()}; withdraw instead`);
     const to = spec.to ?? (await this.address(0)).address;
     const { standard, contract, id = 0n } = spec.asset;
     const low = (x: bigint) => (x & ((1n << 128n) - 1n)).toString();
@@ -665,9 +682,10 @@ export class Wallet {
    * A plan through the core, with every spent nullifier so it refuses spent inputs (SDK-IM4). A V5
    * plan takes its root, paths and `valid_until` from the one synced block (AB-PV6).
    */
-  private planCore(request: SpendRequest, notes: NoteRef[], required: number[] | null): Plan {
+  private planCore(request: SpendRequest, notes: NoteRef[], required: number[] | null, g: Generation): Plan {
     const companions = this.companions;
-    const v5 = this.version === 'v5' ? { version: 'v5', expiry: this.expiryAt(this.state.block) } : {};
+    // The relation of the generation whose adapter is the pool's R0 verifier now (§10.2).
+    const v5 = expiring(g.version) ? { version: g.version, expiry: this.expiryAt(this.state.block) } : {};
     const req = { chain: this.chain, pool: this.pool, request, notes, companions, required_inputs: required, spent: this.spentList(), ...v5 };
     return json<Plan>(() => wasm.plan_spend(this.keys, JSON.stringify(req), this.tree));
   }
@@ -683,6 +701,7 @@ export class Wallet {
   private async plan(request: SpendRequest): Promise<Spend> {
     const r = await this.sync();
     if (!r.complete) fail('incomplete_sync', r.problems.join('; '));
+    const g = await checkVerifier(this.t.provider, this.t.pool);
     return this.store.lock(async () => {
       this.companions = (await this.store.get<[number, Companion][]>('companions', 'all')) ?? [];
       // Another tab's records count too (SDK-IP17).
@@ -691,7 +710,7 @@ export class Wallet {
       for (const old of await this.records()) {
         if (!old.left && LIVE(old)) await this.writeRecord({ ...old, stage: 'dead', closed: 'superseded' });
       }
-      const plan = this.planCore(request, this.spendable(), null);
+      const plan = this.planCore(request, this.spendable(), null, g);
       const record: SpendRecord = {
         id: randomId(),
         version: 0,
@@ -699,6 +718,7 @@ export class Wallet {
         left: false,
         request,
         plan,
+        adapter: canon(g.adapter),
         inputs: plan.inputs.map((n) => n.index),
         nullifiers: await this.nullifiersOf(plan),
         attempts: [],
@@ -715,25 +735,29 @@ export class Wallet {
   async replan(id: string, request: SpendRequest): Promise<Spend> {
     const r = await this.sync();
     if (!r.complete) fail('incomplete_sync', r.problems.join('; '));
+    // Re-planned under the generation the pool uses now: a V5 record's notes move to V6 at the
+    // cutover (pool-v3-spec §11.3).
+    const g = await checkVerifier(this.t.provider, this.t.pool);
     return this.store.lock(async () => {
       // Re-read after the sync: it may have settled or ended the record (SDK-IP6).
       const rec = await this.record(id);
       if (!rec || !LIVE(rec)) fail('record_closed', 'no live record');
       this.companions = (await this.store.get<[number, Companion][]>('companions', 'all')) ?? [];
       const notes = rec.inputs.map((i) => this.state.notes.find((n) => n.index === i) ?? fail('record', `note ${i} unknown`)).map((n) => this.toRef(n));
-      const plan = this.planCore(request, notes, rec.inputs);
-      const { plan: p, proved, server, result, window, tx } = rec;
+      const plan = this.planCore(request, notes, rec.inputs, g);
+      const { plan: p, adapter, proved, server, result, window, tx } = rec;
       const next: SpendRecord = {
         ...rec,
         request,
         plan,
+        adapter: canon(g.adapter),
         stage: 'planned',
         proved: undefined,
         server: undefined,
         result: undefined,
         window: undefined,
         tx: undefined,
-        attempts: [...rec.attempts, { plan: p, proved, server, result, window, tx }],
+        attempts: [...rec.attempts, { plan: p, adapter, proved, server, result, window, tx }],
       };
       await this.writeRecord(next);
       return new Spend(this, id);
@@ -822,9 +846,9 @@ export class Wallet {
       }
       // Eviction is decided only on a complete sync (SDK-IP6).
       if (!r.left || !this.state.complete) continue;
-      // R0 V5: a record is dead once every attempt's `valid_until` is buried by `DEPTH` blocks
-      // (sdk-spec §9.1 as amended), whatever the leaf count.
-      if (r.plan.version === 'v5') {
+      // R0 V5 and V6: a record is dead once every attempt's `valid_until` is buried by `DEPTH`
+      // blocks (sdk-spec §9.1 as amended), whatever the leaf count.
+      if (expiring(r.plan.version)) {
         const last = Math.max(r.plan.valid_until ?? 0, ...r.attempts.map((a) => a.plan.valid_until ?? 0));
         if (this.state.block - last >= DEPTH) await this.writeRecord({ ...r, stage: 'dead', closed: 'expired' });
         continue;
@@ -902,10 +926,10 @@ export class Spend {
       if (spent().has(key(nf))) fail('companion_spent', 'the companion dummy was already spent');
     }
     // A V5 plan must still be able to land (AB-SM4); otherwise re-plan it.
-    const now = rec.plan.version === 'v5' ? JSON.stringify(this.w.expiryAt((await this.w.context.latest()).block_number)) : 'null';
+    const now = expiring(rec.plan.version) ? JSON.stringify(this.w.expiryAt((await this.w.context.latest()).block_number)) : 'null';
     const proved = await proveInWorker(keys, JSON.stringify(rec.plan), now, opts);
     // The client circuit must be the one the deployed bridge pins (spec §8, SDK-IM5, SDK-IP8).
-    if (JSON.stringify(proved.circuit_hash) !== JSON.stringify(t.pool.circuitHash)) fail('circuit_mismatch', 'the client circuit differs from the pinned one');
+    if (JSON.stringify(proved.circuit_hash) !== JSON.stringify(generationOf(t.pool, rec).circuitHash)) fail('circuit_mismatch', 'the client circuit differs from the pinned one');
     await this.step((r) => ({ ...r, stage: 'proved', proved }));
     return proved;
   }
@@ -931,11 +955,14 @@ export class Spend {
     const rec = await this.record();
     this.version ??= rec.version;
     const proved = rec.proved ?? fail('record', 'prove first');
-    // The server must agree with the pins before the statement leaves (SDK-IP8).
-    const info = await prover.info();
+    // The server must agree with the pins before the statement leaves (SDK-IP8), and serve the
+    // record's generation for its route (§10.2).
+    const g = generationOf(t.pool, rec);
+    await prover.info();
+    const info = await prover.checkRelation(g);
     const latestBlock = async () => (await this.w.context.latest()).block_number;
     let current = rec;
-    const until = current.plan.version === 'v5' ? BigInt(current.plan.valid_until ?? 0) : undefined;
+    const until = expiring(current.plan.version) ? BigInt(current.plan.valid_until ?? 0) : undefined;
     // A statement whose own expiry is near cannot be helped by another job: re-plan (AB-SP18).
     if (until !== undefined && (await latestBlock()) > Number(until) - WINDOW_MARGIN) fail('replan', 'the statement expires too soon; re-plan');
     let jobId = current.server?.url === opts.url ? current.server.jobId : undefined;
@@ -985,7 +1012,11 @@ export class Spend {
       const latest = await latestBlock();
       // R0 V5: the window ends at `send_deadline = min(valid_until, base + max_proof_age)`, and the
       // server's pool call must be exactly the one the wallet built.
-      const window = json<Window>(() => wasm.check_result(JSON.stringify(pinsOf(t.network, t.pool)), proved.binding, JSON.stringify(result), BigInt(latest), until));
+      // The result is checked against the route it names (the server's route key), which must be a
+      // route of the record's generation (§9.5); a pre-cutover server names none.
+      const statement = result.statement ?? g.primary;
+      if (!routeOf(g, statement)) fail('bad_result', 'the result names a route this release does not pin');
+      const window = json<Window>(() => wasm.check_result(JSON.stringify(routePins(t.network, t.pool, g, statement)), proved.binding, JSON.stringify(result), BigInt(latest), until));
       if (until !== undefined && (result.pool_call?.entry_point !== 'apply_spend' || JSON.stringify(result.pool_call?.calldata?.map(canon)) !== JSON.stringify(proved.calldata.map(canon)))) {
         fail('bad_result', 'the server returned another pool call');
       }
@@ -1011,9 +1042,9 @@ export class Spend {
    * JSON text, never re-serialized: its u128 amount and `valid_until` would not survive a JS number.
    */
   private body(r: SpendRecord, proved: Proved, payment?: object): string {
-    if (r.plan.version !== 'v5') return `{"relation":"r4","proof":${JSON.stringify(proved.proof)},"statement":${proved.statement_json}}`;
+    if (!expiring(r.plan.version)) return `{"relation":"r4","proof":${JSON.stringify(proved.proof)},"statement":${proved.statement_json}}`;
     const parts = [
-      `"relation":"r5"`,
+      `"relation":${JSON.stringify(r.plan.version === 'v6' ? 'r6' : 'r5')}`,
       `"proof":${JSON.stringify(proved.proof)}`,
       `"statement":${proved.statement_json}`,
       `"pool_call":${JSON.stringify({ entry_point: 'apply_spend', calldata: proved.calldata })}`,
@@ -1102,7 +1133,10 @@ export class Spend {
     if (latest < window.submit_after) fail('too_early', `wait until block ${window.submit_after}`);
     if (latest > window.valid_until - WINDOW_MARGIN) fail('window_passed', 'wrap again');
     await this.fallbackAllowed(provider, rec, latest);
-    await checkVerifier(provider, t.pool);
+    // The pool must still settle the record's generation: after a cutover a V5 record cannot land,
+    // and is planned again under V6 (pool-v3-spec §11.3).
+    const current = await checkVerifier(provider, t.pool);
+    if (!sameFelt(current.adapter, generationOf(t.pool, rec).adapter)) fail('verifier_changed', 'the pool now settles another relation version; re-plan');
     const warnings = await accountWarnings(provider, account.address);
     const call: Call = { contractAddress: t.pool.pool, entrypoint: 'apply_spend', calldata: proved.calldata };
     const prepared = await prepare(account, call, result.proof, result.proof_facts);

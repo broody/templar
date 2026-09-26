@@ -3,13 +3,53 @@
 import type { Pins } from './core.js';
 import { fail } from './errors.js';
 
+/** A route of a routing adapter (docs/pool-v3-spec.md §6.1): its eight pinned fields. */
+export interface Route {
+  statement: string;
+  statementClass: string;
+  accountTag: string;
+  osProgram: string;
+  /** `facts[0]`, `facts[1]`, `facts[3]`; default PROOF2's `PROOF2`, `VIRTUAL_SNOS`, `VIRTUAL_SNOS0`. */
+  proofVersion?: string;
+  proofVariant?: string;
+  outputVersion?: string;
+  maxProofAge: number;
+}
+
+/**
+ * One generation of a verifier kind (docs/pool-v3-spec.md §10.2): an adapter, its class, and every
+ * pinned state of its route set. A pool's flat fields describe its first R0 generation (a
+ * pre-cutover adapter, read through its storage); `generations` lists routing adapters after it.
+ */
+export interface Generation {
+  relation: 'r4' | 'r5' | 'r6' | 'p1';
+  /** The R0 relation version spends are planned with under this generation. */
+  version: 'v4' | 'v5' | 'v6';
+  adapter: string;
+  adapterClass: string;
+  /** A routing adapter (views) rather than a pre-cutover one (storage). */
+  routing: boolean;
+  /** The client circuit hash (R0), eight u32 little-endian words. */
+  circuitHash?: number[];
+  configHash: string;
+  /** Every route this release knows for the adapter. */
+  routes: Route[];
+  /** The pinned states of `get_routes()`, as sets of statement addresses. */
+  routeStates: string[][];
+  /** Route changes this release pins as planned (§10.3): shown as notices, not alarms. */
+  plannedProposals?: { statement: string; route: Route | null }[];
+  /** The route new spends are proved for: the one the service's prover server serves. */
+  primary: string;
+}
+
 export interface PoolConstants {
   /** The pool address. */
   pool: string;
   deploymentBlock: number;
   /**
-   * The spend relation: `v4` (pool V2, R0 V4) or `v5` (pool V3, R0 V5, with a public expiry,
-   * docs/account-bound-note-spec.md). Absent means `v4`.
+   * The pool's ABI and its first relation: `v4` (pool V2, R0 V4) or `v5` (pool V3, R0 V5 with a
+   * public expiry, docs/account-bound-note-spec.md). Absent means `v4`. Later R0 relations on pool
+   * V3 (R0 V6) come with their generation.
    */
   version?: 'v4' | 'v5';
   /**
@@ -29,6 +69,10 @@ export interface PoolConstants {
   maxProofAge: number;
   /** The client circuit hash, eight u32 little-endian words. */
   circuitHash: number[];
+  /** Pool V3: routing adapters after the flat fields' generation (docs/pool-v3-spec.md §10.2). */
+  generations?: { r0?: Generation[]; p1?: Generation[] };
+  /** Pool V3: the pre-cutover P1 adapter and its class, so the P1 kind is watched too (PR2-1). */
+  p1Adapter?: { adapter: string; adapterClass: string };
 }
 
 export interface TokenInfo {
@@ -106,17 +150,61 @@ export function versionOf(p: PoolConstants): 'v4' | 'v5' {
   return p.version ?? 'v4';
 }
 
-export function pinsOf(n: NetworkConstants, p: PoolConstants): Pins {
+/** The flat fields' generation: the pool's first R0 adapter (pre-cutover, storage-pinned). */
+export function legacyGeneration(p: PoolConstants): Generation {
+  const v = versionOf(p);
+  return {
+    relation: v === 'v5' ? 'r5' : 'r4',
+    version: v,
+    adapter: p.adapter,
+    adapterClass: p.adapterClass,
+    routing: false,
+    circuitHash: p.circuitHash,
+    configHash: p.configHash,
+    routes: [{ statement: p.statement, statementClass: p.statementClass, accountTag: p.accountTag, osProgram: p.osProgram, maxProofAge: p.maxProofAge }],
+    routeStates: [[p.statement]],
+    primary: p.statement,
+  };
+}
+
+/** Every R0 generation this release pins, oldest first. */
+export function r0Generations(p: PoolConstants): Generation[] {
+  return [legacyGeneration(p), ...(p.generations?.r0 ?? [])];
+}
+
+/** Every P1 generation this release pins (pool V3), oldest first; empty when P1 is not pinned. */
+export function p1Generations(p: PoolConstants): Generation[] {
+  const legacy: Generation[] = p.p1Adapter
+    ? [{ relation: 'p1', version: 'v5', adapter: p.p1Adapter.adapter, adapterClass: p.p1Adapter.adapterClass, routing: false, configHash: p.configHash, routes: [], routeStates: [], primary: '0x0' }]
+    : [];
+  return [...legacy, ...(p.generations?.p1 ?? [])];
+}
+
+/** A generation's route by its statement address (the route key). */
+export function routeOf(g: Generation, statement: string): Route | undefined {
+  return g.routes.find((r) => sameFelt(r.statement, statement));
+}
+
+/** The pins of one route (docs/pool-v3-spec.md §9.5, §10.2), for checking a result against it. */
+export function routePins(n: NetworkConstants, p: PoolConstants, g: Generation, statement: string = g.primary): Pins {
+  const r = routeOf(g, statement) ?? fail('bad_result', 'a route this release does not pin');
   return {
     chain: n.chainId,
     pool: p.pool,
-    statement: p.statement,
-    statement_class: p.statementClass,
-    account_tag: p.accountTag,
-    os_program: p.osProgram,
-    config_hash: p.configHash,
-    max_proof_age: p.maxProofAge,
+    statement: r.statement,
+    statement_class: r.statementClass,
+    account_tag: r.accountTag,
+    os_program: r.osProgram,
+    config_hash: g.configHash,
+    max_proof_age: r.maxProofAge,
+    proof_version: r.proofVersion ?? 'PROOF2',
+    proof_variant: r.proofVariant ?? 'VIRTUAL_SNOS',
+    output_version: r.outputVersion ?? 'VIRTUAL_SNOS0',
   };
+}
+
+export function pinsOf(n: NetworkConstants, p: PoolConstants): Pins {
+  return routePins(n, p, legacyGeneration(p));
 }
 
 /** Canonical felt text: lowercase, no leading zeros. Malformed text is a `bad_felt` error. */

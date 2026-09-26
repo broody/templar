@@ -240,10 +240,11 @@ pub fn revealed_fri_values(proof: &CircuitProof<Blake2sMerkleHasher>) -> usize {
 }
 
 /// The relation a hiding audit runs on (F27): `--relation r0` (default, the committed V3
-/// baselines), `r5` or `r5-bound`, and for R0 V5 `--shape S`. Removes the flags from `args`.
+/// baselines), `r5`, `r5-bound` or `r6`, and for R0 V5 and V6 `--shape S`. Removes the flags from `args`.
 pub enum Witness {
     R0(templar_client_verifier_circuit::payment::Public, templar_client_verifier_circuit::payment::Private),
     R5(templar_client_verifier_circuit::payment5::Public, templar_client_verifier_circuit::payment5::Private),
+    R6(templar_client_verifier_circuit::payment6::Public, templar_client_verifier_circuit::payment6::Private),
 }
 
 impl Witness {
@@ -283,6 +284,22 @@ impl Witness {
                 let (p, w) = payment5::fresh_shape(tree, shape, mode, rng);
                 Witness::R5(p, w)
             }
+            "r6" => {
+                use templar_client_verifier_circuit::payment6;
+                let shape = match shape.as_str() {
+                    "transfer" => payment6::Shape::Transfer,
+                    "single" => payment6::Shape::Single,
+                    "one-out" => payment6::Shape::OneOut,
+                    "partial" => payment6::Shape::Partial,
+                    "full" => payment6::Shape::Full,
+                    "invoke" => payment6::Shape::Invoke,
+                    "shadow" => payment6::Shape::Shadow,
+                    "nft" => payment6::Shape::Nft,
+                    other => panic!("unknown shape {other}"),
+                };
+                let (p, w) = payment6::fresh_shape(tree, shape, rng);
+                Witness::R6(p, w)
+            }
             other => panic!("unknown relation {other}"),
         };
         (witness, format!("{relation} {shape}"))
@@ -292,6 +309,7 @@ impl Witness {
         match self {
             Witness::R0(..) => templar_client_verifier_circuit::payment::N_OUTPUTS,
             Witness::R5(..) => templar_client_verifier_circuit::payment5::N_OUTPUTS,
+            Witness::R6(..) => templar_client_verifier_circuit::payment6::N_OUTPUTS,
         }
     }
 
@@ -300,6 +318,7 @@ impl Witness {
         match self {
             Witness::R0(p, w) => payment::build(c, payment::Tree::Compress, p, w),
             Witness::R5(p, w) => payment5::build(c, payment::Tree::Compress, p, w),
+            Witness::R6(p, w) => templar_client_verifier_circuit::payment6::build(c, payment::Tree::Compress, p, w),
         }
     }
 

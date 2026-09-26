@@ -33,5 +33,6 @@ pub mod membership;
 pub mod payment;
 pub mod payment4;
 pub mod payment5;
+pub mod payment6;
 pub mod policy;
 pub mod prove;

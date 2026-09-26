@@ -225,14 +225,29 @@ A failed job reports its stage; resubmission is safe.
   are measured again from a V6 virtual-OS run on live Sepolia state (ADR-0027 phase C); if the
   OS result does not report Blake, the prover binary checks it (R0 V6, ADR-0027: pending
   implementation).
-- **The bucket check** (`docs/pool-v3-spec.md` §9.3; R0 V6, ADR-0027: pending implementation).
-  Before proving, the server asserts that the job's component sizes fit the pinned PROOF2 leaf
-  bucket, so that every spend has the same public PROOF2 header. This replaces the account-class
-  allowlist and the padding.
+- **The bucket check** (`docs/pool-v3-spec.md` §9.3; R0 V6, ADR-0027 phase C). Before proving,
+  the server asserts that the job's component sizes fit the pinned PROOF2 leaf bucket, so that
+  every spend has the same public PROOF2 header. This replaces the account-class allowlist and the
+  padding.
+  - **What is pinned.** The proof header's preprocessed root maps one-to-one to the leaf Cairo
+    trace log size, `max(25, the largest component's log size)`; the component sizes themselves are
+    witness of the leaf circuit. `prover.bucket_log_size` (default 25) is the pinned size.
+  - **How.** For routed relations, a `bucket` stage runs `templar-prove bucket JOB_DIR` after the OS
+    caps: it runs the leaf bootloader on the PIE and writes the base trace only (no commitments,
+    FRI or circuit), as proving does, and reports the enabled components' log sizes and the leaf
+    trace log size, computed as the Cairo prover computes its trace domain. A job that misses the
+    bucket is not proved; the bridge pre-check already fixed the proof's structure, so the miss is
+    always the server's fault (refunded) and the note backs off. After proving,
+    `prove-result.json`'s `leaf_trace_log_size`, read from the proof's header, must match too.
+    Results report `timings.bucket_seconds`; `/v1/info` publishes `r6.bucket_log_size` (25 to 29,
+    default 25).
   - **Fault** (PR2-12). A failure is the client's fault only when `proof_data` deviates from the
     pinned proof structure for the statement's shape; its tickets then stay spent. Otherwise it
     is the server's fault, and the tickets are refunded.
-  - The server runs a reference job against the bucket at startup and after every route switch.
+  - The server runs a reference job against the bucket at startup (`prover.bucket_reference`, a
+    routed spend's `os.pie.zip`, required to serve a routed relation) and refuses to start if it
+    misses. A route switch is a new release, so the restart that deploys it checks again.
+  - P1's leaf size is not measured yet; measure it before routing P1 jobs through the bucket.
 - **Result:** `send_deadline = min(statement.valid_until, base_block + max_proof_age)` in place
   of `valid_until`, and the `pool_call` the relayer settles. A failed job releases its note, which
   backs off, doubling per failure. For `r6`, `max_proof_age` is the route's (§8), and each result

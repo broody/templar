@@ -16,3 +16,6 @@ mod hidden_asset_vectors;
 mod test_hidden_asset_e2e;
 mod test_pool_v3;
 mod binding_v5_vectors;
+mod binding_v6_vectors;
+mod routing_vectors;
+mod test_routing_adapter;

@@ -149,6 +149,10 @@ describe('receiving, spending and submission', () => {
         expect(f.keys[0]!.map((k) => BigInt(k)).sort()).toEqual(selectors);
       } else if (c.method === 'callContract') {
         expect(['get_verifier', 'get_leaf_count', 'get_root', 'balance_of']).toContain(c.args[1]);
+      } else if (c.method === 'getClassHashAt' || c.method === 'getStorageAt') {
+        // The verifier's pins, re-read before planning (pool-v3-spec §10.2): only the pinned adapter
+        // and statement account, never a note.
+        expect([chain.pool.adapter, chain.pool.statement].map((x) => BigInt(x))).toContain(BigInt(c.args[0] as string));
       } else {
         expect(['getBlockLatestAccepted', 'getBlockWithTxHashes', 'specVersion', 'estimate', 'fetch', 'invokeSignedTx']).toContain(c.method);
       }

@@ -11,7 +11,9 @@ pub const MAX_PROOF_BYTES: usize = 480_000;
 /// Blocks after the base block before the sequencer accepts the proof.
 pub const SUBMIT_DELAY: u64 = 11;
 
-/// The pinned constants of one pool's R4 relation (spec §10.2).
+/// The pinned constants of one route (spec §10.2; `docs/pool-v3-spec.md` §6.1): a pre-cutover
+/// adapter's single route, or one route of a routing adapter's pinned state. The proof version,
+/// variant and output version default to today's PROOF2 values.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Pins {
     pub chain: String,
@@ -22,6 +24,22 @@ pub struct Pins {
     pub os_program: String,
     pub config_hash: String,
     pub max_proof_age: u64,
+    #[serde(default = "proof2")]
+    pub proof_version: String,
+    #[serde(default = "virtual_snos")]
+    pub proof_variant: String,
+    #[serde(default = "virtual_snos0")]
+    pub output_version: String,
+}
+
+fn proof2() -> String {
+    "PROOF2".into()
+}
+fn virtual_snos() -> String {
+    "VIRTUAL_SNOS".into()
+}
+fn virtual_snos0() -> String {
+    "VIRTUAL_SNOS0".into()
 }
 
 /// The server's result, as `GET /v1/jobs/{id}` returns it.
@@ -31,6 +49,10 @@ pub struct ServerResult {
     pub proof_facts: Vec<String>,
     pub base_block: u64,
     pub binding: String,
+    /// The route key (pool-v3-spec §9.5, PR2-3): the statement account whose message the proof
+    /// carries. A pre-cutover server omits it.
+    #[serde(default)]
+    pub statement: Option<String>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -62,15 +84,21 @@ pub fn check(pins: &Pins, binding: &str, r: &ServerResult, latest_block: u64, st
     if felt::parse(&r.binding).map_err(|_| bad("binding"))? != binding {
         return Err(bad("the result is for another binding"));
     }
+    // A result that names its route must name the route these pins are for.
+    if let Some(s) = &r.statement {
+        if felt::parse(s).map_err(|_| bad("statement"))? != felt::parse(&pins.statement)? {
+            return Err(bad("the result names another route"));
+        }
+    }
     let facts: Vec<Felt32> = r.proof_facts.iter().map(|f| felt::parse(f)).collect::<Result<_>>().map_err(|_| bad("facts"))?;
     if facts.len() != 9 {
         return Err(bad("facts: not nine entries"));
     }
     let expect = [
-        (0, felt::from_short_string("PROOF2")?, "proof version"),
-        (1, felt::from_short_string("VIRTUAL_SNOS")?, "variant"),
+        (0, felt::from_short_string(&pins.proof_version)?, "proof version"),
+        (1, felt::from_short_string(&pins.proof_variant)?, "variant"),
         (2, felt::parse(&pins.os_program)?, "OS program"),
-        (3, felt::from_short_string("VIRTUAL_SNOS0")?, "output version"),
+        (3, felt::from_short_string(&pins.output_version)?, "output version"),
         (4, felt::from_u128(r.base_block as u128), "base block"),
         (6, felt::parse(&pins.config_hash)?, "config hash"),
         (7, felt::from_u128(1), "message count"),
@@ -98,4 +126,58 @@ pub fn check(pins: &Pins, binding: &str, r: &ServerResult, latest_block: u64, st
         return Err(bad("the result can never land: its deadline is before submit_after"));
     }
     Ok(Window { submit_after, valid_until })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn pins() -> Pins {
+        serde_json::from_value(serde_json::json!({
+            "chain": "0x534e5f5345504f4c4941", "pool": "0x7e57b301", "statement": "0x5a7e", "statement_class": "0xc1a5",
+            "account_tag": "TMPZR0_PAYMENT_V6", "os_program": "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+            "config_hash": "0xc0f", "max_proof_age": 512,
+        }))
+        .unwrap()
+    }
+
+    fn result(p: &Pins, binding: &str, base: u64) -> ServerResult {
+        let mh = message_hash(p, &felt::parse(binding).unwrap()).unwrap();
+        let s = |x: &str| felt::to_hex(&felt::from_short_string(x).unwrap());
+        ServerResult {
+            proof: "AAAA".into(),
+            proof_facts: vec![s("PROOF2"), s("VIRTUAL_SNOS"), p.os_program.clone(), s("VIRTUAL_SNOS0"), format!("0x{base:x}"), "0xb10c".into(),
+                              p.config_hash.clone(), "0x1".into(), felt::to_hex(&mh)],
+            base_block: base,
+            binding: binding.into(),
+            statement: Some(p.statement.clone()),
+        }
+    }
+
+    /// Route pins (pool-v3-spec §9.5, §10.2): the proof version, variant and output version default
+    /// to PROOF2's, the route's own age bounds the window, and a result that names another route is
+    /// refused.
+    #[test]
+    fn route_pins_and_route_key() {
+        let p = pins();
+        assert_eq!((p.proof_version.as_str(), p.proof_variant.as_str(), p.output_version.as_str()), ("PROOF2", "VIRTUAL_SNOS", "VIRTUAL_SNOS0"));
+        let r = result(&p, "0xb1d", 1000);
+        assert_eq!(check(&p, "0xb1d", &r, 1005, Some(9000)).unwrap(), Window { submit_after: 1011, valid_until: 1512 });
+        let mut other = r.clone();
+        other.statement = Some("0x5a7f".into());
+        assert_eq!(check(&p, "0xb1d", &other, 1005, None).unwrap_err().code, "bad_result");
+        let mut none = r.clone();
+        none.statement = None;
+        check(&p, "0xb1d", &none, 1005, None).unwrap();
+        // A route pinning another output version refuses PROOF2's facts.
+        let mut q = p.clone();
+        q.output_version = "VIRTUAL_SNOS1".into();
+        assert!(check(&q, "0xb1d", &r, 1005, None).unwrap_err().message.contains("output version"));
+        // Another route's statement: another message hash.
+        let mut q = p.clone();
+        q.statement = "0x5a7f".into();
+        let mut r2 = r.clone();
+        r2.statement = None;
+        assert!(check(&q, "0xb1d", &r2, 1005, None).unwrap_err().message.contains("message hash"));
+    }
 }

@@ -21,3 +21,6 @@ bench/m31-statement/results/rank-substrate.json
 docs/guide/src/pages.gen.ts
 # Local tooling configs
 opencode.json
+
+# Mutation-table crate copies (client-port/mutate_r6.py)
+bench/m31-private-wrapper/.mut-*/

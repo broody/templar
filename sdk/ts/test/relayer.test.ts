@@ -12,7 +12,7 @@ import { beforeAll, describe, expect, test } from 'vitest';
 import * as wasm from '../wasm/templar.js';
 import initTest, * as twasm from '../wasm-test/templar_test.js';
 import { FALLBACK_MARGIN, MemoryKV, SEPOLIA, Templar, loadCore, pinsOf, type NetworkConstants } from '../dist/index.js';
-import { Relayer, fileStore, type RelayerState, type StateStore } from '../dist/relayer.js';
+import { Relayer, fileStore, isVerifierRejection, type RelayerState, type StateStore } from '../dist/relayer.js';
 import { MockChain, MockProver, SEL } from './mockchain.js';
 
 const TOKEN = '0x39f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8';
@@ -89,6 +89,15 @@ function otherNotes(body: string, k: number): string {
   return JSON.stringify(b);
 }
 
+test('verifier and route rejections are recognized, as text or hex', () => {
+  expect(isVerifierRejection("Failure reason: 0x4e4f5f524f555445 ('NO_ROUTE')")).toBe(true);
+  expect(isVerifierRejection('Failure reason: 0x524f5554455f434c415353')).toBe(true);
+  expect(isVerifierRejection("Failure reason: 'PROOF_AGE'")).toBe(true);
+  expect(isVerifierRejection("Failure reason: 0x4e554c4c49464945525f5350454e54 ('NULLIFIER_SPENT')")).toBe(false);
+  expect(isVerifierRejection('')).toBe(false);
+  expect(isVerifierRejection('NO_ROUTES_HERE')).toBe(false);
+});
+
 describe('the relayer', () => {
   test('takes a result, waits for its submit block, claims, submits, and answers the job', async () => {
     const { chain, spend, prover, client, relayer } = await relayedSpend();
@@ -157,9 +166,16 @@ describe('the relayer', () => {
     expect(await relayer.tick()).toEqual([]);
     // It reverts: its notes are denied for good (AB-RL7), and the pause ends.
     chain.txStatus.set('0xa0007', { finality_status: 'ACCEPTED_ON_L2', execution_status: 'REVERTED' });
+    chain.txRevert.set('0xa0007', 'Error in the called contract: 0x4e554c4c49464945525f5350454e54 (\'NULLIFIER_SPENT\')');
     expect((await relayer.tick()).map((o) => o.id)).toEqual(['c']);
     expect(Object.keys(state.s!.denied).length).toBe(2);
     expect(Object.keys(state.s!.inflight)).toEqual(['0xa0009']);
+    // A verifier or route rejection is no verdict on the notes (docs/pool-v3-spec.md §7.3): not denied.
+    chain.txStatus.set('0xa0009', { finality_status: 'ACCEPTED_ON_L2', execution_status: 'REVERTED' });
+    chain.txRevert.set('0xa0009', 'Error in the called contract (0x6a4b): Execution failed. Failure reason: 0x4e4f5f524f555445 (\'NO_ROUTE\').');
+    await relayer.tick();
+    expect(Object.keys(state.s!.inflight)).toEqual([]);
+    expect(Object.keys(state.s!.denied).length).toBe(2);
   }, 120_000);
 
   test('refuses what the pool would refuse or it will not relay, with a reason; waits on a lagging node', async () => {

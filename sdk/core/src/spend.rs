@@ -10,8 +10,8 @@ use rand_core::{CryptoRng, RngCore};
 use serde::{Deserialize, Serialize};
 use templar_client_verifier_circuit::payment::{DEPTH, Identity, Input};
 use templar_client_verifier_circuit::payment4::{self, Output};
-use templar_client_verifier_circuit::payment5;
-use templar_client_verifier_circuit::prove::{self, R4, R5, TREE};
+use templar_client_verifier_circuit::{payment5, payment6};
+use templar_client_verifier_circuit::prove::{self, R4, R5, R6, TREE};
 
 use crate::address::Address;
 use crate::felt::{self, Felt32};
@@ -43,7 +43,7 @@ pub struct Expiry {
 /// ahead of the latest block, and not beyond what the pool accepts (`E + Q`). A plan that fails
 /// is re-planned with a fresh root and expiry (AB-PV6).
 pub fn check_fresh(plan: &Plan, now: &Expiry) -> Result<()> {
-    if plan.version != Version::V5 {
+    if !plan.version.expiring() {
         return Ok(());
     }
     let v = plan.valid_until;
@@ -300,8 +300,8 @@ pub fn plan(p: PlanInput, rng: &mut (impl RngCore + CryptoRng)) -> Result<Plan> 
     let pool_ref = PoolRef::new(p.chain, p.pool, p.version)?;
     let valid_until = match (p.version, &p.expiry) {
         (Version::V4, _) => 0,
-        (Version::V5, Some(e)) => valid_until(e)?,
-        (Version::V5, None) => return Err(Error::input("a V5 spend needs the pool's expiry rules and the latest block")),
+        (Version::V5 | Version::V6, Some(e)) => valid_until(e)?,
+        (Version::V5 | Version::V6, None) => return Err(Error::input("a V5 or V6 spend needs the pool's expiry rules and the latest block")),
     };
     let account = p.keys.account(pool_ref.chain(), pool_ref.pool(), account_index)?;
     let mut total: u128 = 0;
@@ -390,7 +390,7 @@ pub fn plan(p: PlanInput, rng: &mut (impl RngCore + CryptoRng)) -> Result<Plan> 
 /// The server recomputes each commitment with the published asset and amount 0. `None` for any
 /// other plan, which pays a ticket instead.
 pub fn free_withdrawal_openings(plan: &Plan) -> Result<Option<[Digest; 2]>> {
-    if plan.version != Version::V5 || u128_of(&plan.withdrawal_amount)? == 0 || plan.outputs.iter().any(|o| o.amount != "0") {
+    if !plan.version.expiring() || u128_of(&plan.withdrawal_amount)? == 0 || plan.outputs.iter().any(|o| o.amount != "0") {
         return Ok(None);
     }
     Ok(Some([note::inner(&plan.outputs[0].receiver, &plan.outputs[0].rho), note::inner(&plan.outputs[1].receiver, &plan.outputs[1].rho)]))
@@ -403,6 +403,7 @@ pub fn free_withdrawal_openings(plan: &Plan) -> Result<Option<[Digest; 2]>> {
 pub enum Statement {
     V4(payment4::Public),
     V5(payment5::Public),
+    V6(payment6::Public),
 }
 
 impl Serialize for Statement {
@@ -410,6 +411,7 @@ impl Serialize for Statement {
         match self {
             Statement::V4(p) => p.serialize(s),
             Statement::V5(p) => p.serialize(s),
+            Statement::V6(p) => p.serialize(s),
         }
     }
 }
@@ -419,30 +421,35 @@ impl Statement {
         match self {
             Statement::V4(_) => Version::V4,
             Statement::V5(_) => Version::V5,
+            Statement::V6(_) => Version::V6,
         }
     }
     pub fn root(&self) -> Digest {
         match self {
             Statement::V4(p) => p.root,
             Statement::V5(p) => p.root,
+            Statement::V6(p) => p.root,
         }
     }
     pub fn nullifiers(&self) -> [Digest; 2] {
         match self {
             Statement::V4(p) => p.nullifiers,
             Statement::V5(p) => p.nullifiers,
+            Statement::V6(p) => p.nullifiers,
         }
     }
     pub fn commitments(&self) -> [Digest; 2] {
         match self {
             Statement::V4(p) => p.commitments,
             Statement::V5(p) => p.commitments,
+            Statement::V6(p) => p.commitments,
         }
     }
     pub fn token_out(&self) -> &str {
         match self {
             Statement::V4(p) => &p.token_out,
             Statement::V5(p) => &p.token_out,
+            Statement::V6(p) => &p.token_out,
         }
     }
     /// `TMR0_BIND_V4` or `TMR0_BIND_V5`: the bridge's and the pool's binding.
@@ -450,6 +457,7 @@ impl Statement {
         match self {
             Statement::V4(p) => binding(p),
             Statement::V5(p) => binding5(p),
+            Statement::V6(p) => binding5(&as_v5(p)),
         }
     }
     /// `apply_spend(spend, proof)` calldata for the statement's pool.
@@ -457,6 +465,7 @@ impl Statement {
         match self {
             Statement::V4(p) => calldata(p, ciphertexts),
             Statement::V5(p) => calldata5(p, ciphertexts),
+            Statement::V6(p) => calldata5(&as_v5(p), ciphertexts),
         }
     }
 }
@@ -466,6 +475,7 @@ impl Statement {
 pub enum Witness {
     V4(payment4::Private),
     V5(payment5::Private),
+    V6(payment6::Private),
 }
 
 /// Rebuilds the relation's witness and statement from a plan, with every check the bridge runs.
@@ -483,7 +493,7 @@ pub fn witness(keys: &Seed, plan: &Plan) -> Result<(Statement, Witness)> {
     let (chain_s, pool_s, asset_s) = (felt::to_hex(&chain), felt::to_hex(&pool), felt::to_hex(&asset));
     match plan.version {
         Version::V4 if plan.valid_until != 0 => return Err(Error::input("a V4 plan has no expiry")),
-        Version::V5 if plan.valid_until == 0 || plan.valid_until >= payment5::VALID_UNTIL_BOUND => {
+        Version::V5 | Version::V6 if plan.valid_until == 0 || plan.valid_until >= payment5::VALID_UNTIL_BOUND => {
             return Err(Error::input("valid_until out of range"));
         }
         _ => {}
@@ -562,6 +572,13 @@ pub fn witness(keys: &Seed, plan: &Plan) -> Result<(Statement, Witness)> {
             payment5::bridge_checks(&public).map_err(|e| Error::new("bridge_would_reject", e))?;
             (Statement::V5(public), Witness::V5(private))
         }
+        Version::V6 => {
+            let private = payment6::Private { token: asset_s.clone(), inputs, dummy, outputs, identity: Identity::default() };
+            let public = payment6::statement(TREE, &chain_s, &pool_s, deliveries, (recipient_s, w_amount), "0x0", plan.valid_until, &private)
+                .map_err(|e| Error::new("invalid_spend", e))?;
+            payment6::bridge_checks(&public).map_err(|e| Error::new("bridge_would_reject", e))?;
+            (Statement::V6(public), Witness::V6(private))
+        }
     };
     if statement.root() != plan.root {
         return Err(Error::new("invalid_spend", "an input is not under the plan's root"));
@@ -592,6 +609,17 @@ pub fn binding(p: &payment4::Public) -> Result<Felt32> {
 }
 
 /// `Poseidon('TMR0_BIND_V5', …)`: V4's fields, then `valid_until`; never the account (spec §5.2).
+/// A V6 statement as the V5 one with the same fields and a zero account (pool-v3-spec §3): the
+/// binding and the pool calldata never read the account, so V6 shares V5's encoders.
+fn as_v5(p: &payment6::Public) -> payment5::Public {
+    payment5::Public {
+        chain: p.chain.clone(), pool: p.pool.clone(), token_out: p.token_out.clone(), root: p.root, nullifiers: p.nullifiers,
+        commitments: p.commitments, deliveries: p.deliveries.clone(), withdrawal_recipient: p.withdrawal_recipient.clone(),
+        withdrawal_amount: p.withdrawal_amount, intent: p.intent.clone(), identity: p.identity, account: "0x0".into(),
+        valid_until: p.valid_until,
+    }
+}
+
 pub fn binding5(p: &payment5::Public) -> Result<Felt32> {
     let f = |s: &str| felt::parse(s);
     let mut b = vec![felt::from_short_string("TMR0_BIND_V5")?, f(&p.chain)?, f(&p.pool)?, f(&p.token_out)?];
@@ -676,8 +704,8 @@ pub struct Proved {
 /// rules and the latest block, and is refused when it can no longer land (AB-SM4).
 pub fn prove_plan(keys: &Seed, plan: &Plan, now: Option<&Expiry>, rng: &mut (impl RngCore + CryptoRng)) -> Result<Proved> {
     match (plan.version, now) {
-        (Version::V5, Some(now)) => check_fresh(plan, now)?,
-        (Version::V5, None) => return Err(Error::input("proving a V5 plan needs the pool's expiry rules and the latest block")),
+        (Version::V5 | Version::V6, Some(now)) => check_fresh(plan, now)?,
+        (Version::V5 | Version::V6, None) => return Err(Error::input("proving a V5 or V6 plan needs the pool's expiry rules and the latest block")),
         (Version::V4, _) => {}
     }
     let (statement, witness) = witness(keys, plan)?;
@@ -686,6 +714,7 @@ pub fn prove_plan(keys: &Seed, plan: &Plan, now: Option<&Expiry>, rng: &mut (imp
     let proved = match (&statement, &witness) {
         (Statement::V4(public), Witness::V4(private)) => prove::prove(&R4(public, private), blinding, Some(MAX_FRI_COLUMNS)),
         (Statement::V5(public), Witness::V5(private)) => prove::prove(&R5(public, private), blinding, Some(MAX_FRI_COLUMNS)),
+        (Statement::V6(public), Witness::V6(private)) => prove::prove(&R6(public, private), blinding, Some(MAX_FRI_COLUMNS)),
         _ => unreachable!("witness returns matching versions"),
     }
     .map_err(|e| Error::new("proving", e))?;

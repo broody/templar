@@ -921,7 +921,10 @@ async fn relay_list(State(rs): State<Arc<RelayState>>, headers: HeaderMap) -> Re
     let mut jobs: Vec<(u64, Value)> = reg
         .relay
         .iter()
-        .map(|(id, i)| (i.deadline, json!({"id": id, "result": i.result, "nullifiers": i.nullifiers, "root": i.root, "send_deadline": i.deadline})))
+        // Each item names its relation and route key (pool-v3-spec §7.3, §9.5), so a relayer serving
+        // both generations checks the verifier and the route per item.
+        .map(|(id, i)| (i.deadline, json!({"id": id, "relation": i.result.get("relation"), "statement": i.result.get("statement"),
+                                           "result": i.result, "nullifiers": i.nullifiers, "root": i.root, "send_deadline": i.deadline})))
         .collect();
     jobs.sort_by_key(|(d, _)| *d);
     (StatusCode::OK, Json(json!({"jobs": jobs.into_iter().map(|(_, j)| j).collect::<Vec<_>>(), "relay_margin_blocks": margin})))
@@ -1240,7 +1243,8 @@ mod tests {
 
 /// Admission end to end (spec §9, ticket states) with the real R5 bridge and a stub node:
 /// `TEMPLAR_R5_BRIDGE=<built bridge> TEMPLAR_SDK_PROOFS=<sdk-proofs dir> TEMPLAR_CGROUP=<delegated cgroup>
-/// cargo test --release -- --ignored admission_r5`.
+/// cargo test --release -- --ignored admission_r5`. `TEMPLAR_TEST_DIR` roots the scratch
+/// directories (default: the system's temporary directory).
 #[cfg(test)]
 mod admission {
     use super::*;
@@ -1249,6 +1253,12 @@ mod admission {
     use crate::tickets::{issuer, IssuerKeyConfig, PaymentConfig, PricedAsset, RefundKeyConfig};
 
     type Calls = Arc<Mutex<HashMap<Felt, Vec<Felt>>>>;
+
+    /// The tests' scratch root: `TEMPLAR_TEST_DIR` when set (keep runtime directories out of
+    /// /tmp), else the system's temporary directory.
+    fn scratch_root() -> std::path::PathBuf {
+        std::env::var_os("TEMPLAR_TEST_DIR").map(std::path::PathBuf::from).unwrap_or_else(std::env::temp_dir)
+    }
 
     async fn stub(calls: Calls, block: Arc<std::sync::atomic::AtomicU64>) -> String {
         let app = axum::Router::new().route("/", axum::routing::post(move |Json(req): Json<Value>| {
@@ -1286,7 +1296,7 @@ mod admission {
         else {
             panic!("set TEMPLAR_R5_BRIDGE, TEMPLAR_SDK_PROOFS and TEMPLAR_CGROUP");
         };
-        let tmp = std::env::temp_dir().join(format!("templar-admission-{}", rand::random::<u32>()));
+        let tmp = scratch_root().join(format!("templar-admission-{}", rand::random::<u32>()));
         issuer::keygen(&tmp.join("keys"), "test").unwrap();
         let sk = issuer::load_secret(&tmp.join("keys/test.key.pem")).unwrap();
         let pk = issuer::load_public(&tmp.join("keys/test.pub.pem")).unwrap();
@@ -1491,6 +1501,180 @@ mod admission {
         let t = state.tickets.clone().unwrap();
         let r = t.reserve(&[Ticket::parse(&minted[3]).unwrap()], vec![issuer::refund_request(&pk).unwrap().0], unix_now()).unwrap();
         t.release(&r);
+        let _ = std::fs::remove_dir_all(&tmp);
+    }
+
+    /// R0 V6 through a routing adapter (pool-v3-spec §9.2, §9.5) with the real V6 bridge and a stub
+    /// node: `TEMPLAR_R6_BRIDGE=<built bridge> TEMPLAR_R6_PROOFS=<sdk-proofs dir with v6-*>
+    /// TEMPLAR_CGROUP=<delegated cgroup> cargo test --release -- --ignored admission_r6`. A V6
+    /// transfer passes the route pins and the bridge pre-check and reaches proving; a V5 body, a
+    /// changed route, a route set that is not pinned, a due change of the own route and another
+    /// verifier (dormancy) are each refused before the pre-check.
+    #[tokio::test]
+    #[ignore]
+    async fn admission_r6_routed() {
+        let (Ok(bridge), Ok(proofs), Ok(cgroup)) =
+            (std::env::var("TEMPLAR_R6_BRIDGE"), std::env::var("TEMPLAR_R6_PROOFS"), std::env::var("TEMPLAR_CGROUP"))
+        else {
+            panic!("set TEMPLAR_R6_BRIDGE, TEMPLAR_R6_PROOFS and TEMPLAR_CGROUP");
+        };
+        let tmp = scratch_root().join(format!("templar-admission-r6-{}", rand::random::<u32>()));
+        let mut cfg = Config::load(std::path::Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../deploy/prover.example.toml"))).unwrap();
+        cfg.server.data_dir = tmp.join("data");
+        std::fs::create_dir_all(&cfg.server.data_dir).unwrap();
+        cfg.network.pool = "0x7e57b301".into();
+        cfg.network.pool_version = 3;
+        cfg.network.max_proof_age = 1024;
+        cfg.network.parameters = Some(PoolParameters { expiry_window: 1500, quantum: 100, root_window: 4096, timelock: 7200 });
+        let b = std::path::PathBuf::from(&bridge);
+        let sha = |p: &std::path::Path| format!("{:x}", sha2::Sha256::digest(std::fs::read(p).unwrap()));
+        // The stub node gives every address class 0xc1a55: the adapter's pin and the route's class.
+        let own = crate::config::RoutePin {
+            statement: "0xacc6".into(), statement_class: "0xc1a55".into(), account_tag: "TMPZR0_PAYMENT_V6".into(),
+            os_program: cfg.network.os_program.clone(), proof_version: "PROOF2".into(), proof_variant: "VIRTUAL_SNOS".into(),
+            output_version: "VIRTUAL_SNOS0".into(), max_proof_age: 1024,
+        };
+        let planned = crate::config::RoutePin { statement: "0xacc7".into(), ..own.clone() };
+        let mut rel = cfg.relations[0].clone();
+        rel.name = "r6".into();
+        rel.account_tag = "TMPZR0_PAYMENT_V6".into();
+        rel.adapter = "0xada6".into();
+        rel.adapter_class = Some("0xc1a55".into());
+        rel.statement_account = "0xacc6".into();
+        rel.statement_class = "0xc1a55".into();
+        rel.routes = vec![own.clone(), planned.clone()];
+        rel.route_states = vec![vec!["0xacc6".into()], vec!["0xacc6".into(), "0xacc7".into()]];
+        rel.bridge_dir = b.clone();
+        rel.bridge_record_sha256 = sha(&b.join("build-record.json"));
+        rel.bridge_executable_sha256 = sha(&b.join("target/dev/templar_membership_bridge.executable.json"));
+        cfg.relations = vec![rel];
+        crate::config::check_relation(&cfg.network, &cfg.relations[0]).unwrap();
+        crate::stage_bridges(&mut cfg, &tmp.join("bridges")).unwrap();
+        cfg.binaries.scarb = "/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb".into();
+        // A stand-in OS run emitting the V6 statement account's message for the transfer; proving
+        // is `/bin/false`.
+        let binding = std::fs::read_to_string(format!("{proofs}/v6-transfer/binding.txt")).unwrap();
+        let runner = tmp.join("os-runner.sh");
+        std::fs::write(&runner, format!(
+            "#!/bin/sh\ncat > \"$2/os-result.json\" <<EOF\n{}\nEOF\n",
+            json!({"os_seconds": 0.1, "resources": {"n_steps": 1}, "l2_to_l1_messages": [{"from_address": "0xacc6", "to_address": "0x0",
+                   "payload": ["0xc1a55", hex(&short_string("TMPZR0_PAYMENT_V6").unwrap()), "0x534e5f5345504f4c4941", "0x7e57b301", binding.trim()]}]})
+        )).unwrap();
+        std::fs::set_permissions(&runner, std::os::unix::fs::PermissionsExt::from_mode(0o755)).unwrap();
+        cfg.binaries.os_runner = runner;
+        // A stand-in prove binary: `bucket` lands in the pinned bucket, `prove` fails (the server's
+        // fault). The r6 relation is routed, so its jobs pass the bucket stage first.
+        // A file next to it switches the stand-in to a bucket miss (2^26).
+        let prove = tmp.join("prove.sh");
+        let miss = tmp.join("bucket-miss");
+        std::fs::write(&prove, format!(
+            "#!/bin/sh\n[ \"$1\" = bucket ] || exit 1\nsize=25\n[ -e {} ] && size=26\necho \"{{\\\"trace_log_size\\\": $size, \\\"largest_component_log_size\\\": $size}}\" > \"$2/bucket.json\"\n",
+            miss.display()
+        )).unwrap();
+        std::fs::set_permissions(&prove, std::os::unix::fs::PermissionsExt::from_mode(0o755)).unwrap();
+        cfg.binaries.prove = prove;
+        cfg.sandbox.cgroup_root = cgroup.into();
+        cfg.payment = None;
+        let route = |p: &crate::config::RoutePin| crate::routes::route_felts(p).unwrap().to_vec();
+        let calls: Calls = Arc::new(Mutex::new(HashMap::from([
+            (sn_keccak("root_is_known"), vec![Felt::ONE]),
+            (sn_keccak("get_nullifier_spent"), vec![Felt::ZERO]),
+            (sn_keccak("get_root_superseded_at"), vec![Felt::ZERO]),
+            (sn_keccak("get_verifier"), vec![felt("0xada6").unwrap()]),
+            (sn_keccak("get_proposal"), vec![Felt::ZERO, Felt::ZERO]),
+            (sn_keccak("get_pool"), vec![felt("0x7e57b301").unwrap()]),
+            (sn_keccak("get_kind"), vec![short_string("R0").unwrap()]),
+            (sn_keccak("get_routes"), [vec![Felt::ONE], route(&own)].concat()),
+            (sn_keccak("get_route"), [vec![Felt::ZERO], route(&own)].concat()),
+            (sn_keccak("get_route_proposals"), vec![Felt::ZERO]),
+        ])));
+        let block = Arc::new(std::sync::atomic::AtomicU64::new(123_000));
+        let rpc = Rpc::new(&stub(calls.clone(), block.clone()).await);
+        let state = start(cfg, rpc, json!({}), None);
+        let app = router(state.clone(), None).into_make_service_with_connect_info::<SocketAddr>();
+        let l = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let url = format!("http://{}", l.local_addr().unwrap());
+        tokio::spawn(async move { axum::serve(l, app).await.unwrap() });
+        let http = reqwest::Client::new();
+        let body = |name: &str| -> Value {
+            serde_json::from_str(&std::fs::read_to_string(format!("{proofs}/{name}/submission.json")).unwrap()).unwrap()
+        };
+        let post = |b: Value| {
+            let (http, url) = (http.clone(), url.clone());
+            async move {
+                let r = http.post(format!("{url}/v1/jobs")).json(&b).send().await.unwrap();
+                (r.status().as_u16(), r.json::<Value>().await.unwrap())
+            }
+        };
+        let set = |sel: &str, v: Vec<Felt>| {
+            calls.lock().unwrap().insert(sn_keccak(sel), v);
+        };
+        let refused = |code: u16, v: &Value, what: &str| {
+            assert!(code == 503 && v["error"].as_str().unwrap().contains(what), "{code} {v}");
+        };
+
+        // A V5 body: the server serves no r5 relation.
+        let mut v5 = body("v6-transfer");
+        v5["relation"] = json!("r5");
+        v5["statement"]["account"] = json!("0x0");
+        assert_eq!(post(v5).await.0, 400);
+        // Another verifier: the relation is dormant.
+        set("get_verifier", vec![felt("0xada5").unwrap()]);
+        let (code, v) = post(body("v6-transfer")).await;
+        refused(code, &v, "dormant");
+        set("get_verifier", vec![felt("0xada6").unwrap()]);
+        // The own route changed on chain (one field): refused.
+        let changed = crate::config::RoutePin { max_proof_age: 1000, ..own.clone() };
+        set("get_routes", [vec![Felt::ONE], route(&changed)].concat());
+        let (code, v) = post(body("v6-transfer")).await;
+        refused(code, &v, "differs from its pin");
+        // A route set that is not a pinned state (the planned route alone).
+        set("get_routes", [vec![Felt::ONE], route(&planned)].concat());
+        let (code, v) = post(body("v6-transfer")).await;
+        refused(code, &v, "not a pinned state");
+        // The planned state (own + planned) serves.
+        set("get_routes", [vec![Felt::TWO], route(&own), route(&planned)].concat());
+        // A removal of the own route due now: refused; a change under another key is not.
+        let proposal = |key: &str, eta: u64| vec![Felt::ONE, felt(key).unwrap(), Felt::ONE, Felt::from(eta)];
+        set("get_route_proposals", proposal("0xacc6", 1_000_000));
+        let (code, v) = post(body("v6-transfer")).await;
+        refused(code, &v, "own route");
+        set("get_route_proposals", proposal("0xacc8", 1_000_000));
+        // The V6 bridge runs: a forged proof word is refused by the pre-check.
+        let mut forged = body("v6-transfer");
+        let w = forged["proof"][10].as_str().unwrap().to_string();
+        forged["proof"][10] = json!(hex(&(felt(&w).unwrap() + Felt::ONE)));
+        let (code, v) = post(forged).await;
+        assert!(code == 400 && v["error"].as_str().unwrap().contains("Panicked with"), "{code} {v}");
+        let finished = |id: String| {
+            let (http, url) = (http.clone(), url.clone());
+            async move {
+                for _ in 0..600 {
+                    let s: Value = http.get(format!("{url}/v1/jobs/{id}")).send().await.unwrap().json().await.unwrap();
+                    if s["status"] == "failed" || s["status"] == "done" {
+                        return s;
+                    }
+                    tokio::time::sleep(Duration::from_millis(200)).await;
+                }
+                panic!("job {id} did not finish");
+            }
+        };
+        // A job that misses the bucket is not proved: it fails at the bucket stage, the server's
+        // fault (pool-v3-spec §9.3), and its note backs off.
+        std::fs::write(&miss, "").unwrap();
+        let (code, v) = post(body("v6-transfer")).await;
+        assert_eq!(code, 202, "{v}");
+        let s = finished(v["id"].as_str().unwrap().to_string()).await;
+        assert!(s["status"] == "failed" && s["stage"] == "bucket", "{s}");
+        assert!(state.registry.lock().unwrap().refusals.values().any(|r| r.until > Instant::now()), "the note backs off");
+        state.registry.lock().unwrap().refusals.clear();
+        std::fs::remove_file(&miss).unwrap();
+        // Admitted: the pins hold and the V6 bridge accepts the real proof; the job passes the
+        // bucket stage and reaches proving.
+        let (code, v) = post(body("v6-transfer")).await;
+        assert_eq!(code, 202, "{v}");
+        let s = finished(v["id"].as_str().unwrap().to_string()).await;
+        assert_eq!(s["stage"], "prove", "{s}");
         let _ = std::fs::remove_dir_all(&tmp);
     }
 }

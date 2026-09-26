@@ -127,16 +127,19 @@ pub struct Network {
     pub chain_id: String,
     pub rpc_url: String,
     pub pool: String,
-    /// 2 (R0 V4 and P1, pool V2) or 3 (R0 V5 and P1, pool V3). Default 2.
+    /// 2 (R0 V4 and P1, pool V2) or 3 (R0 V5, R0 V6 and P1, pool V3). Default 2.
     #[serde(default = "d_pool_version")]
     pub pool_version: u8,
-    /// The virtual OS program hash the adapters pin.
+    /// The virtual OS program hash the pre-cutover adapters pin (a routed relation pins its own,
+    /// per route).
     pub os_program: String,
+    /// The pre-cutover adapters' proof age (a routed relation's route has its own).
     pub max_proof_age: u64,
     /// Pool V3: refuse jobs from this many seconds before a pending verifier (or target shadow
     /// class) change can apply until it applies, is cancelled or lapses (AB-PV7, AB-SP1).
-    /// Default `max_proof_age × 6` seconds, a result's life at the slowest block time assumed
-    /// (recheck N7).
+    /// Default: the largest proof age served (`max_proof_age` and every routed relation's own
+    /// route) × 6 seconds, a result's life at the slowest block time assumed (recheck N7,
+    /// pool-v3-spec §9.5).
     pub pending_margin_secs: Option<u64>,
     /// Pool V3's `E`, `Q`, `W`, `T`, read at startup.
     #[serde(skip)]
@@ -152,9 +155,26 @@ pub struct PoolParameters {
     pub timelock: u64,
 }
 
+/// A route of a routing adapter (`docs/pool-v3-spec.md` §6.1): its eight fields, in the adapter's
+/// Serde order. The proof version, variant and output version are short strings.
+#[derive(Debug, Clone, Deserialize, PartialEq)]
+pub struct RoutePin {
+    pub statement: String,
+    pub statement_class: String,
+    pub account_tag: String,
+    pub os_program: String,
+    #[serde(default = "d_proof_version")]
+    pub proof_version: String,
+    #[serde(default = "d_proof_variant")]
+    pub proof_variant: String,
+    #[serde(default = "d_output_version")]
+    pub output_version: String,
+    pub max_proof_age: u64,
+}
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct RelationConfig {
-    /// `r4` (pool V2), `r5` (pool V3) or `p1`.
+    /// `r4` (pool V2), `r5` or `r6` (pool V3) or `p1`.
     pub name: String,
     pub statement_account: String,
     pub statement_class: String,
@@ -166,6 +186,59 @@ pub struct RelationConfig {
     /// sha256 of the compiled bridge (`target/dev/templar_membership_bridge.executable.json`),
     /// the program the pre-check executes (PI-6).
     pub bridge_executable_sha256: String,
+    /// A routing adapter's pinned class (pool-v3-spec §6, §9.2). Absent: a pre-cutover adapter,
+    /// whose configuration is read from its storage.
+    #[serde(default)]
+    pub adapter_class: Option<String>,
+    /// A routed relation: every route this release knows (the own route, keyed by
+    /// `statement_account`, among them).
+    #[serde(default)]
+    pub routes: Vec<RoutePin>,
+    /// The pinned states of the adapter's route set, each a set of statement addresses from
+    /// `routes` (a release pins every state a planned change passes through, §10.2). Default: the
+    /// own route alone.
+    #[serde(default)]
+    pub route_states: Vec<Vec<String>>,
+    /// P1 during the cutover (§9.5): the pre-cutover adapter, served while it is still the pool's
+    /// verifier; `adapter` is then the P1 routing adapter.
+    #[serde(default)]
+    pub legacy_adapter: Option<String>,
+}
+
+impl RelationConfig {
+    pub fn is_routed(&self) -> bool {
+        self.adapter_class.is_some()
+    }
+
+    /// The own route: the one keyed by this relation's statement account (§9.5).
+    pub fn own_route(&self) -> Option<&RoutePin> {
+        let own = crate::rpc::felt(&self.statement_account).ok()?;
+        self.routes.iter().find(|r| crate::rpc::felt(&r.statement).ok() == Some(own))
+    }
+
+    /// The proof age that bounds this relation's results: its own route's, else the network's.
+    pub fn max_proof_age(&self, network: &Network) -> u64 {
+        self.own_route().map_or(network.max_proof_age, |r| r.max_proof_age)
+    }
+
+    /// The OS program this relation's proofs carry: its own route's, else the network's.
+    pub fn os_program<'a>(&'a self, network: &'a Network) -> &'a str {
+        self.own_route().map_or(network.os_program.as_str(), |r| r.os_program.as_str())
+    }
+
+    /// The pinned route-set states, as sets of statement felts (sorted for set comparison).
+    pub fn pinned_states(&self) -> Result<Vec<Vec<starknet_types_core::felt::Felt>>> {
+        let states: Vec<Vec<String>> =
+            if self.route_states.is_empty() { vec![vec![self.statement_account.clone()]] } else { self.route_states.clone() };
+        states
+            .iter()
+            .map(|st| {
+                let mut v = st.iter().map(|a| crate::rpc::felt(a)).collect::<Result<Vec<_>>>()?;
+                v.sort();
+                Ok(v)
+            })
+            .collect()
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -206,11 +279,22 @@ pub struct Prover {
     /// beyond 16 there is almost no gain (bench/m31-private-wrapper/proof2-large, core scaling).
     #[serde(default = "d_threads")]
     pub threads: u32,
+    /// The PROOF2 leaf bucket every routed relation's job must land in (pool-v3-spec §9.3): the
+    /// Cairo trace log size whose leaf verifier the proof's header names, so every spend has the
+    /// same public header. 25, the smallest the registry lists.
+    #[serde(default = "d_bucket")]
+    pub bucket_log_size: u32,
+    /// A directory holding a reference `os.pie.zip` (a routed spend's virtual-OS run, the largest
+    /// shape). Required to serve a routed relation: at startup the server runs the bucket check on
+    /// it and refuses to start if it misses the bucket. A route switch is a new release, so it is
+    /// checked again at that restart.
+    #[serde(default)]
+    pub bucket_reference: Option<PathBuf>,
 }
 
 impl Default for Prover {
     fn default() -> Self {
-        Prover { cairo_fri_columns: 16, circuit_fri_columns: 16, stream_commitments: false, threads: 16 }
+        Prover { cairo_fri_columns: 16, circuit_fri_columns: 16, stream_commitments: false, threads: 16, bucket_log_size: 25, bucket_reference: None }
     }
 }
 
@@ -230,20 +314,17 @@ fn d_os_secs() -> u64 { 600 }
 fn d_prove_secs() -> u64 { 1800 }
 fn d_columns() -> usize { 16 }
 fn d_threads() -> u32 { 16 }
+fn d_bucket() -> u32 { 25 }
 fn d_blocks_per_job() -> u64 { 60 }
 fn d_relay_margin() -> u64 { 60 }
 fn d_os_l2_gas() -> u64 { 450_000_000 }
 fn d_pool_version() -> u8 { 2 }
 fn d_os_steps() -> u64 { 4_000_000 }
+fn d_proof_version() -> String { "PROOF2".into() }
+fn d_proof_variant() -> String { "VIRTUAL_SNOS".into() }
+fn d_output_version() -> String { "VIRTUAL_SNOS0".into() }
 fn d_no_network() -> Vec<String> {
     ["unshare", "--user", "--net"].map(String::from).to_vec()
-}
-
-impl Network {
-    /// Seconds before a pending change's `eta` from which jobs are refused (AB-PV7, AB-SP1).
-    pub fn pending_margin(&self) -> u64 {
-        self.pending_margin_secs.unwrap_or(self.max_proof_age * 6)
-    }
 }
 
 impl Config {
@@ -253,11 +334,11 @@ impl Config {
         let mut names: Vec<&str> = c.relations.iter().map(|r| r.name.as_str()).collect();
         names.sort();
         names.dedup();
-        if names.len() != c.relations.len() || names.iter().any(|n| !matches!(*n, "r4" | "r5" | "p1")) {
-            bail!("relations must be distinct, each r4, r5 or p1");
+        if names.len() != c.relations.len() || names.iter().any(|n| !matches!(*n, "r4" | "r5" | "r6" | "p1")) {
+            bail!("relations must be distinct, each r4, r5, r6 or p1");
         }
         match c.network.pool_version {
-            2 if names.contains(&"r5") => bail!("r5 spends settle on pool V3 (pool_version = 3)"),
+            2 if names.contains(&"r5") || names.contains(&"r6") => bail!("r5 and r6 spends settle on pool V3 (pool_version = 3)"),
             3 if names.contains(&"r4") => bail!("r4 spends settle on pool V2 (pool_version = 2)"),
             2 | 3 => {}
             v => bail!("pool_version {v}: expected 2 or 3"),
@@ -265,10 +346,18 @@ impl Config {
         if c.server.max_concurrent_jobs == 0 {
             bail!("max_concurrent_jobs must be at least 1");
         }
+        // The PROOF2 registry lists leaf buckets 25 to 29 (pool-v3-spec §9.3); servers pinning
+        // different buckets would split the header anonymity set, so 25 is the norm.
+        if !(25..=29).contains(&c.prover.bucket_log_size) {
+            bail!("prover.bucket_log_size must be a registry leaf bucket, 25 to 29");
+        }
+        for rel in &c.relations {
+            check_relation(&c.network, rel).with_context(|| format!("relation {}", rel.name))?;
+        }
         if let Some(r) = &c.relay {
             let addr: std::net::SocketAddr = r.listen.parse().context("relay.listen")?;
-            if !names.contains(&"r5") {
-                bail!("relay: only R0 V5 jobs carry a pool call to relay (serve r5)");
+            if !names.contains(&"r5") && !names.contains(&"r6") {
+                bail!("relay: only R0 V5 and V6 jobs carry a pool call to relay (serve r5 or r6)");
             }
             if !addr.ip().is_loopback() {
                 tracing::warn!("relay.listen is not loopback: keep it on a private network or behind TLS");
@@ -283,4 +372,80 @@ impl Config {
     pub fn relation(&self, name: &str) -> Option<&RelationConfig> {
         self.relations.iter().find(|r| r.name == name)
     }
+
+    /// Seconds before a pending change's `eta` from which jobs are refused: configured, or the
+    /// largest proof age served × 6 (pool-v3-spec §9.5).
+    pub fn pending_margin(&self) -> u64 {
+        let largest = self.relations.iter().map(|r| r.max_proof_age(&self.network)).max().unwrap_or(0).max(self.network.max_proof_age);
+        self.network.pending_margin_secs.unwrap_or(largest * 6)
+    }
+}
+
+/// A relation's own rules: r6 is routed; a routed relation pins its adapter's class, its own
+/// route (whose class and tag are the relation's), and route-set states over known routes, each
+/// containing the own route; only p1 names a legacy adapter, and only when routed.
+pub(crate) fn check_relation(network: &Network, rel: &RelationConfig) -> Result<()> {
+    use crate::rpc::{felt, short_string};
+    if rel.name == "r6" && !rel.is_routed() {
+        bail!("r6 is served through a routing adapter: set adapter_class and routes");
+    }
+    if rel.legacy_adapter.is_some() && (rel.name != "p1" || !rel.is_routed()) {
+        bail!("legacy_adapter is for a routed p1 during the cutover");
+    }
+    if !rel.is_routed() {
+        if !rel.routes.is_empty() || !rel.route_states.is_empty() {
+            bail!("routes need a routing adapter (adapter_class)");
+        }
+        return Ok(());
+    }
+    if network.pool_version != 3 {
+        bail!("routing adapters serve pool V3");
+    }
+    felt(rel.adapter_class.as_deref().unwrap_or(""))?;
+    let own = rel.own_route().context("routes must include the own route, keyed by statement_account")?;
+    if felt(&own.statement_class)? != felt(&rel.statement_class)? || own.account_tag != rel.account_tag {
+        bail!("the own route's class and tag must be the relation's");
+    }
+    // While P1 is served through its legacy adapter, jobs are proved with the own route's values
+    // (facts, OS program, deadline), so they must be the legacy adapter's (PR-RC-2).
+    if rel.legacy_adapter.is_some()
+        && (felt(&own.os_program)? != felt(&network.os_program)?
+            || own.max_proof_age != network.max_proof_age
+            || (own.proof_version.as_str(), own.proof_variant.as_str(), own.output_version.as_str()) != ("PROOF2", "VIRTUAL_SNOS", "VIRTUAL_SNOS0"))
+    {
+        bail!("with legacy_adapter, the own route's os_program, max_proof_age and versions must be the legacy adapter's ([network]'s and PROOF2's)");
+    }
+    let known: Vec<_> = rel.routes.iter().map(|r| felt(&r.statement)).collect::<Result<_>>()?;
+    let mut sorted = known.clone();
+    sorted.sort();
+    sorted.dedup();
+    if sorted.len() != known.len() {
+        bail!("routes: a statement appears twice");
+    }
+    for r in &rel.routes {
+        for x in [&r.statement, &r.statement_class, &r.os_program] {
+            if felt(x)? == starknet_types_core::felt::Felt::ZERO {
+                bail!("routes: every field is nonzero");
+            }
+        }
+        for x in [&r.account_tag, &r.proof_version, &r.proof_variant, &r.output_version] {
+            short_string(x)?;
+        }
+        if r.max_proof_age == 0 {
+            bail!("routes: max_proof_age is nonzero");
+        }
+    }
+    let own_felt = felt(&own.statement)?;
+    for state in rel.pinned_states()? {
+        if state.is_empty() || state.len() > 4 {
+            bail!("route_states: each state holds 1 to 4 routes");
+        }
+        if !state.iter().all(|s| known.contains(s)) {
+            bail!("route_states: a state names an unknown route");
+        }
+        if !state.contains(&own_felt) {
+            bail!("route_states: every state holds the own route");
+        }
+    }
+    Ok(())
 }

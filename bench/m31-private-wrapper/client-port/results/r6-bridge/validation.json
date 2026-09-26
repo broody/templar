@@ -1,0 +1,558 @@
+{
+ "scope": "standalone Cairo execution of the R0 V6 payment bridge (fork circuit_air); no OS, no large proof",
+ "executable_sha256": "3e36b87f9687fe2f1c0e7415518aa1802fcbff67ede17937888b9ad995f147b8",
+ "bindings": {
+  "transfer": "0x632324fb38cf0d0c99864b89b470ef68bd2cbf5603bbed3731efa484f6ad82d",
+  "single": "0x2139e6959888bafe0cf5914c0814d60034b6d0729a5ea7a1bfa8d4495cdc683",
+  "one-out": "0x718b5d00536054f8c450fe51f0adf6b61a7a8cd5e3cc0c68087803533e306a6",
+  "partial": "0x6ffd875ffa4a50ea42a7dc8d8f9a95902f8e65d05665bd89911364717188ef3",
+  "full": "0x1f8baa28b91acc6e6d05096028fa833bb841e18b2c2fcbc1dd938830373c68a",
+  "invoke": "0x5e2369125b3be313be0743bcde13ea6408c137961e2c8cd53117a10a018ce90",
+  "shadow": "0x20300e0789b677eae7ff2a5ded52a5775146695c78181e95c4f252869a8690d",
+  "nft": "0x69883a4d36a2032b5a5a8b820808e7dda3f1896de0527e6e227e3e13eac9f55",
+  "valid-until-1": "0x59468584a6da4db8145257f0ca4f27e45d6641993a93f64db0493ce4f251693",
+  "valid-until-max": "0x13b242032d49e98f7f27f69cff5da8b87a32eedf82517d72031be5fe0b57dc9"
+ },
+ "n_cases": 88,
+ "all_passed": true,
+ "cases": [
+  {
+   "name": "transfer-valid",
+   "expected_accept": true,
+   "passed": true,
+   "reason": null,
+   "steps": 2030963
+  },
+  {
+   "name": "transfer-claimed-token-out",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+  },
+  {
+   "name": "single-valid",
+   "expected_accept": true,
+   "passed": true,
+   "reason": null,
+   "steps": 1984668
+  },
+  {
+   "name": "single-claimed-token-out",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+  },
+  {
+   "name": "one-out-valid",
+   "expected_accept": true,
+   "passed": true,
+   "reason": null,
+   "steps": 1989131
+  },
+  {
+   "name": "one-out-claimed-token-out",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+  },
+  {
+   "name": "partial-valid",
+   "expected_accept": true,
+   "passed": true,
+   "reason": null,
+   "steps": 2018000
+  },
+  {
+   "name": "partial-claimed-token-out",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+  },
+  {
+   "name": "full-valid",
+   "expected_accept": true,
+   "passed": true,
+   "reason": null,
+   "steps": 2039952
+  },
+  {
+   "name": "full-claimed-token-out",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+  },
+  {
+   "name": "invoke-valid",
+   "expected_accept": true,
+   "passed": true,
+   "reason": null,
+   "steps": 2022041
+  },
+  {
+   "name": "invoke-claimed-token-out",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+  },
+  {
+   "name": "shadow-valid",
+   "expected_accept": true,
+   "passed": true,
+   "reason": null,
+   "steps": 2035345
+  },
+  {
+   "name": "shadow-claimed-token-out",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+  },
+  {
+   "name": "nft-valid",
+   "expected_accept": true,
+   "passed": true,
+   "reason": null,
+   "steps": 2034881
+  },
+  {
+   "name": "nft-claimed-token-out",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+  },
+  {
+   "name": "valid-until-1-valid",
+   "expected_accept": true,
+   "passed": true,
+   "reason": null,
+   "steps": 2018154
+  },
+  {
+   "name": "valid-until-1-claimed-token-out",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+  },
+  {
+   "name": "valid-until-max-valid",
+   "expected_accept": true,
+   "passed": true,
+   "reason": null,
+   "steps": 2007020
+  },
+  {
+   "name": "valid-until-max-claimed-token-out",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+  },
+  {
+   "name": "transfer-tag-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"statement tag\\\".\"}"
+  },
+  {
+   "name": "transfer-token-out-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"exit rule\\\".\"}"
+  },
+  {
+   "name": "transfer-nullifier-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+  },
+  {
+   "name": "transfer-commitment-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+  },
+  {
+   "name": "transfer-valid-until-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+  },
+  {
+   "name": "transfer-valid-until-hi-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+  },
+  {
+   "name": "transfer-padding-129-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"statement padding\\\".\"}"
+  },
+  {
+   "name": "transfer-padding-130-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"statement padding\\\".\"}"
+  },
+  {
+   "name": "transfer-padding-131-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"statement padding\\\".\"}"
+  },
+  {
+   "name": "transfer-valid-until-zero-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"valid_until\\\".\"}"
+  },
+  {
+   "name": "transfer-valid-until-lo-2^28-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"limb range\\\".\"}"
+  },
+  {
+   "name": "transfer-valid-until-hi-2^28-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"limb range\\\".\"}"
+  },
+  {
+   "name": "transfer-v5-tag-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"statement tag\\\".\"}"
+  },
+  {
+   "name": "transfer-absent-claimed-sum",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"absent component claims a nonzero sum\\\".\"}"
+  },
+  {
+   "name": "transfer-proof-body",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Merkle Verification Error: Root Mismatch\\\".\"}"
+  },
+  {
+   "name": "transfer-wrong-chain",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+  },
+  {
+   "name": "transfer-wrong-pool",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+  },
+  {
+   "name": "transfer-wrong-root",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"root\\\".\"}"
+  },
+  {
+   "name": "transfer-wrong-nullifier",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"nullifiers\\\".\"}"
+  },
+  {
+   "name": "transfer-swapped-outputs",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"commitments\\\".\"}"
+  },
+  {
+   "name": "transfer-wrong-delivery",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"deliveries\\\".\"}"
+  },
+  {
+   "name": "transfer-wrong-withdrawal-recipient",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"withdrawal\\\".\"}"
+  },
+  {
+   "name": "transfer-wrong-withdrawal-amount",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"withdrawal\\\".\"}"
+  },
+  {
+   "name": "transfer-wrong-intent",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"intent or identity\\\".\"}"
+  },
+  {
+   "name": "transfer-wrong-identity",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"intent or identity\\\".\"}"
+  },
+  {
+   "name": "transfer-wrong-valid-until",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"valid_until\\\".\"}"
+  },
+  {
+   "name": "transfer-trailing",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"trailing proof data\\\".\"}"
+  },
+  {
+   "name": "transfer-truncated",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with 0x494e56414c49445f50524f4f465f454e434f44494e47 ('INVALID_PROOF_ENCODING').\"}"
+  },
+  {
+   "name": "partial-tag-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"statement tag\\\".\"}"
+  },
+  {
+   "name": "partial-token-out-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+  },
+  {
+   "name": "partial-nullifier-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+  },
+  {
+   "name": "partial-commitment-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+  },
+  {
+   "name": "partial-valid-until-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+  },
+  {
+   "name": "partial-valid-until-hi-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Interaction Proof Of Work verification failed\\\".\"}"
+  },
+  {
+   "name": "partial-padding-129-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"statement padding\\\".\"}"
+  },
+  {
+   "name": "partial-padding-130-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"statement padding\\\".\"}"
+  },
+  {
+   "name": "partial-padding-131-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"statement padding\\\".\"}"
+  },
+  {
+   "name": "partial-valid-until-zero-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"valid_until\\\".\"}"
+  },
+  {
+   "name": "partial-valid-until-lo-2^28-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"limb range\\\".\"}"
+  },
+  {
+   "name": "partial-valid-until-hi-2^28-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"limb range\\\".\"}"
+  },
+  {
+   "name": "partial-v5-tag-output",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"statement tag\\\".\"}"
+  },
+  {
+   "name": "partial-absent-claimed-sum",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"absent component claims a nonzero sum\\\".\"}"
+  },
+  {
+   "name": "partial-proof-body",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"Merkle Verification Error: Root Mismatch\\\".\"}"
+  },
+  {
+   "name": "partial-wrong-chain",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+  },
+  {
+   "name": "partial-wrong-pool",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"context\\\".\"}"
+  },
+  {
+   "name": "partial-wrong-root",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"root\\\".\"}"
+  },
+  {
+   "name": "partial-wrong-nullifier",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"nullifiers\\\".\"}"
+  },
+  {
+   "name": "partial-swapped-outputs",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"commitments\\\".\"}"
+  },
+  {
+   "name": "partial-wrong-delivery",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"deliveries\\\".\"}"
+  },
+  {
+   "name": "partial-wrong-withdrawal-recipient",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"withdrawal\\\".\"}"
+  },
+  {
+   "name": "partial-wrong-withdrawal-amount",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"withdrawal\\\".\"}"
+  },
+  {
+   "name": "partial-wrong-intent",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"intent or identity\\\".\"}"
+  },
+  {
+   "name": "partial-wrong-identity",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"intent or identity\\\".\"}"
+  },
+  {
+   "name": "partial-wrong-valid-until",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"valid_until\\\".\"}"
+  },
+  {
+   "name": "partial-trailing",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"trailing proof data\\\".\"}"
+  },
+  {
+   "name": "partial-truncated",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with 0x494e56414c49445f50524f4f465f454e434f44494e47 ('INVALID_PROOF_ENCODING').\"}"
+  },
+  {
+   "name": "forge-voluntary-reveal",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"exit rule\\\".\"}"
+  },
+  {
+   "name": "forge-zero-delivery",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"delivery\\\".\"}"
+  },
+  {
+   "name": "forge-recipient-only",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"withdrawal\\\".\"}"
+  },
+  {
+   "name": "forge-identity-no-intent",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"identity intent\\\".\"}"
+  },
+  {
+   "name": "forge-duplicate-nullifier",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"duplicate nullifier\\\".\"}"
+  },
+  {
+   "name": "forge-asset-range",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"address range\\\".\"}"
+  },
+  {
+   "name": "forge-recipient-range",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"address range\\\".\"}"
+  },
+  {
+   "name": "forge-zero-chain",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"zero context\\\".\"}"
+  },
+  {
+   "name": "forge-valid-until-zero",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"valid_until\\\".\"}"
+  },
+  {
+   "name": "forge-valid-until-limb-range",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"limb range\\\".\"}"
+  },
+  {
+   "name": "forge-valid-until-hi-limb-range",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"limb range\\\".\"}"
+  },
+  {
+   "name": "v5-proof",
+   "expected_accept": false,
+   "passed": true,
+   "reason": "{\"type\":\"error\",\"message\":\"Panicked with \\\"not the client circuit\\\".\"}"
+  }
+ ]
+}
