@@ -1,0 +1,269 @@
+{
+ "statement": "0x13f79bef808bc5e20c7542ea41bd649ab012c4224c95c1a165ab29a86ad5ce7",
+ "statement_class": "0x03be56fa87280b1f659626281d849a3e8f9c50977108f04a40ee0a097d9d9a4b",
+ "cases": {
+  "transfer": {
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3407400,
+    "builtins": {
+     "output_builtin": 6,
+     "pedersen_builtin": 50,
+     "poseidon_builtin": 15117,
+     "range_check_builtin": 344688
+    },
+    "seconds": 10.807363153
+   },
+   "bucket": {
+    "trace_log_size": 25,
+    "largest_component_log_size": 23,
+    "leaf_bootloader_steps": 3606874,
+    "wall_seconds": 9.8,
+    "max_rss_kib": 15980668
+   },
+   "l2_gas": null,
+   "l2_gas_bisected": null,
+   "prove": {
+    "prove_seconds": 63.687628748,
+    "proof_bytes": 255066,
+    "leaf_trace_log_size": 25,
+    "max_rss_kib": 29689172,
+    "facts_check": {
+     "n_facts": true,
+     "os_program": true,
+     "output_version": true,
+     "base_block": true,
+     "one_message": true,
+     "message_hash": true
+    }
+   }
+  },
+  "single": {
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3350679,
+    "builtins": {
+     "output_builtin": 6,
+     "pedersen_builtin": 50,
+     "poseidon_builtin": 14689,
+     "range_check_builtin": 337784
+    },
+    "seconds": 10.97955576
+   },
+   "bucket": {
+    "trace_log_size": 25,
+    "largest_component_log_size": 23,
+    "leaf_bootloader_steps": 3550153,
+    "wall_seconds": 9.7,
+    "max_rss_kib": 15551980
+   },
+   "l2_gas": null,
+   "l2_gas_bisected": null,
+   "prove": null
+  },
+  "one-out": {
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3357053,
+    "builtins": {
+     "output_builtin": 6,
+     "pedersen_builtin": 50,
+     "poseidon_builtin": 14825,
+     "range_check_builtin": 338351
+    },
+    "seconds": 10.793703119
+   },
+   "bucket": {
+    "trace_log_size": 25,
+    "largest_component_log_size": 23,
+    "leaf_bootloader_steps": 3556527,
+    "wall_seconds": 9.7,
+    "max_rss_kib": 16122764
+   },
+   "l2_gas": null,
+   "l2_gas_bisected": null,
+   "prove": null
+  },
+  "partial": {
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3392934,
+    "builtins": {
+     "output_builtin": 6,
+     "pedersen_builtin": 50,
+     "poseidon_builtin": 15149,
+     "range_check_builtin": 342582
+    },
+    "seconds": 10.947247286
+   },
+   "bucket": {
+    "trace_log_size": 25,
+    "largest_component_log_size": 23,
+    "leaf_bootloader_steps": 3592408,
+    "wall_seconds": 9.9,
+    "max_rss_kib": 15433456
+   },
+   "l2_gas": null,
+   "l2_gas_bisected": null,
+   "prove": null
+  },
+  "full": {
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3418981,
+    "builtins": {
+     "output_builtin": 6,
+     "pedersen_builtin": 50,
+     "poseidon_builtin": 15281,
+     "range_check_builtin": 345580
+    },
+    "seconds": 10.616311489
+   },
+   "bucket": {
+    "trace_log_size": 25,
+    "largest_component_log_size": 23,
+    "leaf_bootloader_steps": 3618455,
+    "wall_seconds": 10.0,
+    "max_rss_kib": 15660632
+   },
+   "l2_gas": null,
+   "l2_gas_bisected": 274218750,
+   "prove": null
+  },
+  "invoke": {
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3396267,
+    "builtins": {
+     "output_builtin": 6,
+     "pedersen_builtin": 50,
+     "poseidon_builtin": 15031,
+     "range_check_builtin": 342982
+    },
+    "seconds": 10.922739054000001
+   },
+   "bucket": {
+    "trace_log_size": 25,
+    "largest_component_log_size": 23,
+    "leaf_bootloader_steps": 3595741,
+    "wall_seconds": 10.0,
+    "max_rss_kib": 16243548
+   },
+   "l2_gas": null,
+   "l2_gas_bisected": null,
+   "prove": null
+  },
+  "shadow": {
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3413052,
+    "builtins": {
+     "output_builtin": 6,
+     "pedersen_builtin": 50,
+     "poseidon_builtin": 15197,
+     "range_check_builtin": 345118
+    },
+    "seconds": 11.120496124
+   },
+   "bucket": {
+    "trace_log_size": 25,
+    "largest_component_log_size": 23,
+    "leaf_bootloader_steps": 3612526,
+    "wall_seconds": 9.9,
+    "max_rss_kib": 15397540
+   },
+   "l2_gas": null,
+   "l2_gas_bisected": null,
+   "prove": null
+  },
+  "nft": {
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3414048,
+    "builtins": {
+     "output_builtin": 6,
+     "pedersen_builtin": 50,
+     "poseidon_builtin": 15359,
+     "range_check_builtin": 344923
+    },
+    "seconds": 10.776560421
+   },
+   "bucket": {
+    "trace_log_size": 25,
+    "largest_component_log_size": 23,
+    "leaf_bootloader_steps": 3613522,
+    "wall_seconds": 9.9,
+    "max_rss_kib": 16196884
+   },
+   "l2_gas": null,
+   "l2_gas_bisected": null,
+   "prove": null
+  },
+  "valid-until-1": {
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3392175,
+    "builtins": {
+     "output_builtin": 6,
+     "pedersen_builtin": 50,
+     "poseidon_builtin": 15077,
+     "range_check_builtin": 342131
+    },
+    "seconds": 10.571421056
+   },
+   "bucket": {
+    "trace_log_size": 25,
+    "largest_component_log_size": 23,
+    "leaf_bootloader_steps": 3591649,
+    "wall_seconds": 10.0,
+    "max_rss_kib": 15438032
+   },
+   "l2_gas": null,
+   "l2_gas_bisected": null,
+   "prove": null
+  },
+  "valid-until-max": {
+   "os": {
+    "exit": 0,
+    "message_ok": true,
+    "n_steps": 3377561,
+    "builtins": {
+     "output_builtin": 6,
+     "pedersen_builtin": 50,
+     "poseidon_builtin": 14853,
+     "range_check_builtin": 340923
+    },
+    "seconds": 10.743247235
+   },
+   "bucket": {
+    "trace_log_size": 25,
+    "largest_component_log_size": 23,
+    "leaf_bootloader_steps": 3577035,
+    "wall_seconds": 10.2,
+    "max_rss_kib": 16111620
+   },
+   "l2_gas": null,
+   "l2_gas_bisected": null,
+   "prove": null
+  }
+ },
+ "max_os_steps": 3418981,
+ "max_builtins": {
+  "output_builtin": 6,
+  "pedersen_builtin": 50,
+  "poseidon_builtin": 15359,
+  "range_check_builtin": 345580
+ },
+ "max_largest_component_log_size": 23,
+ "max_l2_gas": null,
+ "max_l2_gas_bisected": 274218750
+}

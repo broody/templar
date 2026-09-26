@@ -10,7 +10,8 @@ import { beforeAll, describe, expect, test } from 'vitest';
 import * as wasm from '../wasm/templar.js';
 import initTest, * as twasm from '../wasm-test/templar_test.js';
 import {
-  KIND_R0, MemoryKV, SEPOLIA, Templar, canon, decodeRouteProposals, decodeRoutes, loadCore, routeFelts, routeOfFelts, routePins,
+  KIND_R0, MemoryKV, SEPOLIA, Templar, canon, decodeRouteProposals, decodeRoutes, loadCore, p1Generations, r0Generations,
+  routeFelts, routeOfFelts, routePins,
   type Generation, type NetworkConstants, type Route,
 } from '../dist/index.js';
 import { MockChain, MockProver } from './mockchain.js';
@@ -26,7 +27,7 @@ const STRANGER: Route = { ...ROUTE, statement: '0x5a7e08' };
 const V6: Generation = {
   relation: 'r6', version: 'v6', adapter: '0xada6', adapterClass: '0xada6c1a5', routing: true, circuitHash: V6_CIRCUIT,
   configHash: SEPOLIA.pools[0]!.configHash, routes: [ROUTE, PLANNED], routeStates: [[ROUTE.statement], [ROUTE.statement, PLANNED.statement]],
-  plannedProposals: [{ statement: PLANNED.statement, route: PLANNED }], primary: ROUTE.statement,
+  plannedProposals: [{ statement: PLANNED.statement, route: PLANNED }, { statement: PLANNED.statement, route: null }], primary: ROUTE.statement,
 };
 const V3: NetworkConstants = {
   ...SEPOLIA,
@@ -118,6 +119,53 @@ describe('R0 V6 and routing adapters', () => {
     expect((await deposit()).confirmed).toBe(true);
     chain.adapters.get(canon(V6.adapter))!.proposals = [{ statement: ROUTE.statement, route: null, eta: 1_900_000_000 }];
     await expect(deposit()).rejects.toThrow(/verifier_change_pending/);
+    // With the planned route active, its pinned removal is a notice (§10.2, release review F1),
+    // whichever order the release lists the planned changes in.
+    const ad = chain.adapters.get(canon(V6.adapter))!;
+    ad.routes = [ROUTE, PLANNED];
+    ad.proposals = [{ statement: PLANNED.statement, route: null, eta: 1_900_000_000 }];
+    expect((await w.proposals()).find((p) => p.route)!.pinned).toBe(true);
+    expect((await deposit()).confirmed).toBe(true);
+    const reversed = [...V6.plannedProposals!].reverse();
+    const pinnedIn = async (planned: typeof reversed) => {
+      const g = { ...V6, plannedProposals: planned };
+      const t2 = await Templar.connect({ provider: chain.provider(), network: { ...V3, pools: [{ ...POOL, generations: { r0: [g] } }] }, kv: new MemoryKV() });
+      return (await (await t2.wallet(new Uint8Array(32).fill(0xc7))).proposals()).find((p) => p.route)!.pinned;
+    };
+    expect(await pinnedIn(reversed)).toBe(true);
+    // Without the removal pinned, it is an alarm.
+    expect(await pinnedIn([{ statement: PLANNED.statement, route: PLANNED }])).toBe(false);
+    // An addition of the planned route with one field changed is not the pinned addition.
+    ad.proposals = [{ statement: PLANNED.statement, route: { ...PLANNED, maxProofAge: 1000 }, eta: 1_900_000_000 }];
+    ad.routes = [ROUTE];
+    expect((await w.proposals()).find((p) => p.route)!.pinned).toBe(false);
+  }, 120_000);
+
+  test('deposits check the P1 kind too: an unpinned P1 change applied after connect refuses them (release review ADV-1)', async () => {
+    const P1_ROUTE: Route = { statement: '0x9151', statementClass: '0x9151c1a5', accountTag: 'TMPZP1_POLICY_V1', osProgram: OS, maxProofAge: 1024 };
+    const P1_GEN: Generation = {
+      relation: 'p1', version: 'v5', adapter: '0xada7', adapterClass: V6.adapterClass, routing: true, configHash: POOL.configHash,
+      routes: [P1_ROUTE], routeStates: [[P1_ROUTE.statement]], primary: P1_ROUTE.statement,
+    };
+    const pool = { ...POOL, p1Adapter: { adapter: '0xada1', adapterClass: '0xada1c1a5' }, generations: { r0: [V6], p1: [P1_GEN] } };
+    const chain = new MockChain(pool);
+    chain.adapters.set(canon(V6.adapter), { class: V6.adapterClass, pool: POOL.pool, kind: 'R0', routes: [ROUTE], proposals: [] });
+    chain.adapters.set(canon(P1_GEN.adapter), { class: P1_GEN.adapterClass, pool: POOL.pool, kind: 'P1', routes: [P1_ROUTE], proposals: [] });
+    for (const r of [ROUTE, PLANNED, P1_ROUTE]) chain.classes.set(canon(r.statement), r.statementClass);
+    const t = await Templar.connect({ provider: chain.provider(), network: { ...V3, pools: [pool] }, kv: new MemoryKV() });
+    const w = await t.wallet(new Uint8Array(32).fill(0xc8));
+    const deposit = () => w.deposit(chain.account(), { asset: { standard: 20, contract: TOKEN }, amount: 10n });
+    expect((await deposit()).confirmed).toBe(true);
+    // (A) The P1 verifier becomes an adapter this release does not pin.
+    chain.verifiers.set(canon('0x' + Buffer.from('P1').toString('hex')), '0xbad');
+    await expect(deposit()).rejects.toThrow(/verifier_changed/);
+    // The pinned P1 routing generation serves.
+    chain.verifiers.set(canon('0x' + Buffer.from('P1').toString('hex')), P1_GEN.adapter);
+    expect((await deposit()).confirmed).toBe(true);
+    // (B) An unpinned route applied on the pinned P1 routing adapter.
+    chain.adapters.get(canon(P1_GEN.adapter))!.routes = [P1_ROUTE, { ...P1_ROUTE, statement: '0x9152' }];
+    chain.classes.set(canon('0x9152'), P1_ROUTE.statementClass);
+    await expect(deposit()).rejects.toThrow(/verifier_changed/);
   }, 120_000);
 
   test('route pins: an unpinned route set, a changed route or adapter class is verifier_changed', async () => {
@@ -208,6 +256,21 @@ describe('R0 V6 and routing adapters', () => {
     switchToV6(chain);
     chain.mine(12);
     await expect(spend.submit(chain.account('0xacc'), { confirmFee: () => true })).rejects.toThrow(/verifier_changed/);
+    // Nothing of the old generation leaves again: wrap refuses before contacting the server, and a
+    // V5 plan not yet proved is not proved (release review F4, ADV-6).
+    const sent = prover.bodies.length;
+    await expect(spend.wrap(t.prover({ url: 'http://q', fetch: prover.fetch as any }), { url: 'http://q' })).rejects.toThrow(/verifier_changed/);
+    expect(prover.bodies.length).toBe(sent);
+    // A V5 record planned before the switch and not yet proved is refused before proving.
+    chain.verifiers.delete(KIND_R0);
+    depositTo(chain, (await w.address(0)).address, 300n);
+    chain.mine(12);
+    await w.sync();
+    const unproved = await w.withdraw(TOKEN, 300n, '0xb0b');
+    expect((await unproved.record()).plan.version).toBe('v5');
+    switchToV6(chain);
+    await expect(unproved.prove()).rejects.toThrow(/verifier_changed/);
+    expect((await unproved.record()).proved).toBeUndefined();
     const again = await w.replan(spend.id, { kind: 'withdraw', asset: TOKEN, amount: '700', recipient: '0xb0b' });
     const rec = await again.record();
     expect(rec.plan.version).toBe('v6');
@@ -259,4 +322,32 @@ describe('routing vectors', () => {
     expect(() => decodeRoutes(v.get_routes.felts.slice(0, 10))).toThrow();
     expect(() => decodeRouteProposals([...v.get_route_proposals.felts.slice(0, 3), '0x2'])).toThrow();
   });
+});
+
+/** The SEPOLIA constant pins exactly what phase D deployed (`bench/adr27-d/results/deployment.json`). */
+test('Sepolia pins the deployed routing adapters as pool V3\'s next generations', () => {
+  const d = JSON.parse(readFileSync(new URL('../../../bench/adr27-d/results/deployment.json', import.meta.url), 'utf8'));
+  const v3 = SEPOLIA.pools[1]!;
+  const same = (a: string, b: string) => BigInt(a) === BigInt(b);
+  const [legacy, v6] = r0Generations(v3);
+  expect(legacy!.relation).toBe('r5');
+  expect(v6!.relation).toBe('r6');
+  expect(v6!.version).toBe('v6');
+  expect(v6!.circuitHash).toEqual(V6_CIRCUIT);
+  expect(same(v6!.adapter, d['r0-routing-adapter']) && same(v6!.adapterClass, d.adapter_class)).toBe(true);
+  expect(same(v6!.primary, d.r0_route.statement)).toBe(true);
+  const [own, planned] = v6!.routes;
+  for (const [pin, want] of [[own!, d.r0_route], [planned!, { ...d.r0_route, ...d.planned_route }]] as const) {
+    expect(same(pin.statement, want.statement) && same(pin.statementClass, want.statement_class)).toBe(true);
+    expect([pin.accountTag, pin.maxProofAge]).toEqual([want.account_tag, want.max_proof_age]);
+    expect(same(pin.osProgram, want.os_program)).toBe(true);
+  }
+  expect(v6!.routeStates.map((s) => s.map((x) => BigInt(x)))).toEqual([[BigInt(own!.statement)], [BigInt(own!.statement), BigInt(planned!.statement)]]);
+  // The drill's planned addition, then its removal.
+  expect(v6!.plannedProposals!.map((p) => [BigInt(p.statement), p.route === null])).toEqual([[BigInt(planned!.statement), false], [BigInt(planned!.statement), true]]);
+  const [p1legacy, p1] = p1Generations(v3);
+  expect(p1legacy!.routing).toBe(false);
+  expect(same(p1!.adapter, d['p1-routing-adapter']) && same(p1!.adapterClass, d.adapter_class)).toBe(true);
+  expect(same(p1!.routes[0]!.statement, d.p1_route.statement) && same(p1!.routes[0]!.statementClass, d.p1_route.statement_class)).toBe(true);
+  expect([p1!.routes[0]!.accountTag, p1!.routes[0]!.maxProofAge]).toEqual([d.p1_route.account_tag, d.p1_route.max_proof_age]);
 });

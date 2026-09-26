@@ -99,7 +99,8 @@ export interface NetworkConstants {
 
 /**
  * Sepolia: M31 pool V2 (`bench/m31-sepolia/README.md`, 2026-09-24), then M31 pool V3, the active
- * pool (`bench/account-bound-p6/README.md`, 2026-09-26).
+ * pool (`bench/account-bound-p6/README.md`, 2026-09-26), with ADR-0027's routing adapters pinned as
+ * its next generations (`bench/adr27-d/README.md`, 2026-09-27).
  */
 export const SEPOLIA: NetworkConstants = {
   name: 'sepolia',
@@ -132,6 +133,54 @@ export const SEPOLIA: NetworkConstants = {
       configHash: '0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57',
       maxProofAge: 1024,
       circuitHash: [1903585510, 1708577544, 3915427995, 3101166941, 461832048, 2805149134, 1077751030, 1205594117],
+      // ADR-0027 (bench/adr27-d/README.md): the P1 kind is watched from its pre-cutover adapter, and
+      // both kinds move to routing adapters at the cutover (docs/pool-v3-spec.md §10.2, §11).
+      p1Adapter: { adapter: '0x05681433cadd7f40e7fc62fa8bca9a1ca21ed7dcb4a8f09a5f526c83bd82f8d0', adapterClass: '0x064148aed7efcab705956779e172385e7f2fa36eb161e62b4dcd629a5a3e6ddb' },
+      generations: {
+        r0: [
+          {
+            relation: 'r6',
+            version: 'v6',
+            adapter: '0x6a4b3e9ff38df6d9f2e3218fff0f3c1d2ea0ef9878231a6b154b754dfba879c',
+            adapterClass: '0x046104020e01c065bb55e262c1c3b7dbf4bca22448bcfbd411d5bcbec58d490b',
+            routing: true,
+            circuitHash: [2010035999, 4123906337, 3936982050, 2269257694, 3115244238, 1536739351, 29337086, 2871661834],
+            configHash: '0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57',
+            // The V6 route, and the drill's planned route (§11.4 step 3): a second instance of the
+            // same reviewed class, added and later removed.
+            routes: [
+              { statement: '0x13f79bef808bc5e20c7542ea41bd649ab012c4224c95c1a165ab29a86ad5ce7', statementClass: '0x03be56fa87280b1f659626281d849a3e8f9c50977108f04a40ee0a097d9d9a4b',
+                accountTag: 'TMPZR0_PAYMENT_V6', osProgram: '0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1', maxProofAge: 1024 },
+              { statement: '0x61b33150738c10d59615372b2424cf0011afbfb79a24e51fb042eb5fb2825f2', statementClass: '0x03be56fa87280b1f659626281d849a3e8f9c50977108f04a40ee0a097d9d9a4b',
+                accountTag: 'TMPZR0_PAYMENT_V6', osProgram: '0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1', maxProofAge: 1024 },
+            ],
+            routeStates: [['0x13f79bef808bc5e20c7542ea41bd649ab012c4224c95c1a165ab29a86ad5ce7'], ['0x13f79bef808bc5e20c7542ea41bd649ab012c4224c95c1a165ab29a86ad5ce7', '0x61b33150738c10d59615372b2424cf0011afbfb79a24e51fb042eb5fb2825f2']],
+            plannedProposals: [
+              { statement: '0x61b33150738c10d59615372b2424cf0011afbfb79a24e51fb042eb5fb2825f2', route: { statement: '0x61b33150738c10d59615372b2424cf0011afbfb79a24e51fb042eb5fb2825f2', statementClass: '0x03be56fa87280b1f659626281d849a3e8f9c50977108f04a40ee0a097d9d9a4b',
+                accountTag: 'TMPZR0_PAYMENT_V6', osProgram: '0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1', maxProofAge: 1024 } },
+              // Its removal, once the drill is done (§11.4 step 3).
+              { statement: '0x61b33150738c10d59615372b2424cf0011afbfb79a24e51fb042eb5fb2825f2', route: null },
+            ],
+            primary: '0x13f79bef808bc5e20c7542ea41bd649ab012c4224c95c1a165ab29a86ad5ce7',
+          },
+        ],
+        p1: [
+          {
+            relation: 'p1',
+            version: 'v5',
+            adapter: '0x3b33e246397f4542792d55d22455097616c6379e86ed38b7462f70430b81348',
+            adapterClass: '0x046104020e01c065bb55e262c1c3b7dbf4bca22448bcfbd411d5bcbec58d490b',
+            routing: true,
+            configHash: '0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57',
+            routes: [
+              { statement: '0x052828eb2a0d2095a0fa70d514b08a6ae4a2cb1ec38f72d2d843f1bf2a12d70a', statementClass: '0x032e05ae1fc0e76252f356e169d2a896b0befea4adca4a8d653c0f107836a882',
+                accountTag: 'TMPZP1_POLICY_V1', osProgram: '0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1', maxProofAge: 1024 },
+            ],
+            routeStates: [['0x052828eb2a0d2095a0fa70d514b08a6ae4a2cb1ec38f72d2d843f1bf2a12d70a']],
+            primary: '0x052828eb2a0d2095a0fa70d514b08a6ae4a2cb1ec38f72d2d843f1bf2a12d70a',
+          },
+        ],
+      },
     },
   ],
   tokens: [

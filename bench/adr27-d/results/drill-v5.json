@@ -1,0 +1,39 @@
+[
+ {
+  "block": 15688127,
+  "valid_until": 15689600,
+  "binding": "0x4975d75c7fcf0bede6c5c0aabe15aaf881a2f5ff18824a7784c4f789c0d9886",
+  "r0_verifier": "0x78469651c628d0aa30a3bb3d6f762ecfe89308b62c9db4eec8f6a0232c2e7d",
+  "r0_verifier_is": "the V5 adapter",
+  "reverted": true,
+  "revert_reason": "on failed. Failure reason:\nError in contract (contract address: 0x061a15c67867879eda71f348cd346687014daa795d78875b1dcdeb6d992e68c3, class hash: 0x05b4b537eaa2399e3aa99c4e2e0208ebd6c71bc1467938cd52c798c601e43564, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nError in contract (contract address: 0x03463a80930b97683671b68c6a34feb3ae2ed494bd8cd477cd602dd4ef6a8aa6, class hash: 0x013168dfd5b7258135a02a0ac87323df93222c5a30c103e3e9f7a4a4098bcfdf, selector: 0x032be3546e1b90c13a0347c20c27525ce96fed76e77246d64d9003c91577029a):\n0x554e4b4e4f574e5f524f4f54 ('UNKNOWN_ROOT').\n",
+  "no_route": false
+ },
+ {
+  "block": 15688648,
+  "valid_until": 15690100,
+  "binding": "0x2b7b0bc1b4ff2a34684f4d0e96b17dc258de42808cdfa74ee623745da3837a5",
+  "r0_verifier": "0x78469651c628d0aa30a3bb3d6f762ecfe89308b62c9db4eec8f6a0232c2e7d",
+  "r0_verifier_is": "the V5 adapter",
+  "reverted": true,
+  "revert_reason": "on failed. Failure reason:\nError in contract (contract address: 0x061a15c67867879eda71f348cd346687014daa795d78875b1dcdeb6d992e68c3, class hash: 0x05b4b537eaa2399e3aa99c4e2e0208ebd6c71bc1467938cd52c798c601e43564, selector: 0x015d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad):\nError in contract (contract address: 0x03463a80930b97683671b68c6a34feb3ae2ed494bd8cd477cd602dd4ef6a8aa6, class hash: 0x013168dfd5b7258135a02a0ac87323df93222c5a30c103e3e9f7a4a4098bcfdf, selector: 0x032be3546e1b90c13a0347c20c27525ce96fed76e77246d64d9003c91577029a):\n0x554e4b4e4f574e5f524f4f54 ('UNKNOWN_ROOT').\n",
+  "no_route": false
+ },
+ {
+  "block": 15688885,
+  "valid_until": 15690300,
+  "binding": "0x2e8d9a1f71bbfab13285ef64d323f62a026d874c891be714221cec3499a99ed",
+  "r0_verifier": "0x78469651c628d0aa30a3bb3d6f762ecfe89308b62c9db4eec8f6a0232c2e7d",
+  "r0_verifier_is": "the V5 adapter",
+  "v5": {
+   "reverted": true,
+   "reason": "UNKNOWN_ROOT"
+  },
+  "v6_control": {
+   "reverted": true,
+   "reason": "PROOF_BINDING"
+  },
+  "no_route": false,
+  "control_passes_verifier": false
+ }
+]

@@ -3,7 +3,7 @@
 // persists state and talks to starknet.js and the prover server.
 import { type Account, type Call, type RpcProvider } from 'starknet';
 
-import { SELECTORS, checkSpecVersion, checkVerifier, fetchPoolEvents, leafCountAndRoot, pendingProposals, verifyPins, type PoolEvent, type Proposal } from './chain.js';
+import { SELECTORS, checkSpecVersion, checkVerifier, currentGeneration, fetchPoolEvents, leafCountAndRoot, pendingProposals, verifyPins, type PoolEvent, type Proposal } from './chain.js';
 import {
   call,
   json,
@@ -24,7 +24,7 @@ import {
   type Window,
 } from './core.js';
 import { TemplarError, fail } from './errors.js';
-import { activePool, canon, r0Generations, routeOf, routePins, sameFelt, versionOf, type Generation, type NetworkConstants, type PoolConstants } from './network.js';
+import { activePool, canon, p1Generations, r0Generations, routeOf, routePins, sameFelt, versionOf, type Generation, type NetworkConstants, type PoolConstants } from './network.js';
 import { proveInWorker, type ProveOptions } from './prove.js';
 import { ProverClient, type ProverOptions, type RelayStatus } from './prover.js';
 import { WalletStore, type KV } from './store.js';
@@ -592,6 +592,9 @@ export class Wallet {
    */
   async deposit(account: Account, spec: { asset: AssetSpec; amount: bigint; to?: string }): Promise<{ transactionHash: string; commitment: Digest; confirmed: boolean }> {
     await checkVerifier(this.t.provider, this.t.pool);
+    // Both kinds, as at connect (pool-v3-spec §10.2, PR2-1): a P1 verifier or route change that
+    // applied unpinned after this session connected refuses deposits too (release review ADV-1).
+    if (versionOf(this.t.pool) === 'v5' && p1Generations(this.t.pool).length > 0) await currentGeneration(this.t.provider, this.t.pool, 'P1');
     // No deposit while a verifier or route change is pending on either kind (spec §8.4, AB-PV2;
     // pool-v3-spec §10.3), unless this release pins it as planned (a notice, PV3-8). A route is as
     // strong as a verifier. A lapsed proposal can no longer apply: it is shown, but blocks nothing
@@ -913,6 +916,13 @@ export class Spend {
     return r;
   }
 
+  /** Refuses a record whose generation is no longer the pool's R0 verifier: re-plan it. */
+  private async sameGeneration(rec: SpendRecord): Promise<void> {
+    const { t } = this.w.context;
+    const current = await checkVerifier(t.provider, t.pool);
+    if (!sameFelt(current.adapter, generationOf(t.pool, rec).adapter)) fail('verifier_changed', 'the pool now settles another relation version; re-plan');
+  }
+
   /** The client proof, in a worker; checked against the pinned circuit before anything leaves. */
   async prove(opts: ProveOptions = {}): Promise<Proved> {
     const rec = await this.record();
@@ -920,6 +930,9 @@ export class Spend {
     this.version ??= rec.version;
     if (rec.proved) return rec.proved;
     const { keys, t, chain, pool, spent } = this.w.context;
+    // The pool must still settle the record's generation (pool-v3-spec §11.3): after a cutover a V5
+    // plan is planned again under V6 rather than proved (release review F4, ADV-6).
+    await this.sameGeneration(rec);
     // The companion must still be unspent (spec §3.3).
     if (rec.plan.companion) {
       const nf = json<Digest>(() => wasm.companion_nullifier(JSON.stringify(rec.plan.companion), chain, pool, rec.plan.asset));
@@ -958,6 +971,9 @@ export class Spend {
     // The server must agree with the pins before the statement leaves (SDK-IP8), and serve the
     // record's generation for its route (§10.2).
     const g = generationOf(t.pool, rec);
+    // Before anything leaves: after a cutover a record of the old generation is re-planned, never
+    // sent to a server that would refuse it as dormant (release review F4, ADV-6).
+    await this.sameGeneration(rec);
     await prover.info();
     const info = await prover.checkRelation(g);
     const latestBlock = async () => (await this.w.context.latest()).block_number;

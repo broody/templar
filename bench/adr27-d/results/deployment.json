@@ -1,0 +1,95 @@
+{
+  "r6-statement": "0x13f79bef808bc5e20c7542ea41bd649ab012c4224c95c1a165ab29a86ad5ce7",
+  "r6-statement-planned": "0x61b33150738c10d59615372b2424cf0011afbfb79a24e51fb042eb5fb2825f2",
+  "r0-routing-adapter": "0x6a4b3e9ff38df6d9f2e3218fff0f3c1d2ea0ef9878231a6b154b754dfba879c",
+  "p1-routing-adapter": "0x3b33e246397f4542792d55d22455097616c6379e86ed38b7462f70430b81348",
+  "read_back": {
+    "r0-routing-adapter": {
+      "class": "0x46104020e01c065bb55e262c1c3b7dbf4bca22448bcfbd411d5bcbec58d490b",
+      "routes": [
+        "0x13f79bef808bc5e20c7542ea41bd649ab012c4224c95c1a165ab29a86ad5ce7"
+      ],
+      "proposals": 0
+    },
+    "p1-routing-adapter": {
+      "class": "0x46104020e01c065bb55e262c1c3b7dbf4bca22448bcfbd411d5bcbec58d490b",
+      "routes": [
+        "0x52828eb2a0d2095a0fa70d514b08a6ae4a2cb1ec38f72d2d843f1bf2a12d70a"
+      ],
+      "proposals": 0
+    }
+  },
+  "statement_class": "0x03be56fa87280b1f659626281d849a3e8f9c50977108f04a40ee0a097d9d9a4b",
+  "adapter_class": "0x046104020e01c065bb55e262c1c3b7dbf4bca22448bcfbd411d5bcbec58d490b",
+  "pool": "0x03463a80930b97683671b68c6a34feb3ae2ed494bd8cd477cd602dd4ef6a8aa6",
+  "owner": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+  "r0_route": {
+    "statement": "0x13f79bef808bc5e20c7542ea41bd649ab012c4224c95c1a165ab29a86ad5ce7",
+    "statement_class": "0x03be56fa87280b1f659626281d849a3e8f9c50977108f04a40ee0a097d9d9a4b",
+    "account_tag": "TMPZR0_PAYMENT_V6",
+    "os_program": "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+    "max_proof_age": 1024
+  },
+  "p1_route": {
+    "statement": "0x052828eb2a0d2095a0fa70d514b08a6ae4a2cb1ec38f72d2d843f1bf2a12d70a",
+    "statement_class": "0x032e05ae1fc0e76252f356e169d2a896b0befea4adca4a8d653c0f107836a882",
+    "account_tag": "TMPZP1_POLICY_V1",
+    "os_program": "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+    "max_proof_age": 1024
+  },
+  "planned_route": {
+    "statement": "0x61b33150738c10d59615372b2424cf0011afbfb79a24e51fb042eb5fb2825f2",
+    "statement_class": "0x03be56fa87280b1f659626281d849a3e8f9c50977108f04a40ee0a097d9d9a4b"
+  },
+  "salts": {
+    "r6-statement": "0x17e31667b9a4f42700e3d79600bb06fb44213d008e19e3b76799d04f5566935",
+    "r6-statement-planned": "0x17002b8ddacdaa9ed3a8fb7ce85bc15a5d06c8ee64a80bbbc3a76ea0e8fd252",
+    "r0-routing-adapter": "0x3b2752dea9908827ddd69d9723b26b58f50269c72f2275425de8c99b3eac8a3",
+    "p1-routing-adapter": "0x10d86bc201df2be06dc9b28b68ccd8533a2f091dd7d12cc230f8abafedce532"
+  },
+  "build": {
+    "message_tag": "TMPZR0_PAYMENT_V6",
+    "n_outputs": 33,
+    "circuit_hash_u32_le": [
+      2010035999,
+      4123906337,
+      3936982050,
+      2269257694,
+      3115244238,
+      1536739351,
+      29337086,
+      2871661834
+    ],
+    "fork_commit": "250cc9c1e50575e9f31a326e7fb9fb8e00ced0c7"
+  },
+  "casm_felts": {
+    "statement": 61893,
+    "routing_adapter": 12367
+  },
+  "steps": {
+    "declare-routing-adapter": {
+      "amount": "0xd867a5666a957298",
+      "unit": "FRI"
+    },
+    "declare-statement": {
+      "amount": "0x47152486a6f86a718",
+      "unit": "FRI"
+    },
+    "deploy-p1-routing-adapter": {
+      "amount": "0x28925d99f609e68",
+      "unit": "FRI"
+    },
+    "deploy-r0-routing-adapter": {
+      "amount": "0x28923eb6d85d5e8",
+      "unit": "FRI"
+    },
+    "deploy-r6-statement": {
+      "amount": "0x748c3334846f88",
+      "unit": "FRI"
+    },
+    "deploy-r6-statement-planned": {
+      "amount": "0x748c583772ecc8",
+      "unit": "FRI"
+    }
+  }
+}

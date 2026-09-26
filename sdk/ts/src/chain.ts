@@ -264,12 +264,14 @@ async function routeProposals(provider: RpcProvider, p: PoolConstants, g: Genera
   return raw.map((r) => {
     // The proposed value itself, never a pin looked up by key (ADV-V6-3).
     const value = r.route ? routeOfFelts(r.route) : null;
-    const planned = (g.plannedProposals ?? []).find((x) => sameFelt(x.statement, r.statement));
-    const matches =
-      planned !== undefined &&
-      (r.route === null ? planned.route === null : planned.route !== null && sameRoute(routeFelts(planned.route), r.route));
+    // Any planned change under this key that equals the pending one: a release may pin both a
+    // route's addition and its later removal (§10.2; release review F1, ADV-4).
+    const matches = (g.plannedProposals ?? [])
+      .filter((x) => sameFelt(x.statement, r.statement))
+      .some((x) => (r.route === null ? x.route === null : x.route !== null && sameRoute(routeFelts(x.route), r.route)));
     // A removal never leaves the adapter without a route the SDK can use (PR2-2).
-    const leavesUsable = r.route !== null || live.some((x) => !sameFelt(canon(x[0]!), r.statement) && routeOf(g, canon(x[0]!)) !== undefined);
+    // Usable means the primary route, the only one this release proves for, stays active (PR2-2).
+    const leavesUsable = r.route !== null || (!sameFelt(r.statement, g.primary) && live.some((x) => sameFelt(canon(x[0]!), g.primary)));
     return {
       key, value: canon(r.statement), eta: r.eta, lapsesAt: r.eta + timelock, lapsed: now > r.eta + timelock, verifier: false,
       route: { adapter: canon(g.adapter), statement: r.statement, value }, pinned: matches && leavesUsable,
