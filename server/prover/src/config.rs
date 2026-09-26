@@ -38,10 +38,10 @@ pub struct Relay {
 }
 
 /// Bounds on the virtual-OS run, checked before proving (spec §9, AB-SP4): a job over them is the
-/// client's fault. With the bound account classes they keep an accepted job in the measured leaf
-/// bucket and within `job_memory`. P5 measured R0 V5 in the virtual OS with real Ready and Braavos
-/// accounts at most 3.61M steps (bench/account-bound-p5); the builtin caps it measured are in the
-/// example configuration.
+/// client's fault. They keep an accepted job in the measured leaf bucket and within `job_memory`.
+/// P5 measured R0 V5 in the virtual OS at most 3.61M steps, bound spends with real Ready and
+/// Braavos accounts included (bench/account-bound-p5); the builtin caps it measured are in the
+/// example configuration. Only ordinary spends are served now (ADR-0027).
 #[derive(Debug, Clone, Deserialize)]
 pub struct Caps {
     #[serde(default = "d_os_steps")]
@@ -106,13 +106,6 @@ pub struct Server {
     /// `__execute__`; P3 measured about 364–372M in snforge, P5 in the virtual OS).
     #[serde(default = "d_os_l2_gas")]
     pub os_l2_gas: u64,
-    /// Seconds a bound job's result is kept when the client does not acknowledge it (spec §9).
-    #[serde(default = "d_bound_retention")]
-    pub bound_retention_secs: u64,
-    /// Bound jobs' directories (the account, salt and signature sit in their inputs, PIE and
-    /// logs): a tmpfs, apart from `data_dir` (spec §9, bound-mode data, AB-SP10). Required with
-    /// `operator_node`.
-    pub bound_data_dir: Option<PathBuf>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -140,19 +133,11 @@ pub struct Network {
     /// The virtual OS program hash the adapters pin.
     pub os_program: String,
     pub max_proof_age: u64,
-    /// The node is the operator's own (spec §9, AB-P10): required to serve bound spends, whose
-    /// account, nullifiers and root checks it sees together.
-    #[serde(default)]
-    pub operator_node: bool,
     /// Pool V3: refuse jobs from this many seconds before a pending verifier (or target shadow
     /// class) change can apply until it applies, is cancelled or lapses (AB-PV7, AB-SP1).
     /// Default `max_proof_age × 6` seconds, a result's life at the slowest block time assumed
     /// (recheck N7).
     pub pending_margin_secs: Option<u64>,
-    /// Bound spends: the account classes served (the classes whose virtual-OS resources were
-    /// measured, spec §9 bounds before proving, AB-SP4). Required with `operator_node`.
-    #[serde(default)]
-    pub bound_account_classes: Vec<String>,
     /// Pool V3's `E`, `Q`, `W`, `T`, read at startup.
     #[serde(skip)]
     pub parameters: Option<PoolParameters>,
@@ -248,7 +233,6 @@ fn d_threads() -> u32 { 16 }
 fn d_blocks_per_job() -> u64 { 60 }
 fn d_relay_margin() -> u64 { 60 }
 fn d_os_l2_gas() -> u64 { 450_000_000 }
-fn d_bound_retention() -> u64 { 600 }
 fn d_pool_version() -> u8 { 2 }
 fn d_os_steps() -> u64 { 4_000_000 }
 fn d_no_network() -> Vec<String> {
@@ -291,17 +275,6 @@ impl Config {
             }
             if addr.to_string() == c.server.listen {
                 bail!("relay.listen must not be the public listener");
-            }
-        }
-        if c.network.operator_node && names.contains(&"r5") {
-            if c.server.bound_data_dir.is_none() {
-                bail!("operator_node (bound spends) needs server.bound_data_dir, a tmpfs");
-            }
-            if c.network.bound_account_classes.is_empty() {
-                bail!("operator_node (bound spends) needs network.bound_account_classes");
-            }
-            for h in &c.network.bound_account_classes {
-                crate::rpc::felt(h).with_context(|| format!("bound_account_classes: {h}"))?;
             }
         }
         Ok(c)

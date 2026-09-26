@@ -137,14 +137,11 @@ async fn startup(cfg: &Config, rpc: &Rpc) -> Result<Value> {
     if os_runner["virtual_os_program"].as_str().map(felt).transpose()? != Some(felt(&cfg.network.os_program)?) {
         bail!("templar-os-runner embeds another virtual OS program than the adapters pin");
     }
-    // R0 V5 (spec §9, Info): the spend message's hashes, the relation and the pool's expiry rules.
+    // R0 V5 (spec §9, Info): the relation and the pool's expiry rules. Ordinary spends only
+    // (ADR-0027): the statement names no account.
     let v5 = cfg.relation("r5").map(|_| json!({
         "relation": "R0 V5", "binding": "TMR0_BIND_V5", "account_tag": "TMPZR0_PAYMENT_V5",
-        "spend_message": {"domain": {"name": "Templar", "version": "V5", "revision": "1"},
-                          "domain_type_hash": crate::v5::DOMAIN_TYPE_HASH, "spend_type_hash": crate::v5::SPEND_TYPE_HASH},
         "pool_parameters": cfg.network.parameters,
-        "bound_mode": cfg.network.operator_node,
-        "bound_account_classes": cfg.network.bound_account_classes,
         "caps": {"os_steps": cfg.caps.os_steps, "builtins": cfg.caps.builtins},
         "admission": {"blocks_per_job": cfg.server.blocks_per_job, "relay_margin_blocks": cfg.server.relay_margin_blocks},
         "result": {"send_deadline": "min(statement.valid_until, base_block + max_proof_age)"},
@@ -162,36 +159,6 @@ async fn startup(cfg: &Config, rpc: &Rpc) -> Result<Value> {
                    "max_concurrent_jobs": cfg.server.max_concurrent_jobs, "retention_secs": cfg.server.retention_secs},
         "submission_window": {"submit_after": "base_block + 11", "valid_until": "base_block + max_proof_age"},
     }))
-}
-
-/// Whether `path` lies on a tmpfs (or ramfs), from the longest mount point containing it.
-fn on_tmpfs(path: &Path) -> Result<bool> {
-    let path = std::fs::canonicalize(path)?;
-    let mounts = std::fs::read_to_string("/proc/self/mounts").context("reading /proc/self/mounts")?;
-    let fs = mounts
-        .lines()
-        .filter_map(|l| {
-            let mut f = l.split_whitespace();
-            let (_, point, fstype) = (f.next()?, f.next()?, f.next()?);
-            // Mount points escape spaces as \040.
-            Some((std::path::PathBuf::from(point.replace("\\040", " ")), fstype.to_string()))
-        })
-        .filter(|(point, _)| path.starts_with(point))
-        .max_by_key(|(point, _)| point.as_os_str().len())
-        .map(|(_, fstype)| fstype);
-    Ok(matches!(fs.as_deref(), Some("tmpfs") | Some("ramfs")))
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn tmpfs_detection() {
-        // /dev/shm is a tmpfs on Linux; the crate directory is not.
-        if std::path::Path::new("/dev/shm").exists() {
-            assert!(super::on_tmpfs(std::path::Path::new("/dev/shm")).unwrap());
-        }
-        assert!(!super::on_tmpfs(std::path::Path::new(env!("CARGO_MANIFEST_DIR"))).unwrap());
-    }
 }
 
 #[tokio::main]
@@ -248,10 +215,8 @@ async fn main() -> Result<()> {
             let purged = sandbox::purge(&cfg.sandbox)?;
             // Job directories from a previous run hold statements and cannot be resumed (PI-8). Only
             // entries the server creates are removed: job ids (32 hex) and CLI scratch (PI-14).
-            for root in std::iter::once(&cfg.server.data_dir).chain(cfg.server.bound_data_dir.as_ref()) {
-                if !root.exists() {
-                    continue;
-                }
+            let root = &cfg.server.data_dir;
+            if root.exists() {
                 for e in std::fs::read_dir(root)? {
                     let e = e?;
                     let name = e.file_name().to_string_lossy().to_string();
@@ -259,13 +224,6 @@ async fn main() -> Result<()> {
                     if e.path().is_dir() && (job || name.starts_with("cli-") || name.starts_with("bridges-cli-")) {
                         let _ = std::fs::remove_dir_all(e.path());
                     }
-                }
-            }
-            if let Some(b) = &cfg.server.bound_data_dir {
-                std::fs::create_dir_all(b)?;
-                // Bound inputs hold the account, salt and signature: memory only (spec §9, AB-SP10).
-                if !on_tmpfs(b)? {
-                    bail!("server.bound_data_dir {} is not on a tmpfs", b.display());
                 }
             }
             // A result lives up to max_proof_age blocks (about 6 s each at most); a verifier change

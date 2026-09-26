@@ -3,8 +3,8 @@
 //! proof. Every choice uses the core's CSPRNG.
 //!
 //! Two relations: R0 V4 for pool V2, and R0 V5 for pool V3 (`docs/account-bound-note-spec.md`),
-//! which adds a public `valid_until` and, for a bound wallet, the account both inputs are bound to.
-//! The keys come from a [`KeySource`]: the Templar wallet's seed (never bound) or a bound wallet's.
+//! which adds a public `valid_until`. Every spend is ordinary: the keys come from the Templar
+//! wallet's seed, and a V5 statement names no account (ADR-0027).
 use rand::Rng;
 use rand_core::{CryptoRng, RngCore};
 use serde::{Deserialize, Serialize};
@@ -15,7 +15,7 @@ use templar_client_verifier_circuit::prove::{self, R4, R5, TREE};
 
 use crate::address::Address;
 use crate::felt::{self, Felt32};
-use crate::keys::{Account, BoundWallet, Seed};
+use crate::keys::Seed;
 use crate::note;
 use crate::sealbox;
 use crate::tree::Tree;
@@ -25,32 +25,6 @@ use crate::{Digest, Error, Result, digest_ok, random_digest};
 pub const MAX_FRI_COLUMNS: usize = 16;
 
 pub use crate::pool::{PoolRef, Version};
-
-/// A source of spending keys.
-pub trait KeySource {
-    /// The keys of account `i` in `pool`.
-    fn account(&self, pool: &PoolRef, i: u32) -> Result<Account>;
-    /// The account every input is bound to: zero for the Templar wallet, `A` for a bound wallet.
-    fn bound_account(&self) -> Felt32;
-}
-
-impl KeySource for Seed {
-    fn account(&self, pool: &PoolRef, i: u32) -> Result<Account> {
-        Seed::account(self, pool.chain(), pool.pool(), i)
-    }
-    fn bound_account(&self) -> Felt32 {
-        [0; 32]
-    }
-}
-
-impl KeySource for BoundWallet {
-    fn account(&self, pool: &PoolRef, i: u32) -> Result<Account> {
-        self.keys(pool, i)
-    }
-    fn bound_account(&self) -> Felt32 {
-        *self.account_address()
-    }
-}
 
 /// Inputs to a V5 spend's `valid_until`, all read at one block together with the tree the root
 /// and paths come from (spec §8.2, AB-PV6): a re-plan takes all of them fresh, never an old root
@@ -125,11 +99,9 @@ impl Companion {
         }
     }
 
-    /// The nullifier the companion publishes for `asset` (the wallet checks it is unspent). A
-    /// bound spend's companion is bound to the same account (spec §6.2, AB-M14); `account` is zero
-    /// otherwise.
-    pub fn nullifier(&self, chain: &Felt32, pool: &Felt32, asset: &Felt32, account: &Felt32) -> Result<Digest> {
-        let (receiver, nk) = payment5::receiver_of(&felt::limbs(account)?, &self.sk);
+    /// The nullifier the companion publishes for `asset` (the wallet checks it is unspent).
+    pub fn nullifier(&self, chain: &Felt32, pool: &Felt32, asset: &Felt32) -> Result<Digest> {
+        let (receiver, nk) = payment5::receiver_of(&[0; 9], &self.sk);
         let cm = note::commitment(chain, pool, asset, 0, &receiver, &self.rho)?;
         Ok(note::nullifier(&nk, &cm, self.position))
     }
@@ -162,9 +134,6 @@ pub struct Plan {
     /// V5: the last block the spend may land in; 0 for V4.
     #[serde(default, skip_serializing_if = "is_zero_u64")]
     pub valid_until: u64,
-    /// V5: the account the inputs are bound to, `0x0` for an ordinary spend.
-    #[serde(default = "zero_hex", skip_serializing_if = "is_zero_hex")]
-    pub bound_account: String,
     pub chain: String,
     pub pool: String,
     pub asset: String,
@@ -184,12 +153,6 @@ pub struct Plan {
     pub withdrawal_amount: String,
 }
 
-fn zero_hex() -> String {
-    "0x0".into()
-}
-fn is_zero_hex(s: &str) -> bool {
-    s == "0x0"
-}
 fn is_zero_u64(v: &u64) -> bool {
     *v == 0
 }
@@ -270,7 +233,7 @@ fn select(notes: &[NoteRef], amount: u128) -> Result<Vec<NoteRef>> {
 }
 
 pub struct PlanInput<'a> {
-    pub keys: &'a dyn KeySource,
+    pub keys: &'a Seed,
     pub version: Version,
     /// Required for V5; the tree must be the one read at `expiry.latest_block`.
     pub expiry: Option<Expiry>,
@@ -334,15 +297,13 @@ pub fn plan(p: PlanInput, rng: &mut (impl RngCore + CryptoRng)) -> Result<Plan> 
     if inputs.iter().any(|n| n.account != account_index) {
         return Err(Error::new("one_account", "a spend's inputs come from one account"));
     }
-    let bound = p.keys.bound_account();
     let pool_ref = PoolRef::new(p.chain, p.pool, p.version)?;
     let valid_until = match (p.version, &p.expiry) {
-        (Version::V4, _) if !felt::is_zero(&bound) => return Err(Error::new("wrong_relation", "a bound wallet spends only with R0 V5")),
         (Version::V4, _) => 0,
         (Version::V5, Some(e)) => valid_until(e)?,
         (Version::V5, None) => return Err(Error::input("a V5 spend needs the pool's expiry rules and the latest block")),
     };
-    let account = p.keys.account(&pool_ref, account_index)?;
+    let account = p.keys.account(pool_ref.chain(), pool_ref.pool(), account_index)?;
     let mut total: u128 = 0;
     for n in &inputs {
         let amount = u128_of(&n.amount)?;
@@ -392,7 +353,7 @@ pub fn plan(p: PlanInput, rng: &mut (impl RngCore + CryptoRng)) -> Result<Plan> 
     let (companion, companion_is_new) = if inputs.len() == 1 {
         match p.companions.iter().find(|(i, _)| *i == inputs[0].index) {
             Some((_, c)) => {
-                if p.spent.contains(&c.nullifier(&p.chain, &p.pool, &asset, &bound)?) {
+                if p.spent.contains(&c.nullifier(&p.chain, &p.pool, &asset)?) {
                     return Err(Error::new("companion_spent", "the note's companion dummy was already spent"));
                 }
                 (Some(c.clone()), false)
@@ -405,7 +366,6 @@ pub fn plan(p: PlanInput, rng: &mut (impl RngCore + CryptoRng)) -> Result<Plan> 
     let plan = Plan {
         version: p.version,
         valid_until,
-        bound_account: felt::to_hex(&bound),
         chain: felt::to_hex(&p.chain),
         pool: felt::to_hex(&p.pool),
         asset: felt::to_hex(&asset),
@@ -509,7 +469,7 @@ pub enum Witness {
 }
 
 /// Rebuilds the relation's witness and statement from a plan, with every check the bridge runs.
-pub fn witness(keys: &dyn KeySource, plan: &Plan) -> Result<(Statement, Witness)> {
+pub fn witness(keys: &Seed, plan: &Plan) -> Result<(Statement, Witness)> {
     let chain = felt::parse(&plan.chain)?;
     let pool = felt::parse(&plan.pool)?;
     let asset = felt::parse(&plan.asset)?;
@@ -521,18 +481,15 @@ pub fn witness(keys: &dyn KeySource, plan: &Plan) -> Result<(Statement, Witness)
     // The relation's own encoders panic on non-canonical text (64 hex digits), so every felt it
     // parses is rebuilt from its parsed value (SDK-IM1).
     let (chain_s, pool_s, asset_s) = (felt::to_hex(&chain), felt::to_hex(&pool), felt::to_hex(&asset));
-    let bound = keys.bound_account();
-    if felt::parse(&plan.bound_account)? != bound {
-        return Err(Error::input("the plan is for another wallet's account binding"));
-    }
     match plan.version {
-        Version::V4 if !felt::is_zero(&bound) || plan.valid_until != 0 => return Err(Error::input("a V4 plan is ordinary and has no expiry")),
+        Version::V4 if plan.valid_until != 0 => return Err(Error::input("a V4 plan has no expiry")),
         Version::V5 if plan.valid_until == 0 || plan.valid_until >= payment5::VALID_UNTIL_BOUND => {
             return Err(Error::input("valid_until out of range"));
         }
         _ => {}
     }
-    let account = keys.account(&PoolRef::new(chain, pool, plan.version)?, plan.account)?;
+    let pool_ref = PoolRef::new(chain, pool, plan.version)?;
+    let account = keys.account(pool_ref.chain(), pool_ref.pool(), plan.account)?;
     if plan.inputs.is_empty() || plan.inputs.len() > 2 || plan.paths.len() != plan.inputs.len() {
         return Err(Error::input("one or two inputs"));
     }
@@ -598,7 +555,7 @@ pub fn witness(keys: &dyn KeySource, plan: &Plan) -> Result<(Statement, Witness)
         }
         Version::V5 => {
             let private = payment5::Private {
-                token: asset_s.clone(), account: felt::to_hex(&bound), inputs, dummy, outputs, identity: Identity::default(),
+                token: asset_s.clone(), account: "0x0".into(), inputs, dummy, outputs, identity: Identity::default(),
             };
             let public = payment5::statement(TREE, &chain_s, &pool_s, deliveries, (recipient_s, w_amount), "0x0", plan.valid_until, &private)
                 .map_err(|e| Error::new("invalid_spend", e))?;
@@ -717,7 +674,7 @@ pub struct Proved {
 /// Proves a plan: rebuilds and checks the witness, proves with a fresh blinding seed, checks the
 /// hiding budget and verifies the proof natively (spec §7.3). A V5 plan needs `now`, the pool's
 /// rules and the latest block, and is refused when it can no longer land (AB-SM4).
-pub fn prove_plan(keys: &dyn KeySource, plan: &Plan, now: Option<&Expiry>, rng: &mut (impl RngCore + CryptoRng)) -> Result<Proved> {
+pub fn prove_plan(keys: &Seed, plan: &Plan, now: Option<&Expiry>, rng: &mut (impl RngCore + CryptoRng)) -> Result<Proved> {
     match (plan.version, now) {
         (Version::V5, Some(now)) => check_fresh(plan, now)?,
         (Version::V5, None) => return Err(Error::input("proving a V5 plan needs the pool's expiry rules and the latest block")),

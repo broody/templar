@@ -10,7 +10,7 @@ description: The cryptographic and system terms used in the Templar architecture
 | --- | --- |
 | Asset identifier | A note's token field: an ERC20 address, or a hash of the standard, contract and token id for an ERC721 or ERC1155 token. |
 | Base block | The chain snapshot used by virtual execution. |
-| Bound note | A note whose receiver hashes in one Starknet account: spending it needs the wallet's Templar key and that account's signature ([existing wallets](/architecture/existing-wallets)). |
+| Bound note | Removed (ADR-0027). A note whose receiver hashed in one Starknet account, so spending it also needed that account's signature ([existing wallets](/architecture/existing-wallets)). |
 | Bridge | The Cairo code in a statement account that verifies a client proof against its pinned circuit, decodes the public statement and computes its binding. |
 | Checkpoint | A canonical block identity and pool state against which a wallet verifies history and reports a balance. |
 | Ciphertext | Encrypted note data published with a funded output so its recipient can recover it. |

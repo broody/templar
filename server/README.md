@@ -90,11 +90,7 @@ builds may be mounted read-only; the server copies what it executes into its dat
 startup and hashes the copy. `--init` reaps step processes and forwards SIGTERM; on SIGTERM the
 server stops accepting work and kills running steps.
 
-**Bound spends** (pool V3, `operator_node = true`) keep each job's account, salt and signature in
-its directory until proving ends, so `bound_data_dir` must be a tmpfs (Docker: `--tmpfs
-/run/templar-bound:size=4g,mode=0700,uid=999`, more with `stream_commitments`) and swap must be off or encrypted; the `docker run`
-above sets `--memory-swap` equal to `--memory`, which disables it. With `[payment]`, put
-`spent_dir` on a volume apart from the job directories: a spend that cannot be synced fails the
+With `[payment]`, put `spent_dir` on a volume apart from the job directories: a spend that cannot be synced fails the
 job, and the server takes no payment until the log is writable again.
 
 **The relayer** ([`relayer/`](relayer/README.md)): with `[relay]`, finished R0 V5 results wait on

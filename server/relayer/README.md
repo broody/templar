@@ -52,7 +52,7 @@ The logic is `@templar/sdk/relayer` (`sdk/ts/src/relayer.ts`). Build the SDK fir
 node server/relayer/relayer.mjs /etc/templar/relayer.json
 ```
 
-- **The account.** One account submits every spend, whatever the product or mode, so the
+- **The account.** One account submits every spend, whatever the product, so the
   submitter tells nothing apart. It needs STRK for fees; tickets pay the service off chain. Its
   private key is read from `account.keyFile` (mode 0400) and never logged. The transaction hash
   is taken from what its signer signed, so it is known before sending.

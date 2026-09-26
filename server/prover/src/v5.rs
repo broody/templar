@@ -1,8 +1,9 @@
-//! R0 V5 (`docs/account-bound-note-spec.md` §5, §9): the statement's binding, the bound account's
-//! spend message, and the job's pool calldata, which the server parses strictly and matches to the
-//! statement before it proves (AB-P28). Every encoding here is the Cairo code's: the bridge's
-//! `binding` and `snip12` modules (`client-port/cairo-r5/bridge`), pool V3's `spend5::Spend` and
-//! `open_note::hash_intent_of`, and `spend::delivery_digest` (`bench/m31-pool/cairo`).
+//! R0 V5 (`docs/account-bound-note-spec.md` §5): the statement's binding and the job's pool
+//! calldata, which the server parses strictly and matches to the statement before it proves
+//! (AB-P28). Only ordinary spends (account 0) are served (ADR-0027). Every encoding here is the
+//! Cairo code's: the bridge's `binding` module (`client-port/cairo-r5/bridge`), pool V3's
+//! `spend5::Spend` and `open_note::hash_intent_of`, and `spend::delivery_digest`
+//! (`bench/m31-pool/cairo`).
 use anyhow::{bail, ensure, Context, Result};
 use starknet_types_core::felt::Felt;
 use starknet_types_core::hash::{Poseidon, StarkHash};
@@ -12,8 +13,6 @@ use crate::rpc::{short_string, sn_keccak};
 /// Most felts a pool call may carry: a spend with an invoke of 64 calldata felts and two
 /// destinations is about 170.
 pub const MAX_POOL_CALL_FELTS: usize = 512;
-/// A bound signature's felts at most (spec §9).
-pub const MAX_SIGNATURE_FELTS: usize = 32;
 const MAX_INTENT_CALLDATA: usize = 64;
 const MAX_DESTINATIONS: usize = 2;
 pub const INVOKE: u64 = 0;
@@ -52,10 +51,6 @@ pub struct StatementV5 {
 }
 
 impl StatementV5 {
-    pub fn bound(&self) -> bool {
-        self.account != Felt::ZERO
-    }
-
     /// `Poseidon('TMR0_BIND_V5', chain, pool, token_out, root₉, nf₀₉, nf₁₉, cm₀₉, d₀, cm₁₉, d₁,
     /// recipient, amount, intent, identity₉, valid_until)`; never the account (spec §5.2).
     pub fn binding(&self) -> Felt {
@@ -72,31 +67,7 @@ impl StatementV5 {
         b.push(Felt::from(self.valid_until));
         Poseidon::hash_array(&b)
     }
-
-    /// The hash the bound account's `is_valid_signature` is asked about (spec §5.3).
-    pub fn message_hash(&self, salt: Felt) -> Felt {
-        let domain = Poseidon::hash_array(&[
-            Felt::from_hex_unchecked(DOMAIN_TYPE_HASH),
-            short_string("Templar").expect("short"),
-            short_string("V5").expect("short"),
-            self.chain,
-            Felt::ONE,
-        ]);
-        let spend = Poseidon::hash_array(&[
-            Felt::from_hex_unchecked(SPEND_TYPE_HASH),
-            self.pool,
-            Poseidon::hash_array(&[self.binding(), salt]),
-            self.token_out,
-            self.withdrawal_recipient,
-            self.withdrawal_amount,
-            self.intent,
-        ]);
-        Poseidon::hash_array(&[short_string("StarkNet Message").expect("short"), domain, self.account, spend])
-    }
 }
-
-pub const DOMAIN_TYPE_HASH: &str = "0x1ff2f602e42168014d405a94f75e8a93d640751d71d16311266e140d8b0a210";
-pub const SPEND_TYPE_HASH: &str = "0x26f4b4434596eda927640d80fc0e5f4e6d80e82289e112d306843f5e9df3873";
 
 /// `spend::delivery_digest`: `Poseidon('CTRL_DELIVERY_V1', 304, words…)` over ten words, nine
 /// below 2^248 and the last below 2^200.
@@ -343,40 +314,14 @@ mod tests {
         }
     }
 
-    /// The binding and the spend message equal starknet.js's known answers.
+    /// The binding equals starknet.js's known answers, and never depends on the account.
     #[test]
-    fn binding_and_message_match_starknet_js() {
+    fn binding_matches_starknet_js() {
         let kat: Value = serde_json::from_str(KAT).unwrap();
         for b in kat["bindings"].as_array().unwrap() {
             assert_eq!(statement(&b["statement"], Felt::ZERO).binding(), fv(&b["binding"]), "{}", b["name"]);
             assert_eq!(statement(&b["statement"], Felt::from(0x123u64)).binding(), fv(&b["binding"]), "the account is not bound");
         }
-        for s in kat["spends"].as_array().unwrap() {
-            // A statement with the spend's signed fields and an arbitrary binding is not possible
-            // here, so recompute the message from its parts as the Cairo module does.
-            let domain = Poseidon::hash_array(&[felt(DOMAIN_TYPE_HASH).unwrap(), short_string("Templar").unwrap(), short_string("V5").unwrap(), fv(&s["chain"]), Felt::ONE]);
-            assert_eq!(domain, fv(&s["domain_hash"]));
-            let bc = Poseidon::hash_array(&[fv(&s["binding"]), fv(&s["salt"])]);
-            assert_eq!(bc, fv(&s["binding_commitment"]));
-            let st = Poseidon::hash_array(&[felt(SPEND_TYPE_HASH).unwrap(), fv(&s["pool"]), bc, fv(&s["token_out"]), fv(&s["withdrawal_recipient"]), fv(&s["withdrawal_amount"]), fv(&s["intent"])]);
-            assert_eq!(st, fv(&s["struct_hash"]));
-            let m = Poseidon::hash_array(&[short_string("StarkNet Message").unwrap(), domain, fv(&s["account"]), st]);
-            assert_eq!(m, fv(&s["message_hash"]), "{}", s["name"]);
-        }
-    }
-
-    /// `message_hash` equals the parts above for a statement whose binding is known.
-    #[test]
-    fn message_hash_uses_the_statements_binding() {
-        let kat: Value = serde_json::from_str(KAT).unwrap();
-        let b = &kat["bindings"][1];
-        let st = statement(&b["statement"], Felt::from(0xabcu64));
-        let salt = Felt::from(77u64);
-        let bc = Poseidon::hash_array(&[st.binding(), salt]);
-        let sh = Poseidon::hash_array(&[felt(SPEND_TYPE_HASH).unwrap(), st.pool, bc, st.token_out, st.withdrawal_recipient, st.withdrawal_amount, st.intent]);
-        let dh = Poseidon::hash_array(&[felt(DOMAIN_TYPE_HASH).unwrap(), short_string("Templar").unwrap(), short_string("V5").unwrap(), st.chain, Felt::ONE]);
-        assert_eq!(st.message_hash(salt), Poseidon::hash_array(&[short_string("StarkNet Message").unwrap(), dh, st.account, sh]));
-        assert_ne!(st.message_hash(salt), st.message_hash(Felt::from(78u64)));
     }
 
     fn span(xs: &[Felt]) -> Vec<Felt> {
@@ -393,7 +338,7 @@ mod tests {
             root: w(1), nullifiers: [w(10), w(20)], commitments: [w(30), w(40)],
             deliveries: [delivery_digest(&ct0).unwrap(), delivery_digest(&ct1).unwrap()],
             withdrawal_recipient: Felt::from(0xb0bu64), withdrawal_amount: Felt::from(400u64), intent: Felt::ZERO,
-            identity: vec![Felt::ZERO; 9], account: Felt::from(0x7e57b3c0u64), valid_until: 6500,
+            identity: vec![Felt::ZERO; 9], account: Felt::ZERO, valid_until: 6500,
         };
         let mut c = vec![st.chain, st.pool, st.token_out];
         c.extend(span(&st.root));

@@ -10,10 +10,10 @@ implemented.** **Revision 4 amendments** (`docs/account-bound-note-spec.md` §11
 "Pool V3 (R0 V5)" paragraphs in §8, §9, §10.2, §11 and §14. R0 V4 on pool V2 is unchanged.
 **Revision 5 amendments** (`docs/pool-v3-spec.md` §14, ADR-0027) remove bound wallets and add
 R0 V6 on pool V3, whose R0 and P1 verifiers become routing adapters (pool-v3-spec §6): §3.1,
-§3.4, §8, §9.1, §9.2, §10.2, §11 and §14. The code implements R0 V5 and bound mode until
-ADR-0027's phases B–E land, so each changed passage is marked "(R0 V6, ADR-0027: pending
-implementation)" or "(ADR-0027: pending implementation)", and bound-mode text that the code still
-has is marked "(removed by ADR-0027, phase B)".
+§3.4, §8, §9.1, §9.2, §10.2, §11 and §14. The code implements R0 V5 until ADR-0027's phases C–E
+land, so each changed passage is marked "(R0 V6, ADR-0027: pending implementation)" or "(ADR-0027:
+pending implementation)". Phase B landed on 2026-09-26: text marked "(removed by ADR-0027, phase
+B)" describes bound mode, which the code no longer has.
 Defines the maintained client side of the compact client-proof path (TODO item
 4): a Rust core compiled to WebAssembly, and a TypeScript package on top that uses starknet.js for
 every chain interaction.
@@ -158,7 +158,7 @@ ADR-0027 removes bound wallets (product 1): every user holds ordinary notes unde
 and an external wallet connects only for login, deposits, withdrawals and paying for the service
 (`docs/pool-v3-spec.md` §1, §7). Wallets never create bound receivers again, and every bound
 receiver already in pool V3's tree becomes unspendable at the Sepolia cutover (pool-v3-spec
-§11.5). The code keeps bound seeds until phase B lands. Their normative text (the 21-word seed,
+§11.5). Phase B removed bound seeds from the code (2026-09-26). Their normative text (the 21-word seed,
 the `TEMPLAR_BOUND_*_V1` labels, the `WAUTH` receiver, `KNOWN_V4_POOLS` and the setup checks)
 stays recorded in `docs/account-bound-note-spec.md` §6. The hash kind `WAUTH = 16` is reserved
 permanently (pool-v3-spec §3).
@@ -755,14 +755,15 @@ implementation**).**
     and each removal. It also pins each planned removal as a proposal.
   - The SDK accepts `get_routes()` equal to any pinned state of the current adapter, and checks a
     result against the route in that state whose message hash matches `facts[8]` (§8).
-- **Removed by ADR-0027, phase B** (pool-v3-spec §10.1): bound wallets (`boundWallet`,
-  `boundSetupCheck`, `BoundSigner`, `authorize`, `BOUND_ACCOUNT_CLASSES`) and the
-  `prover_account_class` error code; the core's bound keys and `snip12`; the `spend_message`
-  check on servers; `bound_seeds` in `sdk/vectors/keys.json`, regenerated with `check_keys.py`
-  and `vectors_keys.rs`; and only the SNIP-12 vectors and tests (`cairo-r5/kat`'s SNIP-12 part,
-  `bench/wallet-sig-spike/snip12`). The starknet.js `TMR0_BIND_V5` vectors in `cairo-r5/kat` are
-  kept and moved to `cairo-r6/kat` or `sdk/vectors`, since they anchor the binding test
-  (re-check F3).
+- **Removed by ADR-0027, phase B** (pool-v3-spec §10.1; implemented 2026-09-26): bound wallets
+  (`boundWallet`, `boundSetupCheck`, `BoundSigner`, `authorize`, `BOUND_ACCOUNT_CLASSES`) and the
+  `prover_account_class` and `prover_forbidden` error codes; the core's bound keys and `snip12`,
+  its `KeySource` and `StoreKeys` traits (the seed is the only key source), and the `keys`
+  argument of `companion_nullifier`; the `spend_message` check on servers; `bound_seeds` in
+  `sdk/vectors/keys.json`, regenerated with `check_keys.py` and `vectors_keys.rs`. The SNIP-12
+  vectors and tests stay with the deployed V5 source and the spike they test (pool-v3-spec
+  §10.1). The starknet.js `TMR0_BIND_V5` vectors in `cairo-r5/kat` are kept, and phase C copies
+  them to `cairo-r6/kat`, since they anchor the binding test (re-check F3).
 
 ### 10.3 Storage (SDK-P9)
 

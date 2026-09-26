@@ -1,81 +1,57 @@
 ---
 showAskAi: false
 title: Existing wallets
-description: How Ready and Braavos accounts hold and spend Templar notes, what the prover server learns in that mode, and how spends reach the chain.
+description: How Ready, Braavos and other Starknet accounts use Templar under the one wallet model, what they do and never do, and how spends reach the chain.
 ---
 
 import { Flow } from '../../components/Flow'
 
 # Existing wallets
 
-Templar offers two products on one pool:
-- **Existing Starknet wallets** (Ready, Braavos) in a web app. Each spend needs a signature from the user's own account.
-- **The Templar wallet**, whose own key authorizes spends.
+Templar has **one wallet model** (ADR-0027, `docs/adr/0027-one-wallet-model.md`). Every user holds ordinary Templar notes, and the Templar key authorizes every spend inside the client proof. An existing Starknet wallet (Ready, Braavos, Cartridge Controller, or any account) connects to the site only to:
+- log in;
+- deposit into the pool;
+- receive withdrawals;
+- pay for the service.
 
-Both settle the same kind of spend (R0 V5) in the same pool (pool V3), so both share one anonymity set. On chain, a spend authorized by a Ready or Braavos account looks exactly like one authorized by a Templar key.
+It never authorizes a spend, so any account type works: guardians, multisig and passkey accounts included. Every spend is the same kind of ordinary spend in the same pool, so all users share one anonymity set.
 
-## Account-bound notes
+## The Templar key
 
-A note for an existing wallet is **bound** to one Starknet account. Its receiver hashes that account into the spending authority. Spending it needs two things:
-- the wallet's Templar spending key, derived from a separate 21-word backup;
-- a valid signature from the bound account.
+The Templar key comes from a 24-word backup, the only backup there is. A leaked backup means theft, as with any wallet seed. The external wallet adds no second signature.
 
-A payer cannot tell a bound receiving address from an ordinary one, and any wallet can pay either. Neither half alone is enough:
+At launch the key lives in a vault on its own origin, `vault.templar.money`, embedded in the site. The vault holds the seed, syncs the pool and proves spends. Unlocking, showing the words and confirming each spend open a separate vault window. The vault is specified but not built yet. A Chrome extension wallet may follow later, with one 24-word seed for both its account and its Templar key.
 
-| Leaked | Effect |
-| --- | --- |
-| The Templar backup or device store | Reveals that wallet's bound notes, amounts and spends. Moves nothing without the account's signature. |
-| The account's signing key alone | Moves nothing: the notes also need the Templar spending key |
-| Both | Everything, as with any wallet |
-
-A bound wallet keeps value in bound notes: change, deposits and returns all go to receivers bound to the same account. It creates no policy notes, because a policy settlement involves no account signature.
-
-## A bound spend
+## A spend
 
 <Flow steps={[
-  { title: 'Prove', detail: 'The browser plans the spend and proves it in about 6 seconds. The account is part of the proof’s statement.' },
-  { title: 'Authorize', detail: 'The wallet signs a spend message (SNIP-12) with the account. The screen shows the pool and any exit.' },
-  { title: 'Wrap', detail: 'The prover server runs its statement account in the virtual OS. It calls the account’s is_valid_signature inside the proven execution.' },
-  { title: 'Relay', detail: 'The service’s relayer submits the transaction. The wallet submits itself only if the relayer did not.' },
-]} caption="Keys, amounts, recipients and notes never leave the browser. The account's signature is checked inside the proof that settles the spend." />
+  { title: 'Prove', detail: 'The vault plans the spend and proves it on the device, in about 6 seconds. Keys, amounts and recipients stay there.' },
+  { title: 'Wrap', detail: 'The prover server runs its statement account in the virtual OS and returns the large proof. It learns nothing about the spender.' },
+  { title: 'Relay', detail: 'The service’s relayer submits the transaction from its own account.' },
+]} caption="The external wallet takes no part in a spend. It only funds deposits, receives withdrawals and pays for the service." />
 
-- **The signature is checked where it counts.** The statement account calls the owner account's own `is_valid_signature` inside the execution that the large proof proves. A spend lands only if the account itself accepted the signature.
-- **The message hides in-pool details.** It carries the pool and the plain exit fields (a withdrawal's recipient and amount), plus a salted binding. So a wallet vendor or guardian service can see what leaves the pool, but cannot match an in-pool transfer except by signing time.
-- **Every signer the account accepts can authorize.** That includes the owner, a guardian, or session keys, so the list of launch account classes records each class's signers.
-
-## What the prover server learns
-
-For a bound spend, the prover server learns **which account made which spend**. It cannot move funds or change outputs. It can delay a spend until the spend expires, or refuse it, so it could censor chosen accounts. Label it accordingly: a trusted prover for identity.
-
-That is still much less than a hosted prover that receives the witness: keys, amounts and recipients stay on the device. The Templar wallet removes the identity link as well: its own key authorizes, and the server learns nothing about the spender ([privacy & trust](/architecture/privacy)).
+- **The connected account never submits a spend by default.** Submitting from it would publicly link it to the spend. It could submit only through an explicit override, which needs a wallet API that no extension offers yet.
+- **The relayer submits plain spends.** When it cannot, the fallback is another relayer and then the vault's own submitter account. Each fallback submission is linkable, so the wallet asks first.
+- **Nothing links a session to a spend.** No login session, cookie or wallet credential reaches the prover server, the relayer or the ticket redeemer.
 
 ## Expiry and submission
 
-Every V5 spend carries a public `valid_until`. The pool accepts it only up to that block, and only if `valid_until` sits on a grid and is not too far ahead:
+Every spend carries a public `valid_until`. The pool accepts it only up to that block, and only if `valid_until` sits on a grid and is not too far ahead:
 - on Sepolia the window `E` is 1,500 blocks (about 42 minutes);
 - the grid `Q` is 100 blocks.
 
 A proved spend that nobody submits in time can never land later, which bounds how long anyone can withhold it.
 
-The service's relayer submits every spend the server proves, from its own account, and answers each job with a transaction hash or a refusal. The wallet submits the same transaction itself only in two cases:
+The relayer answers each job with a transaction hash or a refusal. The wallet submits the same transaction itself only in two cases:
 - the relayer refused the job;
 - the deadline is within 40 blocks and no relayer transaction is pending.
 
-So the relayer and the wallet never both land it. A bound account never submits its own spends, since that would link it to the spend on chain.
+So the relayer and the wallet never both land it.
 
-## Supported accounts
+## Account-bound notes (removed)
 
-At launch, bound notes accept accounts whose class the wallet and the server have measured, with a Stark-key signer:
-
-| Wallet | Account class | Notes |
-| --- | --- | --- |
-| Ready | Argent 0.5.0 | Without a guardian |
-| Braavos | Braavos 1.2.0 | Stark signer |
-
-Accounts with guardians, multisig or P-256 and passkey signers are refused at setup. For example, a Ready account with a guardian rejects owner-only signatures. Before creating a bound wallet, the web app checks the account's class and signers at one block, and the wallet signs a setup message that can never authorize a spend.
-
-## What observers see
-
-On chain, a bound spend and an ordinary one publish the same data. The gateway receives the large proof. Its public shape is the same for ordinary, Ready and Braavos spends: the header (proof version and circuit), and the circuit's fixed component sizes. The mode and the account differ only inside the proof's witness, so hiding them from the gateway rests on the large proof's zero knowledge.
+An earlier design made existing wallets co-sign every spend: a **bound note** needed the Templar key and a signature from one Starknet account, checked inside the proven execution. It protected notes when only the Templar backup leaked, but it cost privacy (the prover server learned which account made which spend), accepted only two account classes, and was the most complex code in the relation. ADR-0027 removed it:
+- the client SDK and the prover server no longer create, plan or serve bound spends;
+- pool V3's verifier moves to R0 V6, which has no account at all; bound notes made during the Sepolia tests become unspendable then.
 
 For what has run, see [implementation status](/status#existing-wallets-r0-v5).

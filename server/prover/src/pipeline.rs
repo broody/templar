@@ -9,7 +9,7 @@ use starknet_types_core::felt::Felt;
 use crate::config::{Config, RelationConfig};
 use crate::rpc::{felt, hex, short_string, Rpc};
 use crate::sandbox::{self, Limits};
-use crate::statement::{Relation, Submission, V5Job};
+use crate::statement::{Relation, Submission};
 
 /// A job failure that is the client's doing (spec §9, ticket states): a bridge rejection, a
 /// calldata mismatch, a virtual-OS revert or failed execution, a message mismatch or a cap
@@ -283,16 +283,6 @@ pub async fn invoke_state(rpc: &Rpc, cfg: &Config, sub: &Submission) -> Result<(
     change_due(rpc, cfg, class, "the adapter class's shadow status").await
 }
 
-/// Bound spends: the account's class must be one this server serves (AB-SP4), at `block`.
-pub async fn bound_class(rpc: &Rpc, cfg: &Config, job: &V5Job, block: Option<u64>) -> Result<()> {
-    let class = rpc.class_hash_at_block(block, &hex(&job.statement.account)).await?;
-    let served = cfg.network.bound_account_classes.iter().filter_map(|h| felt(h).ok()).any(|h| h == class);
-    if !served {
-        return Err(client("the bound account's class is not one this server serves"));
-    }
-    Ok(())
-}
-
 /// The virtual-OS resources within the caps (spec §9 bounds before proving, AB-SP4).
 pub fn within_caps(cfg: &Config, resources: &Value) -> Result<()> {
     let steps = resources["n_steps"].as_u64().context("os: n_steps")?;
@@ -342,19 +332,6 @@ pub fn send_deadline(cfg: &Config, sub: &Submission, base: u64) -> u64 {
     })
 }
 
-/// The bound account's `is_valid_signature` over the spend message, through `starknet_call` at
-/// `block` (spec §9 step 8, job start). Advisory: the virtual-OS run is authoritative (AB-IP2).
-/// The error never names the account (spec §9, bound-mode data).
-pub async fn signature_valid(rpc: &Rpc, job: &V5Job, block: Option<u64>) -> Result<()> {
-    let hash = job.statement.message_hash(job.salt);
-    let calldata = [vec![hash, Felt::from(job.signature.len() as u64)], job.signature.clone()].concat();
-    let account = hex(&job.statement.account);
-    match rpc.call_at(block, &account, "is_valid_signature", &calldata).await {
-        Ok(r) if r == [short_string("VALID")?] => Ok(()),
-        _ => bail!("signature: the bound account does not accept it; authorize the spend again"),
-    }
-}
-
 pub struct JobResult {
     pub value: Value,
 }
@@ -374,16 +351,11 @@ pub async fn run(cfg: &Config, rpc: &Rpc, rel: &RelationConfig, sub: &Submission
     if let Some(j) = &sub.v5 {
         // Job start (spec §9): the admission rules again at the base block, proving time included
         // (AB-SP6); a job that expired in the queue is the server's delay, so its tickets are
-        // released. Then the root at the deadline, the pool's rules, and for a bound spend the
-        // account's class and signature at the base block.
+        // released. Then the root at the deadline and the pool's rules.
         expiry_admits(cfg, j.statement.valid_until, base, 0).context("expired in the queue")?;
         root_fresh(rpc, cfg, sub, deadline).await?;
         pool_rules(cfg, sub, base)?;
         invoke_state(rpc, cfg, sub).await?;
-        if j.statement.bound() {
-            bound_class(rpc, cfg, j, Some(base)).await?;
-            signature_valid(rpc, j, Some(base)).await?;
-        }
     }
     let nonce = rpc.nonce(base, &rel.statement_account).await?;
     let l2_gas = if sub.v5.is_some() { cfg.server.os_l2_gas } else { 1_000_000_000 };
@@ -494,6 +466,7 @@ mod tests {
     use super::*;
     use crate::config::PoolParameters;
     use crate::rpc::sn_keccak;
+    use crate::statement::V5Job;
     use crate::v5::StatementV5;
     use axum::Json;
     use std::collections::HashMap;
@@ -623,7 +596,7 @@ mod tests {
         let pool_call = crate::v5::PoolCall { entry_point: "apply_spend".into(), calldata: vec![], spend: st.clone(), binding: st.binding(), intent };
         Submission {
             relation: Relation::R5, proof: vec![], chain: st.chain, pool: st.pool, root: st.root.clone(), nullifiers: vec![],
-            statement_args: vec![], v5: Some(V5Job { pool_call, statement: st, salt: Felt::ZERO, signature: vec![] }),
+            statement_args: vec![], v5: Some(V5Job { pool_call, statement: st }),
         }
     }
 
@@ -698,20 +671,6 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn bound_classes_served() {
-        let mut cfg = v3_config();
-        let mut st = statement(6500);
-        st.account = Felt::from(0xacc0u64);
-        let sub = v5_sub(st, None);
-        let job = sub.v5.as_ref().unwrap();
-        let rpc = stub(HashMap::new(), 0).await;
-        cfg.network.bound_account_classes = vec!["0x1234".into()];
-        assert!(is_client_fault(&bound_class(&rpc, &cfg, job, Some(7)).await.unwrap_err()));
-        cfg.network.bound_account_classes.push("0xc1a55".into());
-        bound_class(&rpc, &cfg, job, Some(7)).await.unwrap();
-    }
-
-    #[tokio::test]
     async fn v3_root_freshness_at_the_deadline() {
         let cfg = v3_config();
         let sel = sn_keccak("get_root_superseded_at");
@@ -722,35 +681,6 @@ mod tests {
         let replaced = stub(HashMap::from([(sel, vec![Felt::from(1001u64)])]), 0).await;
         root_fresh(&replaced, &cfg, &sub_with_root(), 1000 + 4096).await.unwrap();
         assert!(root_fresh(&replaced, &cfg, &sub_with_root(), 1000 + 4097).await.is_err());
-    }
-
-    #[tokio::test]
-    async fn bound_signature_check() {
-        let st = StatementV5 {
-            chain: short_string("SN_SEPOLIA").unwrap(), pool: Felt::from(0x7e57b301u64), token_out: Felt::ZERO,
-            root: vec![Felt::ONE; 9], nullifiers: [vec![Felt::ONE; 9], vec![Felt::TWO; 9]],
-            commitments: [vec![Felt::ONE; 9], vec![Felt::TWO; 9]], deliveries: [Felt::ONE, Felt::TWO],
-            withdrawal_recipient: Felt::ZERO, withdrawal_amount: Felt::ZERO, intent: Felt::ZERO, identity: vec![Felt::ZERO; 9],
-            account: Felt::from(0x7e57b3c0u64), valid_until: 6500,
-        };
-        let job = V5Job {
-            pool_call: crate::v5::PoolCall {
-                entry_point: "apply_spend".into(), calldata: vec![], spend: st.clone(), binding: st.binding(), intent: None,
-            },
-            statement: st, salt: Felt::from(5u64), signature: vec![Felt::ONE, Felt::TWO],
-        };
-        let sel = sn_keccak("is_valid_signature");
-        let valid = stub(HashMap::from([(sel, vec![short_string("VALID").unwrap()])]), 0).await;
-        signature_valid(&valid, &job, None).await.unwrap();
-        signature_valid(&valid, &job, Some(123)).await.unwrap();
-        for answer in [vec![Felt::ZERO], vec![short_string("VALID").unwrap(), Felt::ZERO], vec![]] {
-            let rpc = stub(HashMap::from([(sel, answer)]), 0).await;
-            let e = signature_valid(&rpc, &job, None).await.unwrap_err().to_string();
-            assert!(e.contains("does not accept") && !e.contains("7e57b3c0"), "{e}");
-        }
-        // A reverting account.
-        let reverts = stub(HashMap::new(), 0).await;
-        assert!(signature_valid(&reverts, &job, None).await.is_err());
     }
 
     #[test]

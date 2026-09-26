@@ -111,7 +111,6 @@ export interface Plan {
   /** R0 V5 plans carry these; a V4 plan omits them. */
   version?: 'v4' | 'v5';
   valid_until?: number;
-  bound_account?: Hex;
   chain: Hex;
   pool: Hex;
   asset: Hex;
@@ -139,7 +138,7 @@ export interface Statement {
   withdrawal_amount: number | string;
   intent: Hex;
   identity: Digest;
-  /** R0 V5: the bound account (`0x0` for an ordinary spend) and the expiry. */
+  /** R0 V5: the account (always `0x0`: every spend is ordinary, ADR-0027) and the expiry. */
   account?: Hex;
   valid_until?: number | string;
 }
@@ -149,12 +148,6 @@ export interface Expiry {
   latest_block: number;
   window: number;
   quantum: number;
-}
-
-/** A bound account's SNIP-12 spend message: the typed data to sign and the hash it signs. */
-export interface SpendMessage {
-  typed_data: object;
-  hash: Hex;
 }
 
 export interface Proved {

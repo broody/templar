@@ -1,6 +1,10 @@
 // P6 end to end on Sepolia (docs/account-bound-note-spec.md §15 P6): pool V3 with the SDK, the
 // prover server and the relayer, a real Braavos account for the bound wallet.
 //
+// A record of the P6 run (results in bench/account-bound-p6/results/e2e.json). ADR-0027 phase B
+// removed bound wallets from the SDK and the prover server, so this script runs only against the
+// SDK at commit 7b5b0a4.
+//
 //   node bench/sepolia-v3-e2e.mjs RUN_DIR            # one stage per run; resumable
 //
 // Stages: seeds; the bound setup check (Braavos signs); two deposits from the relayer's account

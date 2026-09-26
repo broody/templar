@@ -425,11 +425,8 @@ describe('deposits, withdrawals and keys', () => {
       fns.push(['note_for', () => wasm.note_for(s, s, s, s, s)]);
       fns.push(['scan', () => wasm.scan(alice, s)]);
       fns.push(['prove_spend', () => wasm.prove_spend(alice, s, s)]);
-      fns.push(['spend_message', () => wasm.spend_message(s, s)]);
-      fns.push(['setup_check_message', () => wasm.setup_check_message(s, s)]);
       fns.push(['free_withdrawal_openings', () => wasm.free_withdrawal_openings(s)]);
-      fns.push(['bound_seed_from_mnemonic', () => wasm.bound_seed_from_mnemonic(s)]);
-      fns.push(['companion_nullifier', () => wasm.companion_nullifier(alice, s, s, s, s)]);
+      fns.push(['companion_nullifier', () => wasm.companion_nullifier(s, s, s, s)]);
       fns.push(['check_result', () => wasm.check_result(s, s, s, 0n)]);
       fns.push(['delivery_digest', () => wasm.delivery_digest(s)]);
       fns.push(['pool_commitment', () => wasm.pool_commitment(s, s, s, s, s)]);
@@ -442,18 +439,9 @@ describe('deposits, withdrawals and keys', () => {
     const pad = (h: string) => '0x' + h.slice(2).padStart(64, '0');
     const hostile = { ...vec.plan, chain: pad(vec.plan.chain), pool: pad(vec.plan.pool), asset: pad(vec.plan.asset), root: vec.plan.root.map((w: number) => (w + 1) % 2147483647) };
     fns.push(['prove_spend (hostile plan)', () => wasm.prove_spend(new Uint8Array(32).fill(0xa1), JSON.stringify(hostile), 'null')]);
-    // A well-formed V5 statement whose felt text is not canonical hex (AB-SP14).
-    const st = { chain: '0x534e5f5345504f4c4941', pool: '0x7e57b301', token_out: '0x0', root: Array(9).fill(1), nullifiers: [Array(9).fill(1), Array(9).fill(2)],
-      commitments: [Array(9).fill(3), Array(9).fill(4)], deliveries: ['0x5', '0x6'], withdrawal_recipient: '0x0', withdrawal_amount: 0, intent: '0x0',
-      identity: Array(9).fill(0), account: '0xacc', valid_until: 6500 };
-    for (const [field, v] of [['chain', '534e5f5345504f4c4941'], ['chain', '0xzz'], ['pool', '0x'], ['account', 'acc']] as const) {
-      fns.push([`spend_message (${field} ${v})`, () => wasm.spend_message(JSON.stringify({ ...st, [field]: v }), '0x5')]);
-    }
     for (const b of bytes) {
       fns.push(['mnemonic_from_seed', () => wasm.mnemonic_from_seed(b)]);
       fns.push(['account', () => wasm.account(b, SEPOLIA.chainId, '0x1', 'v4', 0, 0)]);
-      fns.push(['bound_keys', () => wasm.bound_keys(b, '0x1')]);
-      fns.push(['bound_mnemonic', () => wasm.bound_mnemonic(b)]);
       fns.push(['OhttpRequest', () => new wasm.OhttpRequest(b, 'GET', '/', b)]);
     }
     for (const [name, f] of fns) {

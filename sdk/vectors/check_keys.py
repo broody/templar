@@ -25,8 +25,7 @@ assert hashlib.sha256((HERE / 'bip39-english.txt').read_bytes()).hexdigest() == 
 
 
 def mnemonic(entropy):
-    """BIP-39: entropy then its first len/32 checksum bits, in 11-bit words (24 for 32 bytes,
-    21 for a bound wallet's 28)."""
+    """BIP-39: entropy then its first len/32 checksum bits, in 11-bit words (24 for 32 bytes)."""
     n = len(entropy) * 8
     cs = n // 32
     bits = int.from_bytes(entropy, 'big') << cs | hashlib.sha256(entropy).digest()[0] >> (8 - cs)
@@ -158,35 +157,6 @@ def main():
             assert encode('templarivksep', 2, chain + pool + words36(a['receiver']) + ivk) == a['incoming_viewing_key'], 'ivk export'
             assert encode('templarfvksep', 3, chain + pool + words36(a['ak']) + words36(a['nk']) + ivk) == a['full_viewing_key'], 'fvk export'
             checked += 1
-    # Bound wallets (docs/account-bound-note-spec.md §6.2): the bound salt and labels, A in every
-    # context, receivers bound to A (the relation's WAUTH key, from the bench wallet).
-    bound_checked = 0
-    bpool = felt32(v['bound_pool'])
-    for b in v['bound_seeds']:
-        seed = bytes.fromhex(b['seed'])
-        assert len(seed) == 28 and mnemonic(seed) == b['mnemonic'] and len(b['mnemonic'].split()) == 21, 'bound mnemonic'
-        hk = lambda info, n: hkdf(seed, info, n, salt=b'TEMPLAR_BOUND_WALLET_V1')
-        for w in b['wallets']:
-            actx = chain + bpool + felt32(w['account'])
-            assert hk(b'TEMPLAR_BOUND_STORE_V1' + actx, 32).hex() == w['store_key'], 'bound store key'
-            assert hk(b'TEMPLAR_BOUND_STORE_ID_V1' + actx, 32).hex() == w['store_id_key'], 'bound store id key'
-            for a in w['accounts']:
-                ctx = actx + a['index'].to_bytes(4, 'big')
-                sk = wide9(hk(b'TEMPLAR_BOUND_SPEND_V1' + ctx, 144))
-                assert sk == a['sk'], 'bound sk'
-                ivk = clamp(hk(b'TEMPLAR_BOUND_INCOMING_V1' + ctx, 32))
-                assert ivk.hex() == a['ivk'], 'bound ivk'
-                pk = bindings.crypto_scalarmult_base(ivk)
-                assert pk.hex() == a['pk'], 'bound pk'
-                k = pn.run('keys5', json.dumps(sk), w['account'])
-                assert k['receiver'] == a['receiver'] and k['nk'] == a['nk'] and k['ak'] == a['ak'], 'bound receiver / nk / ak (bench relation)'
-                ordinary = pn.run('keys', json.dumps(sk))
-                assert ordinary['receiver'] != a['receiver'], 'a bound receiver is never the ordinary one'
-                body = chain + bpool + words36(a['receiver']) + pk
-                assert encode('templarsep', 1, body) == a['address'], 'bound address'
-                fp = hashlib.sha256(b'TEMPLAR_ADDRESS_FP_V1' + bytes([1, 1]) + body).hexdigest()[:20]
-                assert '-'.join(fp[4 * i:4 * i + 4] for i in range(5)) == a['fingerprint'], 'bound fingerprint'
-                bound_checked += 1
     sb = v['sealed_boxes']
     ivk = bytes.fromhex(sb['recipient_ivk'])
     pk = bytes.fromhex(sb['recipient_pk'])
@@ -206,7 +176,7 @@ def main():
         except Exception:  # noqa: BLE001
             refused = True
         assert refused, f'libsodium sealed to blocked key {blocked.hex()}'
-    print(json.dumps({'accounts': checked, 'bound_accounts': bound_checked, 'sealed_boxes': len(sb['boxes']), 'result': 'all vectors match'}))
+    print(json.dumps({'accounts': checked, 'sealed_boxes': len(sb['boxes']), 'result': 'all vectors match'}))
 
 
 if __name__ == '__main__':

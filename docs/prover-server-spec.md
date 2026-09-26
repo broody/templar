@@ -159,8 +159,12 @@ The authoritative checks remain in the proven execution and the pool.
    first is free), never the account (removed by ADR-0027, phase B: `r6` admission has no
    step 8).
 
-After phase B and until the swap, `r5` admission refuses a statement with `account ≠ 0` as a
-client fault that consumes tickets (ADR-0027 phase B: pending implementation).
+After phase B and until the swap, `r5` admission refuses a statement with `account ≠ 0`, or a
+body carrying `salt` or `signature`, at parse, before payment is looked at, like any malformed body:
+no work is done and no ticket is taken. A statement naming account 0 over a proof that binds an
+account fails the bridge pre-check, a client fault that consumes tickets. The execute calldata stays
+`(proof_data, salt = 0, signature = [])` for the deployed V5 statement account (ADR-0027 phase B:
+implemented 2026-09-26).
 
 **Verifier and route checks (R0 V6;** `docs/pool-v3-spec.md` §9.2; R0 V6, ADR-0027: pending
 implementation**).** At admission and again at job start, for the relation's kind (`'R0'` for

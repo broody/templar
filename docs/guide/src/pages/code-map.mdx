@@ -16,12 +16,12 @@ packages under `packages/` have not yet adopted these formats.
 | --- | --- | --- |
 | `bench/m31-private-wrapper/client-port/src/payment.rs` | The R0 relation: note, tree and nullifier hashing, native reference, circuit (ordinary spends, open-note intent, identity handle) | [Proofs & verification](/architecture/proofs) |
 | `bench/m31-private-wrapper/client-port/src/payment4.rs` | R0 V4: a private asset published only on exit, a dummy input, always two outputs; `bridge_checks` mirrors the bridge | [Assets & hidden transfers](/architecture/assets) |
-| `bench/m31-private-wrapper/client-port/src/payment5.rs` | R0 V5: V4 plus an account-bound receiver (the account stays inside the proof) and a public `valid_until`; `bridge_checks` mirrors the R5 bridge | [Pool governance](/architecture/governance) |
+| `bench/m31-private-wrapper/client-port/src/payment5.rs` | R0 V5: V4 plus an account-bound receiver (the account stays inside the proof; no longer served, ADR-0027) and a public `valid_until`; `bridge_checks` mirrors the R5 bridge | [Pool governance](/architecture/governance) |
 | `bench/m31-private-wrapper/client-port/src/policy.rs` | The P1 relation: policy, outcome and `policy_id` hashes, native reference, circuit | [Policy notes](/architecture/policy-notes) |
 | `bench/m31-private-wrapper/client-port/examples/wallet.rs` | Wallet CLI: keys, commitments, R0 and P1 proofs from a spend description | [Notes & ownership](/architecture/notes) |
 | `bench/m31-private-wrapper/client-port/tests/` | Relation tests against the native references, and malicious-witness tests (`--features tamper`) | |
-| `sdk/core/` | The client SDK's Rust core: keys, addresses and viewing keys, sealed boxes, notes, scanning, the tree, spend planning (R0 V4 and V5), result checks, store encryption, OHTTP; bound-wallet seeds and keys, each pool's relation (`pool.rs`) and the SNIP-12 spend message (`snip12.rs`) | [Client SDK](/architecture/sdk) |
-| `sdk/wasm/`, `sdk/ts/` | The WebAssembly façade and `@templar/sdk` over starknet.js: sync, records, prover client, submission; pool V3 pins and proposals, bound wallets (setup checks, authorization) | [Client SDK](/architecture/sdk) |
+| `sdk/core/` | The client SDK's Rust core: keys, addresses and viewing keys, sealed boxes, notes, scanning, the tree, spend planning (R0 V4 and V5), result checks, store encryption, OHTTP; each pool's relation (`pool.rs`) | [Client SDK](/architecture/sdk) |
+| `sdk/wasm/`, `sdk/ts/` | The WebAssembly façade and `@templar/sdk` over starknet.js: sync, records, prover client, submission; pool V3 pins and proposals | [Client SDK](/architecture/sdk) |
 | `bench/m31-private-wrapper/client-port/src/prove.rs` | The client prover as a library (fixed bridge FRI, hiding budget, self-verification), shared by the bench wallet and the SDK | [Proving](/architecture/proving) |
 
 ## Server side
@@ -31,8 +31,8 @@ packages under `packages/` have not yet adopted these formats.
 | `bench/m31-private-wrapper/client-port/cairo-r0/`, `cairo-r4/`, `cairo-p1/` | Bridges (verify a client proof against the pinned circuit, decode and range-check the statement, compute the binding) and statement accounts (emit the message) for R0 V3, R0 V4 and P1 |
 | `bench/m31-private-wrapper/client-port/build_bridge_arith.py`, `validate_bridge_r0.py`, `validate_bridge_r4.py`, `validate_bridge_p1.py` | Build a bridge from a trusted circuit manifest; validate it on a real proof against altered statements |
 | `bench/m31-private-wrapper/client-port/capture_os.py` | Run a statement account in the virtual OS and check its exact message |
-| `bench/m31-private-wrapper/client-port/cairo-r5/` | The R0 V5 bridge and statement account: the bound account's `is_valid_signature` over the SNIP-12 spend message, inside the proven execution |
-| `server/prover/`, `server/os-runner/`, `server/prove/` | The prover server: admission (the bridge pre-check, pool V3's rules, the pool-call match, the bound account's signature), tickets and the free full withdrawal, the virtual-OS run and the large proof |
+| `bench/m31-private-wrapper/client-port/cairo-r5/` | The R0 V5 bridge and statement account, deployed on Sepolia: its bound mode (the account's `is_valid_signature` over a SNIP-12 message) is no longer served |
+| `server/prover/`, `server/os-runner/`, `server/prove/` | The prover server: admission (the bridge pre-check, pool V3's rules, the pool-call match; ordinary spends only), tickets and the free full withdrawal, the virtual-OS run and the large proof |
 | `bench/m31-private-wrapper/proof2-large/` | Large-proof wrapping, the bounded-memory server build (`bounded/`) and a per-stage memory profiler |
 
 ## Pool and wallet

@@ -1,9 +1,6 @@
 //! A pool and its spend relation (`docs/account-bound-note-spec.md` §8, AB-SM1). Pool V2 settles
-//! R0 V4 and pool V3 R0 V5; a bound wallet's notes are spendable only with R0 V5. So a bound
-//! wallet derives keys, addresses and deposits only for a pool its network constants declare as
-//! R0 V5, and never for a pool known to take R0 V4 (`KNOWN_V4_POOLS`), whatever the caller
-//! declares: a note bound to an account on such a pool could never be spent. When pool V3 is
-//! deployed (P6), the network constants record each pool's relation.
+//! R0 V4 and pool V3 R0 V5, as the network constants record. A pool known to take R0 V4
+//! (`KNOWN_V4_POOLS`) is never treated as R0 V5, whatever the caller declares.
 use serde::{Deserialize, Serialize};
 
 use crate::felt::{self, Felt32};
@@ -52,14 +49,6 @@ impl PoolRef {
     pub fn version(&self) -> Version {
         self.version
     }
-
-    /// Bound notes live only on pools that settle R0 V5.
-    pub fn check_bound(&self) -> Result<()> {
-        if self.version != Version::V5 {
-            return Err(Error::new("wrong_relation", "bound notes live only on pools that settle R0 V5"));
-        }
-        Ok(())
-    }
 }
 
 #[cfg(test)]
@@ -71,9 +60,9 @@ mod tests {
         let chain = felt::from_short_string("SN_SEPOLIA").unwrap();
         let v2 = felt::parse(KNOWN_V4_POOLS[0].1).unwrap();
         assert!(PoolRef::new(chain, v2, Version::V5).is_err());
-        assert!(PoolRef::new(chain, v2, Version::V4).unwrap().check_bound().is_err());
+        assert_eq!(PoolRef::new(chain, v2, Version::V4).unwrap().version(), Version::V4);
         let v3 = felt::parse("0x7e57b301").unwrap();
-        assert!(PoolRef::new(chain, v3, Version::V5).unwrap().check_bound().is_ok());
+        assert_eq!(PoolRef::new(chain, v3, Version::V5).unwrap().version(), Version::V5);
         // The same address on another chain is not the known pool.
         assert!(PoolRef::new(felt::from_short_string("SN_MAIN").unwrap(), v2, Version::V5).is_ok());
         assert!(PoolRef::new(chain, [0; 32], Version::V5).is_err());

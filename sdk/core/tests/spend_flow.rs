@@ -238,7 +238,7 @@ fn spend_rules() {
     // IM4: a spent companion is refused.
     let single = plan(Request::Transfer { asset: t.clone(), amount: "6".into(), to: a0.encode().unwrap() }, &[], None).unwrap();
     let comp = single.companion.clone().unwrap();
-    let cnf = comp.nullifier(&chain(), &pool(), &token, &[0; 32]).unwrap();
+    let cnf = comp.nullifier(&chain(), &pool(), &token).unwrap();
     let err = spend::plan(
         PlanInput {
             keys: &alice,

@@ -5,7 +5,7 @@ import { call, loadCore, wasm } from './core.js';
 import { coreError } from './errors.js';
 
 interface Job {
-  /** The wallet's key material (a Templar seed, or a bound seed and its account). */
+  /** The wallet's seed. */
   keys: Uint8Array;
   plan: string;
   now: string;

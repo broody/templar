@@ -89,9 +89,6 @@ struct Job {
     body_hash: [u8; 32],
     address_key: String,
     dir: PathBuf,
-    /// A bound spend: its inputs are deleted when proving ends, and its result soon after
-    /// (spec §9, bound-mode data).
-    bound: bool,
     /// The last block the result may land in (`valid_until` for R0 V4 and P1, `send_deadline` for
     /// R0 V5); the note is released after it.
     deadline: Option<u64>,
@@ -133,9 +130,6 @@ struct Registry {
     /// Note key → the job holding it (queued, running or done).
     dedup: HashMap<String, String>,
     refusals: HashMap<String, Refusal>,
-    /// Note key → signature failures (spec §9 step 8): the first is free, then the wait doubles.
-    /// Keyed by the note, never by the account, so nobody can lock out a victim's account.
-    signature_refusals: HashMap<String, Refusal>,
     /// Job id → result waiting for the relayer.
     relay: HashMap<String, RelayItem>,
 }
@@ -158,16 +152,13 @@ impl Bucket {
 }
 
 /// The free full withdrawals' allowances and prover share (spec §7.2). Debited only once a job
-/// passed the bridge, the calldata match and the signature (AB-SP2).
+/// passed the bridge and the calldata match (AB-SP2).
 #[derive(Default)]
 struct FreeState {
     /// All free jobs, per hour.
     bucket: Option<Bucket>,
     /// Per address bucket (relays are bound by the global bucket only).
     addresses: HashMap<String, Bucket>,
-    /// Bound spends: `(day, count)` by a keyed hash of the account under a per-process random key,
-    /// so memory never holds a list of bound accounts (AB-SP10).
-    accounts: HashMap<[u8; 32], (u64, u32)>,
     /// When free jobs finished and the prover seconds they took, over the last hour (AB-SP3).
     ran: VecDeque<(Instant, f64)>,
 }
@@ -184,7 +175,6 @@ pub struct AppState {
     /// Free full withdrawals: their own queue, never ahead of a paid job (spec §7.2).
     free_queue: mpsc::Sender<String>,
     free: Mutex<FreeState>,
-    free_key: [u8; 32],
     /// The latest block number and when it was read (the lookup reads it at most every 10 s).
     latest: Mutex<Option<(Instant, u64)>>,
 }
@@ -195,11 +185,6 @@ fn err(code: StatusCode, msg: impl Into<String>) -> Reply {
     (code, Json(json!({"error": msg.into()})))
 }
 
-/// A refusal with a machine-readable reason, where the client's next step depends on it (a 403:
-/// authorize again for `signature`, nothing helps for `account_class`).
-fn err_reason(code: StatusCode, reason: &str, msg: impl Into<String>) -> Reply {
-    (code, Json(json!({"error": msg.into(), "reason": reason})))
-}
 
 /// The rate-limit key: the IPv4 address (IPv4-mapped IPv6 included), or the IPv6 /64 (PI-4).
 pub fn address_key(ip: IpAddr) -> String {
@@ -336,11 +321,6 @@ async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectIn
     if !chain_ok || !pool_ok {
         return err(StatusCode::BAD_REQUEST, "chain or pool not served");
     }
-    let bound = sub.v5.as_ref().is_some_and(|j| j.statement.bound());
-    // A bound spend's account, nullifiers and root reach the node together (spec §9, AB-P10).
-    if bound && !state.config.network.operator_node {
-        return err(StatusCode::BAD_REQUEST, "this server does not serve bound spends (no operator-controlled node)");
-    }
     // 3. Payment (spec §7.2, §9): tickets verified locally and reserved, or the free full
     // withdrawal's check routing the job to the free queue. Before any proving or account call.
     let mut held = Held { tickets: state.tickets.clone(), reservation: None };
@@ -375,7 +355,7 @@ async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectIn
                     return err(StatusCode::SERVICE_UNAVAILABLE, "the free queue is full; retry later or pay one ticket");
                 }
                 // Only looked at here; debited once the job passed every check (AB-SP2).
-                if let Err(reply) = free_allowance(&state, t, &key, via_relay, None, false) {
+                if let Err(reply) = free_allowance(&state, t, &key, via_relay, false) {
                     return reply;
                 }
                 free = true;
@@ -419,9 +399,6 @@ async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectIn
         if reg.refusals.get(&body_key(&body_hash)).is_some_and(|r| now < r.until) {
             return err(StatusCode::TOO_MANY_REQUESTS, "this submission failed its pre-check recently; retry later");
         }
-        if reg.signature_refusals.get(&dkey).is_some_and(|r| now < r.until) {
-            return err(StatusCode::TOO_MANY_REQUESTS, "this note's recent signatures were refused; retry later");
-        }
         if reg.dedup.contains_key(&dkey) {
             let backoff = state.config.limits.duplicate_backoff_secs;
             let r = reg.refusals.entry(dkey.clone()).or_insert(Refusal { count: 0, until: now });
@@ -452,26 +429,20 @@ async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectIn
         }
     }
     // 6. Chain state: the root, the nullifiers, and for R0 V5 the root at the deadline (AB-PV6);
-    // the verifier and no change of it due (AB-SP1); an invoke's pool state (AB-SP7); a bound
-    // account's class (AB-SP4).
+    // the verifier and no change of it due (AB-SP1); an invoke's pool state (AB-SP7).
     if let Err(e) = pipeline::chain_state(&state.rpc, &state.config, &sub).await {
         return err(StatusCode::CONFLICT, format!("{e:#}"));
     }
     if let Err(e) = pipeline::verifier_unchanged(&state.rpc, &state.config, &rel).await {
         return err(StatusCode::SERVICE_UNAVAILABLE, format!("{e:#}"));
     }
-    if let (Some(j), Some(latest)) = (&sub.v5, latest) {
+    if let (Some(_), Some(latest)) = (&sub.v5, latest) {
         let deadline = pipeline::send_deadline(&state.config, &sub, latest);
         if let Err(e) = pipeline::root_fresh(&state.rpc, &state.config, &sub, deadline).await {
             return err(StatusCode::CONFLICT, format!("{e:#}"));
         }
         if let Err(e) = pipeline::invoke_state(&state.rpc, &state.config, &sub).await {
             return err(StatusCode::BAD_REQUEST, format!("{e:#}"));
-        }
-        if bound {
-            if let Err(e) = pipeline::bound_class(&state.rpc, &state.config, j, None).await {
-                return err_reason(StatusCode::FORBIDDEN, "account_class", format!("{e:#}"));
-            }
         }
     }
     // 7. The bridge and the calldata match, in a child process. It runs in its own task, so a client that disconnects
@@ -481,9 +452,7 @@ async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectIn
         return err(StatusCode::SERVICE_UNAVAILABLE, "pre-checks busy; retry shortly");
     };
     let id = format!("{:032x}", rand::random::<u128>());
-    // Bound jobs on their own tmpfs (spec §9, bound-mode data, AB-SP10).
-    let root = if bound { state.config.server.bound_data_dir.as_ref().unwrap_or(&state.config.server.data_dir) } else { &state.config.server.data_dir };
-    let dir = root.join(&id);
+    let dir = state.config.server.data_dir.join(&id);
     if std::fs::create_dir_all(&dir).is_err() {
         return err(StatusCode::INTERNAL_SERVER_ERROR, "job directory");
     }
@@ -513,7 +482,7 @@ async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectIn
                     tracing::warn!("pre-check failed on the server's side: {e:#}");
                     Err(err(StatusCode::SERVICE_UNAVAILABLE, "the pre-check failed on the server's side; retry later"))
                 }
-                Ok(bridge) => match admission_tail(&state, &sub, &dkey, free, &key, via_relay).await {
+                Ok(bridge) => match admission_tail(&state, free, &key, via_relay).await {
                     // A signature failure or a free-allowance refusal releases the tickets.
                     Err(reply) => {
                         drop(held);
@@ -544,38 +513,26 @@ async fn submit(State(state): State<Arc<AppState>>, ConnectInfo(peer): ConnectIn
 struct FreeDebit {
     key: String,
     via_relay: bool,
-    account: Option<Felt>,
 }
 
-/// Step 8 (bound mode): the account's signature, advisory (spec §9); a failure asks the client to
-/// authorize again and backs off this note (the first is free). Then a free withdrawal's
-/// allowances are looked at again; `admit` takes them only when it queues the job, so a refused,
-/// duplicate or abandoned submission takes nothing (spec §7.2, AB-SP2, recheck N1).
-async fn admission_tail(state: &Arc<AppState>, sub: &Submission, dkey: &str, free: bool, key: &str, via_relay: bool) -> Result<Option<FreeDebit>, Reply> {
-    let bound = sub.v5.as_ref().filter(|j| j.statement.bound());
-    if let Some(j) = bound {
-        if let Err(e) = pipeline::signature_valid(&state.rpc, j, None).await {
-            let mut reg = state.registry.lock().unwrap();
-            signature_failed(&mut reg, dkey, Instant::now(), state.config.limits.duplicate_backoff_secs);
-            return Err(err_reason(StatusCode::FORBIDDEN, "signature", format!("{e:#}")));
-        }
-    }
+/// A free withdrawal's allowances are looked at again; `admit` takes them only when it queues the
+/// job, so a refused, duplicate or abandoned submission takes nothing (spec §7.2, AB-SP2, recheck
+/// N1). Bound spends are not served (ADR-0027), so there is no signature step.
+async fn admission_tail(state: &Arc<AppState>, free: bool, key: &str, via_relay: bool) -> Result<Option<FreeDebit>, Reply> {
     match (&state.tickets, free) {
         (Some(t), true) => {
-            let account = bound.map(|j| j.statement.account);
-            free_allowance(state, t, key, via_relay, account.as_ref(), false)?;
-            Ok(Some(FreeDebit { key: key.to_string(), via_relay, account }))
+            free_allowance(state, t, key, via_relay, false)?;
+            Ok(Some(FreeDebit { key: key.to_string(), via_relay }))
         }
         _ => Ok(None),
     }
 }
 
-/// The free allowances (spec §7.2): the global hourly bucket, the address's (not for relays), and
-/// a bound account's daily count. With `debit`, all are checked, then all taken, under one lock.
-fn free_allowance(state: &Arc<AppState>, t: &Tickets, key: &str, via_relay: bool, account: Option<&Felt>, debit: bool) -> Result<(), Reply> {
+/// The free allowances (spec §7.2): the global hourly bucket, and the address's (not for relays).
+/// With `debit`, both are checked, then both taken, under one lock.
+fn free_allowance(state: &Arc<AppState>, t: &Tickets, key: &str, via_relay: bool, debit: bool) -> Result<(), Reply> {
     let limits = t.config.free;
     let now = Instant::now();
-    let day = unix_now() / 86_400;
     let mut f = state.free.lock().unwrap();
     let (global, per_address) = (limits.per_hour as f64, limits.per_address_per_hour as f64);
     if !f.bucket.get_or_insert_with(|| Bucket::full(global, now)).ready(global, now) {
@@ -584,23 +541,10 @@ fn free_allowance(state: &Arc<AppState>, t: &Tickets, key: &str, via_relay: bool
     if !via_relay && !f.addresses.entry(key.to_string()).or_insert_with(|| Bucket::full(per_address, now)).ready(per_address, now) {
         return Err(err(StatusCode::TOO_MANY_REQUESTS, "this address's free withdrawals are used for now; retry later or pay one ticket"));
     }
-    let account = account.map(|a| account_key(&state.free_key, a));
-    if let Some(a) = &account {
-        let e = f.accounts.entry(*a).or_insert((day, 0));
-        if e.0 != day {
-            *e = (day, 0);
-        }
-        if e.1 >= limits.per_account_per_day {
-            return Err(err(StatusCode::TOO_MANY_REQUESTS, "this account's free withdrawals for today are used; pay one ticket"));
-        }
-    }
     if debit {
         f.bucket.as_mut().expect("set above").tokens -= 1.0;
         if !via_relay {
             f.addresses.get_mut(key).expect("set above").tokens -= 1.0;
-        }
-        if let Some(a) = &account {
-            f.accounts.get_mut(a).expect("set above").1 += 1;
         }
     }
     Ok(())
@@ -616,11 +560,6 @@ fn free_credit(state: &Arc<AppState>, t: &Tickets, d: &FreeDebit) {
     if !d.via_relay {
         if let Some(b) = f.addresses.get_mut(&d.key) {
             b.tokens = (b.tokens + 1.0).min(limits.per_address_per_hour as f64);
-        }
-    }
-    if let Some(a) = &d.account {
-        if let Some(e) = f.accounts.get_mut(&account_key(&state.free_key, a)) {
-            e.1 = e.1.saturating_sub(1);
         }
     }
 }
@@ -639,11 +578,6 @@ fn body_key(body_hash: &[u8; 32]) -> String {
     format!("body:{}", hex::encode(body_hash))
 }
 
-/// `sha256(key ‖ account)`: the free counter's key for a bound account (AB-SP10).
-fn account_key(key: &[u8; 32], account: &Felt) -> [u8; 32] {
-    sha2::Sha256::new().chain_update(key).chain_update(account.to_bytes_be()).finalize().into()
-}
-
 /// Whether free jobs may take the prover now: the free jobs of the last hour took less than
 /// `max_share_percent` of every worker's hour (AB-SP3).
 fn free_budget_left(state: &Arc<AppState>) -> bool {
@@ -655,16 +589,6 @@ fn free_budget_left(state: &Arc<AppState>) -> bool {
         f.ran.pop_front();
     }
     f.ran.iter().map(|(_, s)| s).sum::<f64>() < budget
-}
-
-/// A note's signature failure (spec §9 step 8): the first is free; after that the note waits
-/// `backoff`, doubling per failure, as for duplicates. Never keyed by the account.
-fn signature_failed(reg: &mut Registry, dkey: &str, now: Instant, backoff: u64) {
-    let r = reg.signature_refusals.entry(dkey.to_string()).or_insert(Refusal { count: 0, until: now });
-    r.count += 1;
-    if r.count >= 2 {
-        r.until = now + Duration::from_secs(backoff << (r.count - 2).min(10));
-    }
 }
 
 /// Records an accepted submission and queues it (free withdrawals on their own queue, taking their
@@ -680,7 +604,7 @@ fn admit(state: &Arc<AppState>, id: String, sub: Submission, bridge: BridgeOutpu
     }
     let free = debit.is_some();
     if let (Some(t), Some(d)) = (&state.tickets, &debit) {
-        if let Err(reply) = free_allowance(state, t, &d.key, d.via_relay, d.account.as_ref(), true) {
+        if let Err(reply) = free_allowance(state, t, &d.key, d.via_relay, true) {
             let _ = std::fs::remove_dir_all(&dir);
             return Err(reply);
         }
@@ -695,10 +619,9 @@ fn admit(state: &Arc<AppState>, id: String, sub: Submission, bridge: BridgeOutpu
     }
     reg.dedup.insert(dkey.clone(), id.clone());
     reg.by_body.insert(body_hash, id.clone());
-    let bound = sub.v5.as_ref().is_some_and(|j| j.statement.bound());
     reg.jobs.insert(id.clone(), Job {
         status: Status::Queued, stage: "queued".into(), finished: None, submission: Some(sub),
-        bridge: Some(bridge), result: None, error: None, dedup_key: dkey, body_hash, address_key: key, dir, bound,
+        bridge: Some(bridge), result: None, error: None, dedup_key: dkey, body_hash, address_key: key, dir,
         deadline: None, reservation: held.take(), spent: false, refund: None, free, relay: None,
     });
     reg.order.push_back(id.clone());
@@ -786,7 +709,7 @@ pub fn start(config: Config, rpc: Rpc, info: Value, tickets: Option<Arc<Tickets>
     let state = Arc::new(AppState {
         info, rpc, tickets, registry: Mutex::new(Registry::default()), buckets: Mutex::new(HashMap::new()),
         checks: Arc::new(Semaphore::new(config.server.max_concurrent_checks)), queue: tx, free_queue: ftx,
-        free: Mutex::new(FreeState::default()), free_key: rand::random(), config, latest: Mutex::new(None),
+        free: Mutex::new(FreeState::default()), config, latest: Mutex::new(None),
     });
     let queues = Arc::new(tokio::sync::Mutex::new((rx, frx)));
     for _ in 0..state.config.server.max_concurrent_jobs {
@@ -868,11 +791,6 @@ async fn work(state: &Arc<AppState>, id: &str) {
         Ok(())
     };
     let outcome = pipeline::run(&state.config, &state.rpc, &rel, &sub, &bridge, &dir, id, &stage).await;
-    // A bound job's inputs (the account, salt and signature sit in the bridge arguments, the OS job
-    // and PIE, and the logs) are deleted as soon as proving ends (spec §9, AB-P16).
-    if sub.v5.as_ref().is_some_and(|j| j.statement.bound()) {
-        let _ = std::fs::remove_dir_all(&dir);
-    }
     let mut reg = state.registry.lock().unwrap();
     // Every R0 V5 result this server proves goes to the relayer, if it relays (spec §7.4), except
     // invokes, which wait for tight minimums (F06): those are refused at once, so the client
@@ -1067,10 +985,8 @@ async fn relay_report(State(rs): State<Arc<RelayState>>, headers: HeaderMap, Pat
 }
 
 /// Deletes finished jobs past retention with their directories, and expired refusals and buckets.
-/// A bound job's result is kept only `bound_retention_secs` (spec §9).
 fn sweep(state: &Arc<AppState>) {
     let retention = Duration::from_secs(state.config.server.retention_secs);
-    let bound_retention = Duration::from_secs(state.config.server.bound_retention_secs.min(state.config.server.retention_secs));
     let now = Instant::now();
     let latest = state.latest.lock().unwrap().map(|(_, n)| n);
     let dirs: Vec<PathBuf> = {
@@ -1079,7 +995,7 @@ fn sweep(state: &Arc<AppState>) {
         if let Some(latest) = latest {
             expire_relay(&mut reg, latest, state.config.server.relay_margin_blocks);
         }
-        let past = |j: &Job| j.finished.map(|f| now.duration_since(f) > if j.bound { bound_retention } else { retention }).unwrap_or(false);
+        let past = |j: &Job| j.finished.map(|f| now.duration_since(f) > retention).unwrap_or(false);
         // A relayed job outlives retention until its deadline (AB-RL5): while its item waits, and
         // then so the client can still read the relayer's answer. Only its result goes.
         let relayed: Vec<String> = reg.relay.keys().cloned().collect();
@@ -1111,18 +1027,14 @@ fn sweep(state: &Arc<AppState>) {
         // A refusal keeps its count for the retention period after its wait ends, so repeated
         // duplicates or failures of one note keep doubling (AB-SP4).
         reg.refusals.retain(|_, r| r.until > now || now.duration_since(r.until) < retention);
-        // A note's first free signature failure is forgotten after the retention period.
-        reg.signature_refusals.retain(|_, r| r.until > now || r.count < 2 && now.duration_since(r.until) < retention);
         dirs
     };
     for d in dirs {
         let _ = std::fs::remove_dir_all(d);
     }
     state.buckets.lock().unwrap().retain(|_, b| now.duration_since(b.updated) < Duration::from_secs(3600));
-    let day = unix_now() / 86_400;
     let mut f = state.free.lock().unwrap();
     f.addresses.retain(|_, b| now.duration_since(b.updated) < Duration::from_secs(3600));
-    f.accounts.retain(|_, (d, _)| *d == day);
 }
 
 #[cfg(test)]
@@ -1146,7 +1058,7 @@ mod tests {
         reg.jobs.insert(id.clone(), Job {
             status, stage: "done".into(), finished: None, submission: None, bridge: None,
             result: Some(json!({"valid_until": valid_until})), error: None, dedup_key: "note".into(), body_hash,
-            address_key: "1.2.3.4".into(), dir: std::env::temp_dir(), bound: false, deadline: Some(valid_until),
+            address_key: "1.2.3.4".into(), dir: std::env::temp_dir(), deadline: Some(valid_until),
             reservation: None, spent: false, refund: None, free: false, relay: None,
         });
         reg.dedup.insert("note".into(), id.clone());
@@ -1262,58 +1174,36 @@ mod tests {
         Job {
             status: j.status, stage: j.stage.clone(), finished: j.finished, submission: None, bridge: None, result: j.result.clone(),
             error: None, dedup_key: format!("{}-2", j.dedup_key), body_hash: [9; 32], address_key: j.address_key.clone(), dir: j.dir.clone(),
-            bound: j.bound, deadline: j.deadline, reservation: None, spent: false, refund: None, free: false, relay: j.relay.clone(),
+            deadline: j.deadline, reservation: None, spent: false, refund: None, free: false, relay: j.relay.clone(),
         }
     }
 
-    #[test]
-    fn signature_failures_back_off_per_note() {
-        let mut reg = Registry::default();
-        let now = Instant::now();
-        // The first failure is free.
-        signature_failed(&mut reg, "note-a", now, 60);
-        assert!(reg.signature_refusals["note-a"].until <= now);
-        // Then 60 s, 120 s, 240 s.
-        for (k, secs) in [(2u32, 60u64), (3, 120), (4, 240)] {
-            signature_failed(&mut reg, "note-a", now, 60);
-            assert_eq!(reg.signature_refusals["note-a"].count, k);
-            assert_eq!(reg.signature_refusals["note-a"].until, now + Duration::from_secs(secs));
-        }
-        // Another note, even of the same account, is unaffected.
-        assert!(!reg.signature_refusals.contains_key("note-b"));
-    }
-
-    /// Free allowances (AB-SP2): looking takes nothing; a debit takes the global, the address's
-    /// (never a relay's) and a bound account's, whose counter is keyed by a keyed hash (AB-SP10).
+    /// Free allowances (AB-SP2): looking takes nothing; a debit takes the global and the address's
+    /// (never a relay's).
     #[tokio::test]
     async fn free_allowances() {
         let (state0, _, _) = state_with_job(Status::Done, 0, 0).await;
         let payment = crate::tickets::PaymentConfig {
             required: false, issuer_keys: vec![], refund_key: None, costs: Default::default(), priced_assets: vec![],
-            free: crate::tickets::FreeLimits { per_hour: 6, per_address_per_hour: 2, per_account_per_day: 1, ..Default::default() },
+            free: crate::tickets::FreeLimits { per_hour: 5, per_address_per_hour: 2, ..Default::default() },
             spent_dir: None,
         };
         let dir = std::env::temp_dir().join(format!("templar-free-{}", rand::random::<u32>()));
         let t = Arc::new(Tickets::load(payment, &dir, 0).unwrap());
         let state = start(state0.config.clone(), state0.rpc.clone(), json!({}), Some(t.clone()));
         for _ in 0..5 {
-            free_allowance(&state, &t, "1.2.3.4", false, None, false).unwrap();
+            free_allowance(&state, &t, "1.2.3.4", false, false).unwrap();
         }
-        free_allowance(&state, &t, "1.2.3.4", false, None, true).unwrap();
-        free_allowance(&state, &t, "1.2.3.4", false, None, true).unwrap();
-        assert_eq!(free_allowance(&state, &t, "1.2.3.4", false, None, false).unwrap_err().0, StatusCode::TOO_MANY_REQUESTS, "address");
+        free_allowance(&state, &t, "1.2.3.4", false, true).unwrap();
+        free_allowance(&state, &t, "1.2.3.4", false, true).unwrap();
+        assert_eq!(free_allowance(&state, &t, "1.2.3.4", false, false).unwrap_err().0, StatusCode::TOO_MANY_REQUESTS, "address");
         // A relay is bound by the global bucket only; another address has its own.
-        free_allowance(&state, &t, "relay:5.6.7.8", true, None, true).unwrap();
-        let (a, b) = (Felt::from(0xaaau64), Felt::from(0xbbbu64));
-        free_allowance(&state, &t, "9.9.9.9", false, Some(&a), true).unwrap();
-        assert!(free_allowance(&state, &t, "9.9.9.8", false, Some(&a), false).is_err(), "the account's daily allowance");
-        free_allowance(&state, &t, "9.9.9.8", false, Some(&b), true).unwrap();
-        free_allowance(&state, &t, "9.9.9.7", false, None, true).unwrap();
-        // Six taken of six: the global bucket is empty for everyone.
-        assert!(free_allowance(&state, &t, "relay:5.6.7.8", true, None, false).is_err(), "global");
-        let f = state.free.lock().unwrap();
-        assert!(!f.accounts.contains_key(&<[u8; 32]>::try_from(a.to_bytes_be()).unwrap()));
-        assert!(f.accounts.contains_key(&account_key(&state.free_key, &a)));
+        free_allowance(&state, &t, "relay:5.6.7.8", true, true).unwrap();
+        free_allowance(&state, &t, "9.9.9.9", false, true).unwrap();
+        free_allowance(&state, &t, "9.9.9.8", false, true).unwrap();
+        // Five taken of five: the global bucket is empty for everyone.
+        assert!(free_allowance(&state, &t, "relay:5.6.7.8", true, false).is_err(), "global");
+        assert!(free_allowance(&state, &t, "9.9.9.7", false, false).is_err(), "global, a fresh address");
     }
 
     #[test]
@@ -1406,9 +1296,6 @@ mod admission {
         std::fs::create_dir_all(&cfg.server.data_dir).unwrap();
         cfg.network.pool = "0x7e57b301".into();
         cfg.network.pool_version = 3;
-        cfg.network.operator_node = true;
-        cfg.network.bound_account_classes = vec!["0xc1a55".into()];
-        cfg.server.bound_data_dir = Some(tmp.join("bound"));
         cfg.network.max_proof_age = 1024;
         cfg.network.parameters = Some(PoolParameters { expiry_window: 1500, quantum: 100, root_window: 4096, timelock: 86400 });
         let b = std::path::PathBuf::from(&bridge);
@@ -1426,9 +1313,10 @@ mod admission {
         // As `serve` does: the pre-check runs on a staged copy of the bridge build.
         crate::stage_bridges(&mut cfg, &tmp.join("bridges")).unwrap();
         cfg.binaries.scarb = "/home/broody/.asdf/installs/scarb/2.18.0/bin/scarb".into();
-        // A stand-in OS run that emits the statement account's message for the bound transfer only:
-        // that job reaches proving, where `/bin/false` is the server's own failure (a refund).
-        let binding = std::fs::read_to_string(format!("{proofs}/bound-transfer/binding.txt")).unwrap();
+        // A stand-in OS run that emits the statement account's message for the transfer only: that
+        // job reaches proving, where `/bin/false` is the server's own failure (a refund). The
+        // transfer and the withdrawal spend the same note.
+        let binding = std::fs::read_to_string(format!("{proofs}/v5-transfer/binding.txt")).unwrap();
         let runner = tmp.join("os-runner.sh");
         std::fs::write(&runner, format!(
             "#!/bin/sh\ncat > \"$2/os-result.json\" <<EOF\n{}\nEOF\n",
@@ -1448,17 +1336,16 @@ mod admission {
             free: Default::default(),
             spent_dir: None,
         });
-        // The node: every chain check passes, the account accepts the signature.
+        // The node: every chain check passes.
         let calls: Calls = Arc::new(Mutex::new(HashMap::from([
             (sn_keccak("root_is_known"), vec![Felt::ONE]),
             (sn_keccak("get_nullifier_spent"), vec![Felt::ZERO]),
             (sn_keccak("get_root_superseded_at"), vec![Felt::ZERO]),
             (sn_keccak("get_verifier"), vec![felt("0xada").unwrap()]),
             (sn_keccak("get_proposal"), vec![Felt::ZERO, Felt::ZERO]),
-            (sn_keccak("is_valid_signature"), vec![short_string("VALID").unwrap()]),
         ])));
-        // The bound proofs expire at 6500, the ordinary ones at 125000.
-        let block = Arc::new(std::sync::atomic::AtomicU64::new(5000));
+        // The proofs expire at 125000.
+        let block = Arc::new(std::sync::atomic::AtomicU64::new(123_000));
         let rpc = Rpc::new(&stub(calls.clone(), block.clone()).await);
         let tickets = Arc::new(Tickets::load(cfg.payment.clone().unwrap(), &cfg.server.data_dir, unix_now()).unwrap());
         let state = start(cfg, rpc, json!({}), Some(tickets));
@@ -1499,11 +1386,11 @@ mod admission {
         let minted = issuer::mint("test", &sk, 4).unwrap();
 
         // No payment: refused before any check.
-        let (code, v) = post(body("bound-withdrawal", "submission.json")).await;
+        let (code, v) = post(body("v5-withdrawal", "submission.json")).await;
         assert_eq!(code, 402, "{v}");
-        // Paid: admitted; job start spends the ticket; the OS run (here /bin/false) fails, which is
-        // the client's side, so the ticket stays spent and there is no refund.
-        let mut b1 = body("bound-withdrawal", "submission.json");
+        // Paid: admitted; job start spends the ticket; the OS run (no message for the withdrawal)
+        // fails, which is the client's side, so the ticket stays spent and there is no refund.
+        let mut b1 = body("v5-withdrawal", "submission.json");
         pay(&mut b1, &minted[0..1]);
         let (code, v) = post(b1).await;
         assert_eq!(code, 202, "{v}");
@@ -1511,18 +1398,18 @@ mod admission {
         assert_eq!(s["stage"], "os", "{s}");
         assert!(s["refund"].is_null());
         // The failed job's note backs off (AB-SP4); the refusal releases the fresh ticket.
-        let mut retry = body("bound-withdrawal", "submission.json");
+        let mut retry = body("v5-withdrawal", "submission.json");
         pay(&mut retry, &minted[3..4]);
         let (code, v) = post(retry).await;
         assert!(code == 429 && v["error"].as_str().unwrap().contains("recently"), "{code} {v}");
-        // The bound transfer spends the same note: its back-off is let expire.
+        // The transfer spends the same note: its back-off is let expire.
         state.registry.lock().unwrap().refusals.clear();
-        let mut again = body("bound-transfer", "submission.json");
+        let mut again = body("v5-transfer", "submission.json");
         pay(&mut again, &minted[0..1]);
         let (code, v) = post(again).await;
         assert!(code == 402 && v["error"].as_str().unwrap().contains("spent"), "{code} {v}");
         // A calldata mismatch consumes its ticket.
-        let mut bad = body("bound-transfer", "submission.json");
+        let mut bad = body("v5-transfer", "submission.json");
         let w = bad["pool_call"]["calldata"][50].as_str().unwrap().to_string();
         bad["pool_call"]["calldata"][50] = json!(hex(&(felt(&w).unwrap() + Felt::ONE)));
         pay(&mut bad, &minted[1..2]);
@@ -1531,19 +1418,24 @@ mod admission {
         // A failed pre-check backs the note off too (recheck N9); the back-off is let expire.
         assert!(state.registry.lock().unwrap().refusals.values().any(|r| r.until > Instant::now()));
         state.registry.lock().unwrap().refusals.clear();
-        let mut reuse = body("bound-transfer", "submission.json");
+        let mut reuse = body("v5-transfer", "submission.json");
         pay(&mut reuse, &minted[1..2]);
         assert_eq!(post(reuse).await.0, 402, "a consumed ticket");
-        // A signature the account refuses releases the ticket (and the note's first failure is free).
-        calls.lock().unwrap().insert(sn_keccak("is_valid_signature"), vec![Felt::ZERO]);
-        let mut sig = body("bound-transfer", "submission.json");
-        pay(&mut sig, &minted[2..3]);
-        let (code, v) = post(sig.clone()).await;
-        assert!(code == 403 && v["error"].as_str().unwrap().contains("authorize"), "{code} {v}");
-        calls.lock().unwrap().insert(sn_keccak("is_valid_signature"), vec![short_string("VALID").unwrap()]);
-        let blinded = pay(&mut sig, &minted[2..3]);
-        let (code, v) = post(sig).await;
-        assert_eq!(code, 202, "the released ticket, retried at once: {v}");
+        // Bound spends are no longer served (ADR-0027): a statement naming an account, or a body
+        // with a salt or a signature, is refused at parse, before its ticket is looked at.
+        let mut bound = body("bound-transfer", "submission.json");
+        pay(&mut bound, &minted[2..3]);
+        let (code, v) = post(bound).await;
+        assert!(code == 400 && v["error"].as_str().unwrap().contains("no longer served"), "{code} {v}");
+        let mut salted = body("v5-transfer", "submission.json");
+        salted["salt"] = json!("0x5");
+        pay(&mut salted, &minted[2..3]);
+        let (code, v) = post(salted).await;
+        assert!(code == 400 && v["error"].as_str().unwrap().contains("no longer served"), "{code} {v}");
+        let mut ok = body("v5-transfer", "submission.json");
+        let blinded = pay(&mut ok, &minted[2..3]);
+        let (code, v) = post(ok).await;
+        assert_eq!(code, 202, "the untouched ticket pays: {v}");
         // This job passes the OS run and fails in proving, the server's fault: a blind refund on
         // the job's own request, which finalizes into a fresh ticket that pays for another job.
         let s = wait_failed(v["id"].as_str().unwrap().to_string()).await;
@@ -1555,15 +1447,14 @@ mod admission {
             key_id: "test".into(), nonce: hex::encode(nonce), randomizer: hex::encode(blinding.msg_randomizer.unwrap().0),
             signature: hex::encode(&sig.0),
         };
-        block.store(123_000, std::sync::atomic::Ordering::SeqCst);
-        *state.latest.lock().unwrap() = None;
-        let mut next = body("v5-transfer", "submission.json");
+        state.registry.lock().unwrap().refusals.clear();
+        let mut next = body("v5-withdrawal", "submission.json");
         pay(&mut next, std::slice::from_ref(&refunded));
         let (code, v) = post(next).await;
         assert_eq!(code, 202, "the refunded ticket pays: {v}");
         wait_failed(v["id"].as_str().unwrap().to_string()).await;
-        // A free full withdrawal needs no ticket and goes to the free queue. It spends the ordinary
-        // transfer's note, whose back-off is let expire.
+        // A free full withdrawal needs no ticket and goes to the free queue. Its note's back-off is
+        // let expire.
         state.registry.lock().unwrap().refusals.clear();
         // A forged proof for the same note is refused, and backs off only its own body, never the
         // note, so it cannot lock out the note's owner (recheck N10).
@@ -1574,7 +1465,7 @@ mod admission {
         assert!(code == 400 && v["error"].as_str().unwrap().contains("Panicked with"), "{code} {v}");
         let (code, v) = post(forged).await;
         assert!(code == 429 && v["error"].as_str().unwrap().contains("pre-check"), "{code} {v}");
-                // A client that disconnects during the pre-check gets no job and takes no allowance (N1).
+        // A client that disconnects during the pre-check gets no job and takes no allowance (N1).
         let quick = reqwest::Client::builder().timeout(Duration::from_millis(100)).build().unwrap();
         assert!(quick.post(format!("{url}/v1/jobs")).json(&body("v5-withdrawal", "free-submission.json")).send().await.is_err());
         for _ in 0..600 {
@@ -1592,10 +1483,8 @@ mod admission {
         // Its allowances were taken once it passed the checks (AB-SP2): one from the global bucket.
         let tokens = state.free.lock().unwrap().bucket.as_ref().unwrap().tokens;
         assert!((29.0..29.1).contains(&tokens), "{tokens}");
-        // Bound jobs ran under the tmpfs directory, and left nothing there.
-        assert_eq!(std::fs::read_dir(tmp.join("bound")).unwrap().count(), 0);
-        // A partial withdrawal cannot take the free route.
-        let mut not_free = body("bound-withdrawal", "submission.json");
+        // A transfer cannot take the free route.
+        let mut not_free = body("v5-transfer", "submission.json");
         not_free["payment"] = json!({"free_full_withdrawal": {"openings": [[1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 2, 3, 4, 5, 6, 7, 8, 9]]}});
         assert_eq!(post(not_free).await.0, 402);
         // The back-off refusal released the ticket it had reserved.

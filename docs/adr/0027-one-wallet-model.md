@@ -207,8 +207,10 @@ so removing bound notes now is as cheap as it will ever be.
      an account unlinked to the depositing one, or paid off chain so the mint does not name the
      payer. P7 decides which (AB-P32).
    - **Bound statements before the swap.** After the off-chain removal and before the swap, r5
-     admission refuses statements with `account ≠ 0` as a client fault that consumes tickets, and
-     the SDK refuses to plan them.
+     admission refuses statements with `account ≠ 0` at parse, before payment is looked at, like
+     any malformed body (no work is done and no ticket is taken). A statement naming account 0
+     over a proof that binds an account fails the bridge pre-check, a client fault that consumes
+     tickets. The SDK cannot plan them: its core has no bound keys and always states account 0.
    - **Backup check.** The seed backup is confirmed with a word check before the first address is
      shown.
 

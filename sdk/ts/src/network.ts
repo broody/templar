@@ -8,8 +8,8 @@ export interface PoolConstants {
   pool: string;
   deploymentBlock: number;
   /**
-   * The spend relation: `v4` (pool V2, R0 V4) or `v5` (pool V3, R0 V5; account-bound notes and a
-   * public expiry, docs/account-bound-note-spec.md). Absent means `v4`.
+   * The spend relation: `v4` (pool V2, R0 V4) or `v5` (pool V3, R0 V5, with a public expiry,
+   * docs/account-bound-note-spec.md). Absent means `v4`.
    */
   version?: 'v4' | 'v5';
   /**
@@ -30,42 +30,6 @@ export interface PoolConstants {
   /** The client circuit hash, eight u32 little-endian words. */
   circuitHash: number[];
 }
-
-/**
- * An account class a bound wallet may use (docs/account-bound-note-spec.md §6.3, §13): its class
- * hash and the view calls that must answer exactly `expect` (`'*'` matches any felt). Guardian,
- * multisig and non-Stark-signer accounts are refused at launch.
- */
-export interface BoundAccountClass {
-  vendor: string;
-  version: string;
-  classHash: string;
-  checks: { entrypoint: string; expect: string[] }[];
-}
-
-/** The launch matrix, read from the live classes (Sepolia, 2026-09-26). */
-export const BOUND_ACCOUNT_CLASSES: BoundAccountClass[] = [
-  {
-    vendor: 'Argent (Ready)',
-    version: '0.5.0',
-    classHash: '0x073414441639dcd11d1846f287650a00c60c416b9d3ba45d31c651672125b2c2',
-    // No guardian: `get_guardian` is zero and `get_guardian_guid` is `None`.
-    checks: [
-      { entrypoint: 'get_guardian', expect: ['0x0'] },
-      { entrypoint: 'get_guardian_guid', expect: ['0x1'] },
-    ],
-  },
-  {
-    vendor: 'Braavos',
-    version: '1.2.0',
-    classHash: '0x03957f9f5a1cbfe918cedc2015c85200ca51a5f7506ecb6de98a5207b759bf8a',
-    // No multisig, and exactly one Stark signer (no secp256r1, no WebAuthn).
-    checks: [
-      { entrypoint: 'get_multisig_threshold', expect: ['0x0'] },
-      { entrypoint: 'get_signers', expect: ['0x1', '*', '0x0', '0x0'] },
-    ],
-  },
-];
 
 export interface TokenInfo {
   address: string;

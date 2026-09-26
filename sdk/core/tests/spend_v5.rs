@@ -185,13 +185,9 @@ fn ordinary_v5_transfer_and_withdrawal() {
         let plan = plan_for(request, &mut rng).unwrap();
         assert_eq!(plan.version, Version::V5);
         assert_eq!(plan.valid_until, 125_000);
-        assert_eq!(plan.bound_account, "0x0");
-        // A V5 plan records its version and expiry; tampering either is refused.
+        // A V5 plan records its version and expiry; tampering with the expiry is refused.
         let mut bad = plan.clone();
         bad.valid_until = 0;
-        assert!(spend::witness(&alice, &bad).is_err());
-        let mut bad = plan.clone();
-        bad.bound_account = "0x123".into();
         assert!(spend::witness(&alice, &bad).is_err());
         // Proving checks the plan can still land (AB-SM4): not once the latest block passed it.
         let late = Expiry { latest_block: plan.valid_until, ..expiry(latest) };

@@ -681,11 +681,12 @@ are the server's fault).
 - The core's bound keys and `snip12`.
 - The `spend_message` check on servers.
 - `sdk/vectors/keys.json`'s `bound_seeds`, regenerated with `check_keys.py` and `vectors_keys.rs`.
-- **Only the SNIP-12** vectors and tests (`cairo-r5/kat`'s SNIP-12 part,
-  `bench/wallet-sig-spike/snip12`). The starknet.js `TMR0_BIND_V5` vectors in `cairo-r5/kat`
-  (`kat.json` "bindings" and the binding part of `gen_kat.cjs`) are **kept** and moved to
-  `cairo-r6/kat` or `sdk/vectors`. They anchor §4.4's binding test, and phase B must not delete them
-  (re-check F3).
+- **Not removed in phase B: the SNIP-12 vectors and tests.** They test code that stays: `cairo-r5`
+  is the deployed V5 source, and its bridge's `snip12_kat.cairo` is generated from `cairo-r5/kat`'s
+  SNIP-12 part; `bench/wallet-sig-spike/snip12` is a spike that `wallet-sig-spike/e2e` builds on. No
+  live path uses them after phase B. The starknet.js `TMR0_BIND_V5` vectors in `cairo-r5/kat`
+  (`kat.json` "bindings" and the binding part of `gen_kat.cjs`) are **kept**, and phase C copies
+  them to `cairo-r6/kat`, where they anchor §4.4's binding test (re-check F3).
 
 ### 10.2 Changed
 
@@ -865,10 +866,14 @@ Applied in phase A, after the design sign-off and before any code:
 
 ADR-0027 decision 7:
 - **A. Design:** this spec, its re-check, and the §14 amendments, with Math and protocol sign-off.
-- **B. Off-chain removal of bound mode** (cleared to start).
+- **B. Off-chain removal of bound mode** (implemented 2026-09-26).
   - First, move the shared tests to ordinary fixtures; then add the rules that need no vault.
-  - Until the swap, r5 admission refuses statements with `account ≠ 0` as a client fault that
-    consumes tickets, and the SDK refuses to plan them.
+  - Until the swap, r5 admission refuses statements with `account ≠ 0` at parse, before payment
+    is looked at, like any malformed body (no work, no ticket taken). A statement naming account 0
+    over a proof that binds an account fails the bridge pre-check, a client fault that consumes
+    tickets. The SDK cannot plan them: its core has no bound keys and always states account 0.
+  - The connected-account rules of §10.2 need the vault, so they land with phase F. Phase B
+    removes the bound-only rules (owner-submit, the spend provider) without replacing them.
 - **C. V6:**
   - the relation, bridge, statement account and routing adapter;
   - SDK core and WebAssembly `v6`, server `r6`, and relayer support;

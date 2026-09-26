@@ -1,5 +1,5 @@
 // Proof time and linear memory in headless Chrome (spec §12.4): serves sdk/ts and sdk/vectors,
-// runs bench/web/index.html, writes the results. `node bench/browser.mjs OUT_JSON [RUNS] [v4|v5-bound]`.
+// runs bench/web/index.html, writes the results. `node bench/browser.mjs OUT_JSON [RUNS] [v4|v5]`.
 import http from 'node:http';
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';

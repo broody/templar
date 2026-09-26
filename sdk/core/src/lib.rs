@@ -10,7 +10,6 @@ pub mod ohttp;
 pub mod result;
 pub mod scan;
 pub mod sealbox;
-pub mod snip12;
 pub mod spend;
 pub mod store;
 pub mod tree;

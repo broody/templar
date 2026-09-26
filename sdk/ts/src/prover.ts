@@ -108,23 +108,17 @@ export class ProverClient {
       JSON.stringify(rel.circuit_hash_u32_le) === JSON.stringify(p.circuitHash);
     if (!agree) fail('prover_mismatch', 'the server serves another pool, statement account or circuit than the pinned one');
     if (versionOf(p) === 'v5') {
-      // R0 V5 (account-bound spec §9, Info): the spend message's hashes are the core's, and the pool
-      // parameters are the pinned ones (AB-SP19).
-      const r5 = info.r5 as { spend_message?: { domain_type_hash?: string; spend_type_hash?: string }; pool_parameters?: Record<string, number> } | undefined;
-      const d = JSON.parse(call(() => wasm.spend_domain())) as { domain_type_hash: string; spend_type_hash: string };
+      // R0 V5 (account-bound spec §9, Info): the pool parameters are the pinned ones (AB-SP19).
+      const r5 = info.r5 as { pool_parameters?: Record<string, number> } | undefined;
       const pp = r5?.pool_parameters;
       const want = p.parameters;
       const ok =
-        r5?.spend_message?.domain_type_hash !== undefined &&
-        sameFelt(r5.spend_message.domain_type_hash, d.domain_type_hash) &&
-        r5.spend_message.spend_type_hash !== undefined &&
-        sameFelt(r5.spend_message.spend_type_hash, d.spend_type_hash) &&
         want !== undefined &&
         pp?.expiry_window === want.expiryWindow &&
         pp?.quantum === want.quantum &&
         pp?.root_window === want.rootWindow &&
         pp?.timelock === want.timelock;
-      if (!ok) fail('prover_mismatch', 'the server publishes another spend message or pool parameters than the pinned ones');
+      if (!ok) fail('prover_mismatch', 'the server publishes other pool parameters than the pinned ones');
     }
     this.verified = true;
     return info;
@@ -151,8 +145,6 @@ export class ProverClient {
       : r.status === 429 ? 'prover_rate_limited'
       : r.status === 400 ? 'prover_rejected'
       : r.status === 402 ? 'prover_payment'
-      // 403: the account refused the signature (authorize again), or its class is not served.
-      : r.status === 403 ? (parsed.reason === 'account_class' ? 'prover_account_class' : 'prover_forbidden')
       : 'prover_error';
     throw new TemplarError(code, `${r.status}: ${reason}`);
   }

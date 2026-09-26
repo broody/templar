@@ -4,15 +4,15 @@
 //! validators pass them (`validate_bridge_r4.py`, `validate_bridge_r5.py`, `validate_bridge_p1.py`).
 //!
 //! An R0 V5 job (`docs/account-bound-note-spec.md` §9) also carries the full pool calldata, so the
-//! service can settle what it proved (AB-P28), and in bound mode the salt and the account's
-//! signature, which go into the virtual transaction's calldata.
+//! service can settle what it proved (AB-P28). Bound spends are not served (ADR-0027): an r5
+//! statement must name no account, and a body with a salt or a signature is refused.
 use anyhow::{bail, Context, Result};
 use serde::Deserialize;
 use serde_json::Value;
 use starknet_types_core::felt::Felt;
 
 use crate::rpc::felt;
-use crate::v5::{PoolCall, StatementV5, MAX_SIGNATURE_FELTS};
+use crate::v5::{PoolCall, StatementV5};
 
 const P: u64 = (1 << 31) - 1;
 
@@ -55,7 +55,8 @@ pub struct SubmissionJson {
     /// R0 V5: the pool call that settles the statement.
     #[serde(default)]
     pub pool_call: Option<PoolCallJson>,
-    /// R0 V5 bound mode: the salt of the signed binding commitment, and the account's signature.
+    /// R0 V5 bound mode, no longer served (ADR-0027): kept only so a body that carries them is
+    /// refused rather than silently accepted.
     #[serde(default)]
     pub salt: Option<String>,
     #[serde(default)]
@@ -70,9 +71,6 @@ pub struct SubmissionJson {
 pub struct V5Job {
     pub statement: StatementV5,
     pub pool_call: PoolCall,
-    /// Zero and empty in ordinary mode.
-    pub salt: Felt,
-    pub signature: Vec<Felt>,
 }
 
 #[derive(Debug, Clone)]
@@ -194,17 +192,16 @@ impl Submission {
                     let call = body.pool_call.as_ref().context("an r5 job carries its pool call")?;
                     let calldata: Vec<Felt> = call.calldata.iter().map(|x| felt(x)).collect::<Result<_>>().context("pool_call.calldata")?;
                     let pool_call = PoolCall::parse(&call.entry_point, calldata)?;
-                    let salt = body.salt.as_deref().map(felt).transpose().context("salt")?.unwrap_or(Felt::ZERO);
-                    let signature: Vec<Felt> =
-                        body.signature.iter().flatten().map(|x| felt(x)).collect::<Result<_>>().context("signature")?;
-                    if statement.bound() {
-                        if salt == Felt::ZERO || signature.is_empty() || signature.len() > MAX_SIGNATURE_FELTS {
-                            bail!("a bound spend carries a nonzero salt and a signature of 1 to {MAX_SIGNATURE_FELTS} felts");
-                        }
-                    } else if salt != Felt::ZERO || !signature.is_empty() {
-                        bail!("an ordinary spend carries no salt and no signature");
+                    // Bound spends are not served (ADR-0027, pool-v3-spec §15 B). Refused here,
+                    // before payment; a statement that hides its account fails the bridge, which
+                    // consumes the tickets.
+                    if statement.account != Felt::ZERO {
+                        bail!("bound spends are no longer served: the statement must name no account (ADR-0027)");
                     }
-                    v5 = Some(V5Job { statement, pool_call, salt, signature });
+                    if body.salt.is_some() || body.signature.is_some() {
+                        bail!("bound spends are no longer served: a job carries no salt and no signature (ADR-0027)");
+                    }
+                    v5 = Some(V5Job { statement, pool_call });
                 } else if body.pool_call.is_some() || body.salt.is_some() || body.signature.is_some() {
                     bail!("only r5 jobs carry a pool call, a salt or a signature");
                 }
@@ -243,11 +240,12 @@ impl Submission {
         Ok(Submission { relation, proof, chain, pool, root, nullifiers, statement_args: args, v5 })
     }
 
-    /// The statement account's `__execute__` calldata: `(proof_data, salt, signature)` for R0 V5
-    /// (spec §5.4), the proof span alone otherwise.
+    /// The statement account's `__execute__` calldata: `(proof_data, salt = 0, signature = [])`
+    /// for the deployed R0 V5 account (spec §5.4; ordinary spends only, ADR-0027), the proof span
+    /// alone otherwise.
     pub fn execute_calldata(&self) -> Vec<Felt> {
         match &self.v5 {
-            Some(j) => [self.proof.clone(), vec![j.salt], span(&j.signature)].concat(),
+            Some(_) => [self.proof.clone(), vec![Felt::ZERO], span(&[])].concat(),
             None => self.proof.clone(),
         }
     }
@@ -333,29 +331,27 @@ mod tests {
     }
 
     #[test]
-    fn r5_ordinary_and_bound() {
+    fn r5_ordinary() {
         let s = Submission::parse(r5("0x0", None, None), 10).unwrap();
         let j = s.v5.as_ref().unwrap();
-        assert!(!j.statement.bound() && j.statement.valid_until == 6500);
+        assert!(j.statement.account == Felt::ZERO && j.statement.valid_until == 6500);
         // R4's arguments, then the account and valid_until, then the proof.
         assert_eq!(s.statement_args.len(), 3 + 10 + 19 + 19 + 3 + 3 + 10 + 2);
         assert_eq!(s.statement_args[s.statement_args.len() - 1], Felt::from(6500u64));
         // `__execute__(proof_data, salt = 0, signature = [])`.
         assert_eq!(s.execute_calldata(), [s.proof.clone(), vec![Felt::ZERO, Felt::ZERO]].concat());
-        let s = Submission::parse(r5("0x7e57b3c0", Some("0x5a17"), Some(vec!["0x1", "0x2"])), 10).unwrap();
-        assert!(s.v5.as_ref().unwrap().statement.bound());
-        assert_eq!(s.execute_calldata(), [s.proof.clone(), vec![Felt::from(0x5a17u64), Felt::TWO, Felt::ONE, Felt::TWO]].concat());
     }
 
     #[test]
     fn r5_refusals() {
-        // Bound: a nonzero salt and 1..=32 signature felts. Ordinary: neither.
-        assert!(Submission::parse(r5("0x7e57b3c0", None, Some(vec!["0x1"])), 10).is_err(), "no salt");
-        assert!(Submission::parse(r5("0x7e57b3c0", Some("0x0"), Some(vec!["0x1"])), 10).is_err(), "zero salt");
-        assert!(Submission::parse(r5("0x7e57b3c0", Some("0x1"), None), 10).is_err(), "no signature");
-        assert!(Submission::parse(r5("0x7e57b3c0", Some("0x1"), Some(vec!["0x1"; 33])), 10).is_err(), "33 felts");
-        assert!(Submission::parse(r5("0x0", Some("0x1"), None), 10).is_err(), "ordinary with a salt");
-        assert!(Submission::parse(r5("0x0", None, Some(vec!["0x1"])), 10).is_err(), "ordinary with a signature");
+        // Bound spends are not served (ADR-0027): an account, a salt or a signature is refused.
+        let e = Submission::parse(r5("0x7e57b3c0", None, None), 10).err().unwrap().to_string();
+        assert!(e.contains("no longer served"), "{e}");
+        assert!(Submission::parse(r5("0x7e57b3c0", Some("0x5a17"), Some(vec!["0x1", "0x2"])), 10).is_err(), "a signed bound spend");
+        assert!(Submission::parse(r5("0x0", Some("0x1"), None), 10).is_err(), "a salt");
+        assert!(Submission::parse(r5("0x0", Some("0x0"), None), 10).is_err(), "a zero salt is still a salt");
+        assert!(Submission::parse(r5("0x0", None, Some(vec!["0x1"])), 10).is_err(), "a signature");
+        assert!(Submission::parse(r5("0x0", None, Some(vec![])), 10).is_err(), "an empty signature is still a signature");
         let mut j = r5("0x0", None, None);
         j.pool_call = None;
         assert!(Submission::parse(j, 10).is_err(), "no pool call");

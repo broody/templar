@@ -1,7 +1,7 @@
 // A mock RPC node serving a pool V2 or V3 (spec §12.5, §12.6): blocks of pool events, the leaf
 // count and root at any block (computed with the core's own tree), the adapter's pinned storage,
-// pool V3's views (verifier by kind, proposals, parameters), bound accounts, reorgs, and a trace of
-// every call the SDK makes.
+// pool V3's views (verifier by kind, proposals, parameters), reorgs, and a trace of every call the
+// SDK makes.
 import { RpcError, hash } from 'starknet';
 
 import * as wasm from '../wasm/templar.js';
@@ -32,13 +32,6 @@ interface Block {
 
 const hx = (x: number | bigint | string) => canon(x);
 
-/** A deployed account (a bound wallet's `A`): its class, view answers and signature rule. */
-export interface MockAccount {
-  classHash: string;
-  views: Record<string, string[]>;
-  valid: (hash: string, signature: string[]) => boolean;
-}
-
 export class MockChain {
   readonly pool: PoolConstants;
   readonly base: number;
@@ -61,7 +54,6 @@ export class MockChain {
   signedNonces: string[] = [];
   /** Pool V3: `get_root_superseded_at` by root (the digest's words joined), 0 when absent. */
   superseded = new Map<string, number>();
-  accounts = new Map<string, MockAccount>();
   blocks: Block[] = [];
   fork = 0;
   calls: { method: string; args: unknown[] }[] = [];
@@ -231,8 +223,6 @@ export class MockChain {
       getChainId: async () => (trace('getChainId', []), SEPOLIA.chainId),
       getClassHashAt: async (a: string, id?: unknown) => {
         trace('getClassHashAt', [a, id]);
-        const acc = this.accounts.get(hx(a));
-        if (acc) return acc.classHash;
         if (BigInt(a) === BigInt(pool.adapter)) return pool.adapterClass;
         if (BigInt(a) === BigInt(pool.statement)) return pool.statementClass;
         throw new Error('no contract');
@@ -245,17 +235,6 @@ export class MockChain {
         trace('callContract', [c.contractAddress, c.entrypoint, c.calldata, id]);
         if (c.entrypoint === 'balance_of') return [hx(this.strk & ((1n << 128n) - 1n)), hx(this.strk >> 128n)];
         if (c.entrypoint === 'supports_interface') return [this.supports.get(hx(c.contractAddress)) === false ? '0x0' : '0x1'];
-        const acc = this.accounts.get(hx(c.contractAddress));
-        if (acc) {
-          if (c.entrypoint === 'is_valid_signature') {
-            const [h, n, ...sig] = c.calldata;
-            if (Number(BigInt(n!)) !== sig.length) throw new Error('bad span');
-            return acc.valid(h!, sig) ? ['0x56414c4944'] : ['0x0'];
-          }
-          const v = acc.views[c.entrypoint];
-          if (!v) throw new Error(`no entrypoint ${c.entrypoint}`);
-          return v;
-        }
         if (BigInt(c.contractAddress) !== BigInt(pool.pool)) return ['0x1'];
         switch (c.entrypoint) {
           case 'get_verifier':
@@ -356,8 +335,8 @@ export class MockProver {
   reportFailNext = false;
   /** Every claim answers 409 (someone else took it, or the server refused it for lateness). */
   refuseClaims = false;
-  /** The spend message's hashes the server publishes (the core's by default). */
-  domain = JSON.parse(wasm.spend_domain()) as { domain_type_hash: string; spend_type_hash: string };
+  /** Overrides the pool parameters the server publishes (the pinned ones by default). */
+  poolParameters?: Record<string, number>;
   constructor(private chain: MockChain, private facts: (binding: string, base: number, hash: string) => string[]) {}
 
   fetch = async (url: string | URL, init?: { method?: string; body?: string }): Promise<Response> => {
@@ -373,8 +352,7 @@ export class MockProver {
         ...(p.version === 'v5'
           ? {
               r5: {
-                spend_message: { domain_type_hash: this.domain.domain_type_hash, spend_type_hash: this.domain.spend_type_hash },
-                pool_parameters: { expiry_window: p.parameters!.expiryWindow, quantum: p.parameters!.quantum, root_window: p.parameters!.rootWindow, timelock: p.parameters!.timelock },
+                pool_parameters: this.poolParameters ?? { expiry_window: p.parameters!.expiryWindow, quantum: p.parameters!.quantum, root_window: p.parameters!.rootWindow, timelock: p.parameters!.timelock },
               },
             }
           : {}),

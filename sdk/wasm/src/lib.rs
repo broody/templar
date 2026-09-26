@@ -8,12 +8,11 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use templar_core::address::{Address, ViewingKey};
 use templar_core::felt::{self, Felt32};
-use templar_core::keys::{self, BoundSeed, BoundWallet, Seed, StoreKeys};
+use templar_core::keys::{self, Seed};
 use templar_core::pool::{PoolRef, Version};
 use templar_core::result::{self, Pins, ServerResult};
 use templar_core::scan::{self, Context, Published, Registered, ScanKey, Settlement};
-use templar_core::snip12::{self, SpendMessage};
-use templar_core::spend::{self, Companion, Expiry, KeySource, NoteRef, Plan, PlanInput, Request};
+use templar_core::spend::{self, Companion, Expiry, NoteRef, Plan, PlanInput, Request};
 use templar_core::{Digest, Error, note, sealbox, store};
 use wasm_bindgen::prelude::*;
 
@@ -41,39 +40,6 @@ fn f(s: &str) -> Out<Felt32> {
 
 fn seed_of(b: &[u8]) -> Out<Seed> {
     Seed::from_bytes(b).map_err(err)
-}
-
-/// A wallet's key material: a Templar wallet's 32-byte seed, or a bound wallet's 28-byte seed
-/// followed by its account `A` (60 bytes; `docs/account-bound-note-spec.md` §6).
-enum Keys {
-    Wallet(Seed),
-    Bound(BoundWallet),
-}
-
-fn keys_of(b: &[u8]) -> Out<Keys> {
-    match b.len() {
-        32 => Ok(Keys::Wallet(seed_of(b)?)),
-        60 => {
-            let account: Felt32 = b[28..].try_into().expect("32 bytes");
-            Ok(Keys::Bound(BoundSeed::from_bytes(&b[..28]).map_err(err)?.wallet(&account).map_err(err)?))
-        }
-        _ => Err(bad("key material: a 32-byte seed, or a 28-byte bound seed and its 32-byte account")),
-    }
-}
-
-impl Keys {
-    fn source(&self) -> &dyn KeySource {
-        match self {
-            Keys::Wallet(s) => s,
-            Keys::Bound(w) => w,
-        }
-    }
-    fn store(&self) -> &dyn StoreKeys {
-        match self {
-            Keys::Wallet(s) => s,
-            Keys::Bound(w) => w,
-        }
-    }
 }
 
 fn version_of(v: &str) -> Out<Version> {
@@ -109,38 +75,12 @@ pub fn mnemonic_from_seed(seed: &[u8]) -> Out<String> {
     Ok(seed_of(seed)?.mnemonic())
 }
 
-/// A bound wallet's seed `S_w`: 28 bytes from the core's CSPRNG (spec §6.1).
-#[wasm_bindgen]
-pub fn bound_seed_generate() -> Vec<u8> {
-    BoundSeed::generate(&mut OsRng).bytes().to_vec()
-}
-
-/// A bound wallet's 21-word backup; 24 words are refused (the word count marks the origin).
-#[wasm_bindgen]
-pub fn bound_seed_from_mnemonic(words: &str) -> Out<Vec<u8>> {
-    Ok(BoundSeed::from_mnemonic(words).map_err(err)?.bytes().to_vec())
-}
-
-#[wasm_bindgen]
-pub fn bound_mnemonic(seed: &[u8]) -> Out<String> {
-    Ok(BoundSeed::from_bytes(seed).map_err(err)?.mnemonic())
-}
-
-/// The bound wallet's key material: `S_w ‖ felt₃₂(A)`, with `A` checked to be an address.
-#[wasm_bindgen]
-pub fn bound_keys(seed: &[u8], account: &str) -> Out<Vec<u8>> {
-    let a = f(account)?;
-    BoundSeed::from_bytes(seed).map_err(err)?.wallet(&a).map_err(err)?;
-    Ok([seed, a.as_slice()].concat())
-}
-
-/// `{address, receiver, fingerprint}` of account `i`; refuses indexes past the gap limit, and a
-/// bound wallet's keys on a pool that does not settle R0 V5 (AB-SM1).
+/// `{address, receiver, fingerprint}` of account `i`; refuses indexes past the gap limit.
 #[wasm_bindgen]
 pub fn account(keys: &[u8], chain: &str, pool: &str, version: &str, i: u32, highest_used: u32) -> Out<String> {
     keys::check_index(i, highest_used).map_err(err)?;
     let pr = pool_ref(chain, pool, version)?;
-    let a = keys_of(keys)?.source().account(&pr, i).map_err(err)?;
+    let a = seed_of(keys)?.account(pr.chain(), pr.pool(), i).map_err(err)?;
     let addr = Address::of(pr.chain(), pr.pool(), &a);
     to_json(&json!({"address": addr.encode().map_err(err)?, "receiver": a.receiver, "fingerprint": addr.fingerprint()}))
 }
@@ -161,7 +101,7 @@ fn hex_bytes(b: &[u8]) -> String {
 #[wasm_bindgen]
 pub fn viewing_key_export(keys: &[u8], chain: &str, pool: &str, version: &str, i: u32, full: bool) -> Out<String> {
     let pr = pool_ref(chain, pool, version)?;
-    let a = keys_of(keys)?.source().account(&pr, i).map_err(err)?;
+    let a = seed_of(keys)?.account(pr.chain(), pr.pool(), i).map_err(err)?;
     ViewingKey::of(pr.chain(), pr.pool(), &a, full).encode().map_err(err)
 }
 
@@ -323,12 +263,12 @@ pub fn scan(keys: &[u8], request: &str) -> Out<String> {
             vec![ScanKey { index: 0, receiver: k.receiver, ivk: k.ivk, nk: k.nk.map(|(_, nk)| nk) }]
         }
         (None, None) => {
-            let k = keys_of(keys)?;
+            let k = seed_of(keys)?;
             let pr = PoolRef::new(chain, pool, r.version).map_err(err)?;
             r.accounts
                 .iter()
                 .map(|i| {
-                    let a = k.source().account(&pr, *i)?;
+                    let a = k.account(pr.chain(), pr.pool(), *i)?;
                     Ok(ScanKey { index: *i, receiver: a.receiver, ivk: a.ivk, nk: Some(a.nk) })
                 })
                 .collect::<Result<_, Error>>()
@@ -392,10 +332,10 @@ struct PlanRequest {
 
 fn plan_with(keys: &[u8], request: &str, tree: &Tree, rng: &mut (impl rand_core::RngCore + rand_core::CryptoRng)) -> Out<String> {
     let r: PlanRequest = parse(request, "plan request")?;
-    let k = keys_of(keys)?;
+    let k = seed_of(keys)?;
     let plan = spend::plan(
         PlanInput {
-            keys: k.source(),
+            keys: &k,
             version: r.version,
             expiry: r.expiry,
             chain: f(&r.chain)?,
@@ -439,16 +379,14 @@ fn proved_json(p: &spend::Proved) -> Out<String> {
 pub fn prove_spend(keys: &[u8], plan: &str, now: &str) -> Out<String> {
     let plan: Plan = parse(plan, "plan")?;
     let now: Option<Expiry> = parse(now, "now")?;
-    proved_json(&spend::prove_plan(keys_of(keys)?.source(), &plan, now.as_ref(), &mut OsRng).map_err(err)?)
+    proved_json(&spend::prove_plan(&seed_of(keys)?, &plan, now.as_ref(), &mut OsRng).map_err(err)?)
 }
 
-/// The companion's nullifier, which the wallet checks is unspent before proving (SDK-M17). A
-/// bound wallet's companion is bound to its account (AB-M14, AB-SM3).
+/// The companion's nullifier, which the wallet checks is unspent before proving (SDK-M17).
 #[wasm_bindgen]
-pub fn companion_nullifier(keys: &[u8], companion: &str, chain: &str, pool: &str, asset: &str) -> Out<String> {
+pub fn companion_nullifier(companion: &str, chain: &str, pool: &str, asset: &str) -> Out<String> {
     let c: Companion = parse(companion, "companion")?;
-    let account = keys_of(keys)?.source().bound_account();
-    to_json(&c.nullifier(&f(chain)?, &f(pool)?, &f(asset)?, &account).map_err(err)?)
+    to_json(&c.nullifier(&f(chain)?, &f(pool)?, &f(asset)?).map_err(err)?)
 }
 
 /// Checks a server result against the pins; returns the locally computed `{submit_after,
@@ -461,42 +399,7 @@ pub fn check_result(pins: &str, binding: &str, server_result: &str, latest_block
     to_json(&result::check(&pins, binding, &r, latest_block, statement_valid_until).map_err(err)?)
 }
 
-// ---------------------------------------------------------------- R0 V5: messages and payment
-
-/// A fresh salt in `[1, 2^251)` (spec §5.3), hex.
-#[wasm_bindgen]
-pub fn random_salt() -> String {
-    felt::to_hex(&snip12::random_salt(&mut OsRng))
-}
-
-fn message_json(m: &SpendMessage) -> Out<String> {
-    to_json(&json!({"typed_data": m.typed_data().map_err(err)?, "hash": felt::to_hex(&m.hash().map_err(err)?)}))
-}
-
-/// The bound account's spend message for a V5 statement (the proof's `statement_json`) and a salt:
-/// `{typed_data, hash}` (spec §5.3). The typed data carries the u128 amount as a decimal string.
-#[wasm_bindgen]
-pub fn spend_message(statement: &str, salt: &str) -> Out<String> {
-    let s: templar_core::payment5::Public = parse(statement, "statement")?;
-    message_json(&SpendMessage::of(&s, &f(salt)?).map_err(err)?)
-}
-
-/// The spend message's domain and type hashes (spec §5.3), which a prover server's info must
-/// publish unchanged.
-#[wasm_bindgen]
-pub fn spend_domain() -> Out<String> {
-    to_json(&serde_json::json!({
-        "name": templar_core::snip12::DOMAIN_NAME, "version": templar_core::snip12::DOMAIN_VERSION,
-        "domain_type_hash": templar_core::snip12::DOMAIN_TYPE_HASH, "spend_type_hash": templar_core::snip12::SPEND_TYPE_HASH,
-    }))
-}
-
-/// The setup check's message (spec §6.3): `pool = 0` and a random binding commitment, so it can
-/// never authorize a spend. `{typed_data, hash}`.
-#[wasm_bindgen]
-pub fn setup_check_message(chain: &str, account: &str) -> Out<String> {
-    message_json(&SpendMessage::setup_check(&f(chain)?, &f(account)?, &mut OsRng).map_err(err)?)
-}
+// ---------------------------------------------------------------- R0 V5: payment
 
 /// A free full withdrawal's openings (spec §7.2): both outputs' `inner`, or `null` when the plan
 /// is not a V5 full withdrawal.
@@ -510,17 +413,17 @@ pub fn free_withdrawal_openings(plan: &str) -> Out<String> {
 
 #[wasm_bindgen]
 pub fn store_seal(keys: &[u8], chain: &str, pool: &str, record_type: &str, record_key: &str, plaintext: &[u8]) -> Out<Vec<u8>> {
-    store::seal(keys_of(keys)?.store(), &f(chain)?, &f(pool)?, record_type, record_key, plaintext, &mut OsRng).map_err(err)
+    store::seal(&seed_of(keys)?, &f(chain)?, &f(pool)?, record_type, record_key, plaintext, &mut OsRng).map_err(err)
 }
 
 #[wasm_bindgen]
 pub fn store_open(keys: &[u8], chain: &str, pool: &str, record_type: &str, record_key: &str, sealed: &[u8]) -> Out<Vec<u8>> {
-    store::open(keys_of(keys)?.store(), &f(chain)?, &f(pool)?, record_type, record_key, sealed).map_err(err)
+    store::open(&seed_of(keys)?, &f(chain)?, &f(pool)?, record_type, record_key, sealed).map_err(err)
 }
 
 #[wasm_bindgen]
 pub fn store_record_id(keys: &[u8], chain: &str, pool: &str, record_type: &str, record_key: &str) -> Out<String> {
-    Ok(store::record_id(keys_of(keys)?.store(), &f(chain)?, &f(pool)?, record_type, record_key))
+    Ok(store::record_id(&seed_of(keys)?, &f(chain)?, &f(pool)?, record_type, record_key))
 }
 
 // ---------------------------------------------------------------- OHTTP
@@ -566,7 +469,7 @@ pub fn test_prove_spend_seeded(keys: &[u8], plan: &str, now: &str, rng_seed: u64
     let plan: Plan = parse(plan, "plan")?;
     let now: Option<Expiry> = parse(now, "now")?;
     let mut rng = rand_chacha::ChaCha20Rng::seed_from_u64(rng_seed);
-    proved_json(&spend::prove_plan(keys_of(keys)?.source(), &plan, now.as_ref(), &mut rng).map_err(err)?)
+    proved_json(&spend::prove_plan(&seed_of(keys)?, &plan, now.as_ref(), &mut rng).map_err(err)?)
 }
 
 /// The nine proof facts an honest server returns for `binding` (mock servers in tests only).

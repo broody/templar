@@ -106,10 +106,6 @@ pub struct FreeLimits {
     pub queue_capacity: usize,
     #[serde(default = "d_free_per_hour")]
     pub per_hour: u32,
-    /// Bound spends: free jobs per account per day, counted only after the signature check
-    /// passed (spec §7.2: otherwise anyone could exhaust a victim's allowance).
-    #[serde(default = "d_free_per_account")]
-    pub per_account_per_day: u32,
     /// Free jobs per address bucket per hour (relays share the global bound only).
     #[serde(default = "d_free_per_address")]
     pub per_address_per_hour: u32,
@@ -122,7 +118,7 @@ pub struct FreeLimits {
 impl Default for FreeLimits {
     fn default() -> Self {
         FreeLimits {
-            queue_capacity: d_free_queue(), per_hour: d_free_per_hour(), per_account_per_day: d_free_per_account(),
+            queue_capacity: d_free_queue(), per_hour: d_free_per_hour(),
             per_address_per_hour: d_free_per_address(), max_share_percent: d_free_share(),
         }
     }
@@ -130,7 +126,6 @@ impl Default for FreeLimits {
 
 fn d_free_queue() -> usize { 4 }
 fn d_free_per_hour() -> u32 { 30 }
-fn d_free_per_account() -> u32 { 3 }
 fn d_free_per_address() -> u32 { 4 }
 fn d_free_share() -> u32 { 25 }
 
@@ -733,7 +728,7 @@ mod tests {
             relation: Relation::R5, proof: vec![], chain, pool, root: vec![], nullifiers: vec![], statement_args: vec![],
             v5: Some(V5Job {
                 pool_call: PoolCall { entry_point: "apply_spend".into(), calldata: vec![], spend: st.clone(), binding: Felt::ZERO, intent: None },
-                statement: st, salt: Felt::ZERO, signature: vec![],
+                statement: st,
             }),
         };
         let openings = [inner[0].to_vec(), inner[1].to_vec()];

@@ -1,14 +1,11 @@
 //! Known-answer vectors for the new formats (spec §3, §4, §12.1): seed backups, key derivation,
-//! addresses, viewing keys, fingerprints, sealed boxes and store keys; and a bound wallet's
-//! (`docs/account-bound-note-spec.md` §6): 21-word backups, keys under each account `A`, bound
-//! receivers, addresses and store keys. The core writes
+//! addresses, viewing keys, fingerprints, sealed boxes and store keys. The core writes
 //! `sdk/vectors/keys.json` (with `TEMPLAR_WRITE_VECTORS=1`) and checks it otherwise; the
 //! independent Python reference `sdk/vectors/check_keys.py` recomputes it.
 use serde_json::{Value, json};
 use templar_core::address::{Address, ViewingKey};
 use templar_core::felt;
-use templar_core::keys::{BoundSeed, Seed, StoreKeys};
-use templar_core::pool::{PoolRef, Version};
+use templar_core::keys::Seed;
 use templar_core::sealbox;
 use x25519_dalek::StaticSecret;
 
@@ -58,42 +55,12 @@ fn generate() -> Value {
                    "delivery": felt::to_hex(&sealbox::delivery(&sealbox::to_words(&sealed).unwrap()))})
         })
         .collect();
-    // Bound wallets live only on a pool that settles R0 V5 (AB-SM1).
-    let bound_pool = felt::parse("0x7e57b301").unwrap();
-    let bound_ref = PoolRef::new(chain, bound_pool, Version::V5).unwrap();
-    let mut bound = vec![];
-    for seed_byte in [0u8, 0x5a, 0xff] {
-        let seed = BoundSeed::from_bytes(&[seed_byte; 28]).unwrap();
-        let mut per_account = vec![];
-        for a in ["0x7e57b3c0", "0x7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"] {
-            let w = seed.wallet(&felt::parse(a).unwrap()).unwrap();
-            let mut accounts = vec![];
-            for i in [0u32, 1, 7] {
-                let k = w.keys(&bound_ref, i).unwrap();
-                let addr = Address::of(&chain, &bound_pool, &k);
-                accounts.push(json!({
-                    "index": i, "sk": k.sk, "ak": k.ak, "nk": k.nk, "receiver": k.receiver,
-                    "ivk": hex::encode(k.ivk), "pk": hex::encode(k.pk),
-                    "address": addr.encode().unwrap(), "fingerprint": addr.fingerprint(),
-                }));
-            }
-            per_account.push(json!({
-                "account": a,
-                "store_key": hex::encode(w.store_key(&chain, &bound_pool).as_ref()),
-                "store_id_key": hex::encode(w.store_id_key(&chain, &bound_pool).as_ref()),
-                "accounts": accounts,
-            }));
-        }
-        bound.push(json!({"seed": hex::encode(seed.bytes()), "mnemonic": seed.mnemonic(), "wallets": per_account}));
-    }
     json!({
-        "description": "templar-core key, address, viewing-key, sealed-box and store-key vectors (docs/sdk-spec.md §3-§5), and bound-wallet keys (docs/account-bound-note-spec.md §6)",
+        "description": "templar-core key, address, viewing-key, sealed-box and store-key vectors (docs/sdk-spec.md §3-§5)",
         "chain": "SN_SEPOLIA",
         "pool": "0x2da0011f775d73885cf86c5145feb4cb9149d007f8546959cce32b51b5f37b9",
         "wallets": wallets,
         "sealed_boxes": {"recipient_ivk": hex::encode(a.ivk), "recipient_pk": hex::encode(a.pk), "boxes": boxes},
-        "bound_pool": felt::to_hex(&bound_pool),
-        "bound_seeds": bound,
     })
 }
 
@@ -116,18 +83,6 @@ fn key_vectors() {
                 assert!(Address::decode(key).is_err());
             }
             assert_eq!(addr.fingerprint(), a["fingerprint"].as_str().unwrap());
-        }
-    }
-    // Bound backups are 21 words and round-trip; bound addresses decode.
-    for b in want["bound_seeds"].as_array().unwrap() {
-        let m = b["mnemonic"].as_str().unwrap();
-        assert_eq!(m.split(' ').count(), 21);
-        assert_eq!(hex::encode(BoundSeed::from_mnemonic(m).unwrap().bytes()), b["seed"].as_str().unwrap());
-        assert!(Seed::from_mnemonic(m).is_err());
-        for w in b["wallets"].as_array().unwrap() {
-            for a in w["accounts"].as_array().unwrap() {
-                assert!(Address::decode(a["address"].as_str().unwrap()).is_ok());
-            }
         }
     }
     // Opening the vector boxes.
