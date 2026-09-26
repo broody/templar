@@ -11,7 +11,7 @@ queue_capacity = 16
 trust_forwarded_for = false                  # true only behind a trusted reverse proxy
 # R0 V5 (pool V3) admission and jobs (docs/account-bound-note-spec.md §9):
 # blocks_per_job = 60                        # a statement needs valid_until ≥ latest + (jobs ahead + 1)·this + 11 + relay margin
-# relay_margin_blocks = 30
+# relay_margin_blocks = 60                   # at least the relayer's margin (server/relayer: 60, above the wallet's fallback margin of 40)
 # os_l2_gas = 450000000                      # the virtual transaction's L2 gas bound, from the measured __execute__ cost
 # bound_retention_secs = 600                 # a bound job's result is kept this long unless acknowledged (DELETE /v1/jobs/{id})
 # bound_data_dir = "/run/templar-bound"      # bound jobs' directories: a tmpfs (their inputs hold the account, salt and signature);
@@ -80,6 +80,14 @@ no_network = ["unshare", "--user", "--net"]
 # [caps]
 # os_steps = 4000000
 # builtins = { range_check = 1200000, poseidon = 40000 }   # by name; unnamed builtins are not capped
+
+# The relayer's handoff (docs/account-bound-note-spec.md §7.3, P4b): finished R0 V5 results wait
+# here for server/relayer, which submits them and answers each job. Its own listener, never the
+# public one: loopback (or a private network or TLS proxy), and always a bearer token (16+
+# characters) read by both sides.
+# [relay]
+# listen = "127.0.0.1:8481"
+# token_file = "/etc/templar/relay.token"
 
 # Payment (docs/account-bound-note-spec.md §7.2, §9): absent, the service is free. P4 runs a test
 # issuer: `templar-prover issuer keygen DIR ID`, `issuer mint SECRET_KEY_PEM ID N`.

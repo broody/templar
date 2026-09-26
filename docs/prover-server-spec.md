@@ -196,8 +196,20 @@ A failed job reports its stage; resubmission is safe.
   required or refused, and `403` that the account refused the signature or its class is not
   served, told apart by `reason: "signature" | "account_class"`. `GET /v1/jobs/{id}` adds `refund` (blind signatures on the job's refund requests).
   `DELETE /v1/jobs/{id}` acknowledges a finished job's result and deletes it. `/v1/info` adds the
-  `r5` section (spend domain and type hashes, `E`, `Q`, `W`, `T`, bound mode and classes, caps)
-  and `payment` (issuer keys, costs, priced assets, free bounds).
+  `r5` section (spend domain and type hashes, `E`, `Q`, `W`, `T`, bound mode and classes, caps),
+  `payment` (issuer keys, costs, priced assets, free bounds) and `relay: {enabled}`.
+- **Relay handoff (P4b),** on the `[relay]` listener only, always with the bearer token:
+  - `GET /relay/v1/jobs` → `{jobs: [{id, result, nullifiers, root, send_deadline}],
+    relay_margin_blocks}`, earliest deadline first;
+  - `POST /relay/v1/jobs/{id}/claim` (200 once, 409 if already claimed, 404 if gone), before
+    sending;
+  - `POST /relay/v1/jobs/{id}` with `{transaction_hash}` or `{refused}`.
+
+  Each R0 V5 `apply_spend` result stays in the queue, apart from the client's copy, until the
+  relayer answers or it can no longer be relayed. An unclaimed one is refused once its deadline is
+  within `relay_margin_blocks`; a claimed one expires at its deadline. Invokes are refused at once.
+  `GET /v1/jobs/{id}` shows the answer as `relay: {status: pending | submitted | refused |
+  expired, …}`, kept past retention until the deadline.
 
 Results are kept for a configured time (default one hour), then deleted with their inputs.
 
@@ -242,8 +254,7 @@ result retention; listen address. `info` prints it with the dependency revisions
 at startup. New settings: `operator_node`, `bound_account_classes` and `bound_data_dir` (a tmpfs)
 for bound spends; `pending_margin_secs`; `blocks_per_job`, `relay_margin_blocks`, `os_l2_gas`,
 `bound_retention_secs`; `[caps]`; `[payment]` (issuer keys, refund key, costs, priced assets,
-free bounds, `spent_dir`). A pending verifier change at startup is a warning; jobs are refused
-while it is due.
+free bounds, `spent_dir`); `[relay]` (`listen`, and `token_file`, always required). A pending verifier change at startup is a warning; jobs are refused while it is due.
 
 ## 9. Build and distribution
 

@@ -8,7 +8,8 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
-    "./worker": { "types": "./dist/worker.d.ts", "import": "./dist/worker.js" }
+    "./worker": { "types": "./dist/worker.d.ts", "import": "./dist/worker.js" },
+    "./relayer": { "types": "./dist/relayer.d.ts", "import": "./dist/relayer.js" }
   },
   "files": ["dist", "wasm"],
   "scripts": {

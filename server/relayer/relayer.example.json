@@ -1,0 +1,26 @@
+{
+  "chainId": "0x534e5f5345504f4c4941",
+  "nodeUrl": "http://127.0.0.1:9545/rpc/v0_10",
+  "account": { "address": "<the relayer account, funded with STRK>", "keyFile": "/etc/templar/relayer.key" },
+  "handoff": { "url": "http://127.0.0.1:8481", "tokenFile": "/etc/templar/relay.token" },
+  "stateFile": "/var/lib/templar-relayer/state.json",
+  "assets": ["0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d"],
+  "marginBlocks": 60,
+  "maxFee": "20000000000000000000",
+  "intervalMs": 2000,
+  "pool": {
+    "pool": "<pool V3>",
+    "deploymentBlock": 0,
+    "version": "v5",
+    "parameters": { "expiryWindow": 1500, "quantum": 100, "rootWindow": 4096, "timelock": 86400 },
+    "adapter": "<the R0 V5 adapter>",
+    "adapterClass": "<its class>",
+    "statement": "<the R0 V5 statement account>",
+    "statementClass": "<its class>",
+    "accountTag": "TMPZR0_PAYMENT_V5",
+    "osProgram": "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+    "configHash": "<the virtual OS config hash>",
+    "maxProofAge": 1024,
+    "circuitHash": [1903585510, 1708577544, 3915427995, 3101166941, 461832048, 2805149134, 1077751030, 1205594117]
+  }
+}

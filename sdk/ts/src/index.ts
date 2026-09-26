@@ -1,6 +1,6 @@
 // @templar/sdk (docs/sdk-spec.md): the client side of Templar over starknet.js.
-export { Templar, Wallet, Spend, DEPTH, GAP, EVICTION_LEAVES, type Balance, type SyncResult, type SpendRecord, type AssetSpec, type BoundSigner } from './wallet.js';
-export { ProverClient, type ProverOptions, type OhttpConfig, type ServerInfo, type JobStatus } from './prover.js';
+export { Templar, Wallet, Spend, DEPTH, GAP, EVICTION_LEAVES, FALLBACK_MARGIN, WINDOW_MARGIN, type Balance, type SyncResult, type SpendRecord, type AssetSpec, type BoundSigner } from './wallet.js';
+export { ProverClient, type ProverOptions, type OhttpConfig, type ServerInfo, type JobStatus, type RelayStatus } from './prover.js';
 export { MemoryKV, IndexedDBKV, FileKV, WalletStore, type KV } from './store.js';
 export { SEPOLIA, BOUND_ACCOUNT_CLASSES, activePool, pinsOf, canon, versionOf, type NetworkConstants, type PoolConstants, type TokenInfo, type ProverServer, type BoundAccountClass } from './network.js';
 export { pendingProposals, KIND_R0, KIND_P1, type Proposal } from './chain.js';

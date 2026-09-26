@@ -49,19 +49,23 @@ export interface Prepared {
   nonce: string;
 }
 
-/** Estimates, signs and simulates the exact transaction; nothing is sent. */
-export async function prepare(account: Account, call: Call, proof: string, proofFacts: string[]): Promise<Prepared> {
+/**
+ * Estimates, signs and simulates the exact transaction; nothing is sent. `nonce`: the relayer's
+ * own sequence (several transactions per block); a wallet leaves it to the account.
+ */
+export async function prepare(account: Account, call: Call, proof: string, proofFacts: string[], opts: { nonce?: bigint } = {}): Promise<Prepared> {
   const provider = account.provider as unknown as { channel: { getEstimateFee: Function; fetch: Function } };
+  const nonce = opts.nonce !== undefined ? { nonce: opts.nonce } : {};
   const invocations = await account.accountInvocationsFactory(
     [{ type: TransactionType.INVOKE, payload: [call] }],
     // The query version: the estimate is never a valid V3 transaction (SDK-IP9).
-    { versions: [ETransactionVersion3.F3], skipValidate: false, tip: 0, proof, proofFacts },
+    { versions: [ETransactionVersion3.F3], skipValidate: false, tip: 0, proof, proofFacts, ...nonce },
   );
   const estimates = (await provider.channel.getEstimateFee(invocations, { skipValidate: false, blockIdentifier: 'pre_confirmed' })) as RawEstimate[];
   const raw = estimates[0];
   if (!raw) fail('estimate', 'no fee estimate');
   const { bounds, maxFee, expectedFee } = boundsFrom(raw);
-  const signed = await account.getSignedTransaction([call], { resourceBounds: bounds, tip: 0, proof, proofFacts });
+  const signed = await account.getSignedTransaction([call], { resourceBounds: bounds, tip: 0, proof, proofFacts, ...nonce });
   const response = (await provider.channel.fetch('starknet_simulateTransactions', {
     block_id: 'pre_confirmed',
     transactions: [signed],

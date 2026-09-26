@@ -2,7 +2,7 @@
 // count and root at any block (computed with the core's own tree), the adapter's pinned storage,
 // pool V3's views (verifier by kind, proposals, parameters), bound accounts, reorgs, and a trace of
 // every call the SDK makes.
-import { hash } from 'starknet';
+import { RpcError, hash } from 'starknet';
 
 import * as wasm from '../wasm/templar.js';
 import { SEPOLIA, activePool, canon } from '../dist/index.js';
@@ -44,6 +44,20 @@ export class MockChain {
   proposals = new Map<string, [string, number]>();
   /** Every block's timestamp (proposals lapse by it). */
   timestamp = 1_800_000_000;
+  /** Overrides the timestamp blocks report (a lagging node). */
+  blockTime?: number;
+  /** `getTransactionStatus` answers by hash; an unknown hash is RPC error 29 ("not found"). */
+  txStatus = new Map<string, { finality_status: string; execution_status?: string }>();
+  /** The next `getTransactionStatus` fails like a transport error. */
+  statusFailNext = false;
+  /** The chain's nonce for every account at `pre_confirmed`. */
+  nonce = 7n;
+  /** The next send throws after the transaction left (an ambiguous failure). */
+  sendFailNext = false;
+  /** Nonces of the transactions signed by the mock accounts, in order. */
+  signedNonces: string[] = [];
+  /** Pool V3: `get_root_superseded_at` by root (the digest's words joined), 0 when absent. */
+  superseded = new Map<string, number>();
   accounts = new Map<string, MockAccount>();
   blocks: Block[] = [];
   fork = 0;
@@ -149,7 +163,11 @@ export class MockChain {
         return { transaction_hash: hx(this.sent.length) };
       },
       accountInvocationsFactory: async (inv: unknown, details: unknown) => (this.sent.push({ calls: { factory: details } }), [{ inv, details }]),
-      getSignedTransaction: async (calls: unknown, details: unknown) => ({ type: 'INVOKE', version: '0x3', nonce: '0x7', calls, details }),
+      getSignedTransaction: async (calls: unknown, details: { nonce?: bigint }) => {
+        const nonce = details?.nonce !== undefined ? hx(details.nonce) : hx(this.nonce);
+        this.signedNonces.push(nonce);
+        return { type: 'INVOKE', version: '0x3', nonce, calls, details };
+      },
     };
   }
   noise(k: number): void {
@@ -248,6 +266,15 @@ export class MockChain {
             const p = this.proposals.get(hx(c.calldata[0]!));
             return p ? [p[0], hx(p[1])] : ['0x0', '0x0'];
           }
+          case 'root_is_known':
+            return ['0x1'];
+          case 'get_root_superseded_at':
+            return [hx(this.superseded.get(c.calldata.slice(1).map((x) => BigInt(x).toString()).join(',')) ?? 0)];
+          case 'get_nullifier_spent': {
+            const want = c.calldata.slice(1).map((x) => BigInt(x));
+            const spent = this.blocks.some((b) => b.events.some((e) => e.keys[0] === SEL.NullifierSpent && e.data.slice(1).every((x, i) => BigInt(x) === want[i])));
+            return [spent ? '0x1' : '0x0'];
+          }
           case 'get_leaf_count':
             return [hx(this.leafCount(blockOf(id)))];
           case 'get_root':
@@ -256,14 +283,33 @@ export class MockChain {
         throw new Error(`unexpected entrypoint ${c.entrypoint}`);
       },
       waitForTransaction: async () => ({ execution_status: 'SUCCEEDED' }),
+      getTransactionStatus: async (h: string) => {
+        trace('getTransactionStatus', [h]);
+        if (this.statusFailNext) {
+          this.statusFailNext = false;
+          throw new Error('fetch failed');
+        }
+        const s = this.txStatus.get(hx(h));
+        if (!s) throw new RpcError({ code: 29, message: 'Transaction hash not found' } as never, 'starknet_getTransactionStatus', {});
+        return s;
+      },
+      getNonceForAddress: async (a: string, id?: unknown) => (trace('getNonceForAddress', [a, id]), hx(this.nonce)),
       getClassAt: async () => ({ sierra_program: ['0x1', '0x7', '0x0'] }),
-      invokeSignedTx: async (tx: unknown) => (trace('invokeSignedTx', [tx]), this.sent.push({ signed: tx }), { transaction_hash: '0xbeef' }),
+      invokeSignedTx: async (tx: unknown) => {
+        trace('invokeSignedTx', [tx]);
+        this.sent.push({ signed: tx });
+        if (this.sendFailNext) {
+          this.sendFailNext = false;
+          throw new Error('socket hang up');
+        }
+        return { transaction_hash: '0xbeef' };
+      },
       getBlockLatestAccepted: async () => (trace('getBlockLatestAccepted', []), { block_number: this.latest, block_hash: this.blocks[this.blocks.length - 1]!.hash }),
       getBlockWithTxHashes: async (id: number) => {
         trace('getBlockWithTxHashes', [id]);
         const b = this.blocks[id - this.base];
         if (!b) throw new Error('no block');
-        return { block_hash: b.hash, block_number: id, timestamp: this.timestamp, transactions: [] };
+        return { block_hash: b.hash, block_number: id, timestamp: this.blockTime ?? this.timestamp, transactions: [] };
       },
       getEvents: async (f: { address: string; from_block: { block_number: number }; to_block: { block_number: number }; keys: string[][]; chunk_size: number; continuation_token?: string }) => {
         trace('getEvents', [f]);
@@ -298,6 +344,15 @@ export class MockProver {
   binding = '';
   /** Rewrites the pool call the server returns (a lying server). */
   poolCall?: (c: unknown) => unknown;
+  /** Whether this server relays (its info says so, and finished V5 jobs go to the handoff). */
+  relayEnabled = false;
+  /** The relayer's reports by job id, shown in each job's status. */
+  relay = new Map<string, unknown>();
+  claimed = new Set<string>();
+  /** The next report answers 503 (it did not reach the server). */
+  reportFailNext = false;
+  /** Every claim answers 409 (someone else took it, or the server refused it for lateness). */
+  refuseClaims = false;
   /** The spend message's hashes the server publishes (the core's by default). */
   domain = JSON.parse(wasm.spend_domain()) as { domain_type_hash: string; spend_type_hash: string };
   constructor(private chain: MockChain, private facts: (binding: string, base: number, hash: string) => string[]) {}
@@ -311,6 +366,7 @@ export class MockProver {
         network: { chain_id: 'SN_SEPOLIA', pool: p.pool, os_program: p.osProgram, max_proof_age: p.maxProofAge },
         relations: [{ name: p.version === 'v5' ? 'r5' : 'r4', statement_account: p.statement, statement_class: p.statementClass, account_tag: p.accountTag, adapter: p.adapter, circuit_hash_u32_le: p.circuitHash }],
         limits: { retention_secs: 3600 },
+        relay: { enabled: this.relayEnabled },
         ...(p.version === 'v5'
           ? {
               r5: {
@@ -339,16 +395,62 @@ export class MockProver {
         this.failNext = false;
         return reply(200, { status: 'failed', stage: 'os', error: 'boom' });
       }
-      const base = this.chain.latest - 1;
-      const hash = this.chain.blocks[base - this.chain.base]!.hash;
-      const result: Record<string, unknown> = { proof: 'AAAA', proof_facts: this.facts(this.binding, base, hash), base_block: base, binding: this.binding };
-      if (p.version === 'v5') {
-        // R0 V5: the deadline and the pool call the relayer settles, from the job's own body.
-        const body = JSON.parse(j.body) as { statement: { valid_until: number }; pool_call: unknown };
-        result.send_deadline = Math.min(body.statement.valid_until, base + p.maxProofAge);
-        result.pool_call = this.poolCall ? this.poolCall(body.pool_call) : body.pool_call;
+      const honest = this.resultOf(j);
+      const result = this.poolCall && honest.pool_call ? { ...honest, pool_call: this.poolCall(honest.pool_call) } : honest;
+      const relay = this.relay.get(m[1]!) ?? (this.relayEnabled && p.version === 'v5' ? { status: 'pending' } : null);
+      return reply(200, { status: 'done', result, relay });
+    }
+    return reply(404, {});
+  };
+
+  /** A job's result, fixed at its first read (base block = the latest block then, minus one). */
+  private resultOf(j: { body: string; result?: unknown }): Record<string, unknown> {
+    if (j.result) return j.result as Record<string, unknown>;
+    const p = this.chain.pool;
+    const base = this.chain.latest - 1;
+    const hash = this.chain.blocks[base - this.chain.base]!.hash;
+    const result: Record<string, unknown> = { proof: 'AAAA', proof_facts: this.facts(this.binding, base, hash), base_block: base, binding: this.binding };
+    if (p.version === 'v5') {
+      // R0 V5: the deadline and the pool call the relayer settles, from the job's own body.
+      const body = JSON.parse(j.body) as { statement: { valid_until: number }; pool_call: unknown };
+      result.send_deadline = Math.min(body.statement.valid_until, base + p.maxProofAge);
+      result.pool_call = body.pool_call;
+    }
+    j.result = result;
+    return result;
+  }
+
+  /** The relayer's handoff (`/relay/v1/jobs`): every finished V5 job not yet answered. */
+  handoff = async (url: string | URL, init?: { method?: string; body?: string }): Promise<Response> => {
+    const u = new URL(String(url));
+    const reply = (status: number, v: unknown) => new Response(JSON.stringify(v), { status });
+    if (u.pathname === '/relay/v1/jobs' && (init?.method ?? 'GET') === 'GET') {
+      const jobs = [...this.jobs.entries()]
+        .filter(([id]) => !this.relay.has(id))
+        .map(([id, j]) => {
+          const result = this.resultOf(j);
+          const st = (JSON.parse(j.body) as { statement: { nullifiers: number[][]; root: number[] } }).statement;
+          return { id, result, nullifiers: st.nullifiers.map((n) => n.map(hx)), root: st.root.map(hx), send_deadline: result.send_deadline };
+        });
+      return reply(200, { jobs, relay_margin_blocks: 60 });
+    }
+    const c = /^\/relay\/v1\/jobs\/(.+)\/claim$/.exec(u.pathname);
+    if (c && init?.method === 'POST') {
+      if (!this.jobs.has(c[1]!) || this.relay.has(c[1]!)) return reply(404, {});
+      if (this.refuseClaims || this.claimed.has(c[1]!)) return reply(409, {});
+      this.claimed.add(c[1]!);
+      return reply(200, { id: c[1] });
+    }
+    const m = /^\/relay\/v1\/jobs\/(.+)$/.exec(u.pathname);
+    if (m && init?.method === 'POST') {
+      if (this.reportFailNext) {
+        this.reportFailNext = false;
+        return reply(503, {});
       }
-      return reply(200, { status: 'done', result });
+      if (!this.jobs.has(m[1]!) || this.relay.has(m[1]!)) return reply(404, {});
+      const r = JSON.parse(init.body!) as { transaction_hash?: string; refused?: string };
+      this.relay.set(m[1]!, r.transaction_hash ? { status: 'submitted', transaction_hash: r.transaction_hash } : { status: 'refused', reason: r.refused });
+      return reply(200, { id: m[1] });
     }
     return reply(404, {});
   };

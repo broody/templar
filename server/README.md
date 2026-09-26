@@ -97,6 +97,11 @@ above sets `--memory-swap` equal to `--memory`, which disables it. With `[paymen
 `spent_dir` on a volume apart from the job directories: a spend that cannot be synced fails the
 job, and the server takes no payment until the log is writable again.
 
+**The relayer** ([`relayer/`](relayer/README.md)): with `[relay]`, finished R0 V5 results wait on
+the relay listener for `node server/relayer/relayer.mjs CONFIG`, which submits every spend the
+server proves from one account and answers each job with a transaction hash or a refusal; clients
+see the answer in their job status and fall back only on a refusal or near the deadline.
+
 `templar-prover check CONFIG SUBMISSION_JSON` runs the pre-checks on one submission without the
 queue. `tests/check_bench_proofs.sh CONFIG PROOFS_DIR` runs every R0 V4 bench proof, honest and
 forged, through it and checks each verdict; `cargo test` in `prover/` covers parsing and address

@@ -643,11 +643,12 @@ mod tests {
             assert!(is_client_fault(&pool_rules(&cfg, &v5_sub(statement(bad), None), 5000).unwrap_err()), "{bad}");
         }
         // The last settling block is the deadline, 5000 + age: valid_until − E − Q + margin ≤ it.
-        let last = (5000 + age + 1600 - 30) / 100 * 100;
+        let margin = cfg.server.relay_margin_blocks;
+        let last = (5000 + age + 1600 - margin) / 100 * 100;
         pool_rules(&cfg, &v5_sub(statement(last), None), 5000).unwrap();
         assert!(pool_rules(&cfg, &v5_sub(statement(last + 100), None), 5000).is_err());
         // Invokes: expiry through the job, an adapter neither zero nor the pool, COMPUTE ⇔ identity.
-        let need = 5000 + 60 + 11 + 30;
+        let need = 5000 + 60 + 11 + margin;
         pool_rules(&cfg, &v5_sub(statement(6500), Some(intent(0, 0xada, need))), 5000).unwrap();
         assert!(pool_rules(&cfg, &v5_sub(statement(6500), Some(intent(0, 0xada, need - 1))), 5000).is_err());
         assert!(pool_rules(&cfg, &v5_sub(statement(6500), Some(intent(0, 0, need))), 5000).is_err());
@@ -660,10 +661,10 @@ mod tests {
         // The review's probe (recheck N4): valid_until 6800 settles from block 5200 only, so an
         // intent expiring at 5101 could never land; it must last to 5200 plus the relay margin.
         assert!(pool_rules(&cfg, &v5_sub(statement(6800), Some(intent(0, 0xada, 5101))), 5000).is_err());
-        assert!(pool_rules(&cfg, &v5_sub(statement(6800), Some(intent(0, 0xada, 5229))), 5000).is_err());
-        pool_rules(&cfg, &v5_sub(statement(6800), Some(intent(0, 0xada, 5230))), 5000).unwrap();
+        assert!(pool_rules(&cfg, &v5_sub(statement(6800), Some(intent(0, 0xada, 5200 + margin - 1))), 5000).is_err());
+        pool_rules(&cfg, &v5_sub(statement(6800), Some(intent(0, 0xada, 5200 + margin))), 5000).unwrap();
         // The deadline never passes the intent's expiry.
-        assert_eq!(send_deadline(&cfg, &v5_sub(statement(6800), Some(intent(0, 0xada, 5230))), 5000), 5230);
+        assert_eq!(send_deadline(&cfg, &v5_sub(statement(6800), Some(intent(0, 0xada, 5260))), 5000), 5260);
         assert_eq!(send_deadline(&cfg, &v5_sub(statement(6800), None), 5000), 6800.min(5000 + age));
     }
 
@@ -755,10 +756,11 @@ mod tests {
     #[test]
     fn expiry_and_deadline_rules() {
         let cfg = v3_config();
-        // valid_until ≥ latest + (ahead + 1)·60 + 11 + 30.
-        assert!(expiry_admits(&cfg, 1000 + 60 + 41, 1000, 0).is_ok());
-        assert!(expiry_admits(&cfg, 1000 + 60 + 40, 1000, 0).is_err());
-        assert!(expiry_admits(&cfg, 1000 + 3 * 60 + 41, 1000, 2).is_ok());
-        assert!(expiry_admits(&cfg, 1000 + 3 * 60 + 40, 1000, 2).is_err());
+        // valid_until ≥ latest + (ahead + 1)·60 + 11 + relay margin (60).
+        let m = 11 + cfg.server.relay_margin_blocks;
+        assert!(expiry_admits(&cfg, 1000 + 60 + m, 1000, 0).is_ok());
+        assert!(expiry_admits(&cfg, 1000 + 60 + m - 1, 1000, 0).is_err());
+        assert!(expiry_admits(&cfg, 1000 + 3 * 60 + m, 1000, 2).is_ok());
+        assert!(expiry_admits(&cfg, 1000 + 3 * 60 + m - 1, 1000, 2).is_err());
     }
 }

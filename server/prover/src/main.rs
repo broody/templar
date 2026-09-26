@@ -295,8 +295,26 @@ async fn main() -> Result<()> {
                 Some(o) => json!({"enabled": true, "keys_path": "/ohttp-keys", "key_config_hex": hex::encode(o.gateway.encoded_config())}),
                 None => json!({"enabled": false}),
             };
+            info["relay"] = json!({"enabled": cfg.relay.is_some()});
             let cfg_root = cfg.sandbox.clone();
+            let relay = cfg.relay.clone();
             let state = api::start(cfg, rpc, info, tickets);
+            // The relayer's handoff, on its own listener (account-bound spec §7.3, P4b).
+            if let Some(r) = relay {
+                let token = std::fs::read_to_string(&r.token_file).context("reading relay.token_file")?.trim().to_string();
+                if token.len() < 16 {
+                    bail!("relay.token_file: at least 16 characters");
+                }
+                let addr: SocketAddr = r.listen.parse().context("relay.listen")?;
+                let listener = tokio::net::TcpListener::bind(addr).await?;
+                let app = api::relay_router(Arc::new(api::RelayState { app: state.clone(), token }));
+                tracing::info!(%addr, "relay handoff");
+                tokio::spawn(async move {
+                    if let Err(e) = axum::serve(listener, app).await {
+                        tracing::error!("relay listener: {e}");
+                    }
+                });
+            }
             let app = api::router(state, ohttp).into_make_service_with_connect_info::<SocketAddr>();
             let listener = tokio::net::TcpListener::bind(listen).await?;
             tracing::info!(%listen, "serving");

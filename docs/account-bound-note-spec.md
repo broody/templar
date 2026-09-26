@@ -570,6 +570,64 @@ Before submitting, the relayer:
 - A standard paymaster does not replace the relayer, because the user's account would be the
   transaction's account.
 
+**Implementation (P4b).**
+
+- **Handoff.** A prover server with `[relay]` puts every finished R0 V5 `apply_spend` result in a
+  relay queue on its own listener. The listener is loopback or a private network, and always
+  needs a bearer token.
+  - `GET /relay/v1/jobs` lists the waiting results, earliest deadline first, with the server's
+    `relay_margin_blocks`.
+  - `POST /relay/v1/jobs/{id}/claim` is the relayer's claim just before sending.
+  - `POST /relay/v1/jobs/{id}` takes `{transaction_hash}` or `{refused: reason}`.
+  - The queue holds its own copy, so the client's acknowledgement never takes a result from the
+    relayer.
+  - An unclaimed item is refused once its deadline is within `relay_margin_blocks` ("the relayer
+    did not take it in time"), so the client can fall back early. A claimed one expires at its
+    deadline.
+  - Invokes are refused at once (F06), so their clients submit them without waiting.
+  - A relayed job outlives retention until its deadline, keeping its note and the relayer's
+    answer; only its result goes.
+  - The client reads the answer in its job status (`relay`), and `/v1/info` says whether the
+    server relays.
+- **Relayer** (`@templar/sdk/relayer`, run by `server/relayer/`). It never causes a second
+  transaction beside a wallet's fallback, so it refuses only when nothing was sent:
+  - it waits for the result's submit block, then checks: the verifier, a root known and accepted
+    for the margin, unspent nullifiers, `send_deadline ≥ latest + margin`, and exit assets in its
+    allowlist (an exit calls the asset, which could revert once included);
+  - it prepares with its own nonce sequence (never below the chain's at `pre_confirmed`),
+    simulates with validation under a fee cap, re-checks the margin, claims, records the notes
+    with the signed transaction hash, and sends;
+  - a send whose outcome is unknown, and any later job for notes it already sent, are answered
+    with that hash, and an answer that did not reach the server is sent again;
+  - it tracks its own transactions: a revert denies those notes for good, a rejection resets the
+    nonce, and one stuck pending pauses new jobs;
+  - it sends nothing while its node lags (latest block older than 30 s);
+  - its nullifiers, denials, transactions and nonce survive restarts in a state file;
+  - one account submits for every product and mode, and it logs only job ids and outcome kinds.
+- **Fallback** (SDK):
+  - `wrap` records whether the server relays as soon as the job is admitted, and a re-wrap keeps
+    each earlier job's relay (a job abandoned before its result is bounded by the statement's
+    `valid_until`);
+  - `relayStatus(prover)` reads the answer. Only a job gone at retention leaves the last answer
+    standing; a server that does not answer is no answer.
+  - `submit(account, { prover })` needs the prover while the relayer may still submit.
+  - For every job of the record whose relayer may still submit it, the wallet submits at once only
+    when the relayer refused, expired, or its transaction failed. Otherwise it submits only from
+    that job's `send_deadline − 40` blocks (`FALLBACK_MARGIN`), and never while the relayer's
+    transaction is pending or after it landed.
+  - The status is read through the spend provider in bound mode, else the submitter's provider.
+    Only RPC error 29 counts as a transaction the node does not know.
+- **Margins.** The relayer submits only while `send_deadline ≥ latest + margin`, with a margin of
+  at least 60, which is 20 above the wallet's 40. It re-checks the margin just before sending. So
+  once a wallet may fall back, the relayer never submits anew. The race that remains is a relayer
+  transaction the wallet's node has not seen. The server's `relay_margin_blocks` defaults to 60
+  too, so the jobs it admits are ones the relayer will take, and unclaimed ones are refused in
+  time for the fallback.
+- **P4b limits:**
+  - a prover restart loses its relay queue, and those clients fall back at the deadline;
+  - one relayer per prover;
+  - invokes are submitted by the wallet until tight minimums exist.
+
 ## 8. M31 pool V3
 
 - A fresh deployment: commitments bind the pool address, and pools have no upgrade path.
@@ -902,8 +960,8 @@ the compress-only tree tables (F30), one generic timelock for all owner levers, 
     only. A journal that turns them into refunds at restart comes with P7's issuer.
   - The client side of tickets (blinding, finalizing, storing) comes with P7; in P4 the app
     supplies the payment JSON.
-  - `DELETE /v1/jobs/{id}` drops a result at once. With the relayer (P4b), the relayer takes a
-    result when its job completes, before the client can acknowledge it.
+  - `DELETE /v1/jobs/{id}` drops the client's copy of a result at once; the relayer's copy waits in
+    the relay queue (P4b, §7.4).
   - `pending_margin_secs` should cover a result's life (`max_proof_age` blocks): it defaults to
     `max_proof_age × 6` seconds, and the server warns at startup when it is set lower.
 - **Tests:** the r5 admission path runs end to end against the real R5 bridge with SDK-made
@@ -1097,6 +1155,9 @@ Losing the account's keys entirely is the same as for the wallet's public funds.
   - §7.3 acceptance, handoff and deduplication;
   - submission of every proved spend;
   - a transaction hash or a refusal for every job, and the SDK's fallback timing (§7.4).
+
+  Implemented 2026-09-26 (§7.4, "Implementation (P4b)"). Invokes are not relayed until tight
+  minimums exist (F06).
 - **P5 local end to end:**
   - both modes on live Sepolia state with real Ready and Braavos accounts, with the V5 statement
     account in the pinned virtual OS (P3's real-wallet evidence ran in snforge with a cheated

@@ -102,6 +102,21 @@ struct Job {
     refund: Option<Value>,
     /// A free full withdrawal (the low-priority queue).
     free: bool,
+    /// The relayer's answer, shown to the client (account-bound spec §7.3, AB-P31): `pending`,
+    /// `submitted` with the transaction hash, `refused` with the reason, or `expired`.
+    relay: Option<Value>,
+}
+
+/// A finished R0 V5 result waiting for the relayer (P4b handoff). It is kept apart from the job's
+/// result, so the client's acknowledgement never takes it from the relayer, and it goes when the
+/// relayer reports or its deadline passes.
+struct RelayItem {
+    result: Value,
+    nullifiers: Vec<Vec<String>>,
+    root: Vec<String>,
+    deadline: u64,
+    /// The relayer claimed it before sending: it is no longer refused for lateness (AB-RL9).
+    claimed: bool,
 }
 
 struct Refusal {
@@ -121,6 +136,8 @@ struct Registry {
     /// Note key → signature failures (spec §9 step 8): the first is free, then the wait doubles.
     /// Keyed by the note, never by the account, so nobody can lock out a victim's account.
     signature_refusals: HashMap<String, Refusal>,
+    /// Job id → result waiting for the relayer.
+    relay: HashMap<String, RelayItem>,
 }
 
 struct Bucket {
@@ -682,7 +699,7 @@ fn admit(state: &Arc<AppState>, id: String, sub: Submission, bridge: BridgeOutpu
     reg.jobs.insert(id.clone(), Job {
         status: Status::Queued, stage: "queued".into(), finished: None, submission: Some(sub),
         bridge: Some(bridge), result: None, error: None, dedup_key: dkey, body_hash, address_key: key, dir, bound,
-        deadline: None, reservation: held.take(), spent: false, refund: None, free,
+        deadline: None, reservation: held.take(), spent: false, refund: None, free, relay: None,
     });
     reg.order.push_back(id.clone());
     tracing::info!(job = %id, "admitted");
@@ -716,7 +733,7 @@ async fn status(State(state): State<Arc<AppState>>, Path(id): Path<String>) -> R
     let position = reg.order.iter().position(|x| *x == id);
     (StatusCode::OK, Json(json!({
         "id": id, "status": j.status.name(), "stage": j.stage, "position": position,
-        "result": j.result, "error": j.error, "refund": j.refund,
+        "result": j.result, "error": j.error, "refund": j.refund, "relay": j.relay,
     })))
 }
 
@@ -857,6 +874,25 @@ async fn work(state: &Arc<AppState>, id: &str) {
         let _ = std::fs::remove_dir_all(&dir);
     }
     let mut reg = state.registry.lock().unwrap();
+    // Every R0 V5 result this server proves goes to the relayer, if it relays (spec §7.4), except
+    // invokes, which wait for tight minimums (F06): those are refused at once, so the client
+    // submits them itself without waiting.
+    let invoke = sub.v5.as_ref().is_some_and(|j| j.pool_call.intent.is_some());
+    let relay = match (&outcome, &sub.v5, &state.config.relay) {
+        (Ok(r), Some(j), Some(_)) if !invoke => r.value.get("send_deadline").and_then(Value::as_u64).map(|deadline| RelayItem {
+            result: r.value.clone(),
+            nullifiers: j.statement.nullifiers.iter().map(|n| n.iter().map(crate::rpc::hex).collect()).collect(),
+            root: j.statement.root.iter().map(crate::rpc::hex).collect(),
+            deadline,
+            claimed: false,
+        }),
+        _ => None,
+    };
+    if let Some(item) = relay {
+        reg.relay.insert(id.to_string(), item);
+    }
+    let relayed = reg.relay.contains_key(id);
+    let refused_invoke = invoke && outcome.is_ok() && state.config.relay.is_some();
     let Some(j) = reg.jobs.get_mut(id) else { return };
     j.finished = Some(Instant::now());
     j.submission = None;
@@ -865,6 +901,12 @@ async fn work(state: &Arc<AppState>, id: &str) {
             j.status = Status::Done;
             j.stage = "done".into();
             j.deadline = r.value.get("send_deadline").or_else(|| r.value.get("valid_until")).and_then(Value::as_u64);
+            if relayed {
+                j.relay = Some(json!({"status": "pending"}));
+            }
+            if refused_invoke {
+                j.relay = Some(json!({"status": "refused", "reason": "invokes are not relayed until tight minimums exist (F06)"}));
+            }
             j.result = Some(r.value);
             tracing::info!(job = %id, "done");
         }
@@ -893,19 +935,165 @@ async fn work(state: &Arc<AppState>, id: &str) {
     }
 }
 
+/// The relayer's side of the handoff (P4b): its own listener, never the public one.
+pub struct RelayState {
+    pub app: Arc<AppState>,
+    /// The bearer token, always required (AB-RL10).
+    pub token: String,
+}
+
+impl RelayState {
+    fn authorized(&self, headers: &HeaderMap) -> bool {
+        !self.token.is_empty()
+            && headers
+                .get("authorization")
+                .and_then(|v| v.to_str().ok())
+                .and_then(|v| v.strip_prefix("Bearer "))
+                .is_some_and(|given| constant_time_eq(given.as_bytes(), self.token.as_bytes()))
+    }
+}
+
+fn constant_time_eq(a: &[u8], b: &[u8]) -> bool {
+    a.len() == b.len() && a.iter().zip(b).fold(0u8, |acc, (x, y)| acc | (x ^ y)) == 0
+}
+
+pub fn relay_router(state: Arc<RelayState>) -> Router {
+    Router::new()
+        .route("/relay/v1/jobs", get(relay_list))
+        .route("/relay/v1/jobs/{id}", post(relay_report))
+        .route("/relay/v1/jobs/{id}/claim", post(relay_claim))
+        .layer(DefaultBodyLimit::max(64 * 1024))
+        .with_state(state)
+}
+
+/// Ends relay items that can no longer be relayed at `latest`: an unclaimed one once its deadline
+/// is within `relay_margin_blocks` (the relayer did not take it in time: the client may fall back
+/// at once, AB-RL9), a claimed one when its deadline passed.
+fn expire_relay(reg: &mut Registry, latest: u64, margin: u64) {
+    let ended: Vec<(String, bool)> = reg
+        .relay
+        .iter()
+        .filter(|(_, i)| i.deadline < latest || !i.claimed && i.deadline < latest + margin)
+        .map(|(id, i)| (id.clone(), i.claimed))
+        .collect();
+    for (id, claimed) in ended {
+        reg.relay.remove(&id);
+        if let Some(j) = reg.jobs.get_mut(&id) {
+            j.relay = Some(if claimed {
+                json!({"status": "expired"})
+            } else {
+                json!({"status": "refused", "reason": "the relayer did not take it in time"})
+            });
+        }
+    }
+}
+
+/// The results waiting for the relayer, earliest deadline first, with the server's relay margin
+/// (the relayer's own must not exceed it).
+async fn relay_list(State(rs): State<Arc<RelayState>>, headers: HeaderMap) -> Reply {
+    if !rs.authorized(&headers) {
+        return err(StatusCode::UNAUTHORIZED, "relay token");
+    }
+    let latest = latest_block(&rs.app).await;
+    let margin = rs.app.config.server.relay_margin_blocks;
+    let mut reg = rs.app.registry.lock().unwrap();
+    if let Some(latest) = latest {
+        expire_relay(&mut reg, latest, margin);
+    }
+    let mut jobs: Vec<(u64, Value)> = reg
+        .relay
+        .iter()
+        .map(|(id, i)| (i.deadline, json!({"id": id, "result": i.result, "nullifiers": i.nullifiers, "root": i.root, "send_deadline": i.deadline})))
+        .collect();
+    jobs.sort_by_key(|(d, _)| *d);
+    (StatusCode::OK, Json(json!({"jobs": jobs.into_iter().map(|(_, j)| j).collect::<Vec<_>>(), "relay_margin_blocks": margin})))
+}
+
+/// The relayer claims an item just before sending it: 200 once, 409 when already claimed, 404 when
+/// it is gone (answered, or refused for lateness). It must not send without a 200.
+async fn relay_claim(State(rs): State<Arc<RelayState>>, headers: HeaderMap, Path(id): Path<String>) -> Reply {
+    if !rs.authorized(&headers) {
+        return err(StatusCode::UNAUTHORIZED, "relay token");
+    }
+    let latest = latest_block(&rs.app).await;
+    let margin = rs.app.config.server.relay_margin_blocks;
+    let mut reg = rs.app.registry.lock().unwrap();
+    if let Some(latest) = latest {
+        expire_relay(&mut reg, latest, margin);
+    }
+    match reg.relay.get_mut(&id) {
+        None => err(StatusCode::NOT_FOUND, "no such relay item"),
+        Some(i) if i.claimed => err(StatusCode::CONFLICT, "already claimed"),
+        Some(i) => {
+            i.claimed = true;
+            (StatusCode::OK, Json(json!({"id": id})))
+        }
+    }
+}
+
+#[derive(serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct RelayReport {
+    transaction_hash: Option<String>,
+    refused: Option<String>,
+}
+
+/// The relayer's answer for one job: its transaction hash, or a refusal and its reason (AB-P31).
+/// The item then goes: the relayer keeps only the nullifiers, the server nothing.
+async fn relay_report(State(rs): State<Arc<RelayState>>, headers: HeaderMap, Path(id): Path<String>, body: axum::body::Bytes) -> Reply {
+    if !rs.authorized(&headers) {
+        return err(StatusCode::UNAUTHORIZED, "relay token");
+    }
+    let Ok(r) = serde_json::from_slice::<RelayReport>(&body) else {
+        return err(StatusCode::BAD_REQUEST, "malformed report");
+    };
+    let status = match (r.transaction_hash, r.refused) {
+        (Some(h), None) => match crate::rpc::felt(&h) {
+            Ok(f) if f != Felt::ZERO => json!({"status": "submitted", "transaction_hash": crate::rpc::hex(&f)}),
+            _ => return err(StatusCode::BAD_REQUEST, "transaction_hash"),
+        },
+        (None, Some(reason)) => json!({"status": "refused", "reason": reason.chars().take(300).collect::<String>()}),
+        _ => return err(StatusCode::BAD_REQUEST, "a report is {transaction_hash} or {refused}"),
+    };
+    let mut reg = rs.app.registry.lock().unwrap();
+    if reg.relay.remove(&id).is_none() {
+        return err(StatusCode::NOT_FOUND, "no such relay item");
+    }
+    if let Some(j) = reg.jobs.get_mut(&id) {
+        j.relay = Some(status);
+    }
+    tracing::info!(job = %id, "relay reported");
+    (StatusCode::OK, Json(json!({"id": id})))
+}
+
 /// Deletes finished jobs past retention with their directories, and expired refusals and buckets.
 /// A bound job's result is kept only `bound_retention_secs` (spec §9).
 fn sweep(state: &Arc<AppState>) {
     let retention = Duration::from_secs(state.config.server.retention_secs);
     let bound_retention = Duration::from_secs(state.config.server.bound_retention_secs.min(state.config.server.retention_secs));
     let now = Instant::now();
+    let latest = state.latest.lock().unwrap().map(|(_, n)| n);
     let dirs: Vec<PathBuf> = {
         let mut reg = state.registry.lock().unwrap();
+        // Relay items that can no longer be relayed, when the relayer has not polled.
+        if let Some(latest) = latest {
+            expire_relay(&mut reg, latest, state.config.server.relay_margin_blocks);
+        }
+        let past = |j: &Job| j.finished.map(|f| now.duration_since(f) > if j.bound { bound_retention } else { retention }).unwrap_or(false);
+        // A relayed job outlives retention until its deadline (AB-RL5): while its item waits, and
+        // then so the client can still read the relayer's answer. Only its result goes.
+        let relayed: Vec<String> = reg.relay.keys().cloned().collect();
+        let keep = |id: &String, j: &Job| relayed.contains(id) || j.relay.is_some() && j.deadline.is_some_and(|d| latest.is_none_or(|l| d >= l));
+        for (id, j) in reg.jobs.iter_mut() {
+            if !matches!(j.status, Status::Running | Status::Queued) && past(j) && keep(id, j) {
+                j.result = None;
+            }
+        }
         let expired: Vec<String> = reg
             .jobs
             .iter()
             .filter(|(_, j)| !matches!(j.status, Status::Running | Status::Queued))
-            .filter(|(_, j)| j.finished.map(|f| now.duration_since(f) > if j.bound { bound_retention } else { retention }).unwrap_or(false))
+            .filter(|(id, j)| past(j) && !keep(id, j))
             .map(|(id, _)| id.clone())
             .collect();
         let mut dirs = vec![];
@@ -959,7 +1147,7 @@ mod tests {
             status, stage: "done".into(), finished: None, submission: None, bridge: None,
             result: Some(json!({"valid_until": valid_until})), error: None, dedup_key: "note".into(), body_hash,
             address_key: "1.2.3.4".into(), dir: std::env::temp_dir(), bound: false, deadline: Some(valid_until),
-            reservation: None, spent: false, refund: None, free: false,
+            reservation: None, spent: false, refund: None, free: false, relay: None,
         });
         reg.dedup.insert("note".into(), id.clone());
         reg.by_body.insert(body_hash, id.clone());
@@ -988,6 +1176,94 @@ mod tests {
         assert!(existing_job(&state, &body).await.is_none());
         let reg = state.registry.lock().unwrap();
         assert!(!reg.dedup.contains_key("note") && !reg.refusals.contains_key("note"));
+    }
+
+    /// The relayer's handoff (P4b): its own token, a copy the client's acknowledgement does not take,
+    /// claims, one report per job shown to the client, lateness and expiry, and retention.
+    #[tokio::test]
+    async fn relay_handoff() {
+        let (state, id, _) = state_with_job(Status::Done, 200, 100).await;
+        let item = |deadline| RelayItem { result: json!({"proof": "AAAA", "send_deadline": deadline}), nullifiers: vec![vec!["0x1".into(); 9]], root: vec!["0x2".into(); 9], deadline, claimed: false };
+        {
+            let mut reg = state.registry.lock().unwrap();
+            reg.relay.insert(id.clone(), item(200));
+            reg.jobs.get_mut(&id).unwrap().relay = Some(json!({"status": "pending"}));
+            let mut old = Job { relay: None, ..clone_job(&reg.jobs[&id]) };
+            old.deadline = Some(50);
+            reg.jobs.insert("old".into(), old);
+            reg.relay.insert("old".into(), item(50));
+        }
+        let app = relay_router(Arc::new(RelayState { app: state.clone(), token: "s3cret".into() }));
+        let l = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let url = format!("http://{}", l.local_addr().unwrap());
+        tokio::spawn(async move { axum::serve(l, app).await.unwrap() });
+        let http = reqwest::Client::new();
+        let list = || http.get(format!("{url}/relay/v1/jobs")).bearer_auth("s3cret").send();
+        assert_eq!(http.get(format!("{url}/relay/v1/jobs")).send().await.unwrap().status(), 401);
+        assert_eq!(http.get(format!("{url}/relay/v1/jobs")).bearer_auth("wrong!").send().await.unwrap().status(), 401);
+        // The latest block is 100 and the relay margin 60: the unclaimed item with deadline 50 was
+        // not taken in time (refused, so its client falls back at once); the other is listed.
+        let v: Value = list().await.unwrap().json().await.unwrap();
+        assert_eq!(v["jobs"].as_array().unwrap().len(), 1);
+        assert_eq!(v["jobs"][0]["id"], id.as_str());
+        assert_eq!(v["jobs"][0]["nullifiers"][0][0], "0x1");
+        assert_eq!(v["relay_margin_blocks"], 60);
+        assert_eq!(state.registry.lock().unwrap().jobs["old"].relay.as_ref().unwrap()["status"], "refused");
+        // A claim once; a second claim conflicts. A claimed item is no longer refused for lateness,
+        // only expired after its deadline.
+        let claim = |id: &str| http.post(format!("{url}/relay/v1/jobs/{id}/claim")).bearer_auth("s3cret").send();
+        assert_eq!(claim(&id).await.unwrap().status(), 200);
+        assert_eq!(claim(&id).await.unwrap().status(), 409);
+        assert_eq!(claim("old").await.unwrap().status(), 404);
+        {
+            let mut reg = state.registry.lock().unwrap();
+            reg.relay.insert("late".into(), RelayItem { claimed: true, ..item(120) });
+            reg.relay.insert("late2".into(), item(120));
+            expire_relay(&mut reg, 100, 60);
+            assert!(reg.relay.contains_key("late") && !reg.relay.contains_key("late2"));
+            expire_relay(&mut reg, 121, 60);
+            assert!(!reg.relay.contains_key("late"));
+        }
+        // The client's acknowledgement drops its own copy, not the relayer's.
+        let (code, _) = acknowledge(State(state.clone()), Path(id.clone())).await;
+        assert_eq!(code, StatusCode::OK);
+        assert_eq!(list().await.unwrap().json::<Value>().await.unwrap()["jobs"].as_array().unwrap().len(), 1);
+        // Reports: malformed ones refused; one report per job, shown to the client.
+        let post = |b: Value| http.post(format!("{url}/relay/v1/jobs/{id}")).bearer_auth("s3cret").json(&b).send();
+        assert_eq!(post(json!({"transaction_hash": "0x1", "refused": "x"})).await.unwrap().status(), 400);
+        assert_eq!(post(json!({"transaction_hash": "0x0"})).await.unwrap().status(), 400);
+        assert_eq!(post(json!({"hash": "0x1"})).await.unwrap().status(), 400);
+        assert_eq!(post(json!({"transaction_hash": "0x00abc"})).await.unwrap().status(), 200);
+        assert_eq!(post(json!({"refused": "late"})).await.unwrap().status(), 404);
+        let (_, Json(s)) = status(State(state.clone()), Path(id.clone())).await;
+        assert_eq!(s["relay"], json!({"status": "submitted", "transaction_hash": "0xabc"}));
+        assert!(list().await.unwrap().json::<Value>().await.unwrap()["jobs"].as_array().unwrap().is_empty());
+        // Retention (AB-RL5): past it, a job whose relay item waits, or whose answer is still
+        // within its deadline, keeps its status and note, and loses only its result.
+        {
+            let mut reg = state.registry.lock().unwrap();
+            let j = reg.jobs.get_mut(&id).unwrap();
+            j.finished = Some(Instant::now() - Duration::from_secs(100_000));
+            j.result = Some(json!({"proof": "AAAA"}));
+            let mut w = clone_job(j);
+            w.relay = Some(json!({"status": "pending"}));
+            w.deadline = Some(90);
+            reg.jobs.insert("waiting".into(), w);
+            reg.relay.insert("waiting".into(), RelayItem { claimed: true, ..item(150) });
+        }
+        *state.latest.lock().unwrap() = Some((Instant::now(), 100));
+        sweep(&state);
+        let reg = state.registry.lock().unwrap();
+        assert!(reg.jobs[&id].result.is_none() && reg.jobs[&id].relay.is_some(), "kept until its deadline 200");
+        assert!(reg.jobs.contains_key("waiting") && reg.dedup.values().any(|v| v == &id));
+    }
+
+    fn clone_job(j: &Job) -> Job {
+        Job {
+            status: j.status, stage: j.stage.clone(), finished: j.finished, submission: None, bridge: None, result: j.result.clone(),
+            error: None, dedup_key: format!("{}-2", j.dedup_key), body_hash: [9; 32], address_key: j.address_key.clone(), dir: j.dir.clone(),
+            bound: j.bound, deadline: j.deadline, reservation: None, spent: false, refund: None, free: false, relay: j.relay.clone(),
+        }
     }
 
     #[test]

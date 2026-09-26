@@ -25,12 +25,23 @@ export interface JobStatus {
   error?: string;
   /** Replacement tickets for a job the server failed: blind signatures on the job's requests. */
   refund?: { key_id: string; blind_signatures: string[] } | { owed: number; error: string };
+  /** The relayer's answer for an R0 V5 job (account-bound spec §7.3, AB-P31). */
+  relay?: RelayStatus | null;
 }
+
+/** What the service's relayer did with a proved spend. */
+export type RelayStatus =
+  | { status: 'pending' }
+  | { status: 'submitted'; transaction_hash: string }
+  | { status: 'refused'; reason: string }
+  | { status: 'expired' };
 
 export interface ServerInfo {
   network: { chain_id: string; pool: string; os_program: string; max_proof_age: number };
   relations: { name: string; statement_account: string; statement_class: string; account_tag: string; adapter: string; circuit_hash_u32_le: number[] }[];
   limits: { retention_secs: number; [k: string]: unknown };
+  /** Whether the service submits the spends it proves (§7.4); absent or false for a self-hosted server. */
+  relay?: { enabled: boolean };
   [k: string]: unknown;
 }
 
@@ -148,6 +159,8 @@ export class ProverClient {
 
   async status(id: string): Promise<JobStatus> {
     const r = await this.request('GET', `/v1/jobs/${id}`);
+    // A job gone at retention (404) is told apart from a server that did not answer (AB-RL3).
+    if (r.status === 404) fail('prover_job_gone', 'no such job');
     if (r.status !== 200) fail('prover_job', `status ${r.status}`);
     return JSON.parse(r.text) as JobStatus;
   }

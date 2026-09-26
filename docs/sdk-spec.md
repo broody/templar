@@ -527,7 +527,23 @@ job body, the result, and the signed transaction's hash, nonce and resource boun
 
 **Pool V3 (revision 4).** A bound spend is never submitted by its own account `A`: `submit`
 refuses it (`owner_submits`), and another account or the relayer submits instead, never through
-the provider that has seen `A`. The fallback's timing (account-bound spec §7.4) comes with P4b. The relayer
+the provider that has seen `A`.
+
+**The relayer and the fallback (revision 4, P4b; account-bound spec §7.4).** A server that relays
+submits every R0 V5 spend it proves. `wrap` records whether it does, and a re-wrap keeps each
+earlier job's relay. `relayStatus(prover)` reads the relayer's answer from the job; only a job gone
+at retention leaves the last answer standing. `submit(account, { prover })` needs the prover while
+the relayer may still submit, and reads it first. For every job of the record whose relayer may
+still submit it, the wallet submits:
+
+- at once when the server does not relay, or the relayer refused the spend, let it expire, or its
+  transaction failed;
+- otherwise only from that job's `send_deadline − FALLBACK_MARGIN` (40 blocks), and never while
+  the relayer's transaction is pending or after it landed. The status is read through the spend
+  provider in bound mode, else the submitter's own; only RPC error 29 counts as unknown, and any
+  other failure is no answer.
+
+Either way the submitting account is linkable (`linkable: true`). The relayer
 (P4b) and the ticket wallet (P7) are specified with those phases.
 
 - **Window.** Send only when the latest block is at least `submit_after` and at most

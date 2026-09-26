@@ -27,7 +27,7 @@ import {
 import { TemplarError, fail } from './errors.js';
 import { BOUND_ACCOUNT_CLASSES, activePool, canon, pinsOf, sameFelt, versionOf, type NetworkConstants, type PoolConstants } from './network.js';
 import { proveInWorker, type ProveOptions } from './prove.js';
-import { ProverClient, type ProverOptions } from './prover.js';
+import { ProverClient, type ProverOptions, type RelayStatus } from './prover.js';
 import { WalletStore, type KV } from './store.js';
 import { prepare, send, type Prepared } from './submit.js';
 
@@ -41,6 +41,12 @@ export const GAP = 3;
 export const EVICTION_LEAVES = 512;
 /** Blocks before `valid_until` after which a result is not sent. */
 export const WINDOW_MARGIN = 20;
+/**
+ * Blocks before a relayed spend's deadline from which the wallet may submit it itself, when no
+ * relayer transaction for it is pending (account-bound spec §7.4): above the inclusion latency and
+ * `WINDOW_MARGIN`, so the fallback still lands in time.
+ */
+export const FALLBACK_MARGIN = 40;
 /** `'VALID'`, the only answer `is_valid_signature` may give (docs/account-bound-note-spec.md §5.4). */
 const VALID = 0x56414c4944n;
 
@@ -140,6 +146,8 @@ export interface Attempt {
   result?: ServerResult;
   window?: Window;
   tx?: { hash?: string; nonce: string; maxFee: string; expectedFee: string; signed: unknown };
+  /** R0 V5: what the service's relayer did (`none`: the server does not relay). */
+  relay?: RelayStatus | { status: 'none' };
 }
 
 /** An in-flight spend (spec §9.1). */
@@ -1103,7 +1111,7 @@ export class Spend {
     this.version ??= rec.version;
     const proved = rec.proved ?? fail('record', 'prove first');
     // The server must agree with the pins before the statement leaves (SDK-IP8).
-    await prover.info();
+    const info = await prover.info();
     const latestBlock = async () => (await this.w.context.latest()).block_number;
     let current = rec;
     const until = current.plan.version === 'v5' ? BigInt(current.plan.valid_until ?? 0) : undefined;
@@ -1118,7 +1126,9 @@ export class Spend {
         current = await this.step(async (r) => ({
           ...(await this.w.leaving(r)),
           // An earlier job (another server, or an expired one) joins the history.
-          attempts: r.server?.jobId ? [...r.attempts, { plan: r.plan, server: r.server, result: r.result, window: r.window }] : r.attempts,
+          // Its relay goes with it: that relayer may still submit it (AB-RL2).
+          attempts: r.server?.jobId ? [...r.attempts, { plan: r.plan, server: r.server, result: r.result, window: r.window, relay: r.relay }] : r.attempts,
+          relay: undefined,
           server: { url: opts.url, body },
           result: undefined,
           window: undefined,
@@ -1135,14 +1145,17 @@ export class Spend {
           }
           throw e;
         }
-        current = await this.step((r) => ({ ...r, server: { ...r.server!, jobId } }));
+        // A relaying server may submit this job from now on, even if the wallet stops waiting for
+        // its result (AB-RL2b).
+        const relay = until !== undefined && info.relay?.enabled ? ({ status: 'pending' } as const) : ({ status: 'none' } as const);
+        current = await this.step((r) => ({ ...r, server: { ...r.server!, jobId }, relay }));
       }
       let result: ServerResult;
       try {
         result = await prover.wait(jobId, { onStatus: opts.onStatus });
       } catch (e) {
         const code = (e as TemplarError).code;
-        if (round < 2 && (code === 'prover_failed' || code === 'prover_job')) {
+        if (round < 2 && (code === 'prover_failed' || code === 'prover_job' || code === 'prover_job_gone')) {
           jobId = undefined; // failed or dropped at retention: resubmit the same body
           continue;
         }
@@ -1164,7 +1177,10 @@ export class Spend {
         }
         fail('window_passed', 'the server returned an expired result');
       }
-      await this.step((r) => ({ ...r, result, window, stage: 'wrapped' }));
+      // A relaying server submits the spend itself (§7.4); the wallet then only falls back. An answer
+      // the relayer already gave stands.
+      const relay = until !== undefined && info.relay?.enabled ? ({ status: 'pending' } as const) : ({ status: 'none' } as const);
+      await this.step((r) => ({ ...r, result, window, stage: 'wrapped', relay: r.relay && r.relay.status !== 'none' && relay.status === 'pending' ? r.relay : relay }));
       return window;
     }
   }
@@ -1193,18 +1209,76 @@ export class Spend {
   }
 
   /**
+   * The fallback rule (account-bound spec §7.4, AB-P31): a spend the service relays is submitted by
+   * the wallet at once only when the relayer refused it (or never took it); otherwise only from
+   * `send_deadline − FALLBACK_MARGIN`, and never while the relayer's transaction is pending or
+   * after it landed. A server that does not relay leaves submission to the wallet.
+   */
+  private async fallbackAllowed(provider: RpcProvider, rec: SpendRecord, latest: number): Promise<void> {
+    // Every job of the record whose relayer may still submit it: the current one and earlier ones,
+    // at this server or another (AB-RL2). A relayer submits a result only until its deadline minus
+    // its margin, which exceeds FALLBACK_MARGIN.
+    for (const a of [rec, ...rec.attempts]) {
+      const relay = a.relay;
+      // A job abandoned before its result has no window: its deadline is at most the statement's
+      // `valid_until` (AB-RL2b).
+      const deadline = a.window?.valid_until ?? a.plan.valid_until;
+      if (!relay || deadline === undefined || latest > deadline) continue;
+      if (relay.status === 'none' || relay.status === 'refused' || relay.status === 'expired') continue;
+      if (relay.status === 'submitted') {
+        const tx = await relayTransaction(provider, relay.transaction_hash);
+        if (tx === 'landed') fail('relay_landed', 'the relayer\'s transaction landed; sync to settle the record');
+        if (tx === 'pending') fail('relay_pending', 'the relayer\'s transaction is pending');
+        if (tx === 'failed') continue;
+      }
+      if (latest < deadline - FALLBACK_MARGIN) {
+        fail('relay_pending', `the relayer submits this spend; fall back from block ${deadline - FALLBACK_MARGIN}`);
+      }
+    }
+  }
+
+  /**
+   * The relayer's answer for this spend, read from the job's status at the server that proved it
+   * (account-bound spec §7.3), and stored in the record.
+   */
+  async relayStatus(prover: ProverClient): Promise<SpendRecord['relay']> {
+    const rec = await this.record();
+    this.version ??= rec.version;
+    if (!rec.relay || rec.relay.status === 'none' || !rec.server?.jobId) return rec.relay;
+    let s;
+    try {
+      s = await prover.status(rec.server.jobId);
+    } catch (e) {
+      // Only a job gone at retention leaves the last answer standing; a server that did not answer
+      // is not an answer (AB-RL3).
+      if ((e as TemplarError).code === 'prover_job_gone') return rec.relay;
+      fail('relay_unknown', `the prover server did not answer: ${(e as Error).message ?? e}; retry`);
+    }
+    if (!s.relay || JSON.stringify(s.relay) === JSON.stringify(rec.relay)) return rec.relay;
+    const relay = s.relay;
+    await this.step((r) => ({ ...r, relay }));
+    return relay;
+  }
+
+  /**
    * Estimates, signs, simulates and sends the exact transaction from `account` (spec §9.2). The
    * maximum fee must be confirmed; `linkable` is always true in v1: the account is public. A bound
    * wallet's own account never submits its spends (spec §7.4): this is the fallback submitter.
    */
   async submit(
     account: Account,
-    opts: { confirmFee: (maxFee: bigint, expected: bigint, warnings: string[]) => boolean | Promise<boolean> },
+    opts: { confirmFee: (maxFee: bigint, expected: bigint, warnings: string[]) => boolean | Promise<boolean>; prover?: ProverClient },
   ): Promise<{ transactionHash: string; linkable: true; prepared: Prepared; warnings: string[] }> {
     const { t } = this.w.context;
-    const rec = await this.record();
+    const first = await this.record();
     // A closed record makes no spend-specific reads at all.
-    if (!LIVE(rec)) fail('record_closed', `record ${this.id} is ${rec.stage}${rec.closed ? ` (${rec.closed})` : ''}`);
+    if (!LIVE(first)) fail('record_closed', `record ${this.id} is ${first.stage}${first.closed ? ` (${first.closed})` : ''}`);
+    // The relayer's latest answer first, so the fallback never races its transaction (§7.4). While
+    // it may still submit, its answer is required (AB-RL3).
+    const outstanding = first.relay?.status === 'pending' || first.relay?.status === 'submitted';
+    if (outstanding && !opts.prover) fail('prover_required', 'the relayer may submit this spend: pass the prover client to read its answer');
+    if (opts.prover) await this.relayStatus(opts.prover);
+    const rec = await this.record();
     this.version ??= rec.version;
     const { result, window, proved } = rec;
     if (!result || !window || !proved) fail('record', 'wrap first');
@@ -1218,6 +1292,8 @@ export class Spend {
     const latest = (await provider.getBlockLatestAccepted()).block_number;
     if (latest < window.submit_after) fail('too_early', `wait until block ${window.submit_after}`);
     if (latest > window.valid_until - WINDOW_MARGIN) fail('window_passed', 'wrap again');
+    // The relayer's transaction is watched through the spend provider in bound mode (AB-RL11).
+    await this.fallbackAllowed(bound?.spendProvider ?? provider, rec, latest);
     await checkVerifier(provider, t.pool);
     const warnings = await accountWarnings(provider, account.address);
     const call: Call = { contractAddress: t.pool.pool, entrypoint: 'apply_spend', calldata: proved.calldata };
@@ -1252,6 +1328,22 @@ async function isValidSignature(provider: RpcProvider, account: Hex, hash: Hex, 
     if (strict && !(e instanceof RpcError)) fail('rpc_unavailable', `is_valid_signature: ${(e as Error).message ?? e}`);
     return false;
   }
+}
+
+/** The relayer's transaction is still pending, or it landed: the wallet must not submit too. */
+async function relayTransaction(provider: RpcProvider, hash: string): Promise<'pending' | 'landed' | 'failed' | 'unknown'> {
+  let s: { finality_status?: string; execution_status?: string };
+  try {
+    s = (await provider.getTransactionStatus(hash)) as typeof s;
+  } catch (e) {
+    // Only RPC error 29 means the node does not know it (dropped, or not seen yet); any other error
+    // is no answer at all (AB-RL3).
+    if ((e as { baseError?: { code?: number } }).baseError?.code === 29) return 'unknown';
+    fail('relay_unknown', `the transaction status did not come back: ${(e as Error).message ?? e}; retry`);
+  }
+  if (s.finality_status === 'REJECTED' || s.execution_status === 'REVERTED') return 'failed';
+  if (s.finality_status === 'ACCEPTED_ON_L2' || s.finality_status === 'ACCEPTED_ON_L1') return 'landed';
+  return 'pending';
 }
 
 /** Two providers pointing at the same node URL. */

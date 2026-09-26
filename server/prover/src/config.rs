@@ -21,6 +21,20 @@ pub struct Config {
     pub payment: Option<crate::tickets::PaymentConfig>,
     #[serde(default)]
     pub caps: Caps,
+    /// The relayer's handoff (account-bound spec §7.3, P4b): finished R0 V5 results wait here for
+    /// the relayer, which answers each with a transaction hash or a refusal. Absent: this server
+    /// does not relay (self-hosted), and clients submit themselves.
+    pub relay: Option<Relay>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct Relay {
+    /// The handoff API's own listener, never the public one: its results are not public before
+    /// settlement, and a forged report would steer clients' fallbacks. Loopback, or a private
+    /// network or TLS proxy (the token travels in the clear on the listener itself).
+    pub listen: String,
+    /// The bearer token both sides read (always required, AB-RL10).
+    pub token_file: PathBuf,
 }
 
 /// Bounds on the virtual-OS run, checked before proving (spec §9, AB-SP4): a job over them is the
@@ -84,6 +98,8 @@ pub struct Server {
     /// relay_margin_blocks`.
     #[serde(default = "d_blocks_per_job")]
     pub blocks_per_job: u64,
+    /// Blocks left for the relay after proving: at least the relayer's own margin (60 by default,
+    /// above the wallet's fallback margin of 40), so admitted jobs are ones it will take.
     #[serde(default = "d_relay_margin")]
     pub relay_margin_blocks: u64,
     /// The L2 gas bound of the virtual transaction (spec §9: set from the measured cost of
@@ -230,7 +246,7 @@ fn d_prove_secs() -> u64 { 1800 }
 fn d_columns() -> usize { 16 }
 fn d_threads() -> u32 { 16 }
 fn d_blocks_per_job() -> u64 { 60 }
-fn d_relay_margin() -> u64 { 30 }
+fn d_relay_margin() -> u64 { 60 }
 fn d_os_l2_gas() -> u64 { 450_000_000 }
 fn d_bound_retention() -> u64 { 600 }
 fn d_pool_version() -> u8 { 2 }
@@ -264,6 +280,18 @@ impl Config {
         }
         if c.server.max_concurrent_jobs == 0 {
             bail!("max_concurrent_jobs must be at least 1");
+        }
+        if let Some(r) = &c.relay {
+            let addr: std::net::SocketAddr = r.listen.parse().context("relay.listen")?;
+            if !names.contains(&"r5") {
+                bail!("relay: only R0 V5 jobs carry a pool call to relay (serve r5)");
+            }
+            if !addr.ip().is_loopback() {
+                tracing::warn!("relay.listen is not loopback: keep it on a private network or behind TLS");
+            }
+            if addr.to_string() == c.server.listen {
+                bail!("relay.listen must not be the public listener");
+            }
         }
         if c.network.operator_node && names.contains(&"r5") {
             if c.server.bound_data_dir.is_none() {
