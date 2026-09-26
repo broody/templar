@@ -5,8 +5,9 @@ inside the server's pinned virtual OS, run against live Sepolia state, and the P
 measured for the server's caps and the uniformity gate (§12).
 
 **Status (2026-09-26):** measured. Every real-wallet spend runs and proves, and tampered signatures
-are refused. **The uniformity gate fails** on four components, so every mode must be padded to the
-maximum before production (spec §12). Summary: [`results/summary.json`](results/summary.json).
+are refused. PROOF2's public shape is the same in every mode (spec §12, revised gate). The Cairo
+trace inside differs in four components, hidden by the leaf circuit's blinding. Summary:
+[`results/summary.json`](results/summary.json).
 
 ## What ran
 
@@ -55,17 +56,24 @@ binding]`, and every PROOF2 verifies.
 - **The account call** costs 105–265k OS steps, about 1.0–1.3k more Blake (OS class hashing), 3 EC
   ops and about 57 more Pedersen instances (the Stark ECDSA check).
 
-**Uniformity gate (§12): fails.** Every spend has the same largest component (log 21: `blake_g`,
-`cube_252`, `range_check_252_width_27`), so the same leaf bucket. But four component log sizes
-differ:
+**Uniformity gate (§12, revised): holds on PROOF2's public shape.** The gateway receives the
+large-proof path's leaf-verifier circuit proof:
+- all eight proofs share one header, version `0x0204` and bucket 25's root `daaf3bd0…`;
+- the circuit's own sizes are fixed by the registry;
+- the proofs are 243–256 KB compressed, overlapping across modes.
+
+The Cairo trace is that circuit's witness, blinded (`zk_blinding: true`). Every spend has the same
+largest Cairo component (log 21: `blake_g`, `cube_252`, `range_check_252_width_27`). But four Cairo
+component log sizes differ:
 - `partial_ec_mul_window_bits_9` (12 → 13), `pedersen_builtin_narrow_windows` and
   `pedersen_aggregator_window_bits_9` (6 → 7) tell a bound spend from an ordinary one;
 - `memory_address_to_id` (18 or 19) sits near a threshold and varies with the vendor and the shape.
 
-Ready and Braavos are not told apart by the first three. Whoever sees the PROOF2 object, the gateway
-and the sequencer, therefore sees the mode, and sometimes a hint of the vendor, until every mode is
-padded to `memory_address_to_id` 19, `partial_ec_mul_window_bits_9` 13 and both Pedersen
-components 7. On-chain data is unaffected.
+Ready and Braavos are not told apart by the first three. These sizes are visible only if PROOF2's
+blinding leaks structure, so hiding the mode rests on PROOF2's hiding (the ADR-0024 gate), like the
+rest of the trace. Padding every mode to `memory_address_to_id` 19, `partial_ec_mul_window_bits_9`
+13 and both Pedersen components 7 is written but paused, on a local proving-fork branch
+(`templar/uniform-padding`), as defence in depth.
 
 **Caps for the server.** OS steps at most 3.61M (the 4M default leaves 11%). Builtin instances at
 most:

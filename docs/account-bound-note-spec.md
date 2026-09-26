@@ -1058,19 +1058,29 @@ no fees or gating.
   - the PROOF2 object can differ by mode and wallet vendor. The P0b probes differ: 172k steps and
     1,203 OS Blake for Ready, 161k and 1,124 for Braavos.
 
-  **Gate (P5):** ordinary, Ready and Braavos spends give the same leaf bucket (preprocessed root)
-  and the same component log sizes. Otherwise every mode is padded to the maximum before
-  production.
+  **Gate (P5, revised after measuring):** ordinary, Ready and Braavos spends give PROOF2 the same
+  public shape:
+  - its header (the version, and the leaf-verifier circuit's preprocessed root, i.e. the bucket);
+  - the circuit's component log sizes.
 
-  **Result (P5, 2026-09-26, `bench/account-bound-p5`): fails.**
-  - Every spend has the same largest component (log 21), so the same leaf bucket.
-  - The Stark ECDSA check of a bound spend raises `partial_ec_mul_window_bits_9` from 12 to 13, and
-    both Pedersen components from 6 to 7.
-  - `memory_address_to_id` is 18 or 19 by vendor and shape.
-  - Ready and Braavos are not otherwise told apart.
+  On the large-proof path the gateway receives the leaf-verifier circuit's proof. The Cairo
+  proof's component log sizes are that circuit's witness, hidden by its zero-knowledge blinding
+  (`zk_blinding` in the large-proof circuit registry). They need padding only if that hiding
+  leaks structure.
 
-  Until every mode is padded to those maxima, the PROOF2 object shows the gateway and sequencer
-  whether a spend is bound. On-chain data is unaffected.
+  **Result (P5, 2026-09-26, `bench/account-bound-p5`): the gate holds.**
+  - All eight proofs share one header: version `0x0204` and bucket 25's root `daaf3bd0…`.
+  - The circuit's sizes are fixed by the registry: eq 20, qm31_ops 23, m31_to_u32 21, triple_xor
+    20, blake_g_gate 23.
+  - Proof sizes (243–256 KB, compressed) overlap across modes.
+
+  Inside, the Cairo trace does differ by mode. A bound spend's Stark ECDSA check raises
+  `partial_ec_mul_window_bits_9` from 12 to 13 and both Pedersen components from 6 to 7, and
+  `memory_address_to_id` is 18 or 19 by vendor and shape. So hiding the mode from the gateway rests
+  on PROOF2's own hiding (the ADR-0024 gate), like everything else in the Cairo trace.
+  - Prover-side padding to those maxima is written but paused (a local branch of the proving
+    fork, `templar/uniform-padding`). It is defence in depth for hiding that would leak structure
+    but not values.
 
 ## 13. Compatibility matrix
 
@@ -1190,7 +1200,9 @@ Losing the account's keys entirely is the same as for the wallet's public funds.
     refused.
   - Every PROOF2 verifies: 64–67 s, about 30 GiB.
   - The V5 WASM proof takes a median 6.2 s in Chrome.
-  - The uniformity gate fails (§12), so padding comes before production.- **P6 Sepolia:** declare and deploy pool V3, the statement account, the adapters, and run
+  - The uniformity gate holds on PROOF2's public shape (§12). The Cairo trace differs by mode
+    inside the leaf circuit's blinded witness, so hiding the mode rests on PROOF2's hiding.
+- **P6 Sepolia:** declare and deploy pool V3, the statement account, the adapters, and run
   `initialize` with the first shadow-class allowlist. The deployment record states `E`, `Q`,
   `W` and `T` against §8.4's floors (AB-PV8). The user approves every on-chain action.
 - **P7 paying for the service:**
