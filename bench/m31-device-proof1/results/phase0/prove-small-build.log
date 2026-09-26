@@ -1,0 +1,18 @@
+Running as unit: templar-dp1-build-prove-small-1790427323085005278.service; invocation ID: f7f2c761b5dc47349ecc47cdcb4cb02d
+warning: the feature `stdarch_x86_avx512` has been stable since 1.89.0 and no longer requires an attribute to enable
+ --> /home/broody/development/templar/target/proving-server/crates/stwo/src/lib.rs:6:78
+  |
+6 | #![cfg_attr(all(target_arch = "x86_64", target_feature = "avx512f"), feature(stdarch_x86_avx512))]
+  |                                                                              ^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(stable_features)]` on by default
+
+warning: `stwo` (lib) generated 1 warning
+   Compiling prove-small v0.1.0 (/home/broody/development/templar/bench/m31-device-proof1/prove-small)
+    Finished `release` profile [optimized] target(s) in 4.24s
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 4.292s
+CPU time consumed: 21.496s
+Memory peak: 512.0K
+Memory swap peak: 0B

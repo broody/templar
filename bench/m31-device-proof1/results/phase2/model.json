@@ -1,0 +1,2221 @@
+{
+  "rows": [
+    {
+      "name": "compact-k0-v2-small-16g-r2",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 0,
+      "status": "oom",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": null,
+      "prove_seconds": null,
+      "wall_seconds": 14.424199592001969,
+      "proof_bytes": null,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.24915409088134766,
+          "peak_rss_gib": 2.4328689575195312,
+          "rss_at_start_gib": 2.3216590881347656,
+          "samples": 5
+        },
+        "cairo": {
+          "seconds": 7.816704988479614,
+          "peak_rss_gib": 14.30850601196289,
+          "rss_at_start_gib": 2.5416183471679688,
+          "samples": 155
+        }
+      },
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "native_verify": null,
+      "error": []
+    },
+    {
+      "name": "compact-k0-v2-small-16g-r3",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 0,
+      "status": "passed",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 15.776901245117188,
+      "prove_seconds": 14.654460099,
+      "wall_seconds": 16.90559874099563,
+      "proof_bytes": 226208,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.2525808811187744,
+          "peak_rss_gib": 2.4239540100097656,
+          "rss_at_start_gib": 2.3183937072753906,
+          "samples": 5
+        },
+        "cairo": {
+          "seconds": 7.985202074050903,
+          "peak_rss_gib": 14.210243225097656,
+          "rss_at_start_gib": 2.4762535095214844,
+          "samples": 157
+        },
+        "recursion": {
+          "seconds": 6.040731906890869,
+          "peak_rss_gib": 15.656421661376953,
+          "rss_at_start_gib": 12.143997192382812,
+          "samples": 119
+        }
+      },
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "native_verify": null,
+      "error": [],
+      "base_cells": 139653424,
+      "padded_rows": 2178160,
+      "total_steps": 537414
+    },
+    {
+      "name": "compact-k0-v2-small-16g",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 0,
+      "status": "passed",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 15.916481018066406,
+      "prove_seconds": 14.516960274,
+      "wall_seconds": 16.62763721498777,
+      "proof_bytes": 226208,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.24830007553100586,
+          "peak_rss_gib": 2.44244384765625,
+          "rss_at_start_gib": 2.3356590270996094,
+          "samples": 5
+        },
+        "cairo": {
+          "seconds": 7.931282043457031,
+          "peak_rss_gib": 14.322940826416016,
+          "rss_at_start_gib": 2.5847434997558594,
+          "samples": 156
+        },
+        "recursion": {
+          "seconds": 5.985306978225708,
+          "peak_rss_gib": 15.78940200805664,
+          "rss_at_start_gib": 12.268169403076172,
+          "samples": 119
+        }
+      },
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "native_verify": null,
+      "error": [],
+      "base_cells": 139653424,
+      "padded_rows": 2178160,
+      "total_steps": 537414
+    },
+    {
+      "name": "compact-k0-v2-small-32g-r2b",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 0,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 15.75216293334961,
+      "prove_seconds": 14.525866283,
+      "wall_seconds": 16.657722400006605,
+      "proof_bytes": 226208,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.254302978515625,
+          "peak_rss_gib": 2.4326095581054688,
+          "rss_at_start_gib": 2.3272132873535156,
+          "samples": 5
+        },
+        "cairo": {
+          "seconds": 7.943487882614136,
+          "peak_rss_gib": 14.247978210449219,
+          "rss_at_start_gib": 2.5478134155273438,
+          "samples": 157
+        },
+        "recursion": {
+          "seconds": 5.980431079864502,
+          "peak_rss_gib": 15.681720733642578,
+          "rss_at_start_gib": 12.064613342285156,
+          "samples": 117
+        }
+      },
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "native_verify": null,
+      "error": [],
+      "base_cells": 139653424,
+      "padded_rows": 2178160,
+      "total_steps": 537414
+    },
+    {
+      "name": "compact-k106-v2-cairo-only-16g",
+      "prover": "v2-cairo-stage",
+      "variant": "compact",
+      "k": 106,
+      "status": "oom",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": null,
+      "prove_seconds": null,
+      "wall_seconds": 9.292003651004052,
+      "proof_bytes": null,
+      "stages": {
+        "bootloader": {
+          "seconds": 1.272834062576294,
+          "peak_rss_gib": 0.5691413879394531,
+          "rss_at_start_gib": 0.13108062744140625,
+          "samples": 25
+        }
+      },
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "native_verify": null,
+      "error": []
+    },
+    {
+      "name": "compact-k106-v2-cairo-only-32g",
+      "prover": "v2-cairo-stage",
+      "variant": "compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 20.852519989013672,
+      "prove_seconds": 14.069510868,
+      "wall_seconds": 16.5209498500044,
+      "proof_bytes": 569530,
+      "stages": {
+        "bootloader": {
+          "seconds": 1.2062389850616455,
+          "peak_rss_gib": 0.5695037841796875,
+          "rss_at_start_gib": 0.1308746337890625,
+          "samples": 24
+        },
+        "cairo_only": {
+          "seconds": 14.0712308883667,
+          "peak_rss_gib": 20.73276138305664,
+          "rss_at_start_gib": 0.327728271484375,
+          "samples": 278
+        }
+      },
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "native_verify": true,
+      "error": [],
+      "base_cells": 300581168,
+      "padded_rows": 6016112,
+      "total_steps": 2119813
+    },
+    {
+      "name": "compact-k106-v2-recursion",
+      "prover": "v2-recursion-stage",
+      "variant": "compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 8.616325378417969,
+      "prove_seconds": 6.703985673,
+      "wall_seconds": 7.292433113994775,
+      "proof_bytes": 227440,
+      "stages": {
+        "recursion": {
+          "seconds": 6.703325033187866,
+          "peak_rss_gib": 8.499931335449219,
+          "rss_at_start_gib": 0.06105804443359375,
+          "samples": 132
+        }
+      },
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "native_verify": null,
+      "error": []
+    },
+    {
+      "name": "compact-k106-v2-small-16g",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 106,
+      "status": "oom",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": null,
+      "prove_seconds": null,
+      "wall_seconds": 9.929923667019466,
+      "proof_bytes": null,
+      "stages": {
+        "bootloader": {
+          "seconds": 1.1773650646209717,
+          "peak_rss_gib": 2.858318328857422,
+          "rss_at_start_gib": 2.422687530517578,
+          "samples": 23
+        }
+      },
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "native_verify": null,
+      "error": []
+    },
+    {
+      "name": "compact-k106-v2-small-32g-r2",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 22.468303680419922,
+      "prove_seconds": 20.053812334,
+      "wall_seconds": 22.736203217005823,
+      "proof_bytes": 227440,
+      "stages": {
+        "bootloader": {
+          "seconds": 1.166274070739746,
+          "peak_rss_gib": 2.858173370361328,
+          "rss_at_start_gib": 2.4199142456054688,
+          "samples": 23
+        },
+        "cairo": {
+          "seconds": 13.267975807189941,
+          "peak_rss_gib": 22.12740707397461,
+          "rss_at_start_gib": 2.645336151123047,
+          "samples": 261
+        },
+        "recursion": {
+          "seconds": 5.057264089584351,
+          "peak_rss_gib": 22.30272674560547,
+          "rss_at_start_gib": 20.225208282470703,
+          "samples": 100
+        }
+      },
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "native_verify": null,
+      "error": [],
+      "base_cells": 300581168,
+      "padded_rows": 6016112,
+      "total_steps": 2119813
+    },
+    {
+      "name": "compact-k106-v2-small-32g-r3",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 22.203022003173828,
+      "prove_seconds": 19.966378046,
+      "wall_seconds": 22.560373749001883,
+      "proof_bytes": 227440,
+      "stages": {
+        "bootloader": {
+          "seconds": 1.161635160446167,
+          "peak_rss_gib": 2.851947784423828,
+          "rss_at_start_gib": 2.4012451171875,
+          "samples": 23
+        },
+        "cairo": {
+          "seconds": 13.214433908462524,
+          "peak_rss_gib": 22.12994384765625,
+          "rss_at_start_gib": 2.5316009521484375,
+          "samples": 261
+        },
+        "recursion": {
+          "seconds": 5.01280403137207,
+          "peak_rss_gib": 22.17377471923828,
+          "rss_at_start_gib": 20.159645080566406,
+          "samples": 99
+        }
+      },
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "native_verify": null,
+      "error": [],
+      "base_cells": 300581168,
+      "padded_rows": 6016112,
+      "total_steps": 2119813
+    },
+    {
+      "name": "compact-k106-v2-small-32g",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 22.445770263671875,
+      "prove_seconds": 20.222506674,
+      "wall_seconds": 22.98982673799037,
+      "proof_bytes": 227440,
+      "stages": {
+        "bootloader": {
+          "seconds": 1.1800861358642578,
+          "peak_rss_gib": 2.853435516357422,
+          "rss_at_start_gib": 2.4199485778808594,
+          "samples": 23
+        },
+        "cairo": {
+          "seconds": 13.39318299293518,
+          "peak_rss_gib": 22.203819274902344,
+          "rss_at_start_gib": 2.6111984252929688,
+          "samples": 264
+        },
+        "recursion": {
+          "seconds": 5.074579954147339,
+          "peak_rss_gib": 22.359821319580078,
+          "rss_at_start_gib": 20.125518798828125,
+          "samples": 100
+        }
+      },
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "native_verify": null,
+      "error": [],
+      "base_cells": 300581168,
+      "padded_rows": 6016112,
+      "total_steps": 2119813
+    },
+    {
+      "name": "compact-k16-v2-small-16g",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 16,
+      "status": "oom",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": null,
+      "prove_seconds": null,
+      "wall_seconds": 13.276724388008006,
+      "proof_bytes": null,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.4514429569244385,
+          "peak_rss_gib": 2.5327224731445312,
+          "rss_at_start_gib": 2.3551292419433594,
+          "samples": 9
+        },
+        "cairo": {
+          "seconds": 8.837393999099731,
+          "peak_rss_gib": 15.80789566040039,
+          "rss_at_start_gib": 2.589080810546875,
+          "samples": 174
+        }
+      },
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "native_verify": null,
+      "error": []
+    },
+    {
+      "name": "compact-k16-v2-small-32g",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 16,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 17.068416595458984,
+      "prove_seconds": 15.458361195,
+      "wall_seconds": 17.89943275199039,
+      "proof_bytes": 228151,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.4411959648132324,
+          "peak_rss_gib": 2.5340538024902344,
+          "rss_at_start_gib": 2.3491744995117188,
+          "samples": 9
+        },
+        "cairo": {
+          "seconds": 8.768660068511963,
+          "peak_rss_gib": 15.701141357421875,
+          "rss_at_start_gib": 2.5841407775878906,
+          "samples": 173
+        },
+        "recursion": {
+          "seconds": 5.879956960678101,
+          "peak_rss_gib": 17.055770874023438,
+          "rss_at_start_gib": 13.668067932128906,
+          "samples": 116
+        }
+      },
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "native_verify": null,
+      "error": [],
+      "base_cells": 167993648,
+      "padded_rows": 2976880,
+      "total_steps": 901058
+    },
+    {
+      "name": "compact-k32-v2-small-16g",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 32,
+      "status": "oom",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": null,
+      "prove_seconds": null,
+      "wall_seconds": 10.633680769009516,
+      "proof_bytes": null,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.5777280330657959,
+          "peak_rss_gib": 2.5875511169433594,
+          "rss_at_start_gib": 2.3614654541015625,
+          "samples": 11
+        }
+      },
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "native_verify": null,
+      "error": []
+    },
+    {
+      "name": "compact-k32-v2-small-32g",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 32,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 17.392024993896484,
+      "prove_seconds": 16.114290231,
+      "wall_seconds": 18.61557889598771,
+      "proof_bytes": 230894,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.5909008979797363,
+          "peak_rss_gib": 2.588207244873047,
+          "rss_at_start_gib": 2.3736305236816406,
+          "samples": 11
+        },
+        "cairo": {
+          "seconds": 9.942440032958984,
+          "peak_rss_gib": 16.779621124267578,
+          "rss_at_start_gib": 2.5183143615722656,
+          "samples": 196
+        },
+        "recursion": {
+          "seconds": 5.27591609954834,
+          "peak_rss_gib": 17.20256805419922,
+          "rss_at_start_gib": 14.809288024902344,
+          "samples": 104
+        }
+      },
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "native_verify": null,
+      "error": [],
+      "base_cells": 188047664,
+      "padded_rows": 3697776,
+      "total_steps": 1147801
+    },
+    {
+      "name": "compact-k64-v2-small-16g",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 64,
+      "status": "oom",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": null,
+      "prove_seconds": null,
+      "wall_seconds": 8.511556935991393,
+      "proof_bytes": null,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.8029880523681641,
+          "peak_rss_gib": 2.7201194763183594,
+          "rss_at_start_gib": 2.3831710815429688,
+          "samples": 16
+        }
+      },
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "native_verify": null,
+      "error": []
+    },
+    {
+      "name": "compact-k64-v2-small-32g",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 64,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 19.485458374023438,
+      "prove_seconds": 17.563732413,
+      "wall_seconds": 20.147661677998258,
+      "proof_bytes": 235940,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.8435330390930176,
+          "peak_rss_gib": 2.7208518981933594,
+          "rss_at_start_gib": 2.392658233642578,
+          "samples": 16
+        },
+        "cairo": {
+          "seconds": 11.415901899337769,
+          "peak_rss_gib": 18.961429595947266,
+          "rss_at_start_gib": 2.5245437622070312,
+          "samples": 226
+        },
+        "recursion": {
+          "seconds": 4.957344055175781,
+          "peak_rss_gib": 19.417076110839844,
+          "rss_at_start_gib": 17.062374114990234,
+          "samples": 97
+        }
+      },
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "native_verify": null,
+      "error": [],
+      "base_cells": 230973744,
+      "padded_rows": 4680816,
+      "total_steps": 1579145
+    },
+    {
+      "name": "qm31-k106-v2-cairo-only-16g",
+      "prover": "v2-cairo-stage",
+      "variant": "qm31",
+      "k": 106,
+      "status": "oom",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": null,
+      "prove_seconds": null,
+      "wall_seconds": 8.067967218987178,
+      "proof_bytes": null,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.7259418964385986,
+          "peak_rss_gib": 0.3805351257324219,
+          "rss_at_start_gib": 0.09398269653320312,
+          "samples": 14
+        }
+      },
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "native_verify": null,
+      "error": []
+    },
+    {
+      "name": "qm31-k106-v2-cairo-only-32g",
+      "prover": "v2-cairo-stage",
+      "variant": "qm31",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 18.638511657714844,
+      "prove_seconds": 12.625998649,
+      "wall_seconds": 14.392168015998323,
+      "proof_bytes": 580538,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.7435259819030762,
+          "peak_rss_gib": 0.3805503845214844,
+          "rss_at_start_gib": 0.09558486938476562,
+          "samples": 14
+        },
+        "cairo_only": {
+          "seconds": 12.627678871154785,
+          "peak_rss_gib": 18.521102905273438,
+          "rss_at_start_gib": 0.12688064575195312,
+          "samples": 249
+        }
+      },
+      "verified": false,
+      "message_ok": true,
+      "scaling": false,
+      "native_verify": true,
+      "error": [],
+      "base_cells": 243155248,
+      "padded_rows": 4656240,
+      "total_steps": 1396555
+    },
+    {
+      "name": "qm31-k106-v2-recursion",
+      "prover": "v2-recursion-stage",
+      "variant": "qm31",
+      "k": 106,
+      "status": "expected-failure",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 0.017154693603515625,
+      "prove_seconds": null,
+      "wall_seconds": 0.043564578983932734,
+      "proof_bytes": null,
+      "stages": {},
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "native_verify": null,
+      "error": [
+        "Error: \"fixed small-path deserialization failed: ValueOutOfRange\""
+      ]
+    },
+    {
+      "name": "qm31-k106-v2-recursive-u2-negative",
+      "prover": "v2-small",
+      "variant": "qm31",
+      "k": 106,
+      "status": "expected-failure",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 19.881614685058594,
+      "prove_seconds": null,
+      "wall_seconds": 15.70186007299344,
+      "proof_bytes": null,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.7431740760803223,
+          "peak_rss_gib": 2.6667518615722656,
+          "rss_at_start_gib": 2.3817481994628906,
+          "samples": 14
+        },
+        "cairo": {
+          "seconds": 12.054603815078735,
+          "peak_rss_gib": 19.817440032958984,
+          "rss_at_start_gib": 2.451801300048828,
+          "samples": 238
+        }
+      },
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "native_verify": null,
+      "error": [
+        "thread 'main' (2600157) panicked at /home/broody/development/templar/target/proving-server/crates/cairo_verifier/src/statement.rs:414:9:"
+      ]
+    },
+    {
+      "name": "qm31_compact-k106-v2-cairo-only-16g",
+      "prover": "v2-cairo-stage",
+      "variant": "qm31_compact",
+      "k": 106,
+      "status": "oom",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": null,
+      "prove_seconds": null,
+      "wall_seconds": 10.532822442008182,
+      "proof_bytes": null,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.6977801322937012,
+          "peak_rss_gib": 0.3755760192871094,
+          "rss_at_start_gib": 0.08042526245117188,
+          "samples": 14
+        }
+      },
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "native_verify": null,
+      "error": []
+    },
+    {
+      "name": "qm31_compact-k106-v2-cairo-only-32g",
+      "prover": "v2-cairo-stage",
+      "variant": "qm31_compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 16.243892669677734,
+      "prove_seconds": 10.61760944,
+      "wall_seconds": 12.408210105990293,
+      "proof_bytes": 580634,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.7091050148010254,
+          "peak_rss_gib": 0.37519073486328125,
+          "rss_at_start_gib": 0.08102035522460938,
+          "samples": 14
+        },
+        "cairo_only": {
+          "seconds": 10.619404077529907,
+          "peak_rss_gib": 16.17782974243164,
+          "rss_at_start_gib": 0.12622451782226562,
+          "samples": 210
+        }
+      },
+      "verified": false,
+      "message_ok": true,
+      "scaling": false,
+      "native_verify": true,
+      "error": [],
+      "base_cells": 201072944,
+      "padded_rows": 4140144,
+      "total_steps": 1363357
+    },
+    {
+      "name": "qm31_compact-k106-v2-recursion",
+      "prover": "v2-recursion-stage",
+      "variant": "qm31_compact",
+      "k": 106,
+      "status": "expected-failure",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 0.01708221435546875,
+      "prove_seconds": null,
+      "wall_seconds": 0.04910875399946235,
+      "proof_bytes": null,
+      "stages": {},
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "native_verify": null,
+      "error": [
+        "Error: \"fixed small-path deserialization failed: ValueOutOfRange\""
+      ]
+    },
+    {
+      "name": "qm31_compact-k106-v2-recursive-u2-negative",
+      "prover": "v2-small",
+      "variant": "qm31_compact",
+      "k": 106,
+      "status": "expected-failure",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 17.70819854736328,
+      "prove_seconds": null,
+      "wall_seconds": 13.686255873006303,
+      "proof_bytes": null,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.6853561401367188,
+          "peak_rss_gib": 2.6516571044921875,
+          "rss_at_start_gib": 2.3714637756347656,
+          "samples": 13
+        },
+        "cairo": {
+          "seconds": 10.222900867462158,
+          "peak_rss_gib": 17.61278533935547,
+          "rss_at_start_gib": 2.4215621948242188,
+          "samples": 202
+        }
+      },
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "native_verify": null,
+      "error": [
+        "thread 'main' (2600463) panicked at /home/broody/development/templar/target/proving-server/crates/cairo_verifier/src/statement.rs:414:9:"
+      ]
+    },
+    {
+      "name": "scaling-compact-k106-recursive-t1",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 1,
+      "peak_rss_gib": 22.113834381103516,
+      "prove_seconds": 66.941849052,
+      "wall_seconds": 71.27412745400215,
+      "proof_bytes": 227440,
+      "stages": {
+        "bootloader": {
+          "seconds": 1.2328860759735107,
+          "peak_rss_gib": 2.8517227172851562,
+          "rss_at_start_gib": 2.4140968322753906,
+          "samples": 24
+        },
+        "cairo": {
+          "seconds": 48.00047993659973,
+          "peak_rss_gib": 22.028629302978516,
+          "rss_at_start_gib": 2.4460105895996094,
+          "samples": 945
+        },
+        "recursion": {
+          "seconds": 17.11739706993103,
+          "peak_rss_gib": 21.976566314697266,
+          "rss_at_start_gib": 20.201942443847656,
+          "samples": 338
+        }
+      },
+      "verified": true,
+      "message_ok": true,
+      "scaling": true,
+      "native_verify": null,
+      "error": []
+    },
+    {
+      "name": "scaling-compact-k106-recursive-t16",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 16,
+      "peak_rss_gib": 23.278648376464844,
+      "prove_seconds": 9.676686963,
+      "wall_seconds": 12.006191133987159,
+      "proof_bytes": 227440,
+      "stages": {
+        "bootloader": {
+          "seconds": 1.198396921157837,
+          "peak_rss_gib": 2.8594589233398438,
+          "rss_at_start_gib": 2.4293441772460938,
+          "samples": 23
+        },
+        "cairo": {
+          "seconds": 5.364124059677124,
+          "peak_rss_gib": 22.523574829101562,
+          "rss_at_start_gib": 2.6476402282714844,
+          "samples": 106
+        },
+        "recursion": {
+          "seconds": 2.5280230045318604,
+          "peak_rss_gib": 23.142807006835938,
+          "rss_at_start_gib": 20.436180114746094,
+          "samples": 50
+        }
+      },
+      "verified": true,
+      "message_ok": true,
+      "scaling": true,
+      "native_verify": null,
+      "error": []
+    },
+    {
+      "name": "scaling-compact-k106-recursive-t4",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 22.745521545410156,
+      "prove_seconds": 19.840504330999998,
+      "wall_seconds": 22.47331420998671,
+      "proof_bytes": 227440,
+      "stages": {
+        "bootloader": {
+          "seconds": 1.1603221893310547,
+          "peak_rss_gib": 2.8502883911132812,
+          "rss_at_start_gib": 2.4041099548339844,
+          "samples": 23
+        },
+        "cairo": {
+          "seconds": 13.057163000106812,
+          "peak_rss_gib": 22.28207015991211,
+          "rss_at_start_gib": 2.5705184936523438,
+          "samples": 257
+        },
+        "recursion": {
+          "seconds": 5.066128969192505,
+          "peak_rss_gib": 22.66289520263672,
+          "rss_at_start_gib": 20.475669860839844,
+          "samples": 100
+        }
+      },
+      "verified": true,
+      "message_ok": true,
+      "scaling": true,
+      "native_verify": null,
+      "error": [],
+      "base_cells": 300581168,
+      "padded_rows": 6016112,
+      "total_steps": 2119813
+    },
+    {
+      "name": "scaling-compact-k106-recursive-t8",
+      "prover": "v2-small",
+      "variant": "compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 8,
+      "peak_rss_gib": 22.578067779541016,
+      "prove_seconds": 12.535146862,
+      "wall_seconds": 15.018087648000801,
+      "proof_bytes": 227440,
+      "stages": {
+        "bootloader": {
+          "seconds": 1.1709380149841309,
+          "peak_rss_gib": 2.857219696044922,
+          "rss_at_start_gib": 2.4104461669921875,
+          "samples": 23
+        },
+        "cairo": {
+          "seconds": 7.512732982635498,
+          "peak_rss_gib": 22.26160430908203,
+          "rss_at_start_gib": 2.629108428955078,
+          "samples": 149
+        },
+        "recursion": {
+          "seconds": 3.279592990875244,
+          "peak_rss_gib": 22.4173583984375,
+          "rss_at_start_gib": 20.157730102539062,
+          "samples": 64
+        }
+      },
+      "verified": true,
+      "message_ok": true,
+      "scaling": true,
+      "native_verify": null,
+      "error": []
+    },
+    {
+      "name": "scaling-qm31-k106-cairo-only-t1",
+      "prover": "v2-cairo-stage",
+      "variant": "qm31",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 1,
+      "peak_rss_gib": 18.641437530517578,
+      "prove_seconds": 44.397336229,
+      "wall_seconds": 46.22380604001228,
+      "proof_bytes": 580538,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.7691490650177002,
+          "peak_rss_gib": 0.3804740905761719,
+          "rss_at_start_gib": 0.09402084350585938,
+          "samples": 15
+        },
+        "cairo_only": {
+          "seconds": 44.39902400970459,
+          "peak_rss_gib": 18.579151153564453,
+          "rss_at_start_gib": 0.10162734985351562,
+          "samples": 872
+        }
+      },
+      "verified": false,
+      "message_ok": true,
+      "scaling": true,
+      "native_verify": true,
+      "error": []
+    },
+    {
+      "name": "scaling-qm31-k106-cairo-only-t16",
+      "prover": "v2-cairo-stage",
+      "variant": "qm31",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 16,
+      "peak_rss_gib": 18.983531951904297,
+      "prove_seconds": 5.34958266,
+      "wall_seconds": 7.147087006014772,
+      "proof_bytes": 580538,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.728417158126831,
+          "peak_rss_gib": 0.38089752197265625,
+          "rss_at_start_gib": 0.08324813842773438,
+          "samples": 15
+        },
+        "cairo_only": {
+          "seconds": 5.351308822631836,
+          "peak_rss_gib": 18.87000274658203,
+          "rss_at_start_gib": 0.3114433288574219,
+          "samples": 105
+        }
+      },
+      "verified": false,
+      "message_ok": true,
+      "scaling": true,
+      "native_verify": true,
+      "error": []
+    },
+    {
+      "name": "scaling-qm31-k106-cairo-only-t4",
+      "prover": "v2-cairo-stage",
+      "variant": "qm31",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 18.67197036743164,
+      "prove_seconds": 12.678639016,
+      "wall_seconds": 14.463516833988251,
+      "proof_bytes": 580538,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.7272281646728516,
+          "peak_rss_gib": 0.3759765625,
+          "rss_at_start_gib": 0.10019302368164062,
+          "samples": 14
+        },
+        "cairo_only": {
+          "seconds": 12.68037486076355,
+          "peak_rss_gib": 18.55419921875,
+          "rss_at_start_gib": 0.242431640625,
+          "samples": 250
+        }
+      },
+      "verified": false,
+      "message_ok": true,
+      "scaling": true,
+      "native_verify": true,
+      "error": [],
+      "base_cells": 243155248,
+      "padded_rows": 4656240,
+      "total_steps": 1396555
+    },
+    {
+      "name": "scaling-qm31-k106-cairo-only-t8",
+      "prover": "v2-cairo-stage",
+      "variant": "qm31",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 8,
+      "peak_rss_gib": 18.703418731689453,
+      "prove_seconds": 7.48543392,
+      "wall_seconds": 9.23271852300968,
+      "proof_bytes": 580538,
+      "stages": {
+        "bootloader": {
+          "seconds": 0.7103769779205322,
+          "peak_rss_gib": 0.37909698486328125,
+          "rss_at_start_gib": 0.09267425537109375,
+          "samples": 14
+        },
+        "cairo_only": {
+          "seconds": 7.487226963043213,
+          "peak_rss_gib": 18.586441040039062,
+          "rss_at_start_gib": 0.30339813232421875,
+          "samples": 147
+        }
+      },
+      "verified": false,
+      "message_ok": true,
+      "scaling": true,
+      "native_verify": true,
+      "error": []
+    },
+    {
+      "name": "compact-k0-v1-bounded-16g",
+      "prover": "v1-bounded",
+      "variant": "compact",
+      "k": 0,
+      "status": "passed",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 8.715019226074219,
+      "prove_seconds": 28.26,
+      "request_seconds": 28.885643174988218,
+      "proof_bytes": 237314,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 338014,
+      "base_cells": 139653424,
+      "padded_rows": 2178160,
+      "total_steps": 537414
+    },
+    {
+      "name": "compact-k0-v1-bounded-16g-r2",
+      "prover": "v1-bounded",
+      "variant": "compact",
+      "k": 0,
+      "status": "passed",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 8.716327667236328,
+      "prove_seconds": 28.253,
+      "request_seconds": 28.861684775009053,
+      "proof_bytes": 237314,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 338014,
+      "base_cells": 139653424,
+      "padded_rows": 2178160,
+      "total_steps": 537414
+    },
+    {
+      "name": "compact-k0-v1-bounded-16g-r3",
+      "prover": "v1-bounded",
+      "variant": "compact",
+      "k": 0,
+      "status": "passed",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 8.711570739746094,
+      "prove_seconds": 28.522,
+      "request_seconds": 29.146699478995288,
+      "proof_bytes": 237314,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 338014,
+      "base_cells": 139653424,
+      "padded_rows": 2178160,
+      "total_steps": 537414
+    },
+    {
+      "name": "compact-k0-v1-stock-16g",
+      "prover": "v1-stock",
+      "variant": "compact",
+      "k": 0,
+      "status": "oom",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 15.639148712158203,
+      "prove_seconds": null,
+      "request_seconds": null,
+      "proof_bytes": null,
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "os_steps": 338014
+    },
+    {
+      "name": "compact-k0-v1-stock-32g",
+      "prover": "v1-stock",
+      "variant": "compact",
+      "k": 0,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 19.49954605102539,
+      "prove_seconds": 16.066,
+      "request_seconds": 16.690648622985464,
+      "proof_bytes": 237314,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 338014,
+      "base_cells": 139653424,
+      "padded_rows": 2178160,
+      "total_steps": 537414
+    },
+    {
+      "name": "compact-k0-v1-stock-32g-r2",
+      "prover": "v1-stock",
+      "variant": "compact",
+      "k": 0,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 19.513526916503906,
+      "prove_seconds": 16.241,
+      "request_seconds": 16.893370277015492,
+      "proof_bytes": 237314,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 338014,
+      "base_cells": 139653424,
+      "padded_rows": 2178160,
+      "total_steps": 537414
+    },
+    {
+      "name": "compact-k0-v1-stock-32g-r3",
+      "prover": "v1-stock",
+      "variant": "compact",
+      "k": 0,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 19.632408142089844,
+      "prove_seconds": 16.082,
+      "request_seconds": 16.698003445984796,
+      "proof_bytes": 237314,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 338014,
+      "base_cells": 139653424,
+      "padded_rows": 2178160,
+      "total_steps": 537414
+    },
+    {
+      "name": "compact-k106-v1-bounded-16g",
+      "prover": "v1-bounded",
+      "variant": "compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 15.106864929199219,
+      "prove_seconds": 38.822,
+      "request_seconds": 40.20860399201047,
+      "proof_bytes": 224317,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 1920413,
+      "base_cells": 300581168,
+      "padded_rows": 6016112,
+      "total_steps": 2119813
+    },
+    {
+      "name": "compact-k106-v1-bounded-16g-r2",
+      "prover": "v1-bounded",
+      "variant": "compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 15.132076263427734,
+      "prove_seconds": 39.199,
+      "request_seconds": 40.601557860005414,
+      "proof_bytes": 224317,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 1920413,
+      "base_cells": 300581168,
+      "padded_rows": 6016112,
+      "total_steps": 2119813
+    },
+    {
+      "name": "compact-k106-v1-bounded-16g-r3",
+      "prover": "v1-bounded",
+      "variant": "compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 15.102485656738281,
+      "prove_seconds": 39.72,
+      "request_seconds": 41.06898213698878,
+      "proof_bytes": 224317,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 1920413,
+      "base_cells": 300581168,
+      "padded_rows": 6016112,
+      "total_steps": 2119813
+    },
+    {
+      "name": "compact-k106-v1-stock-16g",
+      "prover": "v1-stock",
+      "variant": "compact",
+      "k": 106,
+      "status": "oom",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 15.792915344238281,
+      "prove_seconds": null,
+      "request_seconds": null,
+      "proof_bytes": null,
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "os_steps": 1920413
+    },
+    {
+      "name": "compact-k106-v1-stock-32g",
+      "prover": "v1-stock",
+      "variant": "compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 25.610435485839844,
+      "prove_seconds": 22.554,
+      "request_seconds": 23.890737084991997,
+      "proof_bytes": 224317,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 1920413,
+      "base_cells": 300581168,
+      "padded_rows": 6016112,
+      "total_steps": 2119813
+    },
+    {
+      "name": "compact-k106-v1-stock-32g-r2",
+      "prover": "v1-stock",
+      "variant": "compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 26.185623168945312,
+      "prove_seconds": 22.392,
+      "request_seconds": 23.703994941985002,
+      "proof_bytes": 224317,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 1920413,
+      "base_cells": 300581168,
+      "padded_rows": 6016112,
+      "total_steps": 2119813
+    },
+    {
+      "name": "compact-k106-v1-stock-32g-r3",
+      "prover": "v1-stock",
+      "variant": "compact",
+      "k": 106,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 25.707561492919922,
+      "prove_seconds": 22.403,
+      "request_seconds": 23.757946097000968,
+      "proof_bytes": 224317,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 1920413,
+      "base_cells": 300581168,
+      "padded_rows": 6016112,
+      "total_steps": 2119813
+    },
+    {
+      "name": "compact-k16-v1-bounded-16g",
+      "prover": "v1-bounded",
+      "variant": "compact",
+      "k": 16,
+      "status": "passed",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 9.878856658935547,
+      "prove_seconds": 30.461,
+      "request_seconds": 31.208860665996326,
+      "proof_bytes": 235399,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 701658,
+      "base_cells": 167993648,
+      "padded_rows": 2976880,
+      "total_steps": 901058
+    },
+    {
+      "name": "compact-k16-v1-stock-16g",
+      "prover": "v1-stock",
+      "variant": "compact",
+      "k": 16,
+      "status": "oom",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 16.012500762939453,
+      "prove_seconds": null,
+      "request_seconds": null,
+      "proof_bytes": null,
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "os_steps": 701658
+    },
+    {
+      "name": "compact-k16-v1-stock-32g",
+      "prover": "v1-stock",
+      "variant": "compact",
+      "k": 16,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 20.772850036621094,
+      "prove_seconds": 17.425,
+      "request_seconds": 18.186364375025732,
+      "proof_bytes": 235399,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 701658,
+      "base_cells": 167993648,
+      "padded_rows": 2976880,
+      "total_steps": 901058
+    },
+    {
+      "name": "compact-k32-v1-bounded-16g",
+      "prover": "v1-bounded",
+      "variant": "compact",
+      "k": 32,
+      "status": "passed",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 10.75521469116211,
+      "prove_seconds": 30.975,
+      "request_seconds": 31.839897340978496,
+      "proof_bytes": 235326,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 948401,
+      "base_cells": 188047664,
+      "padded_rows": 3697776,
+      "total_steps": 1147801
+    },
+    {
+      "name": "compact-k32-v1-stock-16g",
+      "prover": "v1-stock",
+      "variant": "compact",
+      "k": 32,
+      "status": "oom",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 15.789241790771484,
+      "prove_seconds": null,
+      "request_seconds": null,
+      "proof_bytes": null,
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "os_steps": 948401
+    },
+    {
+      "name": "compact-k32-v1-stock-32g",
+      "prover": "v1-stock",
+      "variant": "compact",
+      "k": 32,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 21.105968475341797,
+      "prove_seconds": 18.145,
+      "request_seconds": 19.013698539987672,
+      "proof_bytes": 235326,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 948401,
+      "base_cells": 188047664,
+      "padded_rows": 3697776,
+      "total_steps": 1147801
+    },
+    {
+      "name": "compact-k64-v1-bounded-16g",
+      "prover": "v1-bounded",
+      "variant": "compact",
+      "k": 64,
+      "status": "passed",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 12.445075988769531,
+      "prove_seconds": 34.435,
+      "request_seconds": 35.51273774597212,
+      "proof_bytes": 231491,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 1379745,
+      "base_cells": 230973744,
+      "padded_rows": 4680816,
+      "total_steps": 1579145
+    },
+    {
+      "name": "compact-k64-v1-stock-16g",
+      "prover": "v1-stock",
+      "variant": "compact",
+      "k": 64,
+      "status": "oom",
+      "cap": 16,
+      "threads": 4,
+      "peak_rss_gib": 15.920345306396484,
+      "prove_seconds": null,
+      "request_seconds": null,
+      "proof_bytes": null,
+      "verified": null,
+      "message_ok": null,
+      "scaling": false,
+      "os_steps": 1379745
+    },
+    {
+      "name": "compact-k64-v1-stock-32g",
+      "prover": "v1-stock",
+      "variant": "compact",
+      "k": 64,
+      "status": "passed",
+      "cap": 32,
+      "threads": 4,
+      "peak_rss_gib": 21.65625,
+      "prove_seconds": 19.832,
+      "request_seconds": 20.91705923099653,
+      "proof_bytes": 231491,
+      "verified": true,
+      "message_ok": true,
+      "scaling": false,
+      "os_steps": 1379745,
+      "base_cells": 230973744,
+      "padded_rows": 4680816,
+      "total_steps": 1579145
+    }
+  ],
+  "calibration_points": [
+    {
+      "prover": "v2-small",
+      "variant": "blake589k",
+      "k": null,
+      "peak_rss_gib": 29.32745361328125,
+      "prove_seconds": 26.813979347,
+      "threads": 4,
+      "status": "passed",
+      "scaling": false,
+      "base_cells": 345747760,
+      "padded_rows": 4715632,
+      "total_steps": 789358
+    },
+    {
+      "prover": "v2-cairo-stage",
+      "variant": "blake589k",
+      "k": null,
+      "peak_rss_gib": 27.49039077758789,
+      "prove_seconds": 21.059888053,
+      "threads": 4,
+      "status": "passed",
+      "scaling": false,
+      "base_cells": 345747760,
+      "padded_rows": 4715632,
+      "total_steps": 789358
+    },
+    {
+      "prover": "v1-stock",
+      "variant": "blake589k",
+      "k": null,
+      "peak_rss_gib": 29.291149139404297,
+      "prove_seconds": 27.349,
+      "threads": 4,
+      "status": "passed",
+      "scaling": false,
+      "base_cells": 345747760,
+      "padded_rows": 4715632,
+      "total_steps": 789358
+    },
+    {
+      "prover": "v1-bounded",
+      "variant": "blake589k",
+      "k": null,
+      "peak_rss_gib": 16.219707489013672,
+      "prove_seconds": 48.257,
+      "threads": 4,
+      "status": "passed",
+      "scaling": false,
+      "base_cells": 345747760,
+      "padded_rows": 4715632,
+      "total_steps": 789358
+    },
+    {
+      "prover": "v2-small",
+      "variant": "sample",
+      "k": null,
+      "peak_rss_gib": 13.09375,
+      "prove_seconds": 11.863880168,
+      "threads": 4,
+      "status": "passed",
+      "scaling": false,
+      "base_cells": 73226464,
+      "padded_rows": 959344,
+      "total_steps": 275861
+    },
+    {
+      "prover": "v2-small",
+      "variant": "sample",
+      "k": null,
+      "peak_rss_gib": 13.5535888671875,
+      "prove_seconds": 11.906889688,
+      "threads": 4,
+      "status": "passed",
+      "scaling": false,
+      "base_cells": 73226464,
+      "padded_rows": 959344,
+      "total_steps": 275861
+    }
+  ],
+  "models": {
+    "v2-small": {
+      "peak_gib_vs_base_cells_1e8": {
+        "intercept": 9.211823896669227,
+        "slope": 4.7204262914209885,
+        "max_abs_residual": 3.794861551572886,
+        "r2": 0.9223376436339298,
+        "n": 13
+      },
+      "peak_gib_vs_padded_rows_1e6": {
+        "intercept": 11.683502736125277,
+        "slope": 1.9622521351339985,
+        "max_abs_residual": 8.390691916649764,
+        "r2": 0.6897169530960697,
+        "n": 13
+      },
+      "peak_gib_vs_steps_1e6": {
+        "intercept": 14.550514708666677,
+        "slope": 3.8559053922359308,
+        "max_abs_residual": 11.733249136010002,
+        "r2": 0.3938381200544828,
+        "n": 13
+      },
+      "seconds_vs_base_cells_1e8": {
+        "intercept": 8.499190138014566,
+        "slope": 4.184859118569891,
+        "max_abs_residual": 3.8457325473742934,
+        "r2": 0.902242419070759,
+        "n": 13
+      },
+      "points": [
+        [
+          "compact",
+          0,
+          139653424,
+          15.776901245117188,
+          14.654460099
+        ],
+        [
+          "compact",
+          0,
+          139653424,
+          15.916481018066406,
+          14.516960274
+        ],
+        [
+          "compact",
+          0,
+          139653424,
+          15.75216293334961,
+          14.525866283
+        ],
+        [
+          "compact",
+          106,
+          300581168,
+          22.468303680419922,
+          20.053812334
+        ],
+        [
+          "compact",
+          106,
+          300581168,
+          22.203022003173828,
+          19.966378046
+        ],
+        [
+          "compact",
+          106,
+          300581168,
+          22.445770263671875,
+          20.222506674
+        ],
+        [
+          "compact",
+          16,
+          167993648,
+          17.068416595458984,
+          15.458361195
+        ],
+        [
+          "compact",
+          32,
+          188047664,
+          17.392024993896484,
+          16.114290231
+        ],
+        [
+          "compact",
+          64,
+          230973744,
+          19.485458374023438,
+          17.563732413
+        ],
+        [
+          "compact",
+          106,
+          300581168,
+          22.745521545410156,
+          19.840504330999998
+        ],
+        [
+          "blake589k",
+          null,
+          345747760,
+          29.32745361328125,
+          26.813979347
+        ],
+        [
+          "sample",
+          null,
+          73226464,
+          13.09375,
+          11.863880168
+        ],
+        [
+          "sample",
+          null,
+          73226464,
+          13.5535888671875,
+          11.906889688
+        ]
+      ]
+    },
+    "v2-cairo-stage": {
+      "peak_gib_vs_base_cells_1e8": {
+        "intercept": 1.0020723533394822,
+        "slope": 7.264454167131812,
+        "max_abs_residual": 1.9851335487152824,
+        "r2": 0.9156794251608158,
+        "n": 5
+      },
+      "peak_gib_vs_padded_rows_1e6": {
+        "intercept": 12.466373589280844,
+        "slope": 1.635991377364981,
+        "max_abs_residual": 7.309283897480668,
+        "r2": 0.07090003103549525,
+        "n": 5
+      },
+      "peak_gib_vs_steps_1e6": {
+        "intercept": 26.46346044633114,
+        "slope": -4.305346066445791,
+        "max_abs_residual": 4.425389691574267,
+        "r2": 0.2238021148343422,
+        "n": 5
+      },
+      "seconds_vs_base_cells_1e8": {
+        "intercept": -3.3992240307947803,
+        "slope": 6.601705756992268,
+        "max_abs_residual": 2.3747493734958187,
+        "r2": 0.8630331859150144,
+        "n": 5
+      },
+      "points": [
+        [
+          "compact",
+          106,
+          300581168,
+          20.852519989013672,
+          14.069510868
+        ],
+        [
+          "qm31",
+          106,
+          243155248,
+          18.638511657714844,
+          12.625998649
+        ],
+        [
+          "qm31_compact",
+          106,
+          201072944,
+          16.243892669677734,
+          10.61760944
+        ],
+        [
+          "qm31",
+          106,
+          243155248,
+          18.67197036743164,
+          12.678639016
+        ],
+        [
+          "blake589k",
+          null,
+          345747760,
+          27.49039077758789,
+          21.059888053
+        ]
+      ]
+    },
+    "v1-stock": {
+      "peak_gib_vs_base_cells_1e8": {
+        "intercept": 13.316295383329397,
+        "slope": 4.2517765923639415,
+        "max_abs_residual": 1.4805329652280115,
+        "r2": 0.9579234653347117,
+        "n": 10
+      },
+      "peak_gib_vs_padded_rows_1e6": {
+        "intercept": 15.762172419054863,
+        "slope": 1.7551467292242116,
+        "max_abs_residual": 5.252350639324405,
+        "r2": 0.6791518414192534,
+        "n": 10
+      },
+      "peak_gib_vs_steps_1e6": {
+        "intercept": 19.279927691723657,
+        "slope": 2.9200029406189647,
+        "max_abs_residual": 7.706293766479536,
+        "r2": 0.3293987718969592,
+        "n": 10
+      },
+      "seconds_vs_base_cells_1e8": {
+        "intercept": 9.59695168718847,
+        "slope": 4.549412158674475,
+        "max_abs_residual": 2.022557681026889,
+        "r2": 0.9498797565620358,
+        "n": 10
+      },
+      "points": [
+        [
+          "compact",
+          0,
+          139653424,
+          19.49954605102539,
+          16.066
+        ],
+        [
+          "compact",
+          0,
+          139653424,
+          19.513526916503906,
+          16.241
+        ],
+        [
+          "compact",
+          0,
+          139653424,
+          19.632408142089844,
+          16.082
+        ],
+        [
+          "compact",
+          106,
+          300581168,
+          25.610435485839844,
+          22.554
+        ],
+        [
+          "compact",
+          106,
+          300581168,
+          26.185623168945312,
+          22.392
+        ],
+        [
+          "compact",
+          106,
+          300581168,
+          25.707561492919922,
+          22.403
+        ],
+        [
+          "compact",
+          16,
+          167993648,
+          20.772850036621094,
+          17.425
+        ],
+        [
+          "compact",
+          32,
+          188047664,
+          21.105968475341797,
+          18.145
+        ],
+        [
+          "compact",
+          64,
+          230973744,
+          21.65625,
+          19.832
+        ],
+        [
+          "blake589k",
+          null,
+          345747760,
+          29.291149139404297,
+          27.349
+        ]
+      ]
+    },
+    "v1-bounded": {
+      "peak_gib_vs_base_cells_1e8": {
+        "intercept": 3.461761153569574,
+        "slope": 3.8236904900433073,
+        "max_abs_residual": 0.4623778832136587,
+        "r2": 0.9959460787635886,
+        "n": 10
+      },
+      "peak_gib_vs_padded_rows_1e6": {
+        "intercept": 4.926942598888388,
+        "slope": 1.7590867823181344,
+        "max_abs_residual": 2.997558968648855,
+        "r2": 0.876990685463077,
+        "n": 10
+      },
+      "peak_gib_vs_steps_1e6": {
+        "intercept": 7.925418152779352,
+        "slope": 3.352076329262011,
+        "max_abs_residual": 5.648301069120716,
+        "r2": 0.5580378055685498,
+        "n": 10
+      },
+      "seconds_vs_base_cells_1e8": {
+        "intercept": 16.603401583843404,
+        "slope": 8.026299782018954,
+        "max_abs_residual": 3.9028467089411762,
+        "r2": 0.9391854402872627,
+        "n": 10
+      },
+      "points": [
+        [
+          "compact",
+          0,
+          139653424,
+          8.715019226074219,
+          28.26
+        ],
+        [
+          "compact",
+          0,
+          139653424,
+          8.716327667236328,
+          28.253
+        ],
+        [
+          "compact",
+          0,
+          139653424,
+          8.711570739746094,
+          28.522
+        ],
+        [
+          "compact",
+          106,
+          300581168,
+          15.106864929199219,
+          38.822
+        ],
+        [
+          "compact",
+          106,
+          300581168,
+          15.132076263427734,
+          39.199
+        ],
+        [
+          "compact",
+          106,
+          300581168,
+          15.102485656738281,
+          39.72
+        ],
+        [
+          "compact",
+          16,
+          167993648,
+          9.878856658935547,
+          30.461
+        ],
+        [
+          "compact",
+          32,
+          188047664,
+          10.75521469116211,
+          30.975
+        ],
+        [
+          "compact",
+          64,
+          230973744,
+          12.445075988769531,
+          34.435
+        ],
+        [
+          "blake589k",
+          null,
+          345747760,
+          16.219707489013672,
+          48.257
+        ]
+      ]
+    }
+  },
+  "family_models": {
+    "v2-small": {
+      "intercept": 9.96132942936684,
+      "slope": 4.1498332816609835,
+      "max_abs_residual": 0.37296898152837343,
+      "r2": 0.996017442733713,
+      "n": 10,
+      "seconds": {
+        "intercept": 9.780881894813861,
+        "slope": 3.401170716472463,
+        "max_abs_residual": 0.21834611393924064,
+        "r2": 0.9981681219791563,
+        "n": 10
+      }
+    },
+    "v2-cairo-stage": {
+      "intercept": 7.337441578718412,
+      "slope": 4.560601463262563,
+      "max_abs_residual": 0.26368453532979075,
+      "r2": 0.980077278462614,
+      "n": 4,
+      "seconds": {
+        "intercept": 4.147355185564846,
+        "slope": 3.3809244744464175,
+        "max_abs_residual": 0.32787012075078614,
+        "r2": 0.9458253467762072,
+        "n": 4
+      }
+    },
+    "v1-stock": {
+      "intercept": 14.032851668514756,
+      "slope": 3.8469245845686717,
+      "max_abs_residual": 1.2619874103494624,
+      "r2": 0.9669809580267181,
+      "n": 9,
+      "seconds": {
+        "intercept": 10.73414619362271,
+        "slope": 3.906900902123904,
+        "max_abs_residual": 0.12750845715443404,
+        "r2": 0.9988457042471771,
+        "n": 9
+      }
+    },
+    "v1-bounded": {
+      "intercept": 3.201786571079399,
+      "slope": 3.9705752971030313,
+      "max_abs_residual": 0.08685402651940066,
+      "r2": 0.999727909611224,
+      "n": 9,
+      "seconds": {
+        "intercept": 18.79779924107584,
+        "slope": 6.786472128840287,
+        "max_abs_residual": 0.5846015473710651,
+        "r2": 0.9954431787821679,
+        "n": 9
+      }
+    }
+  },
+  "r0v6_projection": {
+    "compact": {
+      "cells_k102": 293951889.52380955,
+      "cells_faithful": [
+        302966834.2678198,
+        320996723.7558404
+      ],
+      "cells_per_account_step": 128.74337671177136,
+      "v2-small_peak_gib": [
+        22.5339479502075,
+        23.282158304828073
+      ],
+      "v2-small_seconds": [
+        20.08530114255461,
+        20.69852846403351
+      ],
+      "v2-cairo-stage_peak_gib": [
+        21.15455145553687,
+        21.976822859352158
+      ],
+      "v2-cairo-stage_seconds": [
+        14.390435034781083,
+        15.000011981197213
+      ],
+      "v1-stock_peak_gib": [
+        25.68775729905294,
+        26.38135355033817
+      ],
+      "v1-stock_seconds": [
+        22.570760174768395,
+        23.275170089827817
+      ],
+      "v1-bounded_peak_gib": [
+        15.231312850932532,
+        15.947203189038856
+      ],
+      "v1-bounded_seconds": [
+        39.358559008291174,
+        40.5821524332564
+      ]
+    },
+    "qm31_compact": {
+      "cells_k102": 198326673.52380952,
+      "cells_faithful": [
+        202376832.31689936,
+        210477149.90307903
+      ],
+      "cells_per_account_step": 123.19428542133055,
+      "v2-small_peak_gib": [
+        18.35963057122477,
+        18.69578024633629
+      ],
+      "v2-small_seconds": [
+        16.664063452500823,
+        16.939569082183233
+      ],
+      "v2-cairo-stage_peak_gib": [
+        16.567042354667347,
+        16.93646555703157
+      ],
+      "v2-cairo-stage_seconds": [
+        10.989563039976284,
+        11.26342865975532
+      ],
+      "v1-stock_peak_gib": [
+        21.81813578438487,
+        22.12974889303576
+      ],
+      "v1-stock_seconds": [
+        18.64080848110143,
+        18.957279861950788
+      ],
+      "v1-bounded_peak_gib": [
+        11.237311082113829,
+        11.55894029117757
+      ],
+      "v1-bounded_seconds": [
+        32.53204656149205,
+        33.08177235682569
+      ]
+    },
+    "qm31": {
+      "cells_k102": 240552532.57142857,
+      "cells_faithful": [
+        244475922.98517516,
+        252322703.81266838
+      ],
+      "cells_per_account_step": 135.69810121553985,
+      "v2-small_peak_gib": [
+        20.106672647053514,
+        20.43230096937182
+      ],
+      "v2-small_seconds": [
+        18.09592539621141,
+        18.362807807901888
+      ],
+      "v2-cairo-stage_peak_gib": [
+        18.487014099704965,
+        18.84487450094263
+      ],
+      "v2-cairo-stage_seconds": [
+        12.412901499899409,
+        12.678195233352296
+      ],
+      "v1-stock_peak_gib": [
+        23.437656053182632,
+        23.73951579393269
+      ],
+      "v1-stock_seconds": [
+        20.28557823420626,
+        20.592144185143276
+      ],
+      "v1-bounded_peak_gib": [
+        12.908887176493396,
+        13.220449517647658
+      ],
+      "v1-bounded_seconds": [
+        35.38908961618979,
+        35.921609210058804
+      ]
+    }
+  }
+}

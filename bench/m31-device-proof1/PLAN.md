@@ -1,6 +1,6 @@
 # Spike plan: full device-side proving over the M31 pool
 
-Status: **scoped, not run** (2026-09-26). This plan feeds the future device-proving ADR (ADR-0027
+Status: **phases 0–2 run** (2026-09-26); results in [README.md](README.md). Phases 3–5 not run. This plan feeds the future device-proving ADR (ADR-0027
 decision 6: no prover server; submission still through a relayer).
 - It was produced by three research reports and a synthesis. A skeptic then checked it against
   the repository, and its corrections are applied.

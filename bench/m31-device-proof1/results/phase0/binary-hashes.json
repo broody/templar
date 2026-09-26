@@ -1,0 +1,74 @@
+[
+  {
+    "binary": "target/bounded-memory/bin/baseline-prover",
+    "sha256": "d45f739393d497087381fc179391897445d36e983b00278b68c301460896bd7d",
+    "archived_sha256": "d45f739393d497087381fc179391897445d36e983b00278b68c301460896bd7d",
+    "record": "bench/cairo-memory/results/summary.json",
+    "match": true,
+    "note": "cairo-memory low-memory build, not stock"
+  },
+  {
+    "binary": "target/bounded-memory/bin/low-memory-prover",
+    "sha256": "8eaa1763abd7216f43fff2a935a3646e5643f55763236b41885ee77f5286d471",
+    "archived_sha256": "8eaa1763abd7216f43fff2a935a3646e5643f55763236b41885ee77f5286d471",
+    "record": "bench/bounded-memory/results/low-memory-prover-build.json",
+    "match": true,
+    "note": "bounded build used for V1 bounded runs"
+  },
+  {
+    "binary": "target/m31-private-wrapper/capacity-capture-build-v3/capture",
+    "sha256": "9920dedb496508ae1245ab8261dca7c76641dd11ff9a79d3709010e39e8b722b",
+    "archived_sha256": "9920dedb496508ae1245ab8261dca7c76641dd11ff9a79d3709010e39e8b722b",
+    "record": "bench/m31-private-wrapper/results/bridge-capacity/os-capture/execution.json",
+    "match": true,
+    "note": "V1 virtual-OS capture tool"
+  },
+  {
+    "binary": "target/m31-private-wrapper/capacity-build-original-v3/capacity",
+    "sha256": "27cf06db20a3b7b887ae47bb9640992acaf7fef8e2da4e1a2aab187b41713726",
+    "archived_sha256": "27cf06db20a3b7b887ae47bb9640992acaf7fef8e2da4e1a2aab187b41713726",
+    "record": "bench/m31-private-wrapper/results/server-circuit/capacity-boot-optimized/summary.json",
+    "match": true,
+    "note": "V1 component trace tool; capacity.rs was edited after this build (source hash differs from its inputs.json)"
+  },
+  {
+    "binary": "target/m31-append/state-fixture-build-v4/state-fixture",
+    "sha256": "f04d0f3bfad252db20220a545cd3dbd717d0d8451824986f77cc66dbeaba291c",
+    "archived_sha256": "f04d0f3bfad252db20220a545cd3dbd717d0d8451824986f77cc66dbeaba291c",
+    "record": "bench/m31-append/results/state-fixture/anchor.json",
+    "match": true,
+    "note": "synthetic state fixture tool"
+  },
+  {
+    "binary": "target/m31-private-wrapper/attribution-build/blake_sites",
+    "sha256": "8d980f158eb3ca46e2ece60394e0421a02369291273c6d0f21a3464c43dfc40d",
+    "archived_sha256": null,
+    "record": "none (binary unrecorded)",
+    "match": null,
+    "note": "source blake_sites.rs matches the build record inputs.json source_sha256 0f9d7457\u2026"
+  },
+  {
+    "binary": "server/os-runner/target/release/templar-os-runner",
+    "sha256": "ab823d1affa0500dc11e09d9d8f74f152cdc9567f578dcb153735549a404db37",
+    "archived_sha256": null,
+    "record": "none",
+    "match": null,
+    "note": "V2 os-runner, not used (V1 capture still runs)"
+  },
+  {
+    "binary": "target/m31-device-proof1/bin/v1-stock-prover",
+    "sha256": "cd7839b34f77f7c132d50955eb5193ae89254d3c92250cdaae87c37ddcaef628",
+    "archived_sha256": "31fb582d5ec8cfcb028ae7c144f0152acc432f68d5cbfeb4c10e881a00f18db5",
+    "record": "bench/m31-private-wrapper/results/outer-blake-v1-cap32/anchor.json",
+    "match": false,
+    "note": "rebuilt from the same pinned source and lockfile; the archived binary is gone and embeds different build paths; functional identity shown by a byte-identical proof"
+  },
+  {
+    "binary": "target/m31-device-proof1/bin/v1-local-verifier",
+    "sha256": "5e8c45ed748a0962bb997b754435b69b396fc0a351406d637f57e718d459907e",
+    "archived_sha256": "492e2ea2b2bbc9eef05239407e9f3cbcc39199934b3f3bb02172aba3fd198934",
+    "record": "bench/m31-private-wrapper/results/outer-blake-v1-cap32/anchor.json",
+    "match": false,
+    "note": "source reconstructed and matches the archived verify_saved.rs hash; linked against the rebuilt libraries"
+  }
+]

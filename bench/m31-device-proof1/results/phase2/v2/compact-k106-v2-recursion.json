@@ -1,0 +1,82 @@
+{
+  "name": "compact-k106-v2-recursion",
+  "mode": "recursion",
+  "cap_gib": 32,
+  "cpus": "0 1 2 3",
+  "threads": 4,
+  "swap": 0,
+  "pie": "/home/broody/.local/share/templar/runs/m31-device-proof1/v2/compact-k106-v2-cairo-only-32g",
+  "pie_sha256": "9503741c14aee49b8505b46e5f49202e9dad0785e5e770659ac8cd41584e194c",
+  "prove_small_sha256": "455c76184151fd5815de9847f9711dc4fecdf499a89b65d8a37748947db5afbf",
+  "exit_code": 0,
+  "wall_seconds": 7.292433113994775,
+  "peak_rss_gib": 8.616325378417969,
+  "cgroup_peak_gib": 8.617156982421875,
+  "oom_killed": false,
+  "stages": {
+    "recursion": {
+      "seconds": 6.703325033187866,
+      "peak_rss_gib": 8.499931335449219,
+      "rss_at_start_gib": 0.06105804443359375,
+      "samples": 132
+    }
+  },
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-dp1-v2-compact-k106-v2-recursion-1790428455339295533",
+    "-p",
+    "MemoryMax=32G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUAffinity=0 1 2 3",
+    "-p",
+    "CPUQuota=400%",
+    "-p",
+    "RuntimeMaxSec=3600",
+    "--setenv=RAYON_NUM_THREADS=4",
+    "--setenv=TOKIO_WORKER_THREADS=4",
+    "/usr/bin/time",
+    "-v",
+    "/home/broody/development/templar/target/m31-device-proof1/bin/prove-small",
+    "recursion",
+    "/home/broody/.local/share/templar/runs/m31-device-proof1/v2/compact-k106-v2-cairo-only-32g",
+    "/home/broody/.local/share/templar/runs/m31-device-proof1/v2/compact-k106-v2-recursion"
+  ],
+  "error_lines": [],
+  "from": "/home/broody/.local/share/templar/runs/m31-device-proof1/v2/compact-k106-v2-cairo-only-32g",
+  "kind": "recursive",
+  "proof_bytes": 227440,
+  "prove_seconds": 6.703985673,
+  "proof_sha256": "16233de8b26980a89abdc3aefcc4056e272f4564ebade3f64423b5c5e9a5226f",
+  "output_preimage": [
+    "0x1",
+    "0x8",
+    "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+    "0x5649525455414c5f534e4f5330",
+    "0x64",
+    "0x230690966ce71c9778f0895901a55407db93c517d35261bb2b8b85ae357b2e2",
+    "0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57",
+    "0x1",
+    "0x4b7a451dd23bf5274e3f8faab6d7ab28029aafff2f8a53d2a39bcd0557c3906"
+  ],
+  "message_matches_capture": true,
+  "verify": {
+    "controls": {
+      "changed_output_rejected": true,
+      "flipped_byte_rejected": true,
+      "truncated_rejected": true
+    },
+    "error": null,
+    "kind": "recursive",
+    "passed": true,
+    "valid": true,
+    "verify_seconds": 0.119797723
+  },
+  "verify_exit_code": 0,
+  "verify_peak_rss_gib": 0.12296676635742188,
+  "status": "passed"
+}

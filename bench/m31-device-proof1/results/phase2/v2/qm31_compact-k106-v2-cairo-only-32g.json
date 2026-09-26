@@ -1,0 +1,108 @@
+{
+  "name": "qm31_compact-k106-v2-cairo-only-32g",
+  "mode": "cairo-only",
+  "cap_gib": 32,
+  "cpus": "0 1 2 3",
+  "threads": 4,
+  "swap": 0,
+  "pie": "/home/broody/.local/share/templar/runs/m31-device-proof1/phase1/qm31_compact/k106/os/os.pie.zip",
+  "pie_sha256": "adb37c9686fa438a0349088fc80c22ef302e6127ce593771752c9d1c36e9914a",
+  "prove_small_sha256": "455c76184151fd5815de9847f9711dc4fecdf499a89b65d8a37748947db5afbf",
+  "exit_code": 0,
+  "wall_seconds": 12.408210105990293,
+  "peak_rss_gib": 16.243892669677734,
+  "cgroup_peak_gib": 16.24866485595703,
+  "oom_killed": false,
+  "stages": {
+    "bootloader": {
+      "seconds": 0.7091050148010254,
+      "peak_rss_gib": 0.37519073486328125,
+      "rss_at_start_gib": 0.08102035522460938,
+      "samples": 14
+    },
+    "cairo_only": {
+      "seconds": 10.619404077529907,
+      "peak_rss_gib": 16.17782974243164,
+      "rss_at_start_gib": 0.12622451782226562,
+      "samples": 210
+    }
+  },
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-dp1-v2-qm31_compact-k106-v2-cairo-only-32g-1790428513465550984",
+    "-p",
+    "MemoryMax=32G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUAffinity=0 1 2 3",
+    "-p",
+    "CPUQuota=400%",
+    "-p",
+    "RuntimeMaxSec=5400",
+    "--setenv=RAYON_NUM_THREADS=4",
+    "--setenv=TOKIO_WORKER_THREADS=4",
+    "/usr/bin/time",
+    "-v",
+    "/home/broody/development/templar/target/m31-device-proof1/bin/prove-small",
+    "cairo-only",
+    "/home/broody/.local/share/templar/runs/m31-device-proof1/phase1/qm31_compact/k106/os/os.pie.zip",
+    "/home/broody/.local/share/templar/runs/m31-device-proof1/v2/qm31_compact-k106-v2-cairo-only-32g"
+  ],
+  "error_lines": [],
+  "boot_seconds": 0.70903371,
+  "bootloader": {
+    "builtin_instance_counter": {
+      "add_mod_builtin": 0,
+      "bitwise_builtin": 1,
+      "mul_mod_builtin": 0,
+      "output_builtin": 2,
+      "pedersen_builtin": 8,
+      "poseidon_builtin": 626,
+      "range_check96_builtin": 0,
+      "range_check_builtin": 60535
+    },
+    "n_memory_holes": 1248,
+    "n_steps": 1363357
+  },
+  "kind": "cairo",
+  "native_pow_byte_mutation_rejected": true,
+  "native_verify": true,
+  "native_verify_error": null,
+  "native_verify_seconds": 0.009699071,
+  "proof_bytes": 580634,
+  "prove_seconds": 10.61760944,
+  "serialize_seconds": 0.003550998999999777,
+  "proof_sha256": "5356c5f5b3996e574b20dccf2a1f399d15af65471a4adc20d718fda49253409e",
+  "output_preimage": [
+    "0x1",
+    "0x8",
+    "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+    "0x5649525455414c5f534e4f5330",
+    "0x64",
+    "0x654ecfd41fed778a091a2b8d16b75bead0baf134a1ab798dddf110ec62f4094",
+    "0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57",
+    "0x1",
+    "0x6dc8d1eba1b2308c5ec7d6fda3546c993320738fb6d5c76ec03efed5223a1d5"
+  ],
+  "message_matches_capture": true,
+  "verify": {
+    "controls": {
+      "changed_output_rejected": true,
+      "flipped_byte_rejected": true,
+      "truncated_rejected": true
+    },
+    "error": "field element value out of range",
+    "kind": "cairo",
+    "passed": false,
+    "valid": false,
+    "verify_seconds": 0.008442082
+  },
+  "verify_exit_code": 1,
+  "verify_peak_rss_gib": 0.019130706787109375,
+  "fixed_small_path_verifier_accepts": false,
+  "status": "passed"
+}

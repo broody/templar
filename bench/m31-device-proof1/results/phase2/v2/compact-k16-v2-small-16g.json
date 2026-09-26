@@ -1,0 +1,57 @@
+{
+  "name": "compact-k16-v2-small-16g",
+  "mode": "recursive",
+  "cap_gib": 16,
+  "cpus": "0 1 2 3",
+  "threads": 4,
+  "swap": 0,
+  "pie": "/home/broody/.local/share/templar/runs/m31-device-proof1/phase1/compact/k16/os/os.pie.zip",
+  "pie_sha256": "dd2ddfb13eea278c99d6b31ca6e1564d110ea12ad55397088edc496eedae12d1",
+  "prove_small_sha256": "455c76184151fd5815de9847f9711dc4fecdf499a89b65d8a37748947db5afbf",
+  "exit_code": 1,
+  "wall_seconds": 13.276724388008006,
+  "peak_rss_gib": null,
+  "cgroup_peak_gib": 16.0,
+  "oom_killed": true,
+  "stages": {
+    "bootloader": {
+      "seconds": 0.4514429569244385,
+      "peak_rss_gib": 2.5327224731445312,
+      "rss_at_start_gib": 2.3551292419433594,
+      "samples": 9
+    },
+    "cairo": {
+      "seconds": 8.837393999099731,
+      "peak_rss_gib": 15.80789566040039,
+      "rss_at_start_gib": 2.589080810546875,
+      "samples": 174
+    }
+  },
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-dp1-v2-compact-k16-v2-small-16g-1790427686577142828",
+    "-p",
+    "MemoryMax=16G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUAffinity=0 1 2 3",
+    "-p",
+    "CPUQuota=400%",
+    "-p",
+    "RuntimeMaxSec=5400",
+    "--setenv=RAYON_NUM_THREADS=4",
+    "--setenv=TOKIO_WORKER_THREADS=4",
+    "/usr/bin/time",
+    "-v",
+    "/home/broody/development/templar/target/m31-device-proof1/bin/prove-small",
+    "recursive",
+    "/home/broody/.local/share/templar/runs/m31-device-proof1/phase1/compact/k16/os/os.pie.zip",
+    "/home/broody/.local/share/templar/runs/m31-device-proof1/v2/compact-k16-v2-small-16g"
+  ],
+  "error_lines": [],
+  "status": "oom"
+}

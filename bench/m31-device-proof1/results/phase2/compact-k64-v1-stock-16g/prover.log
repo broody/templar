@@ -1,0 +1,27 @@
+Running as unit: templar-dp1-compact-k64-v1-stock-16g-1790427817013617789.service; invocation ID: 4bd948b6f0044a17b77da304f1ee86cd
+2026-09-26T13:03:37.320144Z  INFO starknet_transaction_prover::server::config: CLI override: rpc_node_url: <unset> -> http://127.0.0.1:45877
+2026-09-26T13:03:37.320179Z  INFO starknet_transaction_prover::server::config: CLI override: chain_id: SN_MAIN -> SN_SEPOLIA
+2026-09-26T13:03:37.320187Z  INFO starknet_transaction_prover::server::config: CLI override: port: 3000 -> 47665
+2026-09-26T13:03:37.320190Z  INFO starknet_transaction_prover::server::config: CLI override: ip: 0.0.0.0 -> 127.0.0.1
+2026-09-26T13:03:37.320193Z  INFO starknet_transaction_prover::server::config: CLI override: max_concurrent_requests: 2 -> 1
+2026-09-26T13:03:37.320195Z  INFO starknet_transaction_prover::server::config: CLI override: max_queued_requests: 8 -> 0
+2026-09-26T13:03:37.320199Z  INFO starknet_transaction_prover::server::config: CLI override: compiled_class_cache_size: 600 -> 16
+2026-09-26T13:03:37.320215Z  INFO starknet_transaction_prover: Starting Starknet transaction prover. version="0.19.0-rc.2" git_sha="unknown" chain_id=SN_SEPOLIA rpc_node_host=http://127.0.0.1:45877 validate_zero_fee_fields=true blocking_check_enabled=false blocking_check_fail_open=false ohttp_enabled=false
+2026-09-26T13:03:37.831607Z  INFO prepare_privacy_recursiveprover_precomputes: privacy_prove: Prepare the twiddles
+2026-09-26T13:03:37.852290Z  INFO prepare_privacy_recursiveprover_precomputes: privacy_prove: Prepare the cairo prover preprocessed trace and tree
+2026-09-26T13:03:38.187273Z  INFO prepare_privacy_recursiveprover_precomputes: privacy_prove: Prepare the circuit prover preprocessed trace and tree
+2026-09-26T13:03:38.767013Z  INFO starknet_transaction_prover: JSON-RPC proving server is running. local_address=127.0.0.1:47665 scheme="http" max_concurrent_requests=1 max_connections=10 cors_mode="disabled" cors_allow_origin=[] ohttp_enabled=false
+2026-09-26T13:03:38.859642Z  INFO prove_transaction{block_id=Number(BlockNumber(100)) tx_hash=0x26b69504e5ae2c86a45a5df880b2fb618e007ee96758ffa38875d1844dd31a9}: starknet_transaction_prover::running::runner: Starting transaction proving
+2026-09-26T13:03:39.881492Z  INFO prove_transaction{block_id=Number(BlockNumber(100)) tx_hash=0x26b69504e5ae2c86a45a5df880b2fb618e007ee96758ffa38875d1844dd31a9}: starknet_transaction_prover::running::runner: Virtual OS execution resources n_steps=1379745 n_memory_holes=5332 builtins={output: 6, range_check: 209828, pedersen: 8, ecdsa: 0, keccak: 0, bitwise: 0, ec_op: 0, poseidon: 626, range_check96: 0, add_mod: 0, mul_mod: 0}
+2026-09-26T13:03:39.882101Z  INFO prove_transaction{block_id=Number(BlockNumber(100)) tx_hash=0x26b69504e5ae2c86a45a5df880b2fb618e007ee96758ffa38875d1844dd31a9}: starknet_transaction_prover::proving::virtual_snos_prover: OS execution completed os_duration_ms=1072
+2026-09-26T13:03:39.882331Z  INFO privacy_recursive_prove: privacy_prove: Run privacy bootloader and get the prover input and output preimage
+2026-09-26T13:03:39.899053Z  INFO privacy_recursive_prove:get_prover_input: privacy_prove: Running the program
+2026-09-26T13:03:40.360866Z  INFO privacy_recursive_prove:get_prover_input: privacy_prove: Reading the bootloader output preimage
+2026-09-26T13:03:40.360931Z  INFO privacy_recursive_prove:get_prover_input: privacy_prove: Adapting the runner output for the prover
+2026-09-26T13:03:40.685142Z  INFO privacy_recursive_prove: privacy_prove: Generate the cairo proof
+Finished with result: oom-kill
+Main processes terminated with: code=killed/status=TERM
+Service runtime: 10.293s
+CPU time consumed: 32.090s
+Memory peak: 2.5G
+Memory swap peak: 0B

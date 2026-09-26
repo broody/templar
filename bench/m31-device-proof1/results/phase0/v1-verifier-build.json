@@ -1,0 +1,18 @@
+{
+  "what": "original V1 local verifier (verify_saved.rs), reconstructed",
+  "source_sha256": "eef9af4a1d9f2266566b6e5604405dd92758b711d0d5f367374c75d310d38694",
+  "matches_archived_source": true,
+  "libraries": {
+    "starknet_api": {
+      "path": "/home/broody/development/templar/target/m31-device-proof1/v1-target/release/deps/libstarknet_api-3791f64573bb27cd.rlib",
+      "sha256": "7e90f0d584065f8833fe9add4feebf7fdb1e5d6e216d56e806fbf527e2b06b2b"
+    },
+    "starknet_proof_verifier": {
+      "path": "/home/broody/development/templar/target/m31-device-proof1/v1-target/release/deps/libstarknet_proof_verifier-465a45500f249fc2.rlib",
+      "sha256": "4810b59e76919a80848f2e5c95d2c7eec850731d94df0880e6da6b1a0dfe243d"
+    }
+  },
+  "exit_code": 0,
+  "binary": "/home/broody/development/templar/target/m31-device-proof1/bin/v1-local-verifier",
+  "binary_sha256": "5e8c45ed748a0962bb997b754435b69b396fc0a351406d637f57e718d459907e"
+}

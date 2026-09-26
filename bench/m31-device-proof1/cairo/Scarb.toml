@@ -1,0 +1,23 @@
+[package]
+name = "device_cost"
+version = "0.1.0"
+edition = "2024_07"
+description = "Device-proving spike: cost-model R0 statement account (phase 1 capture sweep); not production"
+
+[dependencies]
+starknet = "2.18.0"
+# M31 reductions for the felt252 permutations and the u32 -> M31 check for the QM31 one
+# (fork broody/proving, templar/arithmetic-profile), the same dependency as bench/m31-pool.
+stwo_verifier_core = { path = "../../../target/proving-arith/stwo_cairo_verifier/crates/verifier_core" }
+
+[features]
+# Shared round code for the permutation (src/perm_compact.cairo).
+compact_perm = []
+# Native M31 arithmetic through the QM31 opcode (src/perm_qm31.cairo); not in the audited libfuncs.
+qm31_perm = []
+# The same with perm_compact's shared-round structure (src/perm_qm31_compact.cairo), phase 1b.
+qm31_compact_perm = []
+
+[[target.starknet-contract]]
+sierra = true
+casm = true

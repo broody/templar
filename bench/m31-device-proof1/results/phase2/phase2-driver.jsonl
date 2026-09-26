@@ -1,0 +1,74 @@
+{"name": "compact-k0-v1-stock-16g", "cap": 16, "exit": 2}
+{"name": "compact-k0-v1-stock-32g", "cap": 32, "exit": 0}
+{"group": "compact-k0-v1-stock", "passing_cap": 32}
+{"name": "compact-k0-v1-stock-32g-r2", "cap": 32, "exit": 0}
+{"name": "compact-k0-v1-stock-32g-r3", "cap": 32, "exit": 0}
+{"name": "compact-k0-v1-bounded-16g", "cap": 16, "exit": 0}
+{"group": "compact-k0-v1-bounded", "passing_cap": 16}
+{"name": "compact-k0-v1-bounded-16g-r2", "cap": 16, "exit": 0}
+{"name": "compact-k0-v1-bounded-16g-r3", "cap": 16, "exit": 0}
+{"name": "compact-k0-v2-small-16g", "cap": 16, "exit": 0}
+{"group": "compact-k0-v2-small", "passing_cap": 16}
+{"name": "compact-k0-v2-small-16g-r2", "cap": 16, "exit": 2}
+{"name": "compact-k0-v2-small-16g-r3", "cap": 16, "exit": 0}
+{"name": "compact-k16-v1-stock-16g", "cap": 16, "exit": 2}
+{"name": "compact-k16-v1-stock-32g", "cap": 32, "exit": 0}
+{"group": "compact-k16-v1-stock", "passing_cap": 32}
+{"name": "compact-k16-v1-bounded-16g", "cap": 16, "exit": 0}
+{"group": "compact-k16-v1-bounded", "passing_cap": 16}
+{"name": "compact-k16-v2-small-16g", "cap": 16, "exit": 2}
+{"name": "compact-k16-v2-small-32g", "cap": 32, "exit": 0}
+{"group": "compact-k16-v2-small", "passing_cap": 32}
+{"name": "compact-k32-v1-stock-16g", "cap": 16, "exit": 2}
+{"name": "compact-k32-v1-stock-32g", "cap": 32, "exit": 0}
+{"group": "compact-k32-v1-stock", "passing_cap": 32}
+{"name": "compact-k32-v1-bounded-16g", "cap": 16, "exit": 0}
+{"group": "compact-k32-v1-bounded", "passing_cap": 16}
+{"name": "compact-k32-v2-small-16g", "cap": 16, "exit": 2}
+{"name": "compact-k32-v2-small-32g", "cap": 32, "exit": 0}
+{"group": "compact-k32-v2-small", "passing_cap": 32}
+{"name": "compact-k64-v1-stock-16g", "cap": 16, "exit": 2}
+{"name": "compact-k64-v1-stock-32g", "cap": 32, "exit": 0}
+{"group": "compact-k64-v1-stock", "passing_cap": 32}
+{"name": "compact-k64-v1-bounded-16g", "cap": 16, "exit": 0}
+{"group": "compact-k64-v1-bounded", "passing_cap": 16}
+{"name": "compact-k64-v2-small-16g", "cap": 16, "exit": 2}
+{"name": "compact-k64-v2-small-32g", "cap": 32, "exit": 0}
+{"group": "compact-k64-v2-small", "passing_cap": 32}
+{"name": "compact-k106-v1-stock-16g", "cap": 16, "exit": 2}
+{"name": "compact-k106-v1-stock-32g", "cap": 32, "exit": 0}
+{"group": "compact-k106-v1-stock", "passing_cap": 32}
+{"name": "compact-k106-v1-stock-32g-r2", "cap": 32, "exit": 0}
+{"name": "compact-k106-v1-stock-32g-r3", "cap": 32, "exit": 0}
+{"name": "compact-k106-v1-bounded-16g", "cap": 16, "exit": 0}
+{"group": "compact-k106-v1-bounded", "passing_cap": 16}
+{"name": "compact-k106-v1-bounded-16g-r2", "cap": 16, "exit": 0}
+{"name": "compact-k106-v1-bounded-16g-r3", "cap": 16, "exit": 0}
+{"name": "compact-k106-v2-small-16g", "cap": 16, "exit": 2}
+{"name": "compact-k106-v2-small-32g", "cap": 32, "exit": 0}
+{"group": "compact-k106-v2-small", "passing_cap": 32}
+{"name": "compact-k106-v2-small-32g-r2", "cap": 32, "exit": 0}
+{"name": "compact-k106-v2-small-32g-r3", "cap": 32, "exit": 0}
+{"name": "compact-k0-v2-small-32g-r2b", "cap": 32, "exit": 0, "note": "repeat 2 OOMed at 16 GiB (peak 15.8-15.9 GiB); rerun at 32"}
+{"name": "compact-k106-v2-cairo-only-16g", "cap": 16, "exit": 2}
+{"name": "compact-k106-v2-cairo-only-32g", "cap": 32, "exit": 0}
+{"group": "compact-k106-v2-cairo-only", "passing_cap": 32}
+{"name": "compact-k106-v2-recursion", "exit": 0}
+{"name": "qm31-k106-v2-cairo-only-16g", "cap": 16, "exit": 2}
+{"name": "qm31-k106-v2-cairo-only-32g", "cap": 32, "exit": 0}
+{"group": "qm31-k106-v2-cairo-only", "passing_cap": 32}
+{"name": "qm31-k106-v2-recursion", "exit": 0}
+{"name": "qm31-k106-v2-recursive-u2-negative", "exit": 0}
+{"name": "qm31_compact-k106-v2-cairo-only-16g", "cap": 16, "exit": 2}
+{"name": "qm31_compact-k106-v2-cairo-only-32g", "cap": 32, "exit": 0}
+{"group": "qm31_compact-k106-v2-cairo-only", "passing_cap": 32}
+{"name": "qm31_compact-k106-v2-recursion", "exit": 0}
+{"name": "qm31_compact-k106-v2-recursive-u2-negative", "exit": 0}
+{"name": "scaling-compact-k106-recursive-t1", "exit": 0}
+{"name": "scaling-qm31-k106-cairo-only-t1", "exit": 0}
+{"name": "scaling-compact-k106-recursive-t4", "exit": 0}
+{"name": "scaling-qm31-k106-cairo-only-t4", "exit": 0}
+{"name": "scaling-compact-k106-recursive-t8", "exit": 0}
+{"name": "scaling-qm31-k106-cairo-only-t8", "exit": 0}
+{"name": "scaling-compact-k106-recursive-t16", "exit": 0}
+{"name": "scaling-qm31-k106-cairo-only-t16", "exit": 0}

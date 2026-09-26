@@ -1,0 +1,51 @@
+{
+  "name": "compact-k106-v2-cairo-only-16g",
+  "mode": "cairo-only",
+  "cap_gib": 16,
+  "cpus": "0 1 2 3",
+  "threads": 4,
+  "swap": 0,
+  "pie": "/home/broody/.local/share/templar/runs/m31-device-proof1/phase1/compact/k106/os/os.pie.zip",
+  "pie_sha256": "1cfdde9eb7d7ebf3d128af4d3a8b75ae73df049bcd4ddd196b3a554df6fbbf76",
+  "prove_small_sha256": "455c76184151fd5815de9847f9711dc4fecdf499a89b65d8a37748947db5afbf",
+  "exit_code": 1,
+  "wall_seconds": 9.292003651004052,
+  "peak_rss_gib": null,
+  "cgroup_peak_gib": 15.923896789550781,
+  "oom_killed": true,
+  "stages": {
+    "bootloader": {
+      "seconds": 1.272834062576294,
+      "peak_rss_gib": 0.5691413879394531,
+      "rss_at_start_gib": 0.13108062744140625,
+      "samples": 25
+    }
+  },
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-dp1-v2-compact-k106-v2-cairo-only-16g-1790428428204563053",
+    "-p",
+    "MemoryMax=16G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUAffinity=0 1 2 3",
+    "-p",
+    "CPUQuota=400%",
+    "-p",
+    "RuntimeMaxSec=5400",
+    "--setenv=RAYON_NUM_THREADS=4",
+    "--setenv=TOKIO_WORKER_THREADS=4",
+    "/usr/bin/time",
+    "-v",
+    "/home/broody/development/templar/target/m31-device-proof1/bin/prove-small",
+    "cairo-only",
+    "/home/broody/.local/share/templar/runs/m31-device-proof1/phase1/compact/k106/os/os.pie.zip",
+    "/home/broody/.local/share/templar/runs/m31-device-proof1/v2/compact-k106-v2-cairo-only-16g"
+  ],
+  "error_lines": [],
+  "status": "oom"
+}

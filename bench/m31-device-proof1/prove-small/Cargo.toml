@@ -1,0 +1,37 @@
+[package]
+name = "prove-small"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+description = "Device-proving spike: the V2 small (log20) privacy path on a virtual-OS PIE (trace, Cairo stage, recursive proof, verification)"
+publish = false
+
+# Path dependencies on the proving worktree the prover server pins (`target/proving-server`,
+# broody/proving b54ed94f8 = starkware-libs/proving@2b495a3 plus bounded-memory patches that leave
+# the small path's functions unchanged). Cargo.lock is seeded from that worktree's lockfile.
+# Build: RUSTUP_TOOLCHAIN=nightly-2026-01-15 RUSTFLAGS="-C target-cpu=native"
+#        CARGO_TARGET_DIR=target/m31-device-proof1/prove-small-target cargo build --release --offline
+[dependencies]
+privacy-prove = { path = "../../../target/proving-server/crates/privacy_prove" }
+privacy-circuit-verify = { path = "../../../target/proving-server/crates/privacy_circuit_verify" }
+cairo-program-runner-lib = { path = "../../../target/proving-server/crates/cairo-program-runner-lib" }
+stwo-cairo-adapter = { path = "../../../target/proving-server/crates/adapter" }
+stwo-cairo-prover = { path = "../../../target/proving-server/crates/prover" }
+stwo-cairo-common = { path = "../../../target/proving-server/crates/common" }
+cairo-air = { path = "../../../target/proving-server/crates/cairo-air" }
+circuit-cairo-verifier = { path = "../../../target/proving-server/crates/cairo_verifier" }
+circuit-common = { path = "../../../target/proving-server/crates/circuit_common" }
+circuit-prover = { path = "../../../target/proving-server/crates/circuit_prover" }
+circuit-serialize = { path = "../../../target/proving-server/crates/circuit_serialize" }
+circuits = { path = "../../../target/proving-server/crates/circuits" }
+stwo = { path = "../../../target/proving-server/crates/stwo", features = ["parallel"] }
+zstd = "0.13"
+cairo-vm = { version = "3.2.0", features = ["extensive_hints", "mod_builtin", "clap"], default-features = false }
+starknet-types-core = { version = "=0.2.4", features = ["hash", "prime-bigint", "serde", "curve", "num-traits"] }
+serde_json = "1.0.142"
+tempfile = "3.10.1"
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["fmt", "env-filter"] }
+
+[profile.release]
+debug = false

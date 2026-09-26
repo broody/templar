@@ -1,0 +1,224 @@
+[
+  {
+    "metric": "V1 stock, 589,958-step fixture: virtual-OS steps",
+    "measured": [
+      589958,
+      589958,
+      589958
+    ],
+    "measured_mean": 589958.0,
+    "reference": 589958,
+    "reference_source": "bench/m31-private-wrapper/results/outer-blake-v1-cap32 (2026-09-22)",
+    "deviation": 0.0,
+    "note": ""
+  },
+  {
+    "metric": "V1 stock: OS stage seconds",
+    "measured": [
+      0.738,
+      0.697,
+      0.719
+    ],
+    "measured_mean": 0.718,
+    "reference": 0.79,
+    "reference_source": "bench/m31-private-wrapper/results/outer-blake-v1-cap32 (2026-09-22)",
+    "deviation": -0.0911392405063292,
+    "note": ""
+  },
+  {
+    "metric": "V1 stock: proving stage seconds",
+    "measured": [
+      27.346,
+      27.442,
+      27.969
+    ],
+    "measured_mean": 27.58566666666667,
+    "reference": 27.419,
+    "reference_source": "bench/m31-private-wrapper/results/outer-blake-v1-cap32 (2026-09-22)",
+    "deviation": 0.0060785100356201115,
+    "note": ""
+  },
+  {
+    "metric": "V1 stock: request seconds",
+    "measured": [
+      28.09582884097472,
+      28.147323668992613,
+      28.705429639987415
+    ],
+    "measured_mean": 28.316194049984915,
+    "reference": 28.22324288499658,
+    "reference_source": "bench/m31-private-wrapper/results/outer-blake-v1-cap32 (2026-09-22)",
+    "deviation": 0.0032934261086541503,
+    "note": ""
+  },
+  {
+    "metric": "V1 stock: peak RSS GiB (VmHWM)",
+    "measured": [
+      30.384254455566406,
+      29.964527130126953,
+      30.102203369140625
+    ],
+    "measured_mean": 30.150328318277996,
+    "reference": 29.051921844482422,
+    "reference_source": "bench/m31-private-wrapper/results/outer-blake-v1-cap32 (2026-09-22)",
+    "deviation": 0.03780839283801753,
+    "note": ""
+  },
+  {
+    "metric": "V1 stock: cgroup peak GiB",
+    "measured": [
+      30.343917846679688,
+      29.92266082763672,
+      30.06043243408203
+    ],
+    "measured_mean": 30.10900370279948,
+    "reference": 29.01197052001953,
+    "reference_source": "bench/m31-private-wrapper/results/outer-blake-v1-cap32 (2026-09-22)",
+    "deviation": 0.03781312207052424,
+    "note": ""
+  },
+  {
+    "metric": "V1 stock: proof bytes",
+    "measured": [
+      225362,
+      225362,
+      225362
+    ],
+    "measured_mean": 225362.0,
+    "reference": 225362,
+    "reference_source": "bench/m31-private-wrapper/results/outer-blake-v1-cap32 (2026-09-22)",
+    "deviation": 0.0,
+    "note": ""
+  },
+  {
+    "metric": "V1 stock: proof byte-identical to archive",
+    "measured": [
+      true,
+      true,
+      true
+    ],
+    "measured_mean": 1.0,
+    "reference": true,
+    "reference_source": "bench/m31-private-wrapper/results/outer-blake-v1-cap32 (2026-09-22)",
+    "deviation": 0.0,
+    "note": ""
+  },
+  {
+    "metric": "V1 stock: local verification ms",
+    "measured": [
+      148,
+      155,
+      154
+    ],
+    "measured_mean": 152.33333333333334,
+    "reference": 159,
+    "reference_source": "bench/m31-private-wrapper/results/outer-blake-v1-cap32 (2026-09-22)",
+    "deviation": -0.04192872117400413,
+    "note": ""
+  },
+  {
+    "metric": "V1 bounded (16/16 columns), same fixture: peak RSS GiB",
+    "measured": [
+      16.219707489013672
+    ],
+    "measured_mean": 16.219707489013672,
+    "reference": null,
+    "reference_source": "no archived bounded run of this fixture",
+    "deviation": null,
+    "note": "ratio to stock mean 0.538; plan expects 0.43-0.63; ordinary spend reference 5.69/9.00 = 0.63 (bench/bounded-memory)"
+  },
+  {
+    "metric": "V1 bounded: proving stage seconds",
+    "measured": [
+      48.257
+    ],
+    "measured_mean": 48.257,
+    "reference": null,
+    "reference_source": "no archived bounded run of this fixture",
+    "deviation": null,
+    "note": "ratio to stock mean 1.749; ordinary spend reference 23.07/16.74 = 1.38"
+  },
+  {
+    "metric": "V1 bounded: proof byte-identical to archive",
+    "measured": [
+      true
+    ],
+    "measured_mean": 1.0,
+    "reference": true,
+    "reference_source": "bench/m31-private-wrapper/results/outer-blake-v1-cap32 (2026-09-22)",
+    "deviation": 0.0,
+    "note": ""
+  },
+  {
+    "metric": "V2 small, same 589,958-step PIE: proving seconds",
+    "measured": [
+      27.012891733,
+      26.998207869
+    ],
+    "measured_mean": 27.005549801,
+    "reference": 27.58566666666667,
+    "reference_source": "V1 stock on the same workload (this phase)",
+    "deviation": -0.021029648211027496,
+    "note": ""
+  },
+  {
+    "metric": "V2 small, same PIE: peak RSS GiB",
+    "measured": [
+      29.202106475830078,
+      28.87533950805664
+    ],
+    "measured_mean": 29.03872299194336,
+    "reference": 30.150328318277996,
+    "reference_source": "V1 stock on the same workload (this phase)",
+    "deviation": -0.03686876357033729,
+    "note": ""
+  },
+  {
+    "metric": "V2 small, same PIE: proof bytes",
+    "measured": [
+      229577,
+      229577
+    ],
+    "measured_mean": 229577.0,
+    "reference": null,
+    "reference_source": "",
+    "deviation": null,
+    "note": "verified, 3 rejections; deterministic across runs"
+  },
+  {
+    "metric": "V2 small, StarkWare sample tx (275,933 steps): proving seconds",
+    "measured": [
+      11.863880168,
+      11.906889688
+    ],
+    "measured_mean": 11.885384928,
+    "reference": 11.199,
+    "reference_source": "ADR-0018 V2 ordinary 2/2/1 (103,294 OS steps, older proving revision)",
+    "deviation": 0.06128984087864994,
+    "note": "different workload: the 2/2/1 private request lived in /tmp and was wiped"
+  },
+  {
+    "metric": "V2 small, StarkWare sample: peak RSS GiB",
+    "measured": [
+      13.09375,
+      13.5535888671875
+    ],
+    "measured_mean": 13.32366943359375,
+    "reference": 14.219856262207031,
+    "reference_source": "ADR-0018 V2 ordinary 2/2/1",
+    "deviation": -0.0630236207798479,
+    "note": "different workload (see above)"
+  },
+  {
+    "metric": "V2 small, StarkWare sample: proof bytes",
+    "measured": [
+      236403,
+      236403
+    ],
+    "measured_mean": 236403.0,
+    "reference": 231955,
+    "reference_source": "ADR-0018 V2 ordinary 2/2/1",
+    "deviation": 0.019176133301718006,
+    "note": "different workload"
+  }
+]

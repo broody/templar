@@ -1,0 +1,94 @@
+{
+  "name": "scaling-compact-k106-recursive-t16",
+  "mode": "recursive",
+  "cap_gib": 32,
+  "cpus": "0-15",
+  "threads": 16,
+  "swap": 0,
+  "pie": "/home/broody/.local/share/templar/runs/m31-device-proof1/phase1/compact/k106/os/os.pie.zip",
+  "pie_sha256": "1cfdde9eb7d7ebf3d128af4d3a8b75ae73df049bcd4ddd196b3a554df6fbbf76",
+  "prove_small_sha256": "455c76184151fd5815de9847f9711dc4fecdf499a89b65d8a37748947db5afbf",
+  "exit_code": 0,
+  "wall_seconds": 12.006191133987159,
+  "peak_rss_gib": 23.278648376464844,
+  "cgroup_peak_gib": 23.297653198242188,
+  "oom_killed": false,
+  "stages": {
+    "bootloader": {
+      "seconds": 1.198396921157837,
+      "peak_rss_gib": 2.8594589233398438,
+      "rss_at_start_gib": 2.4293441772460938,
+      "samples": 23
+    },
+    "cairo": {
+      "seconds": 5.364124059677124,
+      "peak_rss_gib": 22.523574829101562,
+      "rss_at_start_gib": 2.6476402282714844,
+      "samples": 106
+    },
+    "recursion": {
+      "seconds": 2.5280230045318604,
+      "peak_rss_gib": 23.142807006835938,
+      "rss_at_start_gib": 20.436180114746094,
+      "samples": 50
+    }
+  },
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-dp1-v2-scaling-compact-k106-recursive-t16-1790428754030348382",
+    "-p",
+    "MemoryMax=32G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUAffinity=0-15",
+    "-p",
+    "CPUQuota=1600%",
+    "-p",
+    "RuntimeMaxSec=5400",
+    "--setenv=RAYON_NUM_THREADS=16",
+    "--setenv=TOKIO_WORKER_THREADS=16",
+    "/usr/bin/time",
+    "-v",
+    "/home/broody/development/templar/target/m31-device-proof1/bin/prove-small",
+    "recursive",
+    "/home/broody/.local/share/templar/runs/m31-device-proof1/phase1/compact/k106/os/os.pie.zip",
+    "/home/broody/.local/share/templar/runs/m31-device-proof1/v2/scaling-compact-k106-recursive-t16"
+  ],
+  "error_lines": [],
+  "kind": "recursive",
+  "precompute_seconds": 0.994243219,
+  "proof_bytes": 227440,
+  "prove_seconds": 9.676686963,
+  "proof_sha256": "16233de8b26980a89abdc3aefcc4056e272f4564ebade3f64423b5c5e9a5226f",
+  "output_preimage": [
+    "0x1",
+    "0x8",
+    "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+    "0x5649525455414c5f534e4f5330",
+    "0x64",
+    "0x230690966ce71c9778f0895901a55407db93c517d35261bb2b8b85ae357b2e2",
+    "0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57",
+    "0x1",
+    "0x4b7a451dd23bf5274e3f8faab6d7ab28029aafff2f8a53d2a39bcd0557c3906"
+  ],
+  "message_matches_capture": true,
+  "verify": {
+    "controls": {
+      "changed_output_rejected": true,
+      "flipped_byte_rejected": true,
+      "truncated_rejected": true
+    },
+    "error": null,
+    "kind": "recursive",
+    "passed": true,
+    "valid": true,
+    "verify_seconds": 0.124180215
+  },
+  "verify_exit_code": 0,
+  "verify_peak_rss_gib": 0.1201019287109375,
+  "status": "passed"
+}

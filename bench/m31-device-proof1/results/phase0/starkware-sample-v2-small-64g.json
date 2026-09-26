@@ -1,0 +1,728 @@
+{
+  "name": "starkware-sample-v2-small-64g",
+  "mode": "recursive",
+  "cap_gib": 64,
+  "cores": "CPUAffinity 0-3",
+  "swap": 0,
+  "pie": "/home/broody/development/templar/target/proving-server/crates/privacy_prove/test_data/privacy_tx_cairo_pie.zip",
+  "pie_sha256": "9e193692b3f2f26a21dd04f11ca5b44cfb618fdf49d8a042d2030d3c2f9ba354",
+  "prove_small_sha256": "d3b74e6308a5fbec0ef6ea7b4d5883067aaeccab78e4f04cfaacd5f97be4fa31",
+  "exit_code": 0,
+  "wall_seconds": 13.637890110985609,
+  "peak_rss_gib": 13.09375,
+  "oom_killed": false,
+  "spans": [
+    {
+      "span": "prepare_privacy_recursiveprover_precomputes:Extension: stwo::prover::pcs",
+      "busy_s": 0.0813,
+      "idle_s": 3.5099999999999994e-06
+    },
+    {
+      "span": "prepare_privacy_recursiveprover_precomputes:Merkle: stwo::prover::pcs",
+      "busy_s": 0.199,
+      "idle_s": 2.27e-06
+    },
+    {
+      "span": "prepare_privacy_recursiveprover_precomputes:Extension: stwo::prover::pcs",
+      "busy_s": 0.154,
+      "idle_s": 3.64e-06
+    },
+    {
+      "span": "prepare_privacy_recursiveprover_precomputes:Merkle: stwo::prover::pcs",
+      "busy_s": 0.222,
+      "idle_s": 3.02e-06
+    },
+    {
+      "span": "prepare_privacy_recursiveprover_precomputes: privacy_prove",
+      "busy_s": 1.36,
+      "idle_s": 2.71e-06
+    },
+    {
+      "span": "privacy_recursive_prove:get_prover_input:cairo_run_program:cairo run: cairo_vm::cairo_run",
+      "busy_s": 0.0724,
+      "idle_s": 1.69e-06
+    },
+    {
+      "span": "privacy_recursive_prove:get_prover_input:cairo_run_program: cairo_program_runner_lib",
+      "busy_s": 0.0724,
+      "idle_s": 7.280000000000001e-07
+    },
+    {
+      "span": "privacy_recursive_prove:get_prover_input:adapt:pad_relocatble_builtin_segments: stwo_cairo_adapter::builtins",
+      "busy_s": 0.00028199999999999997,
+      "idle_s": 2.1899999999999998e-06
+    },
+    {
+      "span": "privacy_recursive_prove:get_prover_input:adapt:Relocator::new: stwo_cairo_adapter::relocator",
+      "busy_s": 1.34e-06,
+      "idle_s": 3.08e-07
+    },
+    {
+      "span": "privacy_recursive_prove:get_prover_input:adapt:get_relocated_memory: stwo_cairo_adapter::relocator",
+      "busy_s": 0.00906,
+      "idle_s": 1.09e-06
+    },
+    {
+      "span": "privacy_recursive_prove:get_prover_input:adapt:relocate_trace: stwo_cairo_adapter::relocator",
+      "busy_s": 0.00252,
+      "idle_s": 7.960000000000001e-07
+    },
+    {
+      "span": "privacy_recursive_prove:get_prover_input:adapt:get_builtin_segments: stwo_cairo_adapter::relocator",
+      "busy_s": 5.660000000000001e-07,
+      "idle_s": 2.9000000000000003e-07
+    },
+    {
+      "span": "privacy_recursive_prove:get_prover_input:adapt:relocate_public_addresses: stwo_cairo_adapter::relocator",
+      "busy_s": 7.83e-06,
+      "idle_s": 2.1700000000000002e-07
+    },
+    {
+      "span": "privacy_recursive_prove:get_prover_input:adapt:MemoryBuilder::from_iter: stwo_cairo_adapter::memory",
+      "busy_s": 0.020399999999999998,
+      "idle_s": 1.24e-06
+    },
+    {
+      "span": "privacy_recursive_prove:get_prover_input:adapt:StateTransitions::from_slice_parallel: stwo_cairo_adapter::opcodes",
+      "busy_s": 0.0137,
+      "idle_s": 2.44e-06
+    },
+    {
+      "span": "privacy_recursive_prove:get_prover_input:adapt: stwo_cairo_adapter::adapter",
+      "busy_s": 0.050100000000000006,
+      "idle_s": 5.210000000000001e-07
+    },
+    {
+      "span": "privacy_recursive_prove:get_prover_input: privacy_prove",
+      "busy_s": 0.128,
+      "idle_s": 1.33e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Write Base trace: stwo_cairo_prover::prover",
+      "busy_s": 0.376,
+      "idle_s": 3.25e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Compute base trace commitment:Interpolation for commitment: stwo::prover::pcs",
+      "busy_s": 0.0476,
+      "idle_s": 2.1099999999999997e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Compute base trace commitment:Commitment:Commitment:Extension: stwo::prover::pcs",
+      "busy_s": 0.553,
+      "idle_s": 4.28e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Compute base trace commitment:Commitment:Commitment:Merkle: stwo::prover::pcs",
+      "busy_s": 0.425,
+      "idle_s": 3.06e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Compute base trace commitment:Commitment:Commitment: stwo::prover::pcs",
+      "busy_s": 0.978,
+      "idle_s": 1.6999999999999998e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Compute base trace commitment:Commitment: stwo::prover::pcs",
+      "busy_s": 0.978,
+      "idle_s": 7.580000000000001e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Compute base trace commitment: stwo_cairo_prover::prover",
+      "busy_s": 1.03,
+      "idle_s": 1.2499999999999999e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Write interaction trace: stwo_cairo_prover::prover",
+      "busy_s": 0.197,
+      "idle_s": 2.74e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Compute interaction trace commitment:Interpolation for commitment: stwo::prover::pcs",
+      "busy_s": 0.0616,
+      "idle_s": 2.8099999999999998e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Compute interaction trace commitment:Commitment:Commitment:Extension: stwo::prover::pcs",
+      "busy_s": 0.657,
+      "idle_s": 3.8599999999999995e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Compute interaction trace commitment:Commitment:Commitment:Merkle: stwo::prover::pcs",
+      "busy_s": 0.499,
+      "idle_s": 3e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Compute interaction trace commitment:Commitment:Commitment: stwo::prover::pcs",
+      "busy_s": 1.16,
+      "idle_s": 4.78e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Compute interaction trace commitment:Commitment: stwo::prover::pcs",
+      "busy_s": 1.16,
+      "idle_s": 6.29e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Compute interaction trace commitment: stwo_cairo_prover::prover",
+      "busy_s": 1.22,
+      "idle_s": 9.910000000000001e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0287,
+      "idle_s": 1.85e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0245,
+      "idle_s": 2.54e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.004,
+      "idle_s": 1.4099999999999998e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.00143,
+      "idle_s": 8.030000000000001e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.00542,
+      "idle_s": 1.26e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0304,
+      "idle_s": 1.73e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0096,
+      "idle_s": 1.8e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 7.809999999999999e-05,
+      "idle_s": 6.43e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.00135,
+      "idle_s": 4.32e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0009419999999999999,
+      "idle_s": 4.64e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.009800000000000001,
+      "idle_s": 1.2499999999999999e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 5.5599999999999996e-05,
+      "idle_s": 5.91e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 5.46e-05,
+      "idle_s": 3.54e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 4.6e-05,
+      "idle_s": 3.2e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.00332,
+      "idle_s": 9.660000000000002e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0162,
+      "idle_s": 1.0299999999999999e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0052699999999999995,
+      "idle_s": 1.2099999999999998e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.000851,
+      "idle_s": 6.3e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0008139999999999999,
+      "idle_s": 5.58e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0639,
+      "idle_s": 2.21e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.115,
+      "idle_s": 3.0899999999999996e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 4.15e-05,
+      "idle_s": 9.46e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.00787,
+      "idle_s": 4.86e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.378,
+      "idle_s": 3.0399999999999997e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.000203,
+      "idle_s": 6.43e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 4.7e-05,
+      "idle_s": 5.520000000000001e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 5.27e-05,
+      "idle_s": 3.59e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.00214,
+      "idle_s": 5.660000000000001e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 8.709999999999999e-05,
+      "idle_s": 4.6500000000000005e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.00617,
+      "idle_s": 1.06e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0067599999999999995,
+      "idle_s": 5.85e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.000144,
+      "idle_s": 5.490000000000001e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.00183,
+      "idle_s": 8.81e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.00035099999999999997,
+      "idle_s": 5.29e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0162,
+      "idle_s": 1.24e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 2.9999999999999997e-05,
+      "idle_s": 5.26e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.00261,
+      "idle_s": 4.3400000000000005e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.011300000000000001,
+      "idle_s": 4.92e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0030299999999999997,
+      "idle_s": 5.15e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0216,
+      "idle_s": 8.97e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 2.23e-05,
+      "idle_s": 5.3e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 3.31e-05,
+      "idle_s": 3.32e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.00015099999999999998,
+      "idle_s": 4.3400000000000005e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.00026199999999999997,
+      "idle_s": 3.66e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.018600000000000002,
+      "idle_s": 9.600000000000001e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.198,
+      "idle_s": 2.43e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 3.64e-05,
+      "idle_s": 6.790000000000001e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 4.72e-05,
+      "idle_s": 3.49e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0506,
+      "idle_s": 2.22e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0011200000000000001,
+      "idle_s": 1.34e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0174,
+      "idle_s": 6.53e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.004200000000000001,
+      "idle_s": 1.09e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0022,
+      "idle_s": 1.2099999999999998e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 3.64e-05,
+      "idle_s": 5.09e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0010600000000000002,
+      "idle_s": 3.42e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.00561,
+      "idle_s": 6.140000000000001e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0165,
+      "idle_s": 1.04e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraints interpolation{class=\"ConstraintInterpolation\"}: stwo::prover::air::accumulation",
+      "busy_s": 0.0151,
+      "idle_s": 2.09e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}: stwo::prover",
+      "busy_s": 1.13,
+      "idle_s": 7.16e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Commitment:Commitment:Extension: stwo::prover::pcs",
+      "busy_s": 0.0719,
+      "idle_s": 2.6499999999999996e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Commitment:Commitment:Merkle: stwo::prover::pcs",
+      "busy_s": 0.19,
+      "idle_s": 2.36e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Commitment:Commitment: stwo::prover::pcs",
+      "busy_s": 0.262,
+      "idle_s": 5.09e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}:Commitment: stwo::prover::pcs",
+      "busy_s": 0.262,
+      "idle_s": 2.08e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Composition{class=\"Composition\"}: stwo::prover",
+      "busy_s": 1.4,
+      "idle_s": 5.43e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Evaluate columns out of domain{class=\"EvaluateOutOfDomain\"}: stwo::prover::pcs",
+      "busy_s": 0.0502,
+      "idle_s": 2.92e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Compute FRI quotients{class=\"FRIQuotients\"}: stwo::prover::pcs::quotient_ops",
+      "busy_s": 0.167,
+      "idle_s": 2.22e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:commit: stwo::prover::fri",
+      "busy_s": 0.133,
+      "idle_s": 2.8999999999999998e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex:Grind{class=\"Queries POW\"}: stwo::prover::pcs",
+      "busy_s": 0.902,
+      "idle_s": 1.89e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs:prove_ex: stwo::prover",
+      "busy_s": 2.79,
+      "idle_s": 1.2299999999999999e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo:Prove STARKs: stwo_cairo_prover::prover",
+      "busy_s": 2.79,
+      "idle_s": 1.2299999999999999e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_cairo: stwo_cairo_prover::prover",
+      "busy_s": 5.69,
+      "idle_s": 7.990000000000001e-07
+    },
+    {
+      "span": "privacy_recursive_prove:Commitment:Commitment:Extension: stwo::prover::pcs",
+      "busy_s": 0.398,
+      "idle_s": 2.4199999999999997e-06
+    },
+    {
+      "span": "privacy_recursive_prove:Commitment:Commitment:Merkle: stwo::prover::pcs",
+      "busy_s": 0.37,
+      "idle_s": 2.35e-06
+    },
+    {
+      "span": "privacy_recursive_prove:Commitment:Commitment: stwo::prover::pcs",
+      "busy_s": 0.768,
+      "idle_s": 5.03e-07
+    },
+    {
+      "span": "privacy_recursive_prove:Commitment: stwo::prover::pcs",
+      "busy_s": 0.768,
+      "idle_s": 1.1699999999999998e-06
+    },
+    {
+      "span": "privacy_recursive_prove:Commitment:Commitment:Extension: stwo::prover::pcs",
+      "busy_s": 0.44,
+      "idle_s": 2.14e-06
+    },
+    {
+      "span": "privacy_recursive_prove:Commitment:Commitment:Merkle: stwo::prover::pcs",
+      "busy_s": 0.378,
+      "idle_s": 2.8e-06
+    },
+    {
+      "span": "privacy_recursive_prove:Commitment:Commitment: stwo::prover::pcs",
+      "busy_s": 0.8180000000000001,
+      "idle_s": 5.88e-07
+    },
+    {
+      "span": "privacy_recursive_prove:Commitment: stwo::prover::pcs",
+      "busy_s": 0.8180000000000001,
+      "idle_s": 1.4099999999999998e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0115,
+      "idle_s": 1.4499999999999999e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.379,
+      "idle_s": 3.0799999999999997e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0389,
+      "idle_s": 2.43e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0363,
+      "idle_s": 2.71e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.608,
+      "idle_s": 3.1699999999999997e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0052699999999999995,
+      "idle_s": 1.06e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.385,
+      "idle_s": 2.32e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 8.409999999999998e-05,
+      "idle_s": 8.97e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.00114,
+      "idle_s": 5.6e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.017,
+      "idle_s": 1.18e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraint point-wise eval{class=\"ConstraintEval\"}: stwo_constraint_framework::prover::component_prover",
+      "busy_s": 0.0039900000000000005,
+      "idle_s": 8.930000000000001e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}:Constraints interpolation{class=\"ConstraintInterpolation\"}: stwo::prover::air::accumulation",
+      "busy_s": 0.0345,
+      "idle_s": 1.86e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Generation{class=\"CompositionPolynomialGeneration\"}: stwo::prover",
+      "busy_s": 1.55,
+      "idle_s": 5.44e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Commitment:Commitment:Extension: stwo::prover::pcs",
+      "busy_s": 0.0643,
+      "idle_s": 2.52e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Commitment:Commitment:Merkle: stwo::prover::pcs",
+      "busy_s": 0.184,
+      "idle_s": 2.8199999999999997e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Commitment:Commitment: stwo::prover::pcs",
+      "busy_s": 0.248,
+      "idle_s": 4.47e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}:Commitment: stwo::prover::pcs",
+      "busy_s": 0.248,
+      "idle_s": 1.95e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Composition{class=\"Composition\"}: stwo::prover",
+      "busy_s": 1.81,
+      "idle_s": 7.830000000000001e-07
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Evaluate columns out of domain{class=\"EvaluateOutOfDomain\"}: stwo::prover::pcs",
+      "busy_s": 0.06770000000000001,
+      "idle_s": 1.5199999999999998e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Compute FRI quotients{class=\"FRIQuotients\"}: stwo::prover::pcs::quotient_ops",
+      "busy_s": 0.222,
+      "idle_s": 2.7299999999999997e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:commit: stwo::prover::fri",
+      "busy_s": 0.151,
+      "idle_s": 2.56e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex:Grind{class=\"Queries POW\"}: stwo::prover::pcs",
+      "busy_s": 0.258,
+      "idle_s": 2.5099999999999997e-06
+    },
+    {
+      "span": "privacy_recursive_prove:prove_ex: stwo::prover",
+      "busy_s": 2.64,
+      "idle_s": 2.4100000000000002e-06
+    },
+    {
+      "span": "privacy_recursive_prove: privacy_prove",
+      "busy_s": 11.4,
+      "idle_s": 1.95e-06
+    }
+  ],
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-dp1-v2-starkware-sample-v2-small-64g-1790425568217600355",
+    "-p",
+    "MemoryMax=64G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUAffinity=0 1 2 3",
+    "-p",
+    "RuntimeMaxSec=1800",
+    "--setenv=RAYON_NUM_THREADS=4",
+    "--setenv=TOKIO_WORKER_THREADS=4",
+    "/usr/bin/time",
+    "-v",
+    "/home/broody/development/templar/target/m31-device-proof1/bin/prove-small",
+    "recursive",
+    "/home/broody/development/templar/target/proving-server/crates/privacy_prove/test_data/privacy_tx_cairo_pie.zip",
+    "/home/broody/.local/share/templar/runs/m31-device-proof1/v2/starkware-sample-v2-small-64g"
+  ],
+  "kind": "recursive",
+  "precompute_seconds": 1.358163287,
+  "proof_bytes": 236403,
+  "prove_seconds": 11.863880168,
+  "proof_sha256": "3c5e3f77821f6a9d6b8c2d6600e1680da81ac125eb5a44cde54740b2a394cd1a",
+  "verify": {
+    "controls": {
+      "changed_output_rejected": true,
+      "flipped_byte_rejected": true,
+      "truncated_rejected": true
+    },
+    "error": null,
+    "kind": "recursive",
+    "passed": true,
+    "valid": true,
+    "verify_seconds": 0.12053079
+  },
+  "verify_exit_code": 0,
+  "verify_peak_rss_gib": 0.12311553955078125
+}

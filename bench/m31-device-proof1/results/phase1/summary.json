@@ -1,0 +1,1051 @@
+{
+  "rows": [
+    {
+      "variant": "compact",
+      "k": 0,
+      "jobs": 0,
+      "nodes": 0,
+      "os_steps": 338014,
+      "total_steps": 537414,
+      "account_steps": 29864,
+      "blake": 4409,
+      "blake_os": 2495,
+      "poseidon": 626,
+      "hashed_felts": 18802,
+      "executed_felts": 2809,
+      "casm_felts": 28777,
+      "calldata": 1093,
+      "largest_v2": [
+        "blake_g:19",
+        "memory_id_to_small:18",
+        "assert_eq_opcode_double_deref:18",
+        "range_check_252_width_27:17"
+      ],
+      "max_log_v2": 19,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 66519,
+      "mul_opcode_rows": 8636,
+      "memory_rows": {
+        "addresses": 614196,
+        "f252_values": 13712,
+        "small_values": 155677
+      },
+      "not_in_small_path": [],
+      "S1_pass": true,
+      "binding": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d"
+    },
+    {
+      "variant": "compact",
+      "k": 8,
+      "jobs": 6,
+      "nodes": 0,
+      "os_steps": 589050,
+      "total_steps": 788450,
+      "account_steps": 142012,
+      "blake": 5666,
+      "blake_os": 3752,
+      "poseidon": 626,
+      "hashed_felts": 27230,
+      "executed_felts": 6842,
+      "casm_felts": 28777,
+      "calldata": 1093,
+      "largest_v2": [
+        "blake_g:19",
+        "memory_id_to_small:18",
+        "assert_eq_opcode_double_deref:18",
+        "add_opcode_small:18"
+      ],
+      "max_log_v2": 19,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 122043,
+      "mul_opcode_rows": 18554,
+      "memory_rows": {
+        "addresses": 905665,
+        "f252_values": 23967,
+        "small_values": 243178
+      },
+      "not_in_small_path": [],
+      "S1_pass": true,
+      "binding": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d"
+    },
+    {
+      "variant": "compact",
+      "k": 16,
+      "jobs": 10,
+      "nodes": 0,
+      "os_steps": 701658,
+      "total_steps": 901058,
+      "account_steps": 254620,
+      "blake": 5666,
+      "blake_os": 3752,
+      "poseidon": 626,
+      "hashed_felts": 27230,
+      "executed_felts": 7006,
+      "casm_felts": 28777,
+      "calldata": 1093,
+      "largest_v2": [
+        "memory_id_to_small:19",
+        "blake_g:19",
+        "assert_eq_opcode_double_deref:18",
+        "add_opcode_small:18"
+      ],
+      "max_log_v2": 19,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 160881,
+      "mul_opcode_rows": 26933,
+      "memory_rows": {
+        "addresses": 1000397,
+        "f252_values": 33415,
+        "small_values": 292765
+      },
+      "not_in_small_path": [],
+      "S1_pass": true,
+      "binding": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d"
+    },
+    {
+      "variant": "compact",
+      "k": 32,
+      "jobs": 15,
+      "nodes": 2,
+      "os_steps": 948401,
+      "total_steps": 1147801,
+      "account_steps": 481817,
+      "blake": 5836,
+      "blake_os": 3922,
+      "poseidon": 626,
+      "hashed_felts": 28416,
+      "executed_felts": 8107,
+      "casm_felts": 28777,
+      "calldata": 1093,
+      "largest_v2": [
+        "memory_id_to_small:19",
+        "blake_g:19",
+        "assert_eq_opcode_double_deref:19",
+        "range_check_builtin:18"
+      ],
+      "max_log_v2": 19,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 240632,
+      "mul_opcode_rows": 44130,
+      "memory_rows": {
+        "addresses": 1340590,
+        "f252_values": 50067,
+        "small_values": 384957
+      },
+      "not_in_small_path": [],
+      "S1_pass": true,
+      "binding": "0x3ff59323ece49e585ae99658ef08b04322d7998790c83c8ea1661e7c2b8d83a"
+    },
+    {
+      "variant": "compact",
+      "k": 64,
+      "jobs": 19,
+      "nodes": 22,
+      "os_steps": 1379745,
+      "total_steps": 1579145,
+      "account_steps": 911276,
+      "blake": 5852,
+      "blake_os": 3938,
+      "poseidon": 626,
+      "hashed_felts": 28523,
+      "executed_felts": 8675,
+      "casm_felts": 28777,
+      "calldata": 1093,
+      "largest_v2": [
+        "memory_id_to_small:20",
+        "blake_g:19",
+        "assert_eq_opcode_double_deref:19",
+        "add_opcode:19"
+      ],
+      "max_log_v2": 20,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 393894,
+      "mul_opcode_rows": 77663,
+      "memory_rows": {
+        "addresses": 1704162,
+        "f252_values": 83374,
+        "small_values": 556816
+      },
+      "not_in_small_path": [],
+      "S1_pass": true,
+      "binding": "0x32bacfbea2e1c2e7e7d6f47fc1d3f4290faf9f0a85054c9c9b9faa8100456f"
+    },
+    {
+      "variant": "compact",
+      "k": 102,
+      "jobs": 19,
+      "nodes": 60,
+      "os_steps": 1868920,
+      "total_steps": 2068320,
+      "account_steps": 1400451,
+      "blake": 5852,
+      "blake_os": 3938,
+      "poseidon": 626,
+      "hashed_felts": 28523,
+      "executed_felts": 8675,
+      "casm_felts": 28777,
+      "calldata": 1093,
+      "largest_v2": [
+        "memory_id_to_small:20",
+        "add_opcode:20",
+        "range_check_builtin:19",
+        "blake_g:19"
+      ],
+      "max_log_v2": 20,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 574575,
+      "mul_opcode_rows": 117482,
+      "memory_rows": {
+        "addresses": 2378910,
+        "f252_values": 128536,
+        "small_values": 785664
+      },
+      "not_in_small_path": [],
+      "S1_pass": true,
+      "binding": "0x9082389ce499f66ab1200a659d164709d70176c684a7744b3313180bd0889b"
+    },
+    {
+      "variant": "compact",
+      "k": 106,
+      "jobs": 19,
+      "nodes": 64,
+      "os_steps": 1920413,
+      "total_steps": 2119813,
+      "account_steps": 1451944,
+      "blake": 5852,
+      "blake_os": 3938,
+      "poseidon": 626,
+      "hashed_felts": 28523,
+      "executed_felts": 8675,
+      "casm_felts": 28777,
+      "calldata": 1093,
+      "largest_v2": [
+        "memory_id_to_small:20",
+        "add_opcode:20",
+        "range_check_builtin:19",
+        "blake_g:19"
+      ],
+      "max_log_v2": 20,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 593569,
+      "mul_opcode_rows": 121666,
+      "memory_rows": {
+        "addresses": 2422342,
+        "f252_values": 133273,
+        "small_values": 809780
+      },
+      "not_in_small_path": [],
+      "S1_pass": true,
+      "binding": "0x6c05d2a1511b94a5f3b8a678f51d508c6f6100d95851cdf1528c1a172268be1"
+    },
+    {
+      "variant": "compact",
+      "k": 128,
+      "jobs": 19,
+      "nodes": 86,
+      "os_steps": 2203619,
+      "total_steps": 2403019,
+      "account_steps": 1735150,
+      "blake": 5852,
+      "blake_os": 3938,
+      "poseidon": 626,
+      "hashed_felts": 28523,
+      "executed_felts": 8675,
+      "casm_felts": 28777,
+      "calldata": 1093,
+      "largest_v2": [
+        "memory_id_to_small:20",
+        "assert_eq_opcode_double_deref:20",
+        "add_opcode:20",
+        "range_check_builtin:19"
+      ],
+      "max_log_v2": 20,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 698105,
+      "mul_opcode_rows": 144697,
+      "memory_rows": {
+        "addresses": 2661218,
+        "f252_values": 159416,
+        "small_values": 942301
+      },
+      "not_in_small_path": [],
+      "S1_pass": true,
+      "binding": "0x627d29002e6b8b7dd9228ea6a24237a390cc9c03d0025d2d90d72a9a7079c28"
+    },
+    {
+      "variant": "unrolled",
+      "k": 0,
+      "jobs": 0,
+      "nodes": 0,
+      "os_steps": 339876,
+      "total_steps": 539276,
+      "account_steps": 29864,
+      "blake": 4423,
+      "blake_os": 2509,
+      "poseidon": 626,
+      "hashed_felts": 18801,
+      "executed_felts": 2809,
+      "casm_felts": 55900,
+      "calldata": 1093,
+      "largest_v2": [
+        "blake_g:19",
+        "memory_id_to_small:18",
+        "assert_eq_opcode_double_deref:18",
+        "range_check_252_width_27:17"
+      ],
+      "max_log_v2": 19,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 66715,
+      "mul_opcode_rows": 8768,
+      "memory_rows": {
+        "addresses": 643135,
+        "f252_values": 13994,
+        "small_values": 156582
+      },
+      "not_in_small_path": [],
+      "S1_pass": true,
+      "binding": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d"
+    },
+    {
+      "variant": "unrolled",
+      "k": 8,
+      "jobs": 6,
+      "nodes": 0,
+      "os_steps": 1038760,
+      "total_steps": 1238160,
+      "account_steps": 136852,
+      "blake": 9888,
+      "blake_os": 7974,
+      "poseidon": 626,
+      "hashed_felts": 54357,
+      "executed_felts": 18362,
+      "casm_felts": 55900,
+      "calldata": 1093,
+      "largest_v2": [
+        "blake_g:20",
+        "memory_id_to_small:19",
+        "assert_eq_opcode_double_deref:19",
+        "add_opcode_small:19"
+      ],
+      "max_log_v2": 20,
+      "max_log_v1": 21,
+      "blake_g_log": {
+        "v1": 21,
+        "v2": 20
+      },
+      "add_opcode_rows": 178289,
+      "mul_opcode_rows": 25102,
+      "memory_rows": {
+        "addresses": 1361729,
+        "f252_values": 24593,
+        "small_values": 365617
+      },
+      "not_in_small_path": [],
+      "S1_pass": false,
+      "binding": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d"
+    },
+    {
+      "variant": "unrolled",
+      "k": 16,
+      "jobs": 10,
+      "nodes": 0,
+      "os_steps": 1146208,
+      "total_steps": 1345608,
+      "account_steps": 244300,
+      "blake": 9888,
+      "blake_os": 7974,
+      "poseidon": 626,
+      "hashed_felts": 54357,
+      "executed_felts": 18526,
+      "casm_felts": 55900,
+      "calldata": 1093,
+      "largest_v2": [
+        "blake_g:20",
+        "memory_id_to_small:19",
+        "assert_eq_opcode_double_deref:19",
+        "add_opcode_small:19"
+      ],
+      "max_log_v2": 20,
+      "max_log_v1": 21,
+      "blake_g_log": {
+        "v1": 21,
+        "v2": 20
+      },
+      "add_opcode_rows": 216975,
+      "mul_opcode_rows": 33481,
+      "memory_rows": {
+        "addresses": 1451093,
+        "f252_values": 34040,
+        "small_values": 414873
+      },
+      "not_in_small_path": [],
+      "S1_pass": false,
+      "binding": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d"
+    },
+    {
+      "variant": "unrolled",
+      "k": 64,
+      "jobs": 19,
+      "nodes": 22,
+      "os_steps": 1793244,
+      "total_steps": 1992644,
+      "account_steps": 869953,
+      "blake": 10073,
+      "blake_os": 8159,
+      "poseidon": 626,
+      "hashed_felts": 55646,
+      "executed_felts": 20190,
+      "casm_felts": 55900,
+      "calldata": 1093,
+      "largest_v2": [
+        "memory_id_to_small:20",
+        "blake_g:20",
+        "assert_eq_opcode_double_deref:19",
+        "add_opcode_small:19"
+      ],
+      "max_log_v2": 20,
+      "max_log_v1": 21,
+      "blake_g_log": {
+        "v1": 21,
+        "v2": 20
+      },
+      "add_opcode_rows": 449069,
+      "mul_opcode_rows": 84211,
+      "memory_rows": {
+        "addresses": 2122583,
+        "f252_values": 84001,
+        "small_values": 677119
+      },
+      "not_in_small_path": [],
+      "S1_pass": false,
+      "binding": "0x32bacfbea2e1c2e7e7d6f47fc1d3f4290faf9f0a85054c9c9b9faa8100456f"
+    },
+    {
+      "variant": "unrolled",
+      "k": 106,
+      "jobs": 19,
+      "nodes": 64,
+      "os_steps": 2306738,
+      "total_steps": 2506138,
+      "account_steps": 1383447,
+      "blake": 10073,
+      "blake_os": 8159,
+      "poseidon": 626,
+      "hashed_felts": 55646,
+      "executed_felts": 20190,
+      "casm_felts": 55900,
+      "calldata": 1093,
+      "largest_v2": [
+        "memory_id_to_small:20",
+        "blake_g:20",
+        "assert_eq_opcode_double_deref:20",
+        "add_opcode:20"
+      ],
+      "max_log_v2": 20,
+      "max_log_v1": 21,
+      "blake_g_log": {
+        "v1": 21,
+        "v2": 20
+      },
+      "add_opcode_rows": 647946,
+      "mul_opcode_rows": 128214,
+      "memory_rows": {
+        "addresses": 2812539,
+        "f252_values": 133900,
+        "small_values": 928556
+      },
+      "not_in_small_path": [],
+      "S1_pass": false,
+      "binding": "0x6c05d2a1511b94a5f3b8a678f51d508c6f6100d95851cdf1528c1a172268be1"
+    },
+    {
+      "variant": "qm31",
+      "k": 0,
+      "jobs": 0,
+      "nodes": 0,
+      "os_steps": 337476,
+      "total_steps": 536876,
+      "account_steps": 29864,
+      "blake": 4405,
+      "blake_os": 2491,
+      "poseidon": 626,
+      "hashed_felts": 18789,
+      "executed_felts": 2809,
+      "casm_felts": 32060,
+      "calldata": 1093,
+      "largest_v2": [
+        "blake_g:19",
+        "memory_id_to_small:18",
+        "assert_eq_opcode_double_deref:18",
+        "range_check_252_width_27:17"
+      ],
+      "max_log_v2": 19,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 66458,
+      "mul_opcode_rows": 8612,
+      "memory_rows": {
+        "addresses": 616967,
+        "f252_values": 13676,
+        "small_values": 154972
+      },
+      "not_in_small_path": [],
+      "S1_pass": true,
+      "binding": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d"
+    },
+    {
+      "variant": "qm31",
+      "k": 8,
+      "jobs": 6,
+      "nodes": 0,
+      "os_steps": 622059,
+      "total_steps": 821459,
+      "account_steps": 77724,
+      "blake": 7163,
+      "blake_os": 5249,
+      "poseidon": 626,
+      "hashed_felts": 28573,
+      "executed_felts": 8966,
+      "casm_felts": 32060,
+      "calldata": 1093,
+      "largest_v2": [
+        "blake_g:20",
+        "memory_id_to_small:18",
+        "assert_eq_opcode_double_deref:18",
+        "add_opcode_small:18"
+      ],
+      "max_log_v2": 20,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 20
+      },
+      "add_opcode_rows": 89744,
+      "mul_opcode_rows": 9298,
+      "memory_rows": {
+        "addresses": 912406,
+        "f252_values": 14082,
+        "small_values": 245722
+      },
+      "not_in_small_path": [
+        "qm_31_add_mul_opcode"
+      ],
+      "S1_pass": false,
+      "binding": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d"
+    },
+    {
+      "variant": "qm31",
+      "k": 16,
+      "jobs": 10,
+      "nodes": 0,
+      "os_steps": 670379,
+      "total_steps": 869779,
+      "account_steps": 126044,
+      "blake": 7163,
+      "blake_os": 5249,
+      "poseidon": 626,
+      "hashed_felts": 28573,
+      "executed_felts": 9130,
+      "casm_felts": 32060,
+      "calldata": 1093,
+      "largest_v2": [
+        "blake_g:20",
+        "memory_id_to_small:19",
+        "assert_eq_opcode_double_deref:18",
+        "add_opcode_small:18"
+      ],
+      "max_log_v2": 20,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 20
+      },
+      "add_opcode_rows": 91096,
+      "mul_opcode_rows": 9298,
+      "memory_rows": {
+        "addresses": 958218,
+        "f252_values": 14228,
+        "small_values": 277965
+      },
+      "not_in_small_path": [
+        "qm_31_add_mul_opcode"
+      ],
+      "S1_pass": false,
+      "binding": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d"
+    },
+    {
+      "variant": "qm31",
+      "k": 32,
+      "jobs": 15,
+      "nodes": 2,
+      "os_steps": 822411,
+      "total_steps": 1021811,
+      "account_steps": 224574,
+      "blake": 7660,
+      "blake_os": 5746,
+      "poseidon": 626,
+      "hashed_felts": 31694,
+      "executed_felts": 10732,
+      "casm_felts": 32060,
+      "calldata": 1093,
+      "largest_v2": [
+        "blake_g:20",
+        "memory_id_to_small:19",
+        "assert_eq_opcode_double_deref:18",
+        "add_opcode_small:18"
+      ],
+      "max_log_v2": 20,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 20
+      },
+      "add_opcode_rows": 100453,
+      "mul_opcode_rows": 10399,
+      "memory_rows": {
+        "addresses": 1102375,
+        "f252_values": 14573,
+        "small_values": 348702
+      },
+      "not_in_small_path": [
+        "qm_31_add_mul_opcode"
+      ],
+      "S1_pass": false,
+      "binding": "0x3ff59323ece49e585ae99658ef08b04322d7998790c83c8ea1661e7c2b8d83a"
+    },
+    {
+      "variant": "qm31",
+      "k": 64,
+      "jobs": 19,
+      "nodes": 22,
+      "os_steps": 995763,
+      "total_steps": 1195163,
+      "account_steps": 396041,
+      "blake": 7676,
+      "blake_os": 5762,
+      "poseidon": 626,
+      "hashed_felts": 31801,
+      "executed_felts": 11300,
+      "casm_felts": 32060,
+      "calldata": 1093,
+      "largest_v2": [
+        "blake_g:20",
+        "memory_id_to_small:19",
+        "qm_31_add_mul_opcode:18",
+        "assert_eq_opcode_double_deref:18"
+      ],
+      "max_log_v2": 20,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 20
+      },
+      "add_opcode_rows": 103865,
+      "mul_opcode_rows": 10427,
+      "memory_rows": {
+        "addresses": 1269747,
+        "f252_values": 15105,
+        "small_values": 459609
+      },
+      "not_in_small_path": [
+        "qm_31_add_mul_opcode"
+      ],
+      "S1_pass": false,
+      "binding": "0x32bacfbea2e1c2e7e7d6f47fc1d3f4290faf9f0a85054c9c9b9faa8100456f"
+    },
+    {
+      "variant": "qm31",
+      "k": 106,
+      "jobs": 19,
+      "nodes": 64,
+      "os_steps": 1197155,
+      "total_steps": 1396555,
+      "account_steps": 597433,
+      "blake": 7676,
+      "blake_os": 5762,
+      "poseidon": 626,
+      "hashed_felts": 31801,
+      "executed_felts": 11300,
+      "casm_felts": 32060,
+      "calldata": 1093,
+      "largest_v2": [
+        "memory_id_to_small:20",
+        "blake_g:20",
+        "qm_31_add_mul_opcode:19",
+        "assert_eq_opcode_double_deref:18"
+      ],
+      "max_log_v2": 20,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 20
+      },
+      "add_opcode_rows": 105795,
+      "mul_opcode_rows": 10427,
+      "memory_rows": {
+        "addresses": 1467861,
+        "f252_values": 16070,
+        "small_values": 621478
+      },
+      "not_in_small_path": [
+        "qm_31_add_mul_opcode"
+      ],
+      "S1_pass": false,
+      "binding": "0x6c05d2a1511b94a5f3b8a678f51d508c6f6100d95851cdf1528c1a172268be1"
+    },
+    {
+      "variant": "qm31_compact",
+      "k": 0,
+      "jobs": 0,
+      "nodes": 0,
+      "os_steps": 338078,
+      "total_steps": 537478,
+      "account_steps": 29864,
+      "blake": 4410,
+      "blake_os": 2496,
+      "poseidon": 626,
+      "hashed_felts": 18790,
+      "executed_felts": 2809,
+      "casm_felts": 28959,
+      "calldata": 1093,
+      "largest_v2": [
+        "blake_g:19",
+        "memory_id_to_small:18",
+        "assert_eq_opcode_double_deref:18",
+        "range_check_252_width_27:17"
+      ],
+      "max_log_v2": 19,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 66523,
+      "mul_opcode_rows": 8654,
+      "memory_rows": {
+        "addresses": 614454,
+        "f252_values": 13768,
+        "small_values": 155092
+      },
+      "not_in_small_path": [],
+      "S1_pass": true,
+      "binding": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d"
+    },
+    {
+      "variant": "qm31_compact",
+      "k": 8,
+      "jobs": 6,
+      "nodes": 0,
+      "os_steps": 510914,
+      "total_steps": 710314,
+      "account_steps": 83932,
+      "blake": 5559,
+      "blake_os": 3645,
+      "poseidon": 626,
+      "hashed_felts": 25352,
+      "executed_felts": 5187,
+      "casm_felts": 28959,
+      "calldata": 1093,
+      "largest_v2": [
+        "blake_g:19",
+        "memory_id_to_small:18",
+        "assert_eq_opcode_double_deref:18",
+        "add_opcode_small:18"
+      ],
+      "max_log_v2": 19,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 80574,
+      "mul_opcode_rows": 9430,
+      "memory_rows": {
+        "addresses": 781657,
+        "f252_values": 14082,
+        "small_values": 214933
+      },
+      "not_in_small_path": [
+        "qm_31_add_mul_opcode"
+      ],
+      "S1_pass": false,
+      "binding": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d"
+    },
+    {
+      "variant": "qm31_compact",
+      "k": 16,
+      "jobs": 10,
+      "nodes": 0,
+      "os_steps": 565442,
+      "total_steps": 764842,
+      "account_steps": 138460,
+      "blake": 5559,
+      "blake_os": 3645,
+      "poseidon": 626,
+      "hashed_felts": 25352,
+      "executed_felts": 5351,
+      "casm_felts": 28959,
+      "calldata": 1093,
+      "largest_v2": [
+        "blake_g:19",
+        "memory_id_to_small:18",
+        "assert_eq_opcode_double_deref:18",
+        "add_opcode_small:18"
+      ],
+      "max_log_v2": 19,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 82078,
+      "mul_opcode_rows": 9430,
+      "memory_rows": {
+        "addresses": 833365,
+        "f252_values": 14228,
+        "small_values": 243946
+      },
+      "not_in_small_path": [
+        "qm_31_add_mul_opcode"
+      ],
+      "S1_pass": false,
+      "binding": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d"
+    },
+    {
+      "variant": "qm31_compact",
+      "k": 32,
+      "jobs": 15,
+      "nodes": 2,
+      "os_steps": 731665,
+      "total_steps": 931065,
+      "account_steps": 249409,
+      "blake": 6071,
+      "blake_os": 4157,
+      "poseidon": 626,
+      "hashed_felts": 28593,
+      "executed_felts": 6968,
+      "casm_felts": 28959,
+      "calldata": 1093,
+      "largest_v2": [
+        "memory_id_to_small:19",
+        "blake_g:19",
+        "assert_eq_opcode_double_deref:18",
+        "add_opcode_small:18"
+      ],
+      "max_log_v2": 19,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 91930,
+      "mul_opcode_rows": 10531,
+      "memory_rows": {
+        "addresses": 990937,
+        "f252_values": 14567,
+        "small_values": 309684
+      },
+      "not_in_small_path": [
+        "qm_31_add_mul_opcode"
+      ],
+      "S1_pass": false,
+      "binding": "0x3ff59323ece49e585ae99658ef08b04322d7998790c83c8ea1661e7c2b8d83a"
+    },
+    {
+      "variant": "qm31_compact",
+      "k": 64,
+      "jobs": 19,
+      "nodes": 22,
+      "os_steps": 929889,
+      "total_steps": 1129289,
+      "account_steps": 445748,
+      "blake": 6087,
+      "blake_os": 4173,
+      "poseidon": 626,
+      "hashed_felts": 28700,
+      "executed_felts": 7536,
+      "casm_felts": 28959,
+      "calldata": 1093,
+      "largest_v2": [
+        "memory_id_to_small:19",
+        "blake_g:19",
+        "qm_31_add_mul_opcode:18",
+        "assert_eq_opcode_double_deref:18"
+      ],
+      "max_log_v2": 19,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 95950,
+      "mul_opcode_rows": 10559,
+      "memory_rows": {
+        "addresses": 1181913,
+        "f252_values": 15099,
+        "small_values": 409313
+      },
+      "not_in_small_path": [
+        "qm_31_add_mul_opcode"
+      ],
+      "S1_pass": false,
+      "binding": "0x32bacfbea2e1c2e7e7d6f47fc1d3f4290faf9f0a85054c9c9b9faa8100456f"
+    },
+    {
+      "variant": "qm31_compact",
+      "k": 106,
+      "jobs": 19,
+      "nodes": 64,
+      "os_steps": 1163957,
+      "total_steps": 1363357,
+      "account_steps": 679816,
+      "blake": 6087,
+      "blake_os": 4173,
+      "poseidon": 626,
+      "hashed_felts": 28700,
+      "executed_felts": 7536,
+      "casm_felts": 28959,
+      "calldata": 1093,
+      "largest_v2": [
+        "memory_id_to_small:20",
+        "qm_31_add_mul_opcode:19",
+        "blake_g:19",
+        "assert_eq_opcode_double_deref:18"
+      ],
+      "max_log_v2": 20,
+      "max_log_v1": 20,
+      "blake_g_log": {
+        "v1": 20,
+        "v2": 19
+      },
+      "add_opcode_rows": 98678,
+      "mul_opcode_rows": 10559,
+      "memory_rows": {
+        "addresses": 1411023,
+        "f252_values": 16064,
+        "small_values": 553641
+      },
+      "not_in_small_path": [
+        "qm_31_add_mul_opcode"
+      ],
+      "S1_pass": false,
+      "binding": "0x6c05d2a1511b94a5f3b8a678f51d508c6f6100d95851cdf1528c1a172268be1"
+    }
+  ],
+  "fits": {
+    "compact": {
+      "account_steps_per_sponge_permutation": 14047.25,
+      "account_steps_per_node_permutation": 12873.033018867925,
+      "os_steps_per_k_all_points": 13948.52048992674,
+      "os_steps_intercept": 448661.8320741758
+    },
+    "unrolled": {
+      "account_steps_per_sponge_permutation": 13402.25,
+      "account_steps_per_node_permutation": 12226.047619047618,
+      "os_steps_per_k_all_points": 15863.52934226073,
+      "os_steps_intercept": 709460.2615202836
+    },
+    "qm31": {
+      "account_steps_per_sponge_permutation": 6011.25,
+      "account_steps_per_node_permutation": 4795.047619047619,
+      "os_steps_per_k_all_points": 7065.267088607594,
+      "os_steps_intercept": 508082.10632911394
+    },
+    "qm31_compact": {
+      "account_steps_per_sponge_permutation": 6787.25,
+      "account_steps_per_node_permutation": 5573.047619047619,
+      "os_steps_per_k_all_points": 7317.526378113515,
+      "os_steps_intercept": 431030.67309105763
+    }
+  },
+  "bindings_by_k": {
+    "0": {
+      "compact": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d",
+      "unrolled": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d",
+      "qm31": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d",
+      "qm31_compact": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d"
+    },
+    "8": {
+      "compact": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d",
+      "unrolled": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d",
+      "qm31": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d",
+      "qm31_compact": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d"
+    },
+    "16": {
+      "compact": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d",
+      "unrolled": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d",
+      "qm31": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d",
+      "qm31_compact": "0x3369f9294a76d753cf8eeb6725735e8e5c6c52a97597e1802e3c6850aca4f1d"
+    },
+    "32": {
+      "compact": "0x3ff59323ece49e585ae99658ef08b04322d7998790c83c8ea1661e7c2b8d83a",
+      "qm31": "0x3ff59323ece49e585ae99658ef08b04322d7998790c83c8ea1661e7c2b8d83a",
+      "qm31_compact": "0x3ff59323ece49e585ae99658ef08b04322d7998790c83c8ea1661e7c2b8d83a"
+    },
+    "64": {
+      "compact": "0x32bacfbea2e1c2e7e7d6f47fc1d3f4290faf9f0a85054c9c9b9faa8100456f",
+      "unrolled": "0x32bacfbea2e1c2e7e7d6f47fc1d3f4290faf9f0a85054c9c9b9faa8100456f",
+      "qm31": "0x32bacfbea2e1c2e7e7d6f47fc1d3f4290faf9f0a85054c9c9b9faa8100456f",
+      "qm31_compact": "0x32bacfbea2e1c2e7e7d6f47fc1d3f4290faf9f0a85054c9c9b9faa8100456f"
+    },
+    "102": {
+      "compact": "0x9082389ce499f66ab1200a659d164709d70176c684a7744b3313180bd0889b"
+    },
+    "106": {
+      "compact": "0x6c05d2a1511b94a5f3b8a678f51d508c6f6100d95851cdf1528c1a172268be1",
+      "unrolled": "0x6c05d2a1511b94a5f3b8a678f51d508c6f6100d95851cdf1528c1a172268be1",
+      "qm31": "0x6c05d2a1511b94a5f3b8a678f51d508c6f6100d95851cdf1528c1a172268be1",
+      "qm31_compact": "0x6c05d2a1511b94a5f3b8a678f51d508c6f6100d95851cdf1528c1a172268be1"
+    },
+    "128": {
+      "compact": "0x627d29002e6b8b7dd9228ea6a24237a390cc9c03d0025d2d90d72a9a7079c28"
+    }
+  },
+  "bindings_agree_across_variants": {
+    "0": true,
+    "8": true,
+    "16": true,
+    "32": true,
+    "64": true,
+    "106": true
+  }
+}

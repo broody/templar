@@ -1,0 +1,59 @@
+{
+  "name": "qm31-k106-v2-recursive-u2-negative",
+  "mode": "recursive",
+  "cap_gib": 32,
+  "cpus": "0 1 2 3",
+  "threads": 4,
+  "swap": 0,
+  "pie": "/home/broody/.local/share/templar/runs/m31-device-proof1/phase1/qm31/k106/os/os.pie.zip",
+  "pie_sha256": "58819a5f91377d573632edae1c09105a8377af51f5db25213b7e9bf491c7974d",
+  "prove_small_sha256": "455c76184151fd5815de9847f9711dc4fecdf499a89b65d8a37748947db5afbf",
+  "exit_code": 101,
+  "wall_seconds": 15.70186007299344,
+  "peak_rss_gib": 19.881614685058594,
+  "cgroup_peak_gib": 19.891178131103516,
+  "oom_killed": false,
+  "stages": {
+    "bootloader": {
+      "seconds": 0.7431740760803223,
+      "peak_rss_gib": 2.6667518615722656,
+      "rss_at_start_gib": 2.3817481994628906,
+      "samples": 14
+    },
+    "cairo": {
+      "seconds": 12.054603815078735,
+      "peak_rss_gib": 19.817440032958984,
+      "rss_at_start_gib": 2.451801300048828,
+      "samples": 238
+    }
+  },
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-dp1-v2-qm31-k106-v2-recursive-u2-negative-1790428486700359746",
+    "-p",
+    "MemoryMax=32G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUAffinity=0 1 2 3",
+    "-p",
+    "CPUQuota=400%",
+    "-p",
+    "RuntimeMaxSec=5400",
+    "--setenv=RAYON_NUM_THREADS=4",
+    "--setenv=TOKIO_WORKER_THREADS=4",
+    "/usr/bin/time",
+    "-v",
+    "/home/broody/development/templar/target/m31-device-proof1/bin/prove-small",
+    "recursive",
+    "/home/broody/.local/share/templar/runs/m31-device-proof1/phase1/qm31/k106/os/os.pie.zip",
+    "/home/broody/.local/share/templar/runs/m31-device-proof1/v2/qm31-k106-v2-recursive-u2-negative"
+  ],
+  "error_lines": [
+    "thread 'main' (2600157) panicked at /home/broody/development/templar/target/proving-server/crates/cairo_verifier/src/statement.rs:414:9:"
+  ],
+  "status": "expected-failure"
+}

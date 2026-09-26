@@ -1,0 +1,108 @@
+{
+  "name": "compact-k106-v2-cairo-only-32g",
+  "mode": "cairo-only",
+  "cap_gib": 32,
+  "cpus": "0 1 2 3",
+  "threads": 4,
+  "swap": 0,
+  "pie": "/home/broody/.local/share/templar/runs/m31-device-proof1/phase1/compact/k106/os/os.pie.zip",
+  "pie_sha256": "1cfdde9eb7d7ebf3d128af4d3a8b75ae73df049bcd4ddd196b3a554df6fbbf76",
+  "prove_small_sha256": "455c76184151fd5815de9847f9711dc4fecdf499a89b65d8a37748947db5afbf",
+  "exit_code": 0,
+  "wall_seconds": 16.5209498500044,
+  "peak_rss_gib": 20.852519989013672,
+  "cgroup_peak_gib": 20.866634368896484,
+  "oom_killed": false,
+  "stages": {
+    "bootloader": {
+      "seconds": 1.2062389850616455,
+      "peak_rss_gib": 0.5695037841796875,
+      "rss_at_start_gib": 0.1308746337890625,
+      "samples": 24
+    },
+    "cairo_only": {
+      "seconds": 14.0712308883667,
+      "peak_rss_gib": 20.73276138305664,
+      "rss_at_start_gib": 0.327728271484375,
+      "samples": 278
+    }
+  },
+  "command": [
+    "systemd-run",
+    "--user",
+    "--wait",
+    "--pipe",
+    "--unit=templar-dp1-v2-compact-k106-v2-cairo-only-32g-1790428437791888855",
+    "-p",
+    "MemoryMax=32G",
+    "-p",
+    "MemorySwapMax=0",
+    "-p",
+    "CPUAffinity=0 1 2 3",
+    "-p",
+    "CPUQuota=400%",
+    "-p",
+    "RuntimeMaxSec=5400",
+    "--setenv=RAYON_NUM_THREADS=4",
+    "--setenv=TOKIO_WORKER_THREADS=4",
+    "/usr/bin/time",
+    "-v",
+    "/home/broody/development/templar/target/m31-device-proof1/bin/prove-small",
+    "cairo-only",
+    "/home/broody/.local/share/templar/runs/m31-device-proof1/phase1/compact/k106/os/os.pie.zip",
+    "/home/broody/.local/share/templar/runs/m31-device-proof1/v2/compact-k106-v2-cairo-only-32g"
+  ],
+  "error_lines": [],
+  "boot_seconds": 1.206160946,
+  "bootloader": {
+    "builtin_instance_counter": {
+      "add_mod_builtin": 0,
+      "bitwise_builtin": 1,
+      "mul_mod_builtin": 0,
+      "output_builtin": 2,
+      "pedersen_builtin": 8,
+      "poseidon_builtin": 626,
+      "range_check96_builtin": 0,
+      "range_check_builtin": 333304
+    },
+    "n_memory_holes": 8026,
+    "n_steps": 2119813
+  },
+  "kind": "cairo",
+  "native_pow_byte_mutation_rejected": true,
+  "native_verify": true,
+  "native_verify_error": null,
+  "native_verify_seconds": 0.009699538,
+  "proof_bytes": 569530,
+  "prove_seconds": 14.069510868,
+  "serialize_seconds": 0.0034849420000000464,
+  "proof_sha256": "9503741c14aee49b8505b46e5f49202e9dad0785e5e770659ac8cd41584e194c",
+  "output_preimage": [
+    "0x1",
+    "0x8",
+    "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+    "0x5649525455414c5f534e4f5330",
+    "0x64",
+    "0x230690966ce71c9778f0895901a55407db93c517d35261bb2b8b85ae357b2e2",
+    "0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57",
+    "0x1",
+    "0x4b7a451dd23bf5274e3f8faab6d7ab28029aafff2f8a53d2a39bcd0557c3906"
+  ],
+  "message_matches_capture": true,
+  "verify": {
+    "controls": {
+      "changed_output_rejected": true,
+      "flipped_byte_rejected": true,
+      "truncated_rejected": true
+    },
+    "error": null,
+    "kind": "cairo",
+    "passed": true,
+    "valid": true,
+    "verify_seconds": 0.239379311
+  },
+  "verify_exit_code": 0,
+  "verify_peak_rss_gib": 0.23627853393554688,
+  "fixed_small_path_verifier_accepts": true,
+  "status": "passed"
+}

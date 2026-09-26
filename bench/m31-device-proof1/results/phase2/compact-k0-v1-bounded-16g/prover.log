@@ -1,0 +1,35 @@
+Running as unit: templar-dp1-compact-k0-v1-bounded-16g-1790427477554561224.service; invocation ID: 90a4293a1c564b61913441ec046fcc94
+2026-09-26T12:57:57.863888Z  INFO starknet_transaction_prover::server::config: CLI override: rpc_node_url: <unset> -> http://127.0.0.1:60601
+2026-09-26T12:57:57.863926Z  INFO starknet_transaction_prover::server::config: CLI override: chain_id: SN_MAIN -> SN_SEPOLIA
+2026-09-26T12:57:57.863932Z  INFO starknet_transaction_prover::server::config: CLI override: port: 3000 -> 34401
+2026-09-26T12:57:57.863937Z  INFO starknet_transaction_prover::server::config: CLI override: ip: 0.0.0.0 -> 127.0.0.1
+2026-09-26T12:57:57.863941Z  INFO starknet_transaction_prover::server::config: CLI override: max_concurrent_requests: 2 -> 1
+2026-09-26T12:57:57.863945Z  INFO starknet_transaction_prover::server::config: CLI override: max_queued_requests: 8 -> 0
+2026-09-26T12:57:57.863950Z  INFO starknet_transaction_prover::server::config: CLI override: compiled_class_cache_size: 600 -> 16
+2026-09-26T12:57:57.863975Z  INFO starknet_transaction_prover: Starting Starknet transaction prover. version="0.19.0-rc.2" git_sha="unknown" chain_id=SN_SEPOLIA rpc_node_host=http://127.0.0.1:60601 validate_zero_fee_fields=true blocking_check_enabled=false blocking_check_fail_open=false ohttp_enabled=false
+2026-09-26T12:57:57.864058Z  INFO starknet_transaction_prover: JSON-RPC proving server is running. local_address=127.0.0.1:34401 scheme="http" max_concurrent_requests=1 max_connections=10 cors_mode="disabled" cors_allow_origin=[] ohttp_enabled=false
+2026-09-26T12:57:58.154792Z  INFO prove_transaction{block_id=Number(BlockNumber(100)) tx_hash=0x601bbfdd1bbf2a9224e6dfa4fb596646db3ab7b6eea9c7800ade33af4277802}: starknet_transaction_prover::running::runner: Starting transaction proving
+2026-09-26T12:57:58.725110Z  INFO prove_transaction{block_id=Number(BlockNumber(100)) tx_hash=0x601bbfdd1bbf2a9224e6dfa4fb596646db3ab7b6eea9c7800ade33af4277802}: starknet_transaction_prover::running::runner: Virtual OS execution resources n_steps=338014 n_memory_holes=10295 builtins={output: 6, range_check: 23866, pedersen: 8, ecdsa: 0, keccak: 0, bitwise: 0, ec_op: 0, poseidon: 626, range_check96: 0, add_mod: 0, mul_mod: 0}
+2026-09-26T12:57:58.725782Z  INFO prove_transaction{block_id=Number(BlockNumber(100)) tx_hash=0x601bbfdd1bbf2a9224e6dfa4fb596646db3ab7b6eea9c7800ade33af4277802}: starknet_transaction_prover::proving::virtual_snos_prover: OS execution completed os_duration_ms=622
+2026-09-26T12:57:58.726043Z  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Run privacy bootloader and get the prover input and output preimage
+2026-09-26T12:57:58.747441Z  INFO privacy_recursive_prove_low_memory:get_prover_input: privacy_prove: Running the program
+2026-09-26T12:57:58.903873Z  INFO privacy_recursive_prove_low_memory:get_prover_input: privacy_prove: Reading the bootloader output preimage
+2026-09-26T12:57:58.903919Z  INFO privacy_recursive_prove_low_memory:get_prover_input: privacy_prove: Adapting the runner output for the prover
+2026-09-26T12:57:59.012852Z  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Prepare only the Cairo stage
+2026-09-26T12:57:59.346480Z  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Generate the cairo proof
+2026-09-26T12:58:17.183550Z  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Cairo stage tree and buffer pool released
+2026-09-26T12:58:17.200047Z  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Prepare the cairo proof for the cairo-circuit verifier
+2026-09-26T12:58:17.201751Z  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Build the cairo-circuit verifier context
+2026-09-26T12:58:17.494836Z  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Prepare only the recursive circuit stage
+2026-09-26T12:58:18.375136Z  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Prove the cairo-circuit verifier
+2026-09-26T12:58:26.878817Z  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Recursive stage tree and buffer pool released
+2026-09-26T12:58:26.878848Z  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Prepare the circuit proof for the circuit verifier
+2026-09-26T12:58:26.927808Z  INFO privacy_recursive_prove_low_memory: privacy_prove::low_memory: Serialize and compress the proof
+2026-09-26T12:58:26.985946Z  INFO prove_transaction{block_id=Number(BlockNumber(100)) tx_hash=0x601bbfdd1bbf2a9224e6dfa4fb596646db3ab7b6eea9c7800ade33af4277802}: starknet_transaction_prover::proving::virtual_snos_prover: Proving completed prove_duration_ms=28260
+2026-09-26T12:58:26.985994Z  INFO prove_transaction{block_id=Number(BlockNumber(100)) tx_hash=0x601bbfdd1bbf2a9224e6dfa4fb596646db3ab7b6eea9c7800ade33af4277802}: starknet_transaction_prover::proving::virtual_snos_prover: prove_transaction completed total_duration_ms=28882
+Finished with result: success
+Main processes terminated with: code=killed/status=TERM
+Service runtime: 29.604s
+CPU time consumed: 1min 40.575s
+Memory peak: 8.6G
+Memory swap peak: 0B

@@ -1,0 +1,547 @@
+{
+  "variant": "compact",
+  "k": 106,
+  "jobs": 19,
+  "sponge_permutations": 42,
+  "nodes": 64,
+  "virtual_os": {
+    "builtin_instance_counter": {
+      "add_mod_builtin": 0,
+      "bitwise_builtin": 0,
+      "ec_op_builtin": 0,
+      "ecdsa_builtin": 0,
+      "keccak_builtin": 0,
+      "mul_mod_builtin": 0,
+      "output_builtin": 6,
+      "pedersen_builtin": 8,
+      "poseidon_builtin": 626,
+      "range_check96_builtin": 0,
+      "range_check_builtin": 321842
+    },
+    "n_memory_holes": 8020,
+    "n_steps": 1920413
+  },
+  "os_seconds": 3.5340486269999998,
+  "bootloader_run_total_steps": 2119813,
+  "steps_by_pc_segment": {
+    "bootloader": 199389,
+    "os": 468469,
+    "account": 1451944,
+    "os_segment_index": 14,
+    "all": {
+      "0": 199389,
+      "14": 468469,
+      "19": 1451944
+    }
+  },
+  "builtins_total": {
+    "add_mod_builtin": 0,
+    "bitwise_builtin": 1,
+    "mul_mod_builtin": 0,
+    "output_builtin": 2,
+    "pedersen_builtin": 8,
+    "poseidon_builtin": 626,
+    "range_check96_builtin": 0,
+    "range_check_builtin": 333304
+  },
+  "opcode_rows_v2": {
+    "add_ap_opcode": 42502,
+    "add_opcode": 593569,
+    "add_opcode_small": 216371,
+    "assert_eq_opcode": 140621,
+    "assert_eq_opcode_double_deref": 504433,
+    "assert_eq_opcode_imm": 167132,
+    "blake_compress_opcode": 5852,
+    "call_opcode_abs": 3,
+    "call_opcode_rel_imm": 9600,
+    "generic_opcode": 0,
+    "jnz_opcode_non_taken": 8596,
+    "jnz_opcode_taken": 129123,
+    "jump_opcode_abs": 1,
+    "jump_opcode_double_deref": 3,
+    "jump_opcode_rel": 1,
+    "jump_opcode_rel_imm": 47481,
+    "mul_opcode": 121666,
+    "mul_opcode_small": 123255,
+    "qm_31_add_mul_opcode": 0,
+    "ret_opcode": 9603
+  },
+  "memory_rows_v2": {
+    "addresses": 2422342,
+    "f252_values": 133273,
+    "small_values": 809780
+  },
+  "blake": {
+    "total": 5852,
+    "bootloader": 1914,
+    "os": 3938,
+    "account": 0,
+    "by_segment_[compress,finalize]": {
+      "0": [
+        1912,
+        2
+      ],
+      "14": [
+        3892,
+        46
+      ]
+    }
+  },
+  "poseidon": {
+    "virtual_os": 626,
+    "total": 626
+  },
+  "casm": {
+    "casm_felts": 28777,
+    "segment_leaves": 71,
+    "loaded_leaves": 38,
+    "hashed_felts": 28523,
+    "executed_instructions": 6733,
+    "executed_felts": 8675,
+    "class_hash_blake_model": 3881,
+    "bytecode_offset_in_segment_19": 26,
+    "visited_outside_bytecode": [
+      28777
+    ]
+  },
+  "calldata_felts": 1093,
+  "component_log_sizes_v2": {
+    "add_ap_opcode": [
+      16
+    ],
+    "add_opcode": [
+      20
+    ],
+    "add_opcode_small": [
+      18
+    ],
+    "assert_eq_opcode": [
+      18
+    ],
+    "assert_eq_opcode_double_deref": [
+      19
+    ],
+    "assert_eq_opcode_imm": [
+      18
+    ],
+    "bitwise_builtin": [
+      4
+    ],
+    "blake_compress_opcode": [
+      13
+    ],
+    "blake_g": [
+      19
+    ],
+    "blake_round": [
+      16
+    ],
+    "blake_round_sigma": [
+      null
+    ],
+    "call_opcode_abs": [
+      4
+    ],
+    "call_opcode_rel_imm": [
+      14
+    ],
+    "cube_252": [
+      17
+    ],
+    "jnz_opcode_non_taken": [
+      14
+    ],
+    "jnz_opcode_taken": [
+      17
+    ],
+    "jump_opcode_abs": [
+      4
+    ],
+    "jump_opcode_double_deref": [
+      4
+    ],
+    "jump_opcode_rel": [
+      4
+    ],
+    "jump_opcode_rel_imm": [
+      16
+    ],
+    "memory_address_to_id": [
+      18
+    ],
+    "memory_id_to_big": [
+      18
+    ],
+    "memory_id_to_small": [
+      20
+    ],
+    "mul_opcode": [
+      17
+    ],
+    "mul_opcode_small": [
+      17
+    ],
+    "partial_ec_mul_window_bits_9": [
+      10
+    ],
+    "pedersen_aggregator_window_bits_9": [
+      4
+    ],
+    "pedersen_builtin_narrow_windows": [
+      4
+    ],
+    "pedersen_points_table_window_bits_9": [
+      null
+    ],
+    "poseidon_3_partial_rounds_chain": [
+      15
+    ],
+    "poseidon_aggregator": [
+      10
+    ],
+    "poseidon_builtin": [
+      10
+    ],
+    "poseidon_full_round_chain": [
+      13
+    ],
+    "poseidon_round_keys": [
+      null
+    ],
+    "range_check_11": [
+      null
+    ],
+    "range_check_12": [
+      null
+    ],
+    "range_check_18": [
+      null
+    ],
+    "range_check_20": [
+      null
+    ],
+    "range_check_252_width_27": [
+      17
+    ],
+    "range_check_3_3_3_3_3": [
+      null
+    ],
+    "range_check_3_6_6_3": [
+      null
+    ],
+    "range_check_4_3": [
+      null
+    ],
+    "range_check_4_4": [
+      null
+    ],
+    "range_check_4_4_4_4": [
+      null
+    ],
+    "range_check_6": [
+      null
+    ],
+    "range_check_7_2_5": [
+      null
+    ],
+    "range_check_8": [
+      null
+    ],
+    "range_check_9_9": [
+      null
+    ],
+    "range_check_builtin": [
+      19
+    ],
+    "ret_opcode": [
+      14
+    ],
+    "triple_xor_32": [
+      16
+    ],
+    "verify_bitwise_xor_12": [
+      null
+    ],
+    "verify_bitwise_xor_4": [
+      null
+    ],
+    "verify_bitwise_xor_7": [
+      null
+    ],
+    "verify_bitwise_xor_8": [
+      null
+    ],
+    "verify_bitwise_xor_9": [
+      null
+    ],
+    "verify_instruction": [
+      14
+    ]
+  },
+  "component_log_sizes_v1": {
+    "add_opcode": [
+      20
+    ],
+    "add_opcode_small": [
+      18
+    ],
+    "add_ap_opcode": [
+      16
+    ],
+    "assert_eq_opcode": [
+      18
+    ],
+    "assert_eq_opcode_imm": [
+      18
+    ],
+    "assert_eq_opcode_double_deref": [
+      19
+    ],
+    "blake_compress_opcode": [
+      13
+    ],
+    "call_opcode_abs": [
+      4
+    ],
+    "call_opcode_rel_imm": [
+      14
+    ],
+    "jnz_opcode_non_taken": [
+      14
+    ],
+    "jnz_opcode_taken": [
+      17
+    ],
+    "jump_opcode_abs": [
+      4
+    ],
+    "jump_opcode_double_deref": [
+      4
+    ],
+    "jump_opcode_rel": [
+      4
+    ],
+    "jump_opcode_rel_imm": [
+      16
+    ],
+    "mul_opcode": [
+      17
+    ],
+    "mul_opcode_small": [
+      17
+    ],
+    "ret_opcode": [
+      14
+    ],
+    "verify_instruction": [
+      14
+    ],
+    "blake_round": [
+      17
+    ],
+    "blake_g": [
+      20
+    ],
+    "blake_round_sigma": [
+      null
+    ],
+    "triple_xor_32": [
+      16
+    ],
+    "verify_bitwise_xor_12": [
+      null
+    ],
+    "bitwise_builtin": [
+      4
+    ],
+    "pedersen_builtin_narrow_windows": [
+      4
+    ],
+    "poseidon_builtin": [
+      10
+    ],
+    "range_check_builtin": [
+      19
+    ],
+    "pedersen_aggregator_window_bits_9": [
+      4
+    ],
+    "partial_ec_mul_window_bits_9": [
+      10
+    ],
+    "pedersen_points_table_window_bits_9": [
+      null
+    ],
+    "poseidon_aggregator": [
+      10
+    ],
+    "poseidon_3_partial_rounds_chain": [
+      15
+    ],
+    "poseidon_full_round_chain": [
+      13
+    ],
+    "cube_252": [
+      17
+    ],
+    "poseidon_round_keys": [
+      null
+    ],
+    "range_check_252_width_27": [
+      17
+    ],
+    "memory_address_to_id": [
+      18
+    ],
+    "memory_id_to_big": [
+      18
+    ],
+    "memory_id_to_small": [
+      20
+    ],
+    "range_check_6": [
+      null
+    ],
+    "range_check_8": [
+      null
+    ],
+    "range_check_11": [
+      null
+    ],
+    "range_check_12": [
+      null
+    ],
+    "range_check_18": [
+      null
+    ],
+    "range_check_20": [
+      null
+    ],
+    "range_check_4_3": [
+      null
+    ],
+    "range_check_4_4": [
+      null
+    ],
+    "range_check_9_9": [
+      null
+    ],
+    "range_check_7_2_5": [
+      null
+    ],
+    "range_check_3_6_6_3": [
+      null
+    ],
+    "range_check_4_4_4_4": [
+      null
+    ],
+    "range_check_3_3_3_3_3": [
+      null
+    ],
+    "verify_bitwise_xor_4": [
+      null
+    ],
+    "verify_bitwise_xor_7": [
+      null
+    ],
+    "verify_bitwise_xor_8": [
+      null
+    ],
+    "verify_bitwise_xor_9": [
+      null
+    ]
+  },
+  "max_log_v2": 20,
+  "max_log_v1": 20,
+  "over_2^20_v2": {},
+  "over_2^20_v1": {},
+  "v1_boot": {
+    "blake_compressions": 5852,
+    "qm31_opcodes": 0,
+    "generic_opcodes": 0
+  },
+  "small_path": {
+    "cairo_trace_log_size": 20,
+    "enabled_components": [
+      "add_ap_opcode",
+      "add_opcode",
+      "add_opcode_small",
+      "assert_eq_opcode",
+      "assert_eq_opcode_double_deref",
+      "assert_eq_opcode_imm",
+      "bitwise_builtin",
+      "blake_compress_opcode",
+      "blake_g",
+      "blake_round",
+      "call_opcode_abs",
+      "call_opcode_rel_imm",
+      "cube_252",
+      "jnz_opcode_non_taken",
+      "jnz_opcode_taken",
+      "jump_opcode_abs",
+      "jump_opcode_double_deref",
+      "jump_opcode_rel",
+      "jump_opcode_rel_imm",
+      "memory_address_to_id",
+      "memory_id_to_big",
+      "memory_id_to_small",
+      "mul_opcode",
+      "mul_opcode_small",
+      "partial_ec_mul_window_bits_9",
+      "pedersen_aggregator_window_bits_9",
+      "pedersen_builtin_narrow_windows",
+      "poseidon_3_partial_rounds_chain",
+      "poseidon_aggregator",
+      "poseidon_builtin",
+      "poseidon_full_round_chain",
+      "range_check_252_width_27",
+      "range_check_builtin",
+      "ret_opcode",
+      "triple_xor_32",
+      "verify_instruction"
+    ],
+    "not_in_fixed_list": [],
+    "accepted_by_fixed_recursion": true
+  },
+  "S1": {
+    "nonhash_components_over_2^20": {},
+    "blake_total": 5852,
+    "blake_ok": true,
+    "poseidon_total": 626,
+    "poseidon_ok": true,
+    "components_not_in_small_path": [],
+    "all_components_le_2^20": true,
+    "pass": true,
+    "blake_g_log": {
+      "v1": 20,
+      "v2": 19
+    },
+    "v1_all_components_le_2^20": true,
+    "blake_le_7000_margin": true
+  },
+  "message": {
+    "n_messages": 1,
+    "from_statement": true,
+    "to_zero": true,
+    "payload_len": 5,
+    "class_tag_chain_pool": true,
+    "binding": "0x6c05d2a1511b94a5f3b8a678f51d508c6f6100d95851cdf1528c1a172268be1",
+    "ok": true
+  },
+  "pie_sha256": "1cfdde9eb7d7ebf3d128af4d3a8b75ae73df049bcd4ddd196b3a554df6fbbf76",
+  "fixture_sha256": "973a038cfa59f5ae375bef3349d0aeb43b6eb213ba718e110640403f50b1d250",
+  "tools": {
+    "capacity_trace_v1": {
+      "wall_seconds": 4.116545501019573,
+      "max_rss_gib": 3.9030227661132812
+    },
+    "prove_small_trace_v2": {
+      "wall_seconds": 3.7047289239999373,
+      "max_rss_gib": 3.3981170654296875
+    },
+    "blake_sites": {
+      "wall_seconds": 1.3005424269940704,
+      "max_rss_gib": 0.3548927307128906
+    }
+  }
+}

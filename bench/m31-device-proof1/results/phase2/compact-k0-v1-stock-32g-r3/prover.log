@@ -1,0 +1,34 @@
+Running as unit: templar-dp1-compact-k0-v1-stock-32g-r3-1790427456258418546.service; invocation ID: e129b9812ec3474ab36c8459afce820e
+2026-09-26T12:57:36.569319Z  INFO starknet_transaction_prover::server::config: CLI override: rpc_node_url: <unset> -> http://127.0.0.1:40221
+2026-09-26T12:57:36.569344Z  INFO starknet_transaction_prover::server::config: CLI override: chain_id: SN_MAIN -> SN_SEPOLIA
+2026-09-26T12:57:36.569349Z  INFO starknet_transaction_prover::server::config: CLI override: port: 3000 -> 44643
+2026-09-26T12:57:36.569351Z  INFO starknet_transaction_prover::server::config: CLI override: ip: 0.0.0.0 -> 127.0.0.1
+2026-09-26T12:57:36.569354Z  INFO starknet_transaction_prover::server::config: CLI override: max_concurrent_requests: 2 -> 1
+2026-09-26T12:57:36.569355Z  INFO starknet_transaction_prover::server::config: CLI override: max_queued_requests: 8 -> 0
+2026-09-26T12:57:36.569358Z  INFO starknet_transaction_prover::server::config: CLI override: compiled_class_cache_size: 600 -> 16
+2026-09-26T12:57:36.569369Z  INFO starknet_transaction_prover: Starting Starknet transaction prover. version="0.19.0-rc.2" git_sha="unknown" chain_id=SN_SEPOLIA rpc_node_host=http://127.0.0.1:40221 validate_zero_fee_fields=true blocking_check_enabled=false blocking_check_fail_open=false ohttp_enabled=false
+2026-09-26T12:57:37.071603Z  INFO prepare_privacy_recursiveprover_precomputes: privacy_prove: Prepare the twiddles
+2026-09-26T12:57:37.091612Z  INFO prepare_privacy_recursiveprover_precomputes: privacy_prove: Prepare the cairo prover preprocessed trace and tree
+2026-09-26T12:57:37.442367Z  INFO prepare_privacy_recursiveprover_precomputes: privacy_prove: Prepare the circuit prover preprocessed trace and tree
+2026-09-26T12:57:38.025672Z  INFO starknet_transaction_prover: JSON-RPC proving server is running. local_address=127.0.0.1:44643 scheme="http" max_concurrent_requests=1 max_connections=10 cors_mode="disabled" cors_allow_origin=[] ohttp_enabled=false
+2026-09-26T12:57:38.097053Z  INFO prove_transaction{block_id=Number(BlockNumber(100)) tx_hash=0x601bbfdd1bbf2a9224e6dfa4fb596646db3ab7b6eea9c7800ade33af4277802}: starknet_transaction_prover::running::runner: Starting transaction proving
+2026-09-26T12:57:38.663998Z  INFO prove_transaction{block_id=Number(BlockNumber(100)) tx_hash=0x601bbfdd1bbf2a9224e6dfa4fb596646db3ab7b6eea9c7800ade33af4277802}: starknet_transaction_prover::running::runner: Virtual OS execution resources n_steps=338014 n_memory_holes=10295 builtins={output: 6, range_check: 23866, pedersen: 8, ecdsa: 0, keccak: 0, bitwise: 0, ec_op: 0, poseidon: 626, range_check96: 0, add_mod: 0, mul_mod: 0}
+2026-09-26T12:57:38.664630Z  INFO prove_transaction{block_id=Number(BlockNumber(100)) tx_hash=0x601bbfdd1bbf2a9224e6dfa4fb596646db3ab7b6eea9c7800ade33af4277802}: starknet_transaction_prover::proving::virtual_snos_prover: OS execution completed os_duration_ms=611
+2026-09-26T12:57:38.664784Z  INFO privacy_recursive_prove: privacy_prove: Run privacy bootloader and get the prover input and output preimage
+2026-09-26T12:57:38.680520Z  INFO privacy_recursive_prove:get_prover_input: privacy_prove: Running the program
+2026-09-26T12:57:38.835647Z  INFO privacy_recursive_prove:get_prover_input: privacy_prove: Reading the bootloader output preimage
+2026-09-26T12:57:38.835704Z  INFO privacy_recursive_prove:get_prover_input: privacy_prove: Adapting the runner output for the prover
+2026-09-26T12:57:38.930056Z  INFO privacy_recursive_prove: privacy_prove: Generate the cairo proof
+2026-09-26T12:57:49.157399Z  INFO privacy_recursive_prove: privacy_prove: Prepare the cairo proof for the cairo-circuit verifier
+2026-09-26T12:57:49.158982Z  INFO privacy_recursive_prove: privacy_prove: Build the cairo-circuit verifier context
+2026-09-26T12:57:49.442099Z  INFO privacy_recursive_prove: privacy_prove: Prove the cairo-circuit verifier
+2026-09-26T12:57:54.732269Z  INFO privacy_recursive_prove: privacy_prove: Prepare the circuit proof for the circuit verifier
+2026-09-26T12:57:54.733111Z  INFO privacy_recursive_prove: privacy_prove: Serialize and compress the proof
+2026-09-26T12:57:54.746921Z  INFO prove_transaction{block_id=Number(BlockNumber(100)) tx_hash=0x601bbfdd1bbf2a9224e6dfa4fb596646db3ab7b6eea9c7800ade33af4277802}: starknet_transaction_prover::proving::virtual_snos_prover: Proving completed prove_duration_ms=16082
+2026-09-26T12:57:54.746951Z  INFO prove_transaction{block_id=Number(BlockNumber(100)) tx_hash=0x601bbfdd1bbf2a9224e6dfa4fb596646db3ab7b6eea9c7800ade33af4277802}: starknet_transaction_prover::proving::virtual_snos_prover: prove_transaction completed total_duration_ms=16693
+Finished with result: success
+Main processes terminated with: code=killed/status=TERM
+Service runtime: 19.587s
+CPU time consumed: 1min 4.771s
+Memory peak: 19.5G
+Memory swap peak: 0B

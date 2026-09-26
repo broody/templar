@@ -1,0 +1,34 @@
+Running as unit: templar-dp1-blake589k-v1-bounded-32g-1790425314406057878-verify.service; invocation ID: f30972b97c7348cbba04219b0b159052
+valid proof: PASS; verification_ms=181
+changed message digest: rejected (Proof verification failed: Verification failed)
+changed program hash: rejected (Proof verification failed: Verification failed)
+corrupted proof bytes: rejected (Proof verification failed: Verification failed)
+	Command being timed: "/home/broody/development/templar/target/m31-device-proof1/bin/v1-local-verifier /home/broody/.local/share/templar/runs/m31-device-proof1/phase0/blake589k-v1-bounded-32g"
+	User time (seconds): 0.39
+	System time (seconds): 0.21
+	Percent of CPU this job got: 96%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.64
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 140904
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 146236
+	Voluntary context switches: 1
+	Involuntary context switches: 42
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 650ms
+CPU time consumed: 624ms
+Memory peak: 256.0K
+Memory swap peak: 0B
