@@ -24,7 +24,7 @@ baseline until ADR-0024's hiding, review and format gates close.
 |-----|-------|--------|
 | [0001](0001-two-phase-proof-facts-architecture.md) | Keep the two-phase proof-facts architecture | Superseded by [0010](0010-single-phase-architecture.md) |
 | [0002](0002-remove-mandatory-auditor.md) | No mandatory auditor; voluntary viewing keys only | Accepted |
-| [0003](0003-remove-onchain-screening.md) | No on-chain screening; opt-in ZK association sets | Accepted |
+| [0003](0003-remove-onchain-screening.md) | No on-chain screening; opt-in ZK association sets | Accepted — would be superseded by [0028](0028-deposit-admission-and-screening.md) (proposed) |
 | [0004](0004-commitment-tree-state-model.md) | Sparse commitment tree + nullifier ring state model | Accepted |
 | [0005](0005-proving-architecture.md) | User-generated inner proofs; blind operator; client-side Stwo as end state | Superseded by [0010](0010-single-phase-architecture.md) |
 | [0006](0006-controlled-notes.md) | Adopt controlled notes with out-of-prover controller authorization | Accepted (format superseded by 0009) |
@@ -49,3 +49,4 @@ baseline until ADR-0024's hiding, review and format gates close.
 | [0025](0025-policy-notes.md) | Policy notes: bounded, capability-spent, controller-gated (supersedes 0022 once accepted) | Proposed — design and implementation reviewed; experimental, not deployed |
 | [0026](0026-account-bound-notes.md) | Account-bound notes for existing wallets, expiry and a permissionless M31 pool V3 | Proposed — design revision 4 (simplified); re-review math GO, protocol conditions applied |
 | [0027](0027-one-wallet-model.md) | One wallet model: remove account-bound notes, R0 V6, and key custody (a vault at launch, a Chrome extension later) | Proposed — would supersede 0026 decisions 1, 2, 4, 5 and parts of 6, withdraw 3, amend 7 and 8, and amend 0023's identity handle |
+| [0028](0028-deposit-admission-and-screening.md) | Deposit admission, sanctions screening and gated value entry | Proposed — would supersede 0003 and amend 0023 (allowlisted fair-value adapters); not implemented |

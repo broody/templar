@@ -8,17 +8,17 @@ description: What a cloaked receiving address reveals, what the chain exposes, a
 
 Templar hides note openings and the direct relationship between a consumed note and its creation. Its receiving model lets someone pay a known address without publishing that address as the private transfer's recipient. It does not conceal every consequence of moving value on a public chain.
 
-## Trusted roles removed
+## Trusted roles
 
 Templar is based on [StarkWare's starknet-privacy](https://github.com/starkware-libs/starknet-privacy), with these architectural boundaries:
 
 | Role | Templar's architecture |
 | --- | --- |
 | Mandatory auditor | No global auditor key or mandatory viewing-key disclosure. Incoming and full viewing capabilities are shared only by the user. |
-| Deposit screener | No screener key or screening-signature requirement. Deposits use the pool's funding and state checks. |
+| Deposit screening | A deposit waits as pending until a list provider admits it, after sanctions screening and a short hold that is longer for large deposits. The provider sees only public deposit data: the funding address, asset and amount. It cannot touch notes already in the pool, and a pending deposit can always be refunded to its sender. Value from DeFi enters only through allowlisted adapters that cap proceeds at fair value. |
 | Proving operator entrusted with private inputs | The holder proves on their own device. A wrapping server, which anyone can run, receives only an already zero-knowledge proof and public data, never the witness, and learns nothing about who spends. |
 
-Ordinary notes need no auditor, screener, or controller approval. Starknet verification, token behavior, and pool configuration remain part of the trust model. The [upstream comparison](/comparison) explains the corresponding hosted services and contract roles.
+Screening applies only when value enters the pool. Spending ordinary notes needs no auditor, screener, or controller approval. Starknet verification, token behavior, pool configuration, and the list provider's admission decisions remain part of the trust model. The [upstream comparison](/comparison) explains the corresponding hosted services and contract roles.
 
 ## Sharing a cloaked address does not expose a public balance
 

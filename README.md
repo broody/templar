@@ -30,12 +30,18 @@ proving ([below](#relation-to-starknet-privacy)).
   history. It can grant an *incoming* viewing key (sees received notes) or a *full* viewing key
   (also sees which are spent). Neither can spend.
 - **DeFi composability.** Open notes route private funds through public contracts (swaps,
-  vaults) and return the proceeds as private notes in the same transaction. Shadow accounts
-  hold persistent positions under a pseudonym.
+  vaults) and return the proceeds as private notes in the same transaction. They go through
+  reviewed adapters that cap proceeds at fair value, so no outside value enters unscreened.
+  Shadow accounts hold persistent positions under a pseudonym.
 - **Rule-governed assets.** Policy notes hold funds that can only move into outcomes committed in
   advance, approved by an on-chain controller, with a guaranteed refund after a deadline. They
   cover escrow, vesting and conditional payments.
-- **No privileged roles.** There is no global auditor, deposit screener or proving operator.
+- **Screened deposits.** A deposit is admitted into the pool after sanctions screening and a
+  short hold, which is longer for large deposits. Until then the depositor can take it back.
+  Notes already in the pool are never delayed.
+- **No auditor key.** There is no global auditor and no proving operator that sees private
+  inputs. Users can share viewing keys voluntarily, for example to show an exchange where their
+  funds came from.
 
 ## Note types
 
@@ -199,7 +205,7 @@ wallet secrets go to `~/.local/share/templar/runs`, never into the repository.
 | Receiving | Registered viewing keys, sender/recipient channels | Cloaked receiving addresses, no registration; payer pushes encrypted notes |
 | Note storage | Notes in a contract map, read during proving | Commitments in a depth-32 tree; private membership proofs |
 | Assets | ERC20; encrypted notes hide their token | ERC20, ERC721 and ERC1155; in-pool transfers hide the asset and their note counts |
-| Oversight | Auditor viewing-key path; deposit screening options | None; voluntary viewing keys only |
+| Oversight | Auditor viewing-key path; deposit screening | Deposit screening before admission; no auditor key; voluntary viewing keys |
 | Proving | User or proving service runs the client actions | Client proves privately; optional server only wraps an already-private proof |
 | DeFi | Open notes, external invokes, `ComputeAndInvoke` / `privacy_compute` | Open notes and shadow accounts through the same adapter interface; no general `privacy_compute` |
 | Governed assets | No equivalent | Policy notes with an on-chain controller and deadline refund |
@@ -217,7 +223,9 @@ The [comparison page](docs/guide/src/pages/comparison.mdx) in the guide goes int
 - **Large proofs** are not yet accepted by the public Sepolia gateway, and not enabled on mainnet.
 - **Public metadata:** submission, gas funding, RPC access and timing can still correlate
   activity. An open note makes funding private; it does not make the swap itself private.
-- **Operator trust:** pool owners can currently change verifiers and allowlists.
+- **Operator trust:** pool owners can change verifiers and allowlists behind a timelock. The
+  deposit list provider decides admission; a pending deposit can always be refunded to its
+  sender.
 
 ## License
 

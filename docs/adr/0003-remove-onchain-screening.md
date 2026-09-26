@@ -1,6 +1,6 @@
 # ADR-0003: No on-chain screening; opt-in ZK association sets
 
-- Status: Accepted
+- Status: Accepted; would be superseded by [ADR-0028](0028-deposit-admission-and-screening.md) (proposed)
 - Date: 2026-09-19
 - Deciders: broody
 

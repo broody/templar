@@ -12,7 +12,7 @@ import { Flow } from '../components/Flow'
 
 <p className="guide-lead">Templar is a private token pool on Starknet with push payments to reusable cloaked receiving addresses. Share a cloaked address, receive while offline, use public DeFi without revealing which notes you spend, and prove spends on your own device.</p>
 
-Templar is based on [StarkWare's starknet-privacy](https://github.com/starkware-libs/starknet-privacy), with its auditor and deposit-screening roles removed and private validity proved on the user's device. No proving operator ever receives users' secrets. The [trust model](/architecture/privacy#trusted-roles-removed) explains these boundaries and the remaining authority of pool configuration.
+Templar is based on [StarkWare's starknet-privacy](https://github.com/starkware-libs/starknet-privacy), with its auditor role removed, deposits screened against sanctions lists before admission, and private validity proved on the user's device. No proving operator ever receives users' secrets. The [trust model](/architecture/privacy#trusted-roles) explains these boundaries and the remaining authority of pool configuration and deposit admission.
 
 The [Starknet Privacy comparison](/comparison) shows how the two designs differ in trust, note handling, supported flows, and client responsibilities.
 

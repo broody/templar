@@ -2,6 +2,7 @@
 
 - Date: 2026-09-21
 - Status: Accepted architecture; experimental integration and production qualification tracked separately
+- Would be amended by: [ADR-0028](0028-deposit-admission-and-screening.md) (proposed): `INVOKE` only through allowlisted adapters with fair-value bounds
 - Deciders: broody
 - Partially supersedes: ADR-0009's removal of open-note funding and ADR-0010's exclusion of external invokes
 - Extends: ADR-0021's push-payment scope and ADR-0018's native proof architecture

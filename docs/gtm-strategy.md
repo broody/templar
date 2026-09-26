@@ -1,6 +1,6 @@
 # Templar go-to-market strategy
 
-Date: 2026-09-23
+Date: 2026-09-23; positioning revised 2026-09-27 ([ADR-0028](adr/0028-deposit-admission-and-screening.md))
 
 Status: internal strategy draft; proposed experiments, not launch commitments
 
@@ -9,20 +9,24 @@ Scope: positioning, acquisition, distribution, incentives, and launch gates
 ## 1. Strategic thesis
 
 **Win users who want STRK20's private payments and DeFi capabilities but reject
-its mandatory disclosure and screening model. Retain them through useful
-applications and a dependable product.**
+an auditor key over their private history and a proving service that sees their
+private inputs. Retain them through useful applications and a dependable
+product.**
 
-The competitive hook is deliberately direct: **STRK20 with the mandatory
-compliance machinery removed.** This means removing protocol-enforced auditor
-access and deposit screening, not making a claim about users' legal obligations.
-Controlled notes are the third product pillar, not a replacement for this hook
-and not a compliance product.
+The competitive hook is deliberately direct: **STRK20's private DeFi, without
+the auditor key, and your data never leaves your device.** Templar operates
+within the law. Deposits are screened against sanctions lists before admission,
+and users can disclose their own history voluntarily. What Templar removes is
+any key or service that can open a user's private history. Controlled notes are
+the third product pillar, not a replacement for this hook and not a compliance
+product.
 
 The story has four parts:
 
 1. **Credibility:** the Starknet, Cairo, and S-two proving foundation also used
    by STRK20, with open-source lineage from StarkWare's privacy implementation.
-2. **Reason to switch:** no mandatory auditor access or screening machinery.
+2. **Reason to switch:** no auditor key, and private inputs never leave the
+   user's device.
 3. **Everyday utility:** ordinary private payments and open-note-equivalent DeFi
    interactions.
 4. **Reason to build:** controlled notes for contract-governed private funds,
@@ -42,7 +46,7 @@ infrastructure are expansion products, not prerequisites for the first launch.
 
 **Comparative hook**
 
-> STRK20's private DeFi proposition, without mandatory auditor access and screening.
+> STRK20's private DeFi proposition, without the auditor key.
 
 **Credibility line**
 
@@ -55,8 +59,9 @@ infrastructure are expansion products, not prerequisites for the first launch.
 **Longer description — target positioning, subject to qualification**
 
 > Templar is an independent private token pool built on Starknet's Cairo and
-> S-two infrastructure. It removes mandatory auditor access and screening,
-> supports ordinary private payments and DeFi return flows, and extends the
+> S-two infrastructure. It has no auditor key, keeps private inputs on the
+> user's device, and screens deposits against sanctions lists before admission.
+> It supports ordinary private payments and DeFi return flows, and extends the
 > model with contract-controlled notes for private applications.
 
 This describes the intended product. Public copy must label experimental,
@@ -67,9 +72,11 @@ feature parity or official StarkWare endorsement.
 
 STRK20's published model requires viewing-key registration and encryption to a
 master key, with an operational process for scoped disclosure. It also describes
-deposit screening. Contrast that architecture accurately, including its stated
-safeguards; do not present it as an undisclosed exploit or ordinary public access
-to everyone's funds. [STRK20 compliance architecture](https://www.starknet.io/blog/compliance-layer-onchain-privacy-strk20/)
+deposit screening. Templar screens deposits too, so the contrast is the auditor
+key and who sees private inputs, not screening. Contrast that architecture
+accurately, including its stated safeguards; do not present it as an
+undisclosed exploit or ordinary public access to everyone's funds.
+[STRK20 compliance architecture](https://www.starknet.io/blog/compliance-layer-onchain-privacy-strk20/)
 
 Templar derives from the open-source privacy implementation and reuses native
 virtual-OS/proof-verification infrastructure. That is a concrete engineering
@@ -79,24 +86,29 @@ lineage, not an inheritance of every upstream security property or audit.
 | Use | Avoid |
 | --- | --- |
 | Built on established Starknet proving infrastructure | Templar inherits all STRK20 security guarantees |
-| No mandatory auditor access or protocol-level screening | Compliance-free means exempt from legal obligations |
+| No auditor key; deposits screened before admission | Compliance-free, unscreened, or exempt from legal obligations |
+| Operates within the law; voluntary disclosure of your own history | Untraceable by law enforcement, or a way around sanctions |
 | Independent implementation with a different privacy model | Official STRK20 successor or StarkWare-endorsed product |
 | State exactly what is hidden and from whom | Untraceable, zero metadata, or guaranteed anonymity |
 | Contract-controlled spending on selected notes | Controlled notes are a pool-wide audit or compliance layer |
 | Describe reviewed components and their exact scope | The whole system is battle-tested because the prover is shared |
 
-### Product direction versus existing documentation
+### Compliance model and viewing keys
 
-The founder's direction for this strategy is **no viewing keys at all**; do not
-reintroduce optional auditor/viewing exports as a GTM feature. This does not mean
-wallets have no spending or encryption keys.
+The founder's direction: **no global or auditor viewing key**, and Templar
+operates within the law.
 
-The current [README](../README.md), [push specification](push-payment-spec.md),
-and historical [viewing/recovery decision](adr/0020-full-viewing-and-recovery.md)
-still describe viewing capabilities. Reconcile the implementation, recovery
-model, ADRs, and public documentation before advertising "no viewing keys" as a
-verified property of a release. This strategy records product intent; it does
-not silently supersede architecture decisions or remove implemented features.
+- **Voluntary per-account viewing keys stay.** Incoming and full keys are held
+  by the user and shared only by the user, for example to answer an exchange's
+  source-of-funds request ([SDK spec §4.2](sdk-spec.md)). They are not an
+  auditor path.
+- **Deposits are admitted after sanctions screening and a hold**, and value can
+  enter through DeFi only by allowlisted fair-value adapters
+  ([ADR-0028](adr/0028-deposit-admission-and-screening.md)).
+- **Never market the absence of compliance controls.** In enforcement cases
+  against Samourai and Tornado Cash, prosecutors used marketing and internal
+  messages as evidence of intent. Keep public and internal messaging consistent
+  with this model.
 
 ## 3. Three product pillars
 
@@ -151,7 +163,7 @@ to ship every possible private application in the first dapp release.
 
 | Priority | Audience and motivation | Offer | Route to acquisition |
 | --- | --- | --- | --- |
-| 1: dapp launch | Privacy-conscious Starknet users, including prospective or existing STRK20 users who reject its disclosure model | A usable Templar dapp for transfers and supported DeFi flows, without first adopting a new wallet | Sourced comparison, hands-on demos, existing wallet communities, privacy researchers |
+| 1: dapp launch | Privacy-conscious Starknet users, including prospective or existing STRK20 users who reject its auditor-key disclosure model | A usable Templar dapp for transfers and supported DeFi flows, without first adopting a new wallet | Sourced comparison, hands-on demos, existing wallet communities, privacy researchers |
 | 2: design partners, then infrastructure expansion | Wallet and DeFi developers who want to offer that choice | Early technical collaboration; later, qualified SDKs, services, and integration support | Direct technical outreach, Cairo developer groups, office hours, reproducible examples |
 | 3: application partners | Teams needing contract-governed private funds | A scoped controlled-note application demo, followed by reusable primitives as qualified | Co-design with auction organizers and application developers |
 
@@ -175,7 +187,7 @@ switch, and low switching costs. [Sushi's account of the vampire attack](https:/
 
 | Original mechanism | Templar adaptation |
 | --- | --- |
-| Target established liquidity providers | Target privacy users and developers with a demonstrated objection to mandatory disclosure |
+| Target established liquidity providers | Target privacy users and developers with a demonstrated objection to an auditor key over their history |
 | Reward switching | Sponsor initial proving/transaction costs and pay milestone-based integration grants |
 | Provide migration tooling | Offer supported onboarding, clear compatibility checks, and a user-authorized movement of funds |
 | Retain economically useful liquidity | Retain repeat private activity, integrations, and applications after subsidies end |
@@ -243,9 +255,20 @@ cover more than one role.
 - Qualify latency, devices, supported tokens/accounts, relayer behavior, and
   capacity under realistic load; clearly distinguish client proving from total
   time to accepted settlement.
+- Deposit admission, sanctions screening, the admission rate limit and the
+  adapter allowlist ([ADR-0028](adr/0028-deposit-admission-and-screening.md))
+  are live and tested on the exact release path, together with sanctions checks
+  and geoblocking in every operated service.
 - Have counsel assess the intended operating model, service roles, marketing,
-  jurisdictions, and any incentive/token plans. Do not turn architectural
-  absence of screening into a legal guarantee.
+  jurisdictions, and any incentive/token plans. That includes:
+  - the relayer's money-transmitter status, free versus paid;
+  - separating a developer entity from the entity that operates the relayer,
+    prover server, vault and front end;
+  - whether serving the vault counts as control;
+  - the list provider's role;
+  - the owner's timelocked powers.
+
+  Do not present screening or any other control as a legal guarantee.
 
 As of the [2026-09-23 Sepolia run](../bench/m31-sepolia/README.md), a genuine
 large-path PROOF2 was generated and verified locally, and the transfer simulated,
@@ -359,9 +382,12 @@ technical dependency log instead of turning rollout issues into accusations.
 - [ ] Product/engineering: freeze the initial dapp's supported flows, existing
   wallet connections, private-note key/recovery UX, and proving requirements;
   keep standalone wallet and public infrastructure launches out of that scope.
-- [ ] Product/engineering: reconcile the no-viewing-keys direction with current
-  docs, recovery design, and implementation; track any architecture change
-  separately.
+- [ ] Product/engineering: implement ADR-0028 (deposit admission, sanctions
+  screening, admission rate limit, allowlisted adapters) and keep public docs
+  consistent with it.
+- [ ] Business development: brief Chainalysis, TRM and Elliptic before mainnet
+  (addresses, admission policy, disclosure features) and ask how they will
+  classify Templar.
 - [ ] Product: draft the sourced comparison and interview script; test whether
   the disclosure objection causes actual switching intent.
 - [ ] Engineering/security: publish the component/release evidence matrix and
@@ -379,9 +405,11 @@ partnership commitments, or transactions. Those remain separate decisions.
 
 ## Bottom line
 
-**Use the absence of mandatory compliance machinery to win attention. Use shared
-Starknet infrastructure to establish engineering credibility. Use ordinary notes
-and DeFi returns to deliver utility. Use controlled notes to grow a private
-application ecosystem. Earn trust in Templar itself through independent review
-and reliable operation. Start with a dapp; expand into wallet and infrastructure
-products when adoption justifies them.**
+**Use the absence of an auditor key, and private inputs that never leave the
+device, to win attention. Operate within the law: screen deposits and support
+voluntary disclosure. Use shared Starknet infrastructure to establish
+engineering credibility. Use ordinary notes and DeFi returns to deliver utility.
+Use controlled notes to grow a private application ecosystem. Earn trust in
+Templar itself through independent review and reliable operation. Start with a
+dapp; expand into wallet and infrastructure products when adoption justifies
+them.**
