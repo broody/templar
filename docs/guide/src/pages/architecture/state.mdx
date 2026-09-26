@@ -40,6 +40,8 @@ While a holder prepares a proof, another user may append a note and change the c
 
 The pool keeps a ring of **256 accepted roots**. A spend can reference any root still in that history. This is a window measured in recorded roots, not seconds or blocks; a busy pool can advance it quickly. A transaction can also insert multiple leaves and therefore advance several roots.
 
+Pool V3, not yet deployed, replaces the ring with a window in blocks. The current root is always accepted, and a replaced root stays accepted for `W` blocks after the block that replaced it. Appends cannot age a root out early, and a quiet pool never freezes. Each V3 spend also carries a public `valid_until` block after which it cannot land.
+
 An expired root does not destroy a note. The holder needs a fresh membership path and a new proof against an accepted root. Nullifiers remain authoritative regardless of which accepted root was used.
 
 ## Two independent freshness checks

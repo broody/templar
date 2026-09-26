@@ -1,0 +1,82 @@
+---
+showAskAi: false
+title: Pool governance
+description: What the pool owner can change, how every change is announced before it applies, and why a pool's features are fixed at deployment.
+---
+
+import { Flow } from '../../components/Flow'
+
+# Pool governance
+
+A pool contract cannot be upgraded. Its rules are fixed when it is deployed, and a change of rules means a new pool, with notes moved by withdrawal and deposit. The owner keeps a small set of levers. This page describes pool V3, the pool for R0 V5 spends, which is not yet deployed. The deployed pool V2 has the same levers without a timelock ([status](/status#current-configuration-boundary)).
+
+## What the owner can and cannot do
+
+| The owner can | The owner cannot |
+| --- | --- |
+| Set the two verifiers once, before any deposit | Change the pool's code or its constants (`E`, `Q`, `W`, `T`) |
+| Propose a new verifier for R0 spends or P1 policy settlements | Move funds or block spends, except through a timelocked verifier change |
+| Propose allowing or removing a shadow-account class | Charge a fee, or choose who may deposit or submit |
+| Hand ownership to a new owner, who must accept it | Skip or shorten the timelock |
+
+The verifiers are the strongest lever. A verifier decides which proofs the pool accepts, so a verifier that accepts false claims could drain the pool. Local proving alone does not make a deployment trustless ([privacy & trust](/architecture/privacy)). The timelock turns that power into a public announcement with a waiting period.
+
+## The timelock
+
+<Flow steps={[
+  { title: 'Propose', detail: 'The owner names a change. The pool emits Proposed with its eta, T seconds from now.' },
+  { title: 'Wait', detail: 'Anyone can read the pending change. Wallets warn, and users can leave.' },
+  { title: 'Apply or lapse', detail: 'The owner may apply it from eta until eta + T. After that it lapses and must be proposed again.' },
+]} caption="Every verifier and shadow-class change follows the same path. T is a constructor constant: at least 7 days on mainnet." />
+
+One mechanism covers every lever. `propose(key, value)` names the change:
+
+| Key | Value | On apply |
+| --- | --- | --- |
+| `'R0'` | the new R0 verifier's address | `VerifierChanged` |
+| `'P1'` | the new P1 verifier's address | `VerifierChanged` |
+| a shadow class hash | 1 to allow the class, 0 to remove it | `ShadowClassSet` |
+
+- **Proposals can be withdrawn or replaced.** The owner can `cancel(key)` a pending proposal. A new proposal for the same key replaces the old one with a fresh `eta`, and the replaced one emits `Cancelled`.
+- **Proposals expire.** A proposal applies only from `eta` until `eta + T`, so none stays armed indefinitely, waiting for a moment when nobody watches.
+- **Anyone can read the state.** `get_proposal(key)` returns the pending value and its `eta`.
+- **Only the owner applies.** A proposal that anyone could apply would race the owner's own cancel.
+
+The waiting period, at least a week on mainnet, is far longer than any spend's lifetime: a proved spend expires within about 45 minutes. Everything already in flight lands under the old rules, and nothing changes by surprise.
+
+## The shadow-class allowlist
+
+[Open notes](/architecture/open-notes) run an external call through an adapter in one of two ways:
+
+- **`INVOKE`:** a one-shot call, such as a swap on Ekubo or a vault deposit. Any adapter works. The user names it in their own proved intent, and the owner has no say.
+- **`COMPUTE`:** a [shadow account](/architecture/open-notes#shadow-accounts), a persistent account that keeps a position for a private identity. The pool hands the adapter the user's proven identity commitment. Only classes the owner has allowed receive it, because they must keep each identity's account separate. In practice that is one class, upstream's shadow-account anonymizer, plus its later versions.
+
+An `INVOKE` carries no proven identity, so it may not target an allowed shadow class: through `INVOKE`, such a class could act for an identity nobody proved. That rule makes the allowlist a switch over routes in both directions:
+
+| Change | Effect |
+| --- | --- |
+| Allow class X | Every `INVOKE` to X reverts |
+| Remove class Y | Every `COMPUTE` to Y reverts |
+
+If the switch flipped instantly, the owner could break trades already on their way. Allowing the class of a popular swap adapter would make every swap in flight to it revert when it lands. No funds would be lost, because a revert undoes everything. But the failed transaction would stay on chain with its public calldata, and the user's proof and fees would be wasted. The timelock removes that: in-flight trades land first, and wallets stop routing into a class before the change can apply.
+
+The allowlist cannot move funds. A `COMPUTE` budget goes only to the adapter the user's own intent names. Plain transfers and withdrawals never consult the allowlist.
+
+## Bootstrap
+
+The constructor takes no verifiers. A one-time `initialize` sets both verifiers and the first shadow-class allowlist, with no wait, and every deposit and spend reverts until it has run. This is safe because `initialize` runs only on an empty pool that nobody has used yet. After it, every change takes the timelock.
+
+Ownership moves in two steps: the owner names a successor, who must accept. Mainnet ownership is a multisig.
+
+## What wallets do
+
+The SDK reads every pending proposal and shows it with its `eta` and lapse time.
+
+- **A verifier proposal is pending:** the wallet refuses deposits and offers an exit, since a verifier can move funds.
+- **A shadow-class proposal is pending:** the wallet warns and stops building the routes the change would break. Deposits stay open, since allowlisting cannot move funds.
+
+## Why features are fixed before deployment
+
+Because a pool cannot be upgraded, everything it will ever do must fit in the class that is deployed. Starknet limits a declared class to 81,920 CASM felts, and pool V3 uses 80,052 of them.
+
+Most of that space is the Poseidon2-M31 hash, fully unrolled for speed, which the tree and the note commitments use. The features themselves are comparatively small. A compact version of the same hash shares its round code: it frees about a third of the class (pool V3 would be 52,962 felts) for about 4.5% more gas on every call that hashes. Pool V3 keeps the unrolled hash. If new features are needed, before deployment or in a later pool, the compact hash is the first lever.

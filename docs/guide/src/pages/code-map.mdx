@@ -38,6 +38,7 @@ packages under `packages/` have not yet adopted these formats.
 | --- | --- |
 | `bench/m31-pool/cairo/src/pool.cairo` | Deposits, `apply_spend`, `apply_spend_with_invoke` (open notes), `apply_policy_spend` (policy notes), nullifiers, root history, owner configuration |
 | `bench/m31-pool/cairo/src/pool_v2.cairo`, `assets.cairo`, `spend4.cairo` | M31 pool V2: R0 V4 spends, the asset registry and contract standards, ERC20 pull and ERC721/ERC1155 push deposits, holdings, `pay_out` by standard |
+| `bench/m31-pool/cairo/src/pool_v3.cairo`, `tree_v3.cairo`, `spend5.cairo` | M31 pool V3: R0 V5 spends with `valid_until`, roots accepted by block height, `initialize`, the owner timelock ([governance](/architecture/governance)) |
 | `bench/m31-pool/cairo/src/tree.cairo`, `hash.cairo`, `perm_*.cairo` | Depth-32 Poseidon2-M31 tree, the client's sponge and note hashing, the permutation |
 | `bench/m31-pool/cairo/src/spend.cairo`, `adapter.cairo` | Spend encoding and binding; the large-proof verifier adapter |
 | `bench/m31-pool/cairo/src/open_note.cairo` | Execution intents, destinations and the identity commitment |

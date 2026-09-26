@@ -69,7 +69,7 @@ A root obtained from an untrusted source does not establish its own canonical st
 
 ## Configuration authority
 
-The pool owner can change the verifiers and the allowlist of shadow-account anonymizers. A verifier that accepts false claims could compromise the pool, so local proving alone does not make a deployment immutable or fully trustless.
+The pool owner can change the verifiers and the allowlist of shadow-account anonymizers. A verifier that accepts false claims could compromise the pool, so local proving alone does not make a deployment immutable or fully trustless. In pool V3 every such change is announced and waits at least a week on mainnet before it can apply ([governance](/architecture/governance)).
 
 Correct statement and relation code, the proving pipelines, Starknet consensus and native verification, compatible tokens, secure keys, and available encrypted history remain necessary. The native verifier cannot repair a missing application invariant. The [status page](/status) records the remaining qualification work.
 

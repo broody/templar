@@ -150,7 +150,7 @@ Missing payloads produce incomplete results rather than complete zero balances. 
 
 ## Current configuration boundary
 
-Each relation has its own adapter, pinned to the large-proof format, the virtual OS program, its statement account and class, and its account tag. The experimental maximum proof age is **4,096 blocks**, separate from the **256-root** pool history. The owner can change the R0 and P1 verifiers and the shadow-anonymizer allowlist. No pool fee is charged.
+Each relation has its own adapter, pinned to the large-proof format, the virtual OS program, its statement account and class, and its account tag. The experimental maximum proof age is **4,096 blocks**, separate from the **256-root** pool history. The owner can change the R0 and P1 verifiers and the shadow-anonymizer allowlist. No pool fee is charged. Pool V3, implemented but not deployed, puts every such change behind a timelock ([governance](/architecture/governance)).
 
 The bench submits with sncast signing and the official Sepolia gateway, with explicit fee bounds. The SDK submits through starknet.js: the raw fee estimate, the exact signed transaction simulated with validation, then sent. That path has not yet carried a funded spend.
 
