@@ -10,13 +10,13 @@ import { beforeAll, describe, expect, test } from 'vitest';
 import * as wasm from '../wasm/templar.js';
 import initTest, * as twasm from '../wasm-test/templar_test.js';
 import { FileKV, IndexedDBKV, MemoryKV, SEPOLIA, Templar, TemplarError, boundsFrom, checkRuntime, loadCore, pinsOf, activePool, type NetworkConstants } from '../dist/index.js';
-import { MockChain, MockProver, SEL } from './mockchain.js';
+import { MockChain, MockProver, SEL, SEPOLIA_V2 } from './mockchain.js';
 
 const TOKEN = '0x39f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8';
 const alice = new Uint8Array(32).fill(0xa1);
 const bob = new Uint8Array(32).fill(0xb0);
 
-async function setup(network: NetworkConstants = SEPOLIA) {
+async function setup(network: NetworkConstants = SEPOLIA_V2) {
   const chain = new MockChain();
   const kv = new MemoryKV();
   const t = await Templar.connect({ provider: chain.provider(), network, kv });
@@ -24,12 +24,12 @@ async function setup(network: NetworkConstants = SEPOLIA) {
 }
 
 function depositTo(chain: MockChain, address: string, amount: bigint, asset = TOKEN) {
-  const note = JSON.parse(wasm.note_for(address, asset, amount.toString(), SEPOLIA.chainId, activePool(SEPOLIA).pool));
+  const note = JSON.parse(wasm.note_for(address, asset, amount.toString(), SEPOLIA.chainId, activePool(SEPOLIA_V2).pool));
   chain.deposit(note, asset, amount);
 }
 
 function mockProver(chain: MockChain) {
-  const pins = JSON.stringify(pinsOf(SEPOLIA, activePool(SEPOLIA)));
+  const pins = JSON.stringify(pinsOf(SEPOLIA, activePool(SEPOLIA_V2)));
   return new MockProver(chain, (binding, base, hash) => JSON.parse(twasm.test_expected_facts(pins, binding, BigInt(base), hash)));
 }
 
@@ -162,7 +162,7 @@ describe('receiving, spending and submission', () => {
   }, 300_000);
 
   test('a client circuit other than the pinned one is refused before anything leaves', async () => {
-    const network = structuredClone(SEPOLIA);
+    const network = structuredClone(SEPOLIA_V2);
     network.pools[0]!.circuitHash = [1, 2, 3, 4, 5, 6, 7, 8];
     const { chain, t } = await setup(network);
     const a = await t.wallet(alice);
@@ -179,7 +179,7 @@ describe('prover client and in-flight failures', () => {
     // A key configuration list: one config, key id 1, X25519 (0x0020), HKDF-SHA256 + AES-128-GCM.
     const config = new Uint8Array([0x00, 0x29, 0x01, 0x00, 0x20, ...new Uint8Array(32).fill(9), 0x00, 0x04, 0x00, 0x01, 0x00, 0x01]);
     const hex = [...config].map((b) => b.toString(16).padStart(2, '0')).join('');
-    const network = structuredClone(SEPOLIA);
+    const network = structuredClone(SEPOLIA_V2);
     network.provers = [{ url: 'http://p', ohttpKeyConfig: hex }];
     const { t } = await setup(network);
     const other = config.slice();
@@ -215,7 +215,7 @@ describe('prover client and in-flight failures', () => {
     await spend.wrap(client, { url: 'http://p' });
     chain.mine(12);
     // A restart: a new instance on the same store resumes the record.
-    const t2 = await Templar.connect({ provider: chain.provider(), network: SEPOLIA, kv });
+    const t2 = await Templar.connect({ provider: chain.provider(), network: SEPOLIA_V2, kv });
     const a2 = await t2.wallet(alice);
     const resumed = await a2.resume(spend.id);
     expect((await resumed.record()).stage).toBe('wrapped');
@@ -380,7 +380,7 @@ describe('deposits, withdrawals and keys', () => {
     depositTo(chain, at(2), 2n);
     depositTo(chain, at(5), 5n);
     chain.mine(12);
-    const fresh = await (await Templar.connect({ provider: chain.provider(), network: SEPOLIA, kv: new MemoryKV() })).wallet(alice);
+    const fresh = await (await Templar.connect({ provider: chain.provider(), network: SEPOLIA_V2, kv: new MemoryKV() })).wallet(alice);
     const r = await fresh.sync();
     expect(r.balances).toMatchObject([{ unspent: 7n, notes: 2 }]);
     await fresh.address(8);

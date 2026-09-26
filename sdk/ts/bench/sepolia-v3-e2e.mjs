@@ -46,8 +46,10 @@ const pins = await load('pool-pins.json');
 const deployment = await load('sepolia/deployment.json');
 const relayerInfo = await load('sepolia/relayer.json');
 const TOKEN = deployment.token;
-// Pool V3 as the active Sepolia pool, V2 kept as history (the SDK's pins will follow once this passes).
-const network = { ...SEPOLIA, pools: [...SEPOLIA.pools, pins] };
+// The SDK pins pool V3 as Sepolia's active pool; the deployment must be the pinned one.
+const network = SEPOLIA;
+const active = SEPOLIA.pools.at(-1);
+if (BigInt(active.pool) !== BigInt(pins.pool) || BigInt(active.adapter) !== BigInt(pins.adapter)) throw new Error('the run directory is not the pinned pool V3');
 
 // Providers: `seen` has seen the bound account (setup checks, sync); spend reads and every
 // submission go through the local node, which has not (spec §10).

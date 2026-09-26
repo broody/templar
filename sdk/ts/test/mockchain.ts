@@ -6,6 +6,9 @@ import { RpcError, hash } from 'starknet';
 
 import * as wasm from '../wasm/templar.js';
 import { SEPOLIA, activePool, canon } from '../dist/index.js';
+
+/** Sepolia with only pool V2 (R0 V4): the network the V4 wallet tests run against. */
+export const SEPOLIA_V2 = { ...SEPOLIA, pools: [SEPOLIA.pools[0]!] };
 import type { Plan, PoolConstants, Proved } from '../dist/index.js';
 
 const SEL = {
@@ -72,7 +75,7 @@ export class MockChain {
   /** The account's STRK balance for fee checks. */
   strk = 10n ** 20n;
   /** Leaves in order with the block they were published in. */
-  constructor(pool: PoolConstants = activePool(SEPOLIA)) {
+  constructor(pool: PoolConstants = activePool(SEPOLIA_V2)) {
     this.pool = pool;
     this.base = pool.deploymentBlock;
     this.mine(1);

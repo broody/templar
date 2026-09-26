@@ -89,7 +89,10 @@ export interface NetworkConstants {
   provers: ProverServer[];
 }
 
-/** Sepolia, M31 pool V2 (`bench/m31-sepolia/README.md`, 2026-09-24). */
+/**
+ * Sepolia: M31 pool V2 (`bench/m31-sepolia/README.md`, 2026-09-24), then M31 pool V3, the active
+ * pool (`bench/account-bound-p6/README.md`, 2026-09-26).
+ */
 export const SEPOLIA: NetworkConstants = {
   name: 'sepolia',
   chainId: '0x534e5f5345504f4c4941',
@@ -106,6 +109,21 @@ export const SEPOLIA: NetworkConstants = {
       configHash: '0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57',
       maxProofAge: 4096,
       circuitHash: [4130052835, 1598900057, 4277742495, 934065338, 3030711690, 3187179780, 957846778, 3640319832],
+    },
+    {
+      pool: '0x03463a80930b97683671b68c6a34feb3ae2ed494bd8cd477cd602dd4ef6a8aa6',
+      deploymentBlock: 15655614,
+      version: 'v5',
+      parameters: { expiryWindow: 1500, quantum: 100, rootWindow: 4096, timelock: 7200 },
+      adapter: '0x0078469651c628d0aa30a3bb3d6f762ecfe89308b62c9db4eec8f6a0232c2e7d',
+      adapterClass: '0x064148aed7efcab705956779e172385e7f2fa36eb161e62b4dcd629a5a3e6ddb',
+      statement: '0x07748e3ba3fca5228625cf754c0d0e7dd7e7bf3e9c426c5c7bc8dc08d88b6a81',
+      statementClass: '0x06a2bd80203760b1eb0aee384ae835300c66a24f327b038315d628fbd92b830a',
+      accountTag: 'TMPZR0_PAYMENT_V5',
+      osProgram: '0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1',
+      configHash: '0x57ed4d5e20d617d8cc087a5882eae4f71d005172326be6439b2e1fd8b4dc57',
+      maxProofAge: 1024,
+      circuitHash: [1903585510, 1708577544, 3915427995, 3101166941, 461832048, 2805149134, 1077751030, 1205594117],
     },
   ],
   tokens: [

@@ -11,7 +11,7 @@ import { beforeAll, describe, expect, test } from 'vitest';
 import * as wasm from '../wasm/templar.js';
 import initTest, * as twasm from '../wasm-test/templar_test.js';
 import { BOUND_ACCOUNT_CLASSES, KIND_R0, MemoryKV, SEPOLIA, Templar, canon, loadCore, pinsOf, type BoundSigner, type NetworkConstants } from '../dist/index.js';
-import { MockChain, MockProver, type MockAccount } from './mockchain.js';
+import { MockChain, MockProver, type MockAccount, SEPOLIA_V2 } from './mockchain.js';
 
 const TOKEN = '0x39f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8';
 const A = '0x7a11ce00000000000000000000000000000000000000000000000000000a11';
@@ -127,7 +127,7 @@ describe('bound wallets', () => {
   test('setup checks: the pool, the class matrix, signers, and the account signature rules', async () => {
     const onV2 = await (async () => {
       const chain = new MockChain();
-      return Templar.connect({ provider: chain.provider(), network: SEPOLIA, kv: new MemoryKV() });
+      return Templar.connect({ provider: chain.provider(), network: SEPOLIA_V2, kv: new MemoryKV() });
     })();
     await expect(onV2.boundSetupCheck(A, signer())).rejects.toThrow(/wrong_relation/);
     await expect(onV2.boundWallet(Templar.generateBoundSeed(), A, signer(), { spendProvider: new MockChain().provider() })).rejects.toThrow(/wrong_relation/);
@@ -317,4 +317,17 @@ describe('bound wallets', () => {
     expect(await spend.freeWithdrawalPayment()).toBeUndefined();
     await expect(spend.authorize()).rejects.toThrow(/not_bound/);
   }, 60_000);
+});
+
+test('Sepolia pins pool V3 as the active pool, with pool V2 kept as history', () => {
+  const [v2, v3] = SEPOLIA.pools;
+  expect(SEPOLIA.pools.length).toBe(2);
+  expect(v2!.version ?? 'v4').toBe('v4');
+  expect(v3!.version).toBe('v5');
+  expect(v3!.accountTag).toBe('TMPZR0_PAYMENT_V5');
+  expect(v3!.maxProofAge).toBe(1024);
+  const { expiryWindow: E, quantum: Q, rootWindow: W, timelock: T } = v3!.parameters!;
+  expect(W).toBeGreaterThanOrEqual(E + Q);
+  expect(T).toBeGreaterThan(0);
+  expect(v3!.deploymentBlock).toBeGreaterThan(v2!.deploymentBlock);
 });

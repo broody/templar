@@ -1,5 +1,5 @@
 // Read-only check against Sepolia (no transactions): pins verified on chain, then a full sync of
-// pool V2 from its deployment block, complete only if the local root equals the pool's.
+// the active pool from its deployment block, complete only if the local root equals the pool's.
 import { RpcProvider } from 'starknet';
 import { MemoryKV, SEPOLIA, Templar } from '../dist/index.js';
 
