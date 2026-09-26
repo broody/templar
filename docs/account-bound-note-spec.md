@@ -2,8 +2,9 @@
 
 Status: **design, revision 4.** Decided by the user on 2026-09-25
 ([ADR-0026](adr/0026-account-bound-notes.md)). Implemented so far: P2, the relation
-(`client-port/results/stwo-client-r5`), and P3, the bridge and statement account
-(`client-port/results/r5-bridge`). Nothing is deployed.
+(`client-port/results/stwo-client-r5`); P3, the bridge and statement account
+(`client-port/results/r5-bridge`); and P3b, pool V3 (`bench/m31-pool/results/pool-v3`). Nothing is
+deployed.
 
 - Revision 1 was reviewed in `docs/reviews/account-bound-design-{math,protocol}-review.md` (both
   CONDITIONAL GO).
@@ -575,7 +576,7 @@ Before submitting, the relayer:
 `apply_spend` and `apply_spend_with_invoke` take a V5 `Spend`: V4's plus `valid_until`. Under the
 lock the pool checks, in addition to V2's rules:
 
-- the binding `TMR0_BIND_V5`, recomputed from the spend;
+- the binding `TMR0_BIND_V5`, recomputed from the spend (`spend5.cairo`);
 - the expiry rules of §8.2;
 - the root rule of §8.3;
 - V2's output rules: both commitments nonzero, ciphertexts present and matching their digests, and
@@ -583,7 +584,9 @@ lock the pool checks, in addition to V2's rules:
 - V2's single nullifier set, exit rule and invoke rules;
 - `MAX_NOTES = 4`, as in V2: two outputs plus up to two open-note destinations.
 
-`apply_policy_spend` (P1, unchanged relation) uses the root rule of §8.3 and its own adapter.
+`apply_policy_spend` (P1, unchanged relation) uses the root rule of §8.3 and its own adapter. P1
+statements carry no `valid_until`: on a quiet pool they stay valid on the current root, as in V2
+(AB-PV8).
 
 ### 8.2 Expiry (F07, AB-P11, AB-P17)
 
@@ -592,7 +595,8 @@ lock the pool checks, in addition to V2's rules:
   - `valid_until % Q = 0`;
   - `valid_until ≤ block_number + E + Q`.
 
-  `E` and `Q` are constructor constants.
+  `E` and `Q` are constructor constants (`Q ≥ 1`, both below 2^32). A zero `valid_until` is
+  rejected too (the bridge already rejects it).
 - The SDK sets `valid_until = ceil((latest + E) / Q) · Q`.
   - An honest statement always satisfies the rules at inclusion.
   - A far-future one cannot land before `valid_until − E − Q`, which bounds withholding for every
@@ -602,32 +606,68 @@ lock the pool checks, in addition to V2's rules:
   - Proposed `E = 1,500` and `Q = 100` blocks: about 42 min and 3 min at Sepolia's measured
     1.69 s per block.
   - They are fixed from P5 measurements.
+- The adapter bounds the proof's base block separately (`max_proof_age`, §8.4). A spend lands
+  only while both hold: `block ≤ valid_until` and `block − base ≤ max_proof_age`. The server
+  proves after the queue wait, so the base block follows the proving time, not `latest`.
 
 ### 8.3 Roots (F02, AB-P1)
 
 - The current root is always accepted.
-- When an append replaces root `R`, the pool writes `superseded_at[R] = block_number`.
-- `R` is accepted while `block_number − superseded_at[R] ≤ W` (proposed `W = 4,096`).
+- When an append replaces root `R`, the pool records that block. `R` is accepted while
+  `block_number − that block ≤ W` (proposed `W = 4,096`).
+  - Storage holds the block plus one (`superseded_at[key(R)]`), so 0 always means "never
+    replaced", even at block 0.
+  - The intermediate root of a batched `insert_two` is never recorded. The intermediate roots of
+    a three- or four-note append are recorded and replaced in the same block.
 - A root never recorded reads as 0 and is unknown.
+- The constructor requires `W ≥ E + Q`. A root that was current when the client read `latest`
+  then stays accepted through the `valid_until` derived from it. The SDK reads the root and
+  `latest` together.
 - Junk deposits cannot age a root out early, and a quiet pool never freezes.
 - The rule applies to `apply_policy_spend` too.
 
 ### 8.4 Owner functions, timelock and bootstrap (F01, F19, AB-P2, AB-P4, AB-P5)
 
-- **Verifier changes are timelocked.** Every verifier the pool trusts (R0 V5 and P1) changes only
-  through `propose_*` → wait `T` → `apply_*`, with `cancel_*`, each emitting an event.
+- **Owner levers are timelocked.** Every verifier the pool trusts (R0 V5 and P1) and the
+  shadow-class allowlist (AB-PV1) change only through one timelock: `propose(key, value)`, then
+  `apply(key)`, or `cancel(key)`.
+  - `key` is `'R0'` or `'P1'` for that verifier, with `value` its address. Any other key is a
+    shadow class hash, with `value` 1 to allow it or 0 to disallow it. No class hash equals the
+    two-byte kinds.
+  - `eta = block_timestamp + T`. A proposal applies from `eta` until `eta + T`; after that it
+    lapses and must be proposed again (AB-PV2). No proposal stays armed indefinitely.
+  - A new proposal for a key replaces a pending one, with a fresh `eta`. The replaced one emits
+    `Cancelled` (AB-PV3).
+  - Only the owner proposes, applies and cancels. A permissionless apply would race the owner's
+    cancel.
+  - Events: `Proposed`, `Cancelled`, then `VerifierChanged` or `ShadowClassSet` on apply.
+    `get_proposal(key)` returns the pending value and its `eta`, and `get_verifier(kind)` the
+    current verifier.
   - `T` is a constructor constant: on mainnet at least 7 days and above `E + Q + margin`; shorter
-    on Sepolia.
-  - Views return, for each verifier, the current value, the pending value and its `eta`.
+    on Sepolia. The constructor only requires `T > 0`, so the P6 deployment record and the SDK
+    pins enforce the mainnet floor, and a `W` with a sync margin above `E + Q` (AB-PV8).
+  - **SDK rule (normative, AB-PV2).** The SDK shows every pending proposal with its `eta` and
+    lapse time.
+    - While a verifier proposal is pending, the SDK refuses deposits and offers an exit: a
+      verifier can move funds.
+    - A pending shadow-class proposal cannot move funds. The SDK warns and stops building the
+      routes it would break: `INVOKE`s to a class being allowed, `COMPUTE`s to one being removed.
+      Deposits stay open, so adding a new anonymizer version does not block deposits for `T`.
 - **Bootstrap.** The constructor takes no verifiers.
-  - A one-time `initialize(r0_verifier, p1_verifier)` by the owner is allowed only while no
-    verifier is set and the tree is empty. It emits the change events.
+  - A one-time `initialize(r0_verifier, p1_verifier, shadow_classes)` by the owner is allowed only
+    while no verifier is set and the tree is empty. Both verifiers must be nonzero. It sets the
+    first allowlist, and emits the change events.
   - Deposits and spends revert until it has run.
-- Owner transfer is two-step with events. Mainnet ownership is a multisig.
-- **No other owner function moves funds**, and none charges or gates users. Shadow-class
-  allowlisting cannot move funds either:
+- Owner transfer is two-step with events (`transfer_ownership`, then `accept_ownership` by the new
+  owner; transferring to zero cancels). Mainnet ownership is a multisig.
+- **No other owner function moves funds**, and none charges or gates users. The only other owner
+  function is the two-step ownership transfer. Shadow-class allowlisting cannot move funds:
   - a `COMPUTE` budget goes only to the adapter bound in the user's own intent;
   - an `INVOKE` target must not be an allowlisted shadow class (F18).
+
+  It does open and close routes: allowing a class makes `INVOKE`s to it revert, and disallowing it
+  makes `COMPUTE`s to it revert. So it takes the timelock, and in-flight invokes are never gated
+  without notice (AB-PV1). Plain spends and withdrawals never depend on it.
 - **OS rotation.** The adapter pins one virtual-OS program. A new program needs a new adapter
   through the timelock.
   - The owner proposes it as soon as a new version is announced.
@@ -645,10 +685,23 @@ lock the pool checks, in addition to V2's rules:
 Deposits (ERC20, ERC721, ERC1155), the asset registry, `held` accounting and solvency, payouts,
 open-note invokes, shadow classes and views are V2's, with these fixes:
 
-- F17: an ERC20 deposit also checks that the caller's balance fell by `amount`;
+- F17: an ERC20 deposit also checks that the caller's balance fell by `amount`; so does the
+  pull of an open note's proceeds from the adapter; an ERC20 payout checks that the pool's balance
+  fell by exactly the amount (`PAYOUT_AMOUNT`), as ERC1155 payouts already did;
 - F18: an `INVOKE` target is not an allowlisted shadow class;
-- F30: the tree format is fixed to the compress tree (`R0C5`) in the constructor;
+- F30: the tree format is fixed to the compress tree (`R0C5`): the constructor takes no format,
+  and `tree_v3.cairo` carries only the compress tree's node hash and empty-subtree table;
 - F19: the constructor and `initialize` emit the verifier events.
+
+**Frozen tokens (AB-PV5).** The payout check turns a token that starts charging the sender (an
+upgradeable token changing its rules), or a rebasing token, into a frozen asset. Its
+withdrawals, invoke budgets and P1 payouts revert, and there is no rescue. In-pool transfers keep
+working, and fees taken from the recipient's side pass the check. This is preferred to silent
+insolvency, where the last holders go unpaid. The SDK's token list flags upgradeable tokens.
+
+Class size: pool V3's CASM is 80,052 felts of the 81,920 limit (V2: 76,860). It fits because of
+the compress-only tree tables (F30), one generic timelock for all owner levers, and dropping the
+`asset_id` view, which the SDK computes itself.
 
 ### 8.6 No fees and no gating (normative)
 
@@ -684,7 +737,9 @@ open-note invokes, shadow classes and views are V2's, with these fixes:
   4. work deduplication;
   5. expiry: a statement whose `valid_until` is below
      `latest + expected wait + proving + 11 + relay margin` is refused;
-  6. chain state (root known, nullifiers unspent);
+  6. chain state: root known, nullifiers unspent, and the root still accepted at
+     `send_deadline` (`get_root_superseded_at(root) − 1 + W ≥ send_deadline` for a replaced
+     root, AB-PV6);
   7. the bridge. The server also checks that the calldata matches the statement: its delivery
      digests, the intent hash, and the binding recomputed from the `Spend`;
   8. in bound mode, the account's `is_valid_signature` at the latest block through
@@ -766,8 +821,13 @@ Applied when the corresponding phase lands.
 - §7.2: outputs unchanged (two, in random order);
 - §8: the job body (full pool calldata, salt, signature, tickets or full-withdrawal openings,
   blinded refund requests); the pins (spend domain and type hashes, E, Q, relayer, issuer keys);
-  `send_deadline`;
+  `send_deadline`. Pin checks read `get_verifier(kind)` (pool V3's ABI) and `get_proposal` for
+  `'R0'`, `'P1'` and every shadow class the SDK uses (AB-PV7);
 - §9.1:
+  - a re-proof keeps its inputs and companion but takes its root, paths and `valid_until` from
+    one latest block. It never reuses the old root with a fresh `valid_until`, which could fail
+    late with `UNKNOWN_ROOT` (AB-PV6). The root is public and the nullifiers do not depend on it,
+    so this reveals nothing;
   - the dead-record rule becomes "`valid_until` buried by 10 blocks", replacing leaf count
     `m + 512`;
   - in-flight records use `send_deadline`;
@@ -784,14 +844,16 @@ Applied when the corresponding phase lands.
   inputs. It now holds the full pool calldata, so it can settle, and it chooses when, up to
   `send_deadline` (replacing "cannot submit", PS-7);
 - §4: the merged admission order of §9, including payment and the calldata match; job-start
-  checks; the ticket states; signature failure as a new per-note refusal reason;
+  checks; the ticket states; signature failure as a new per-note refusal reason. The per-job
+  verifier check reads `get_verifier('R0')` and `get_proposal('R0')` (AB-PV7);
 - §5: calldata `(proof_data, salt, signature)` and `send_deadline`;
 - §7: caps;
 - §8: the relation config;
 - §10: logging, and the data rules of §9.
 
 **hidden-asset-spec.md:** §5.7, pool V3's entry points: `valid_until`, roots by supersession,
-timelocked verifiers, `initialize`, and no fees or gating.
+the timelocked owner levers (`propose`, `apply`, `cancel`), `initialize`, no `asset_id` view, and
+no fees or gating.
 
 ## 12. Threat model and privacy
 
@@ -862,6 +924,8 @@ All spends, in both modes, also stop while:
 - the gateway rejects PROOF2 (today on Sepolia; mainnet 0.14.4 pending);
 - the adapter's OS program is retired before a new adapter applies (§8.4).
 
+One asset's exits also stop if its token starts charging the sender or rebases (§8.5, AB-PV5).
+
 Other liveness limits:
 
 - **The log20 small path** (ADR-0024's fallback) moves further away with V5: about +171k steps and
@@ -909,7 +973,8 @@ Losing the account's keys entirely is the same as for the wallet's public funds.
   - F17, F18, F28's tests committed, and F30;
   - the real statement account end to end.
 
-  Protocol review.
+  Protocol review. Implemented 2026-09-26 (`bench/m31-pool/results/pool-v3`). The end to end runs
+  the statement account in snforge; the pinned virtual OS is P5.
 - **P4 server and SDK:**
   - §6, §7, §9, §10 and §11;
   - the job body with full pool calldata, and the calldata-to-statement match at admission;
@@ -932,7 +997,8 @@ Losing the account's keys entirely is the same as for the wallet's public funds.
   - the expiry rate against `E`;
   - WASM proof time and small-path fit.
 - **P6 Sepolia:** declare and deploy pool V3, the statement account, the adapters, and run
-  `initialize`. The user approves every on-chain action.
+  `initialize` with the first shadow-class allowlist. The deployment record states `E`, `Q`,
+  `W` and `T` against §8.4's floors (AB-PV8). The user approves every on-chain action.
 - **P7 paying for the service:**
   - `docs/relayer-spec.md`;
   - the Templar Pass contract (soulbound, minter role, no price in code);
@@ -1051,3 +1117,16 @@ Revision 4 re-review (math GO; protocol CONDITIONAL GO, with conditions AB-P28 a
 | AB-P30 | §9 the merged admission order and the ticket states; blinded refund requests; §7.2 one spent set per issuer key across all redeemers. One deviation: a signature failure releases the reservation (it costs one call, and honest clients meet it after a key rotation), with a per-note back-off (never per account: a victim's account could be locked out) and an SDK pre-check |
 | AB-P31 | §7.3 the relayer returns a transaction hash or a refusal; §7.4 the fallback timing and `margin` |
 | AB-P32 | §12 the issuer-key period and a pass-holder row; §7.2 the pass in a separate account; ADR decision 3 states why there is no escape path |
+
+P3b protocol review (GO), `docs/reviews/account-bound-p3b-protocol-review.md`:
+
+| Finding | Resolution |
+| --- | --- |
+| AB-PV1 | §8.4: the shadow-class allowlist takes the verifiers' timelock; `initialize` sets the first allowlist |
+| AB-PV2 | §8.4: a proposal applies only within `[eta, eta + T]`. SDK rule: no deposits while a verifier proposal is pending; a pending shadow-class proposal only warns and stops the routes it would break (narrowed from the reviewer's "any proposal": allowlisting cannot move funds) |
+| AB-PV3 | A replaced proposal emits `Cancelled` |
+| AB-PV4 | Test: a stranger's `transfer_ownership` fails `NOT_OWNER` |
+| AB-PV5 | §8.5 and §14: frozen tokens documented; the SDK flags upgradeable tokens |
+| AB-PV6 | §11: sdk-spec §9.1 re-proofs take root, paths and `valid_until` from one block; §9 admission checks the root at `send_deadline` |
+| AB-PV7 | §11: the server and SDK read `get_verifier(kind)` and `get_proposal` |
+| AB-PV8 | §8.4 and §15 P6: the deployment record enforces `T` and `W`; §8.1 P1 has no `valid_until` |

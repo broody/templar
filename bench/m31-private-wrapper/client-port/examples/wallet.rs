@@ -23,6 +23,10 @@
 //!   or x2, outputs: [{receiver, rho, amount, delivery}] x2, withdrawal, intent?,
 //!   identity_scope?}`. With one input, input 1 is a dummy drawn fresh from the OS CSPRNG for this
 //!   proof (spec §6); outputs of amount zero are dummies the caller built.
+//! - `wallet keys5 SK_JSON ACCOUNT`: `{receiver, nk}` of an R0 V5 key bound to `ACCOUNT` (`0x0`:
+//!   an ordinary key, as `keys`) (`docs/account-bound-note-spec.md` §3.2).
+//! - `wallet prove5 SPEND_JSON OUT [MAX_FRI_COLUMNS]`: an R0 V5 proof (spec §4): `prove4`'s spend
+//!   plus `account` (`0x0` for an ordinary spend; both inputs are bound to it) and `valid_until`.
 use std::{fs, path::Path, time::Instant};
 #[path = "support/mod.rs"]
 mod support;
@@ -32,7 +36,7 @@ use templar_client_verifier_circuit::payment::{
     self, Digest, INNER, Identity, Input, NOTE, Output, Private, Public, Tree, amount_limbs, felt_limbs, h, receiver_of,
     tree_paths,
 };
-use templar_client_verifier_circuit::{payment4, policy, prove};
+use templar_client_verifier_circuit::{payment4, payment5, policy, prove};
 
 const TREE: Tree = Tree::Compress;
 
@@ -77,10 +81,11 @@ fn no_intent() -> String {
     "0x0".into()
 }
 
-/// The relation a proof is for: an R0 spend, an R0 V4 spend or a P1 policy settlement.
+/// The relation a proof is for: an R0 spend, an R0 V4 or V5 spend, or a P1 policy settlement.
 enum Relation {
     R0(Public, Private),
     R4(payment4::Public, payment4::Private),
+    R5(payment5::Public, payment5::Private),
     P1(policy::Public, policy::Private),
 }
 
@@ -89,6 +94,7 @@ impl Relation {
         match self {
             Relation::R0(..) => "tmpzr0-client-payment",
             Relation::R4(..) => "tmpzr4-client-payment",
+            Relation::R5(..) => "tmpzr5-client-payment",
             Relation::P1(..) => "tmpzp1-client-policy",
         }
     }
@@ -97,6 +103,7 @@ impl Relation {
         match self {
             Relation::R0(..) => payment::statement_tag(TREE),
             Relation::R4(..) => payment4::statement_tag(TREE),
+            Relation::R5(..) => payment5::statement_tag(TREE),
             Relation::P1(..) => policy::statement_tag(TREE),
         }
     }
@@ -105,6 +112,7 @@ impl Relation {
         match self {
             Relation::R0(p, _) => serde_json::to_vec_pretty(p).unwrap(),
             Relation::R4(p, _) => serde_json::to_vec_pretty(p).unwrap(),
+            Relation::R5(p, _) => serde_json::to_vec_pretty(p).unwrap(),
             Relation::P1(p, _) => serde_json::to_vec_pretty(p).unwrap(),
         }
     }
@@ -216,6 +224,59 @@ fn prove4(spec: SpendJson4, out: &Path, max_fri_columns: Option<usize>) {
 }
 
 #[derive(Deserialize)]
+struct SpendJson5 {
+    #[serde(flatten)]
+    v4: SpendJson4,
+    /// The account both inputs are bound to, `0x0` for an ordinary spend.
+    #[serde(default = "no_intent")]
+    account: String,
+    valid_until: u64,
+}
+
+/// `prove4` for R0 V5: the inputs' receivers are bound to `account`, and `valid_until` is public.
+fn prove5(spec: SpendJson5, out: &Path, max_fri_columns: Option<usize>) {
+    fs::create_dir_all(out).unwrap();
+    let SpendJson5 { v4: spec, account, valid_until } = spec;
+    let u128_of = |s: &str| s.parse::<u128>().expect("decimal u128");
+    assert!(spec.inputs.len() == 1 || spec.inputs.len() == 2, "one or two inputs");
+    let positions: Vec<u32> = spec.inputs.iter().map(|i| i.position).collect();
+    let (root, paths) = tree_paths(TREE, &spec.leaves, &positions);
+    let mut inputs: Vec<Input> = spec
+        .inputs
+        .iter()
+        .zip(paths)
+        .map(|(i, siblings)| Input { sk: i.sk, rho: i.rho, amount: u128_of(&i.amount), position: i.position, siblings })
+        .collect();
+    let dummy = inputs.len() == 1;
+    if dummy {
+        let position = rand::RngCore::next_u32(&mut rand::rngs::OsRng);
+        let siblings = (0..payment::DEPTH).map(|_| fresh_digest()).collect();
+        inputs.push(Input { sk: fresh_digest(), rho: fresh_digest(), amount: 0, position, siblings });
+    }
+    let private = payment5::Private {
+        token: spec.token.clone(),
+        account,
+        inputs: [inputs[0].clone(), inputs[1].clone()],
+        dummy,
+        outputs: std::array::from_fn(|j| payment4::Output {
+            receiver: spec.outputs[j].receiver,
+            rho: spec.outputs[j].rho,
+            amount: u128_of(&spec.outputs[j].amount),
+        }),
+        identity: Identity { active: spec.identity_scope.is_some(), scope: spec.identity_scope.unwrap_or([0; 9]) },
+    };
+    let deliveries = [spec.outputs[0].delivery.clone(), spec.outputs[1].delivery.clone()];
+    let public = payment5::statement(
+        TREE, &spec.chain, &spec.pool, deliveries,
+        (spec.withdrawal.recipient.clone(), u128_of(&spec.withdrawal.amount)), &spec.intent, valid_until, &private,
+    )
+    .unwrap_or_else(|e| panic!("invalid spend: {e}"));
+    payment5::bridge_checks(&public).unwrap_or_else(|e| panic!("the bridge would reject: {e}"));
+    assert_eq!(public.root, root);
+    prove_relation(Relation::R5(public, private), out, max_fri_columns);
+}
+
+#[derive(Deserialize)]
 struct PolicyNoteIn {
     cap: Digest,
     rho: Digest,
@@ -294,6 +355,7 @@ fn prove_relation(rel: Relation, out: &Path, max_fri_columns: Option<usize>) {
     let proved = match &rel {
         Relation::R0(p, w) => prove::prove(&prove::R0(p, w), seed, max_fri_columns),
         Relation::R4(p, w) => prove::prove(&prove::R4(p, w), seed, max_fri_columns),
+        Relation::R5(p, w) => prove::prove(&prove::R5(p, w), seed, max_fri_columns),
         Relation::P1(p, w) => prove::prove(&prove::P1(p, w), seed, max_fri_columns),
     };
     let mut proved = proved.unwrap_or_else(|e| panic!("{e}"));
@@ -390,10 +452,18 @@ fn main() {
             let spec: SpendJson4 = serde_json::from_slice(&fs::read(&a[2]).unwrap()).unwrap();
             prove4(spec, Path::new(&a[3]), a.get(4).map(|n| n.parse().unwrap()));
         }
+        Some("keys5") => {
+            let (receiver, nk) = payment5::receiver_of(&felt_limbs(&a[3]), &digest(&a[2]));
+            println!("{}", json!({"receiver": receiver, "nk": nk}));
+        }
+        Some("prove5") => {
+            let spec: SpendJson5 = serde_json::from_slice(&fs::read(&a[2]).unwrap()).unwrap();
+            prove5(spec, Path::new(&a[3]), a.get(4).map(|n| n.parse().unwrap()));
+        }
         Some("prove-policy") => {
             let spec: PolicySpendJson = serde_json::from_slice(&fs::read(&a[2]).unwrap()).unwrap();
             prove_policy(spec, Path::new(&a[3]), a.get(4).map(|n| n.parse().unwrap()));
         }
-        _ => panic!("wallet keys|inner|commitment|prove|prove4|policy-note|prove-policy ..."),
+        _ => panic!("wallet keys|keys5|inner|commitment|prove|prove4|prove5|policy-note|prove-policy ..."),
     }
 }

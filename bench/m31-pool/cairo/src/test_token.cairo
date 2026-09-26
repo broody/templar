@@ -3,12 +3,9 @@
 
 #[starknet::contract]
 pub mod E2EToken {
-    use core::starknet::{get_caller_address, ContractAddress};
     use m31_pool::spend::IERC20;
-    use starknet::storage::{
-        Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
-        StoragePointerWriteAccess,
-    };
+    use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
+    use starknet::{ContractAddress, get_caller_address};
 
     #[storage]
     struct Storage {

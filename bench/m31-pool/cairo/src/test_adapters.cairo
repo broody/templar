@@ -162,7 +162,7 @@ pub mod ExtraAdapter {
 /// Fee-on-transfer token: `transfer_from` delivers one unit less.
 #[starknet::contract]
 pub mod FeeToken {
-    use core::starknet::{get_caller_address, ContractAddress};
+    use starknet::{ContractAddress, get_caller_address};
     use crate::spend::IERC20;
     use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
     #[storage]
@@ -260,6 +260,66 @@ pub mod MockPolicyController {
             } else {
                 crate::policy::POLICY_OK
             }
+        }
+    }
+}
+
+/// Fee-on-top token (pool V3, F17): the sender pays `amount + 1` and the recipient receives
+/// `amount`, on `transfer_from` (`pull`) or `transfer` (`push`) as switched on by `set_fees`. The
+/// allowance is charged `amount`.
+#[starknet::interface]
+pub trait IFeeOnTop<T> {
+    fn set_fees(ref self: T, pull: bool, push: bool);
+    fn faucet(ref self: T, to: ContractAddress, amount: u256);
+}
+
+#[starknet::contract]
+pub mod FeeOnTopToken {
+    use starknet::storage::{
+        Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess, StoragePointerWriteAccess,
+    };
+    use starknet::{ContractAddress, get_caller_address};
+    use crate::spend::IERC20;
+    #[storage]
+    struct Storage {
+        balances: Map<ContractAddress, u256>,
+        allowances: Map<(ContractAddress, ContractAddress), u256>,
+        pull: bool,
+        push: bool,
+    }
+    #[abi(embed_v0)]
+    impl Erc20Impl of IERC20<ContractState> {
+        fn approve(ref self: ContractState, spender: ContractAddress, amount: u256) -> bool {
+            self.allowances.write((get_caller_address(), spender), amount);
+            true
+        }
+        fn transfer(ref self: ContractState, recipient: ContractAddress, amount: u256) -> bool {
+            let s = get_caller_address();
+            let fee = if self.push.read() { 1 } else { 0 };
+            self.balances.write(s, self.balances.read(s) - amount - fee);
+            self.balances.write(recipient, self.balances.read(recipient) + amount);
+            true
+        }
+        fn transfer_from(ref self: ContractState, sender: ContractAddress, recipient: ContractAddress, amount: u256) -> bool {
+            let sp = get_caller_address();
+            let fee = if self.pull.read() { 1 } else { 0 };
+            self.allowances.write((sender, sp), self.allowances.read((sender, sp)) - amount);
+            self.balances.write(sender, self.balances.read(sender) - amount - fee);
+            self.balances.write(recipient, self.balances.read(recipient) + amount);
+            true
+        }
+        fn balance_of(self: @ContractState, account: ContractAddress) -> u256 {
+            self.balances.read(account)
+        }
+    }
+    #[abi(embed_v0)]
+    impl FeeImpl of super::IFeeOnTop<ContractState> {
+        fn set_fees(ref self: ContractState, pull: bool, push: bool) {
+            self.pull.write(pull);
+            self.push.write(push);
+        }
+        fn faucet(ref self: ContractState, to: ContractAddress, amount: u256) {
+            self.balances.write(to, self.balances.read(to) + amount);
         }
     }
 }

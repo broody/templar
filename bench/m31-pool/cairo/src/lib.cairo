@@ -22,13 +22,16 @@ pub mod policy;
 pub mod policy_escrow;
 pub mod pool;
 pub mod pool_v2;
+pub mod pool_v3;
 pub mod spend;
 pub mod spend4;
+pub mod spend5;
 pub mod test_adapters;
 pub mod test_nft;
 pub mod test_policy_controllers;
 pub mod test_token;
 pub mod tree;
+pub mod tree_v3;
 pub mod zeros;
 #[cfg(test)]
 mod tests;

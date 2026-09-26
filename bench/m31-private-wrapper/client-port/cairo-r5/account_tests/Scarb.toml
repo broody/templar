@@ -6,6 +6,9 @@ name = "templar_account_tests"
 version = "0.1.0"
 edition = "2024_07"
 
+# The lib target lets pool_e2e deploy `MockAccount` as an external contract.
+[lib]
+
 [dependencies]
 starknet = "2.18.0"
 templar_membership_account = { path = "../account" }

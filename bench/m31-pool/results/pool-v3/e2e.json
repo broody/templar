@@ -1,0 +1,31 @@
+{
+  "pool_class": "0x13168dfd5b7258135a02a0ac87323df93222c5a30c103e3e9f7a4a4098bcfdf",
+  "valid_until": 6500,
+  "proofs": {
+    "s1": {
+      "trace_log_size": 18,
+      "proof_felts": 29154,
+      "binding": "0x68bbdabf91c59e028551f20d542637d90d2480bfa458cd61cbf72a9f01f3e22"
+    },
+    "s2": {
+      "trace_log_size": 18,
+      "proof_felts": 30174,
+      "binding": "0x23aa5d8d831f27ad53e5815aa609f07e5ca12ff622683a7932d1cc08e83e9de"
+    }
+  },
+  "tests": [
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::bound_spend_needs_the_accounts_signature (l1_gas: ~0, l1_data_gas: ~9984, l2_gas: ~520294275)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::expired_spend_rejected (l1_gas: ~32284, l1_data_gas: ~9984, l2_gas: ~521611921)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::redirected_withdrawal_rejected (l1_gas: ~32284, l1_data_gas: ~9984, l2_gas: ~522124929)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::moved_expiry_rejected (l1_gas: ~32284, l1_data_gas: ~9984, l2_gas: ~522899741)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::another_spends_facts_rejected (l1_gas: ~32284, l1_data_gas: ~9984, l2_gas: ~533650410)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::replay_rejected (l1_gas: ~32284, l1_data_gas: ~11136, l2_gas: ~583693379)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::bound_withdrawal_lands_at_valid_until (l1_gas: ~32284, l1_data_gas: ~11136, l2_gas: ~581556517)",
+    "[PASS] templar_pool_e2e_integrationtest::test_pool_v3_e2e::bound_withdrawal_then_ordinary_transfer (l1_gas: ~64568, l1_data_gas: ~12384, l2_gas: ~1010856846)"
+  ],
+  "gas": [
+    "GAS apply_spend v5 bound_withdrawal real_adapter=55272996",
+    "GAS apply_spend v5 ordinary_transfer real_adapter=54203726"
+  ],
+  "result": "Tests: 8 passed, 0 failed, 0 ignored, 0 filtered out"
+}

@@ -1,0 +1,255 @@
+{
+ "scope": "single-line mutants of pool_v3.cairo, tree_v3.cairo and spend5.cairo, each run against tests/test_pool_v3.cairo (snforge, scratch copy of the package); X1 and X3 are the protocol reviewer's",
+ "mutants": [
+  {
+   "mutant": "window <= ",
+   "built": true,
+   "killed_by": [
+    "policy_spends_use_the_root_rule",
+    "replaced_root_window_boundary"
+   ]
+  },
+  {
+   "mutant": "superseded at block",
+   "built": true,
+   "killed_by": [
+    "replaced_root_window_boundary",
+    "policy_spends_use_the_root_rule"
+   ]
+  },
+  {
+   "mutant": "no superseded write",
+   "built": true,
+   "killed_by": [
+    "replaced_root_window_boundary",
+    "policy_spends_use_the_root_rule",
+    "junk_appends_do_not_age_a_root"
+   ]
+  },
+  {
+   "mutant": "no current-root rule",
+   "built": true,
+   "killed_by": [
+    "v3_tree_roots_match_client_nodes",
+    "v3_tree_roots_match_client_frontier",
+    "fee_on_top_open_note_funding_rejected",
+    "tree_full",
+    "expiry_boundaries",
+    "sdk_valid_until_lands_through_its_window",
+    "applied_verifiers_decide",
+    "compute_funds_an_open_note",
+    "invoke_funds_an_open_note",
+    "junk_appends_do_not_age_a_root",
+    "spend_guards",
+    "current_root_accepted_after_a_long_idle",
+    "any_account_deposits_and_any_account_submits",
+    "fee_on_top_payout_rejected",
+    "execution_guards"
+   ]
+  },
+  {
+   "mutant": "valid_until zero",
+   "built": true,
+   "killed_by": [
+    "expiry_boundaries"
+   ]
+  },
+  {
+   "mutant": "expiry strict",
+   "built": true,
+   "killed_by": [
+    "expiry_boundaries",
+    "sdk_valid_until_lands_through_its_window"
+   ]
+  },
+  {
+   "mutant": "grid dropped",
+   "built": true,
+   "killed_by": [
+    "expiry_boundaries"
+   ]
+  },
+  {
+   "mutant": "ahead minus Q",
+   "built": true,
+   "killed_by": [
+    "current_root_accepted_after_a_long_idle",
+    "replaced_root_window_boundary",
+    "expiry_boundaries",
+    "sdk_valid_until_lands_through_its_window"
+   ]
+  },
+  {
+   "mutant": "ahead dropped",
+   "built": true,
+   "killed_by": [
+    "expiry_boundaries"
+   ]
+  },
+  {
+   "mutant": "F18 dropped",
+   "built": true,
+   "killed_by": [
+    "invoke_cannot_target_a_shadow_class"
+   ]
+  },
+  {
+   "mutant": "F17 payer dropped",
+   "built": true,
+   "killed_by": [
+    "fee_on_top_deposit_rejected",
+    "fee_on_top_open_note_funding_rejected"
+   ]
+  },
+  {
+   "mutant": "payout delta dropped",
+   "built": true,
+   "killed_by": [
+    "fee_on_top_payout_rejected"
+   ]
+  },
+  {
+   "mutant": "init gate dropped",
+   "built": true,
+   "killed_by": [
+    "nothing_enters_before_initialize"
+   ]
+  },
+  {
+   "mutant": "init twice",
+   "built": true,
+   "killed_by": [
+    "initialize_once_by_the_owner"
+   ]
+  },
+  {
+   "mutant": "eta strict",
+   "built": true,
+   "killed_by": [
+    "invoke_cannot_target_a_shadow_class",
+    "shadow_classes_take_the_timelock",
+    "compute_funds_an_open_note",
+    "timelock_for_each_verifier",
+    "applied_verifiers_decide"
+   ]
+  },
+  {
+   "mutant": "lapse dropped",
+   "built": true,
+   "killed_by": [
+    "proposals_lapse_after_a_second_period"
+   ]
+  },
+  {
+   "mutant": "lapse strict",
+   "built": true,
+   "killed_by": [
+    "proposals_lapse_after_a_second_period"
+   ]
+  },
+  {
+   "mutant": "replaced not cancelled",
+   "built": true,
+   "killed_by": [
+    "timelock_for_each_verifier"
+   ],
+   "note": "survived the first run (the test spy already held an identical Cancelled event from an earlier explicit cancel); killed after the test took a fresh spy before the replacement"
+  },
+  {
+   "mutant": "transfer open (X1)",
+   "built": true,
+   "killed_by": [
+    "ownership_moves_in_two_steps"
+   ]
+  },
+  {
+   "mutant": "shadow value unchecked",
+   "built": true,
+   "killed_by": [
+    "shadow_classes_take_the_timelock"
+   ]
+  },
+  {
+   "mutant": "shadow zero class",
+   "built": true,
+   "killed_by": [
+    "shadow_classes_take_the_timelock"
+   ]
+  },
+  {
+   "mutant": "init zero class",
+   "built": true,
+   "killed_by": [
+    "initialize_once_by_the_owner"
+   ]
+  },
+  {
+   "mutant": "init allowlist ignored",
+   "built": true,
+   "killed_by": [
+    "initialize_once_by_the_owner"
+   ]
+  },
+  {
+   "mutant": "verifier zero",
+   "built": true,
+   "killed_by": [
+    "timelock_for_each_verifier"
+   ]
+  },
+  {
+   "mutant": "apply keeps proposal (X3)",
+   "built": true,
+   "killed_by": [
+    "timelock_for_each_verifier"
+   ]
+  },
+  {
+   "mutant": "cancel keeps proposal",
+   "built": true,
+   "killed_by": [
+    "timelock_for_each_verifier"
+   ]
+  },
+  {
+   "mutant": "no delay",
+   "built": true,
+   "killed_by": [
+    "timelock_for_each_verifier",
+    "shadow_classes_take_the_timelock",
+    "proposals_lapse_after_a_second_period"
+   ]
+  },
+  {
+   "mutant": "zero acceptor",
+   "built": true,
+   "killed_by": [
+    "ownership_moves_in_two_steps"
+   ]
+  },
+  {
+   "mutant": "W >= E+Q dropped",
+   "built": true,
+   "killed_by": [
+    "constructor_checks_its_parameters"
+   ]
+  },
+  {
+   "mutant": "policy root",
+   "built": true,
+   "killed_by": [
+    "policy_spends_use_the_root_rule"
+   ]
+  },
+  {
+   "mutant": "binding omits valid_until",
+   "built": true,
+   "killed_by": [
+    "binding_matches_the_reference",
+    "valid_until_is_bound_at_the_pool",
+    "every_field_is_bound"
+   ]
+  }
+ ],
+ "survivors": []
+}
