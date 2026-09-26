@@ -1205,6 +1205,17 @@ Losing the account's keys entirely is the same as for the wallet's public funds.
 - **P6 Sepolia:** declare and deploy pool V3, the statement account, the adapters, and run
   `initialize` with the first shadow-class allowlist. The deployment record states `E`, `Q`,
   `W` and `T` against §8.4's floors (AB-PV8). The user approves every on-chain action.
+
+  Deployed 2026-09-26 (`bench/account-bound-p6`), user-approved:
+  - pool V3 `0x03463a80…8aa6`, the R0 V5 adapter `0x00784696…2e7d` and the P1 adapter
+    `0x05681433…f8d0`, with `max_proof_age` 1,024;
+  - `E` 1,500, `Q` 100, `W` 4,096 blocks, and `T` 7,200 s (Sepolia; mainnet ≥ 7 days);
+  - `initialize` with an empty shadow-class allowlist;
+  - the P5 statement account and pool V2's P1 statement account are reused.
+
+  End to end with the SDK, the prover server and the relayer, for a real Braavos account: a bound
+  setup check, two deposits, a bound transfer and an ordinary withdrawal, each proved, wrapped,
+  simulated with validation by the relayer and sent. The gateway refuses both large proofs.
 - **P7 paying for the service:**
   - `docs/relayer-spec.md`;
   - the Templar Pass contract (soulbound, minter role, no price in code);

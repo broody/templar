@@ -35,10 +35,18 @@ The core picks one or two notes of the asset, adds change and dummies, shuffles 
 
 Submission builds the exact transaction, simulates it with validation, and sends that same signed object. The fee bounds are a fixed function of the node's raw estimate, identical in every wallet, with a zero tip. The submitting account is public and linked to the spend; for unlinkability it should be a relayer's account.
 
+## Bound wallets
+
+For a Ready or Braavos account, the SDK opens a **bound wallet** from its own 21-word seed and the account ([existing wallets](/architecture/existing-wallets)):
+- **Setup checks.** Before creating the wallet, the SDK checks the account's class and signers at one block, and has the account sign a setup message that can never authorize a spend.
+- **Authorization.** Each spend is proved as usual; the connected wallet then signs its SNIP-12 spend message, and the SDK checks the signature against the account before anything leaves.
+- **Separate providers.** Spend-specific reads and submission go through a provider that has not seen the account.
+- **Submission.** The service's relayer submits by default. The wallet falls back to submitting itself only after a refusal, or within 40 blocks of the deadline with no relayer transaction pending.
+
 ## Spends in flight
 
 Once a spend's statement has left the wallet, anyone holding it could settle it: the prover server, the RPC node, or anyone reading a published failed transaction. The wallet therefore keeps each spend as a record until it settles or can no longer settle. Until then, a retry must reuse the same input notes and the same dummy input, so at most one attempt pays. A record can no longer settle once the pool has evicted the root it used, which the wallet counts from its own sync.
 
 ## Status
 
-The SDK is not yet released. It passes against a mock pool (receiving, a hidden transfer, reorgs, conflicting events, record locking) and read-only against Sepolia, where it verifies its pinned constants and syncs the pool to the same root. Its proofs pass the deployed bridge's checks. A funded run on Sepolia with the SDK alone received a deposit, recovered it from the seed, and proved, wrapped and sent a hidden transfer and a withdrawal; both pass simulation with validation, and the gateway refuses them only because it does not yet accept large proofs. Details are in `sdk/README.md` and `docs/sdk-spec.md`.
+The SDK is not yet released. It passes against a mock pool (receiving, a hidden transfer, reorgs, conflicting events, record locking) and read-only against Sepolia, where it verifies its pinned constants and syncs the pool to the same root. Its proofs pass the deployed bridge's checks. A funded run on Sepolia with the SDK alone received a deposit, recovered it from the seed, and proved, wrapped and sent a hidden transfer and a withdrawal; both pass simulation with validation, and the gateway refuses them only because it does not yet accept large proofs. On pool V3, the SDK carried bound and ordinary spends end to end with the prover server and the relayer, for a real Braavos account, up to the gateway. Details are in `sdk/README.md` and `docs/sdk-spec.md`.

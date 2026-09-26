@@ -1,0 +1,61 @@
+{
+  "pool": "0x03463a80930b97683671b68c6a34feb3ae2ed494bd8cd477cd602dd4ef6a8aa6",
+  "r0_adapter": "0x0078469651c628d0aa30a3bb3d6f762ecfe89308b62c9db4eec8f6a0232c2e7d",
+  "p1_adapter": "0x05681433cadd7f40e7fc62fa8bca9a1ca21ed7dcb4a8f09a5f526c83bd82f8d0",
+  "initialized": true,
+  "pool_class": "0x013168dfd5b7258135a02a0ac87323df93222c5a30c103e3e9f7a4a4098bcfdf",
+  "adapter_class": "0x064148aed7efcab705956779e172385e7f2fa36eb161e62b4dcd629a5a3e6ddb",
+  "owner": "0x54f2b25070d70d49f1c1f7c10ef2639889fdac15894d3fba1a03caf5603eca3",
+  "parameters": {
+    "E_blocks": 1500,
+    "Q_blocks": 100,
+    "W_blocks": 4096,
+    "T_seconds": 7200
+  },
+  "floors": {
+    "W >= E + Q": true,
+    "mainnet T >= 7 days": "not applied on Sepolia",
+    "T > E + Q (~45 min)": true
+  },
+  "r0": {
+    "class": "0x064148aed7efcab705956779e172385e7f2fa36eb161e62b4dcd629a5a3e6ddb",
+    "statement": "0x07748e3ba3fca5228625cf754c0d0e7dd7e7bf3e9c426c5c7bc8dc08d88b6a81",
+    "statement_class": "0x06a2bd80203760b1eb0aee384ae835300c66a24f327b038315d628fbd92b830a",
+    "os_program": "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+    "max_proof_age": 1024,
+    "account_tag": "TMPZR0_PAYMENT_V5"
+  },
+  "p1": {
+    "class": "0x064148aed7efcab705956779e172385e7f2fa36eb161e62b4dcd629a5a3e6ddb",
+    "statement": "0x052828eb2a0d2095a0fa70d514b08a6ae4a2cb1ec38f72d2d843f1bf2a12d70a",
+    "statement_class": "0x032e05ae1fc0e76252f356e169d2a896b0befea4adca4a8d653c0f107836a882",
+    "os_program": "0x53f6c9fcfd31d27279ff7d7e422b44623550a732b59fe193354a7316a96daa1",
+    "max_proof_age": 1024,
+    "account_tag": "TMPZP1_POLICY_V1"
+  },
+  "shadow_classes": [],
+  "token": "0x39f5916e2110601b44d7ed0f4c033dd684f99b945df2cce8356c73dc0c805b8",
+  "start_block": 15655614,
+  "steps": {
+    "declare-pool-v3": {
+      "amount": "0x5ae53e3013ad349f1",
+      "unit": "FRI"
+    },
+    "deploy-pool-v3": {
+      "amount": "0x1b42a1728585db2",
+      "unit": "FRI"
+    },
+    "deploy-r0-v5-adapter": {
+      "amount": "0x15a92e9f2e75b51",
+      "unit": "FRI"
+    },
+    "deploy-p1-adapter": {
+      "amount": "0x15a94516da37f51",
+      "unit": "FRI"
+    },
+    "initialize": {
+      "amount": "0xbcb4e65bba8531",
+      "unit": "FRI"
+    }
+  }
+}

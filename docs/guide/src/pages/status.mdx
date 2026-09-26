@@ -6,7 +6,7 @@ description: What Templar has demonstrated, measured resources, and the remainin
 
 # Implementation status
 
-<div className="guide-eyebrow">Snapshot / 24 September 2026</div>
+<div className="guide-eyebrow">Snapshot / 26 September 2026</div>
 
 Templar [proves](/architecture/proving) each spend as a compact client proof that a wrapping server turns into a Starknet large proof. This runs end to end locally with real proofs for ordinary spends, hidden-asset transfers of ERC20, ERC721 and ERC1155 notes, open notes and policy notes, and reaches Sepolia up to the gateway, which does not accept large-proof transactions yet.
 
@@ -122,6 +122,31 @@ The large-proof flow's smallest leaf is a Cairo trace of 2²⁵ rows, so each wr
 
 The server receives the client proof and its public statement only. It must be built with native CPU features for these times. Evidence is in `bench/m31-private-wrapper/proof2-large/`.
 
+## Existing wallets (R0 V5)
+
+Spends from Ready and Braavos accounts use account-bound notes and pool V3 ([existing wallets](/architecture/existing-wallets)).
+
+**In the virtual OS on live Sepolia state** (`bench/account-bound-p5`), real accounts authorized transfers, invokes and withdrawals:
+- Ready X 5.33.11 (Argent 0.5.0) and Braavos 4.19.6 (1.2.0), through the statement account deployed on Sepolia;
+- tampered signatures are refused.
+
+| Measured | Result |
+| --- | --- |
+| Virtual OS | 3.34–3.61M steps; the account check adds 105–265k |
+| Large proof | 64–67 s, about 30 GiB, every proof verifies |
+| Large proof's public shape | The same for ordinary, Ready and Braavos spends: one header and circuit, fixed component sizes, overlapping proof sizes |
+| V5 client proof in Chrome | median 6.2 s, 257 MiB |
+
+**Pool V3 on Sepolia** (`bench/account-bound-p6`, 26 September 2026):
+- deployed with its R0 V5 and P1 adapters: `E` 1,500 blocks, `Q` 100, `W` 4,096, `T` 2 hours;
+- declaring its class cost 104.8 test STRK.
+
+**End to end with the SDK, the prover server and the relayer**, for a real Braavos account:
+- two deposits landed: an ordinary wallet's, and a bound wallet's after its setup check;
+- a bound transfer (Braavos signed the spend) and an ordinary full withdrawal were each proved in WebAssembly (8–12 s) and wrapped by the server (about 100 s);
+- the relayer simulated each exact transaction with validation and sent it;
+- the gateway refused both, only because it does not yet accept large proofs.
+
 ## Client SDK
 
 The wallet side is a Rust core in WebAssembly and a TypeScript package over starknet.js ([Client SDK](/architecture/sdk)). The R0 V4 client proof runs in a browser worker in about 6 seconds with 256 MiB of memory (Chrome 153, 128-bit SIMD), byte-identical to the native proof, and the deployed bridge build accepts it. On Sepolia, with the SDK alone, a live deposit was received and recovered from the seed, and a hidden transfer and a withdrawal were proved in WebAssembly, wrapped by the prover server (one through OHTTP) and sent with starknet.js. Both transactions pass simulation with validation at about 3.4 STRK; the gateway refuses them only because it does not yet accept large proofs.
@@ -150,11 +175,18 @@ Missing payloads produce incomplete results rather than complete zero balances. 
 
 ## Current configuration boundary
 
-Each relation has its own adapter, pinned to the large-proof format, the virtual OS program, its statement account and class, and its account tag. The experimental maximum proof age is **4,096 blocks**, separate from the **256-root** pool history. The owner can change the R0 and P1 verifiers and the shadow-anonymizer allowlist. No pool fee is charged. Pool V3, implemented but not deployed, puts every such change behind a timelock ([governance](/architecture/governance)).
+Each relation has its own adapter, pinned to the large-proof format, the virtual OS program, its statement account and class, and its account tag. No pool fee is charged.
 
-Pool V3's client and server side are implemented but not deployed. The prover server admits R0 V5 spends and their exact pool calls, checks pool V3's expiry, root and timelock rules before proving, serves bound spends only for the account classes it has measured, and is paid with blind tickets, with full withdrawals of priced assets free. The SDK adds bound wallets for Ready and Braavos accounts: setup checks, an account signature over each spend, and spend reads kept off the provider that has seen the account. A relayer submits every spend the service proves from one account and answers each job with a transaction hash or a refusal; the wallet submits itself only on a refusal, or near the deadline with no relayer transaction pending, so the two never both land. Both are tested against mocks and the real R5 bridge; the real wallets in the virtual OS come next.
+| | Pool V2 (R0 V4, the SDK's pinned Sepolia pool) | Pool V3 (R0 V5, Sepolia since 26 September) |
+| --- | --- | --- |
+| Maximum proof age | 4,096 blocks | 1,024 blocks |
+| Roots accepted | the last 256 | the current one, and a replaced one for `W` = 4,096 blocks |
+| Spend expiry | none | `valid_until`, at most `E` + `Q` = 1,600 blocks ahead |
+| Owner levers (verifiers, shadow-class allowlist) | immediate | behind the timelock `T` ([governance](/architecture/governance)) |
 
-The bench submits with sncast signing and the official Sepolia gateway, with explicit fee bounds. The SDK submits through starknet.js: the raw fee estimate, the exact signed transaction simulated with validation, then sent. That path has not yet carried a funded spend.
+For pool V3 the prover server admits R0 V5 spends and their exact pool calls. It checks the expiry, root and timelock rules before proving, and serves bound spends only for the account classes it has measured. A relayer submits every spend the service proves, from one account, and answers each job with a transaction hash or a refusal. The wallet submits itself only on a refusal, or near the deadline with no relayer transaction pending, so the two never both land. On Sepolia the service is free. The paid service (blind tickets and a Templar Pass) is specified, with a test issuer only.
+
+The bench submits with sncast signing and the official Sepolia gateway, with explicit fee bounds. The SDK and the relayer submit through starknet.js: the raw fee estimate, then the exact signed transaction simulated with validation, then sent.
 
 ## Work still needed
 
@@ -163,7 +195,8 @@ The bench submits with sncast signing and the official Sepolia gateway, with exp
 | Client privacy | Complete and independently confirm the compact client proof's zero-knowledge argument |
 | Network support | Public acceptance of large-proof transactions on Starknet (Sepolia gateway, then mainnet) |
 | Relations | Larger shapes, spends of several assets at once, NFTs in open-note executions, private creation of policy notes end to end, a real-proof split-outcome settlement |
-| Production integration | The client SDK covers keys, addresses, receiving, R0 V4 spends and submission; bring policy notes, open notes, bridges, pool ABI and adapters into maintained packages |
+| Production integration | The client SDK covers keys, addresses, receiving, R0 V4 and V5 spends, bound wallets and submission; bring policy notes, open notes, bridges, pool ABI and adapters into maintained packages |
+| Existing wallets | The paid service (Templar Pass, ticket issuer, relayer operations); accounts with guardians or passkeys; a device-side option that removes the identity link |
 | Cryptography and formats | Addresses, derivation, backups and exports are specified and design-reviewed (SDK spec); implementation review, then freezing formats |
 | Device qualification | Complete payments on physical target devices and in browsers |
 | Wrapping service | Availability, pricing, and protection of client network metadata |

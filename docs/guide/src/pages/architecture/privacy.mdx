@@ -16,7 +16,7 @@ Templar is based on [StarkWare's starknet-privacy](https://github.com/starkware-
 | --- | --- |
 | Mandatory auditor | No global auditor key or mandatory viewing-key disclosure. Incoming and full viewing capabilities are shared only by the user. |
 | Deposit screener | No screener key or screening-signature requirement. Deposits use the pool's funding and state checks. |
-| Proving operator entrusted with private inputs | The holder proves on their own device. A wrapping server, which anyone can run, receives only an already zero-knowledge proof and public data, never the witness. |
+| Proving operator entrusted with private inputs | The holder proves on their own device. A wrapping server, which anyone can run, receives only an already zero-knowledge proof and public data, never the witness. For a spend from an [existing wallet](/architecture/existing-wallets), the server also learns which account made it. |
 
 Ordinary notes need no auditor, screener, or controller approval. Starknet verification, token behavior, and pool configuration remain part of the trust model. The [upstream comparison](/comparison) explains the corresponding hosted services and contract roles.
 
@@ -38,12 +38,17 @@ People who receive the same address off-chain can compare it and recognize the s
 | Spend root | Yes | Anyone can observe it | Yes |
 | Spend asset and real input and output counts | Yes | Hidden for in-pool transfers; the asset is public on withdrawal or execution | Only on exit |
 | Client proof and its public statement | Created on the device | The wrapping server receives them, with the client's network metadata | The statement's fields appear in the transaction |
+| Bound account of an existing-wallet spend | Yes | The prover server and relayer learn it; the wallet vendor sees the signed pool and exit fields | No |
 | Deposit token, amount, and funding account | Yes | Anyone can observe them | Yes |
 | External call, return token and amount, and linked return deposit | Yes | Anyone can observe them | Yes |
 | Withdrawal token, amount, and destination | Yes | Anyone can observe them | Yes |
 | Transaction sender, fees, ordering, and timing | Yes | Anyone can observe them | Yes |
 
 An in-pool transfer publishes neither its asset nor how many real inputs and outputs it has: every spend shows two nullifiers and two outputs, and the asset appears only when value leaves the pool ([assets](/architecture/assets)). Amounts of ordinary private-payment outputs remain inside the witness and encrypted payloads. Open-note funding amounts are public. Public movements and surrounding activity can still reveal or suggest those amounts.
+
+## Existing wallets add one link
+
+A spend from a Ready or Braavos account is authorized by that account's signature, which the prover server's statement account checks inside the proven execution. The server therefore learns which account made which spend. It still never sees keys, amounts or recipients, and it cannot move funds or change outputs, but it could delay or refuse chosen accounts' spends. The Templar wallet has no such link. See [existing wallets](/architecture/existing-wallets).
 
 ## Viewing keys are sensitive capabilities
 

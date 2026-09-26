@@ -31,6 +31,7 @@ export default defineConfig({
         { text: 'Open notes', link: '/architecture/open-notes' },
         { text: 'Policy notes', link: '/architecture/policy-notes' },
         { text: 'Pool governance', link: '/architecture/governance' },
+        { text: 'Existing wallets', link: '/architecture/existing-wallets' },
         { text: 'Client SDK', link: '/architecture/sdk' },
         { text: 'Privacy & trust', link: '/architecture/privacy' },
       ],

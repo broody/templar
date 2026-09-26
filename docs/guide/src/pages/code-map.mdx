@@ -50,6 +50,9 @@ packages under `packages/` have not yet adopted these formats.
 | `bench/m31-pool/open_note_e2e.py`, `policy_e2e.py`, `hidden_asset_e2e.py` | Local end to end: wallet → client proof → bridge → virtual OS → large proof → settlement |
 | `bench/m31-pool/cairo/src/tests/` | Pool tests, including adversarial suites and settlements with real large-proof facts |
 | `bench/m31-sepolia/` | Sepolia deployment and flows, with archived evidence |
+| `server/relayer/`, `sdk/ts/src/relayer.ts` | The relayer: takes proved R0 V5 spends from the server's handoff, simulates each exact transaction with validation, submits it from its own account and answers the job |
+| `bench/account-bound-p5/` | Real Ready and Braavos accounts in the pinned virtual OS on live Sepolia: runs, large proofs, the large proof's public shape, caps |
+| `bench/account-bound-p6/`, `sdk/ts/bench/sepolia-v3-e2e.mjs` | Pool V3 on Sepolia: deployment, the relayer's account, server and relayer configuration; the end to end with a real Braavos account |
 
 ## Earlier references
 
