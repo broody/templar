@@ -24,7 +24,10 @@ natural form on an append-only M31 tree whose commitment includes the amount.
 **Client statement (R0 V3).** V2's statement plus two public fields:
 - `intent` (a felt): the execution the spend authorizes, `0x0` for an ordinary spend. The circuit
   carries it verbatim, so the proof commits the owner to exactly that execution.
-- `identity` (nine M31 words): `H(IDENTITY, sk₀ ‖ scope)` under a private flag, zero otherwise.
+- `identity` (nine M31 words): `H(IDENTITY, ak₀ ‖ scope)` under a private flag, zero otherwise,
+  where `ak₀ = H(AUTH, sk₀)` is computed in the circuit from input 0's key, never guessed or
+  copied. (ADR-0027 amends ADR-0023: this is the handle of R0 V5 and R0 V6 on pool V3. R0 V3 and
+  V4 on pool V2 publish `H(IDENTITY, sk₀ ‖ scope)`.)
 
 The execution's budget is the statement's withdrawal (possibly zero); its recipient is part of the
 intent and may be any address except the pool (usually the adapter). A zero budget needs a zero
@@ -48,8 +51,9 @@ intent = Poseidon('OPEN_EXEC_V1', chain, pool, token, kind, adapter, nonce,
   `[identity_commitment] ++ calldata`, where
   `identity_commitment = Poseidon(partial, 0)` (upstream `commitment_from_partial` at nonce 0) and
   `partial = Poseidon('TEMPLAR_IDENTITY_V1', identity₉)`. Only the owner of `sk₀` can produce a
-  handle, so only they can address their shadow accounts. Upstream's shadow-account anonymizer is
-  used unchanged, configured with the Templar pool as its privacy contract.
+  handle, since the circuit derives `ak₀` from `sk₀` (knowing `ak₀`, as a full viewing key does,
+  is not enough), so only they can address their shadow accounts. Upstream's shadow-account
+  anonymizer is used unchanged, configured with the Templar pool as its privacy contract.
 
 **`COMPUTE` targets.** Upstream contracts trust the calldata prefix of
 `privacy_invoke_with_computation` as the output of their own `privacy_compute`, run over the
@@ -57,11 +61,13 @@ user's secret in the client proof; they check only that the privacy contract is 
 compact path has no such client-side computation: the prefix is always the pool's identity
 commitment, followed by user calldata. That is exactly the shadow anonymizer's compute output, but
 any other target would read user-chosen data as proven output. The pool therefore calls only
-contracts whose class the owner has allowed (`set_shadow_class`, event `ShadowClassSet`). An
+contracts whose class the owner has allowed (event `ShadowClassSet`). On pool V3 the owner allows
+or removes a class through the timelocked `propose(class_hash, value)` and `apply(class_hash)`
+(ADR-0027; `docs/pool-v3-spec.md` §8); pool V2's `set_shadow_class` is immediate. An
 upgrade of an anonymizer changes its class and disables `COMPUTE` to it until the new class is
 reviewed and allowed. General `privacy_compute` is not supported (ADR-0023).
 
-**Shadow accounts.** The handle `H(IDENTITY, sk₀ ‖ scope)` is public, and anyone can compute
+**Shadow accounts.** The handle `H(IDENTITY, ak₀ ‖ scope)` is public, and anyone can compute
 `Poseidon(partial, n)` from it for every `n`. A public nonce would therefore let anyone enumerate
 every shadow account under one handle; the pool requires it to be zero. A wallet separates accounts
 through the private `scope` instead, nine M31 words derived from a wallet secret and the context:
@@ -71,7 +77,7 @@ scope_i = Poseidon('TEMPLAR_SHADOW_SCOPE_V1', seed, chain, pool, anonymizer, dap
 ```
 
 (`bench/m31-pool/open_note.py`, `shadow_scope`). Handles for different scopes are unlinkable without
-`sk₀` and the seed; all executions under one scope share its handle and its shadow account.
+`ak₀` and the seed; all executions under one scope share its handle and its shadow account.
 
 **Settlement (`apply_spend_with_invoke`)**, under the pool's lock:
 1. Recompute `intent`; check expiry (block number); the adapter is nonzero and not the pool; the

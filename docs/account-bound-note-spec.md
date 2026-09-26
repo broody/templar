@@ -1,5 +1,9 @@
 # Account-bound notes, expiry and M31 pool V3 (R0 V5)
 
+> **Being replaced.** [ADR-0027](adr/0027-one-wallet-model.md) (proposed) removes account-bound
+> notes. The design of R0 V6 and the routing adapter is in [pool-v3-spec.md](pool-v3-spec.md). This
+> spec stays as the record of the deployed R0 V5 until the Sepolia cutover.
+
 Status: **design, revision 4.** Decided by the user on 2026-09-25
 ([ADR-0026](adr/0026-account-bound-notes.md)). Implemented so far: P2, the relation
 (`client-port/results/stwo-client-r5`); P3, the bridge and statement account

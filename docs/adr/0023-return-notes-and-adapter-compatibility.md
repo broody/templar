@@ -8,6 +8,7 @@
 - Amends: ADR-0007 publication metadata and ADR-0014 operation binding/output accounting for this execution path
 - Specification: [open notes](../open-note-spec.md)
 - Amended: 2026-09-24 (rename; compact client-proof path; shadow accounts), see below
+- Amended: 2026-09-26 (identity handle, by [ADR-0027](0027-one-wallet-model.md)), see below
 - Reference: [upstream adapter integration](../../bench/return-note-e2e/README.md)
 
 ## Context
@@ -125,10 +126,11 @@ claimed from introducing this abstraction.
   [specification](../open-note-spec.md#compact-client-proof-path-r0-v3). The budget is the
   statement's withdrawal and may be zero; the intent names its recipient.
 - **Shadow accounts.** A bounded form of upstream's `ComputeAndInvoke`: the client proves the
-  identity handle `H(IDENTITY, sk₀ ‖ scope)`, and the pool derives upstream's identity commitment
-  from it. This supports persistent pseudonymous positions through upstream's shadow-account
-  anonymizer. General `privacy_compute` (arbitrary application logic on private data) needs
-  per-application circuits and remains out of scope.
+  identity handle `H(IDENTITY, sk₀ ‖ scope)` (amended 2026-09-26 to `H(IDENTITY, ak₀ ‖ scope)`
+  with `ak₀ = H(AUTH, sk₀)`; see the amendment below), and the pool derives upstream's identity
+  commitment from it. This supports persistent pseudonymous positions through upstream's
+  shadow-account anonymizer. General `privacy_compute` (arbitrary application logic on private
+  data) needs per-application circuits and remains out of scope.
 - **Limits.** 2 destinations, 4 new notes, 64 calldata felts, one adapter call and one input token
   per transaction.
 - **Process deviation.** At the user's direction, the independent math review and the adversarial
@@ -161,3 +163,13 @@ claimed from introducing this abstraction.
   anonymous membership, authentication and voter-private DAO voting (one member one vote, or
   token-weighted against a snapshot root). It was deferred for lack of near-term demand; it would
   fit with the policy-note design.
+
+## Amendment (2026-09-26): identity handle (ADR-0027)
+
+[ADR-0027](0027-one-wallet-model.md) amends the identity handle of this ADR's 2026-09-24
+amendment. The handle becomes `H(IDENTITY, ak₀ ‖ scope)`, where `ak₀ = H(AUTH, sk₀)` is computed
+in the circuit from input 0's key, never taken as a guessed or copied witness. It is R0 V5's
+ordinary handle, and R0 V6 keeps it (`docs/pool-v3-spec.md` §4.3). A holder of `ak₀` alone, such
+as a full viewing key, therefore cannot publish a handle. R0 V3 and V4 on pool V2 keep
+`H(IDENTITY, sk₀ ‖ scope)`, and no pool V2 shadow account needs to stay addressable under pool V3.
+The rest of this ADR is unchanged; [open notes](../open-note-spec.md) carries the new text.

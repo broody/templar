@@ -5,7 +5,11 @@ compact client-proof path, replacing the research scripts under `bench/` for ser
 **Revision 4 amendments** (`docs/account-bound-note-spec.md` §9, §11; P4 implemented in
 `server/prover` on `feat/account-bound`) add R0 V5 on pool V3, bound spends and payment: the
 "Pool V3 (R0 V5)" paragraphs in §2, §4, §5, §6, §7, §8 and §10. The normative detail is
-account-bound spec §9.
+account-bound spec §9. **Revision 5 amendments** (`docs/pool-v3-spec.md` §9, §14; ADR-0027)
+remove bound mode and add R0 V6 (`r6`), served through routing adapters (pool-v3-spec §6), in the
+same sections. The code implements R0 V5 and bound mode until ADR-0027's phases B–E land, so each
+changed passage is marked "(R0 V6, ADR-0027: pending implementation)", and bound-mode text that
+the code still has is marked "(removed by ADR-0027, phase B)".
 
 ## 1. Purpose and scope
 
@@ -58,8 +62,17 @@ the statement). It can refuse, delay or drop jobs.
 carries pool V3's full calldata, so the server **can** settle the spend, and it chooses when, up
 to `send_deadline`. In bound mode it learns the account `A`, with the salt and the account's
 signature; a retained signature over a public binding is third-party-verifiable proof that `A`
-made the spend, so bound inputs are deleted when proving ends and results on acknowledgement. A
-free full withdrawal tells it that the spend empties its inputs.
+made the spend, so bound inputs are deleted when proving ends and results on acknowledgement
+(bound mode: removed by ADR-0027, phase B). A free full withdrawal tells it that the spend empties
+its inputs.
+
+**R0 V6 (revision 5;** `docs/pool-v3-spec.md` §7.4, §9.4; R0 V6, ADR-0027: pending
+implementation**).** No job carries an account, in any mode: the R0 V6 statement has no account
+limbs, and the `r6` body has no salt and no signature. The full-calldata and free-withdrawal
+rules above carry over. No login session, cookie or wallet credential reaches the server, and
+job requests carry no session. The pre-checks still send each statement's root and nullifiers to
+the server's node, so a self-hoster should use their own node for privacy, but an
+operator-controlled node is no longer required.
 
 **Transport privacy.** The server accepts every request, submissions and job polling alike,
 over oblivious HTTP (OHTTP), with the same gateway layer the upstream transaction prover uses
@@ -128,23 +141,45 @@ The authoritative checks remain in the proven execution and the pool.
 **Pool V3 (R0 V5; revision 4).** The admission order is account-bound spec §9's:
 
 1. parse (the body adds `pool_call`, parsed strictly, and for bound spends `salt` and
-   `signature`);
-2. configuration (a bound spend needs an operator-controlled node);
+   `signature`, removed by ADR-0027, phase B; an `r6` body has neither);
+2. configuration (a bound spend needs an operator-controlled node: removed by ADR-0027, phase B);
 3. payment: tickets verified and reserved, or the free full withdrawal's check, whose allowances
-   are taken only when the job is queued;
+   are taken only when the job is queued. For `r6` the free check includes the job's
+   proof-of-work stamp (§7) and routes the job to the free queue (R0 V6, ADR-0027: pending
+   implementation);
 4. deduplication and back-off;
 5. expiry: `valid_until ≥ latest + (jobs ahead + 1) · blocks_per_job + 11 + relay margin`, with
    the queue counted per queue, and pool V3's `valid_until` rules;
 6. chain state: root and nullifiers, the root still accepted at `send_deadline`, the verifier
-   with no change due (`get_verifier('R0')`, `get_proposal('R0')`), an invoke's pool state, and
-   a bound account's class;
+   with no change due (`get_verifier('R0')`, `get_proposal('R0')`; for `r6`, the verifier and
+   route checks below), an invoke's pool state (AB-SP7), and a bound account's class (removed by
+   ADR-0027, phase B);
 7. the bridge, and the pool call matched field by field to the bridge-checked statement;
 8. the bound account's `is_valid_signature`, advisory, whose failure backs off the note (the
-   first is free), never the account.
+   first is free), never the account (removed by ADR-0027, phase B: `r6` admission has no
+   step 8).
+
+After phase B and until the swap, `r5` admission refuses a statement with `account ≠ 0` as a
+client fault that consumes tickets (ADR-0027 phase B: pending implementation).
+
+**Verifier and route checks (R0 V6;** `docs/pool-v3-spec.md` §9.2; R0 V6, ADR-0027: pending
+implementation**).** At admission and again at job start, for the relation's kind (`'R0'` for
+`r6`, `'P1'` for `p1`), the server also requires:
+
+- `get_verifier(kind)` is a pinned adapter, with its pinned class, and `get_routes()` is a pinned
+  state of its route set;
+- the relation's route (keyed by the statement account in the relation's configuration, §8) is
+  active and equal to its pin in all eight fields;
+- no verifier change for that kind, and no change to its own route, is due (§8).
 
 Ticket states: released on a refusal or a server-side failure before job start; consumed by a
 bridge rejection or a calldata mismatch; spent, once synced, when the OS stage begins; kept spent
-for the client's faults after that; refunded, blind, for the server's own.
+for the client's faults after that; refunded, blind, for the server's own. For `r6` they follow
+the same causes without the signature-failure case, plus blind refunds when the service fails to
+settle for a cause that is not the client's (a relayer refusal or late take-up, a deadline or
+root margin the server admitted, a verifier or route change after admission;
+`docs/pool-v3-spec.md` §7.2), and for bucket-check failures that are the server's fault (§5)
+(R0 V6, ADR-0027: pending implementation).
 
 ## 5. The job
 
@@ -174,14 +209,32 @@ A failed job reports its stage; resubmission is safe.
 **Pool V3 (R0 V5; revision 4).**
 
 - **Job start** repeats the expiry rule at the base block (proving time included), the root at
-  the deadline, the pool rules, and for a bound spend the account's class and signature.
+  the deadline, the pool rules, and for a bound spend the account's class and signature (removed
+  by ADR-0027, phase B). For `r6` it repeats the expiry, chain, verifier and route checks (§4) at
+  the chosen base block (R0 V6, ADR-0027: pending implementation).
 - **Transaction calldata** is `(proof_data, salt, signature)`, with a configurable L2 gas bound
-  (default 450M) in place of 10^9.
+  (default 450M) in place of 10^9. For `r6` the calldata is `(proof_data)`, and `os_l2_gas`
+  (default 450M, sized from the bound `__execute__`) is measured again (R0 V6, ADR-0027: pending
+  implementation).
 - **Before proving,** the OS run's steps and named builtins must be within the configured caps
-  (a violation is the client's fault).
+  (a violation is the client's fault). For `r6` the caps also cover Blake compressions, and all
+  are measured again from a V6 virtual-OS run on live Sepolia state (ADR-0027 phase C); if the
+  OS result does not report Blake, the prover binary checks it (R0 V6, ADR-0027: pending
+  implementation).
+- **The bucket check** (`docs/pool-v3-spec.md` §9.3; R0 V6, ADR-0027: pending implementation).
+  Before proving, the server asserts that the job's component sizes fit the pinned PROOF2 leaf
+  bucket, so that every spend has the same public PROOF2 header. This replaces the account-class
+  allowlist and the padding.
+  - **Fault** (PR2-12). A failure is the client's fault only when `proof_data` deviates from the
+    pinned proof structure for the statement's shape; its tickets then stay spent. Otherwise it
+    is the server's fault, and the tickets are refunded.
+  - The server runs a reference job against the bucket at startup and after every route switch.
 - **Result:** `send_deadline = min(statement.valid_until, base_block + max_proof_age)` in place
   of `valid_until`, and the `pool_call` the relayer settles. A failed job releases its note, which
-  backs off, doubling per failure.
+  backs off, doubling per failure. For `r6`, `max_proof_age` is the route's (§8), and each result
+  names its route key `statement` (the statement account's address, `docs/pool-v3-spec.md` §6.1),
+  distinct from the job body's public statement (PR2-3; R0 V6, ADR-0027: pending
+  implementation).
 
 ## 6. API
 
@@ -197,7 +250,16 @@ A failed job reports its stage; resubmission is safe.
   served, told apart by `reason: "signature" | "account_class"`. `GET /v1/jobs/{id}` adds `refund` (blind signatures on the job's refund requests).
   `DELETE /v1/jobs/{id}` acknowledges a finished job's result and deletes it. `/v1/info` adds the
   `r5` section (spend domain and type hashes, `E`, `Q`, `W`, `T`, bound mode and classes, caps),
-  `payment` (issuer keys, costs, priced assets, free bounds) and `relay: {enabled}`.
+  `payment` (issuer keys, costs, priced assets, free bounds) and `relay: {enabled}`. The `salt`
+  and `signature` fields, both `403` reasons, and the bound fields in `/v1/info` are removed by
+  ADR-0027, phase B.
+- **R0 V6 (revision 5;** `docs/pool-v3-spec.md` §9.1, §9.5; R0 V6, ADR-0027: pending
+  implementation**).** `POST /v1/jobs` takes `{relation: "r6", proof, statement, pool_call:
+  {entry_point: "apply_spend" | "apply_spend_with_invoke", calldata}, payment?}`, where `payment`
+  is `{tickets, refund_requests}` or `{free_full_withdrawal: {openings: [inner₀, inner₁],
+  stamp}}`. There is no salt and no signature. Each job result names its route key `statement`
+  (§5). `/v1/info` gains an `r6` section: the pool parameters (`E`, `Q`, `W`, `T`), the adapter,
+  the server's route and the circuit hash. It has no spend-message hashes.
 - **Relay handoff (P4b),** on the `[relay]` listener only, always with the bearer token:
   - `GET /relay/v1/jobs` → `{jobs: [{id, result, nullifiers, root, send_deadline}],
     relay_margin_blocks}`, earliest deadline first;
@@ -210,6 +272,10 @@ A failed job reports its stage; resubmission is safe.
   within `relay_margin_blocks`; a claimed one expires at its deadline. Invokes are refused at once.
   `GET /v1/jobs/{id}` shows the answer as `relay: {status: pending | submitted | refused |
   expired, …}`, kept past retention until the deadline.
+
+  During the cutover the server relays both `r5` and `r6` results until apply. Each relay item
+  carries its relation and its route key, and the relayer checks the verifier and route per item
+  (`docs/pool-v3-spec.md` §7.3, §9.5; R0 V6, ADR-0027: pending implementation).
 
 Results are kept for a configured time (default one hour), then deleted with their inputs.
 
@@ -225,10 +291,17 @@ Results are kept for a configured time (default one hour), then deleted with the
 - **Time:** a per-stage timeout (OS run, proof).
 - Allowlists (IP or domain) are a later addition.
 - **Pool V3 (revision 4).** Caps on virtual-OS steps and builtins before proving; bound spends
-  only for configured account classes, whose resources were measured. Free full withdrawals have
-  their own queue, never count against the paid queue, and take at most a configured share of
-  the prover's time; they are rate-limited globally, per address and per bound account, debited
-  only when the job is queued.
+  only for configured account classes, whose resources were measured (removed by ADR-0027, phase
+  B). Free full withdrawals have their own queue, never count against the paid queue, and take at
+  most a configured share of the prover's time; they are rate-limited globally, per address and
+  per bound account (the per-account cap: removed by ADR-0027, phase B), debited only when the
+  job is queued.
+- **R0 V6 (revision 5;** `docs/pool-v3-spec.md` §7.5; R0 V6, ADR-0027: pending
+  implementation**).** Caps also cover Blake compressions (§5). Every free job, over OHTTP or
+  not, carries a proof-of-work stamp (PS-13) priced near the service's cost of one job, with
+  difficulty rising as the free queue fills. The global bucket is sized to the relayer's gas
+  budget, and the 25% prover-time share stays. Free exits are best-effort and can be exhausted by
+  one party; paid exits and self-hosting are unaffected.
 
 ## 8. Configuration
 
@@ -255,6 +328,38 @@ at startup. New settings: `operator_node`, `bound_account_classes` and `bound_da
 for bound spends; `pending_margin_secs`; `blocks_per_job`, `relay_margin_blocks`, `os_l2_gas`,
 `bound_retention_secs`; `[caps]`; `[payment]` (issuer keys, refund key, costs, priced assets,
 free bounds, `spent_dir`); `[relay]` (`listen`, and `token_file`, always required). A pending verifier change at startup is a warning; jobs are refused while it is due.
+`operator_node`, `bound_account_classes`, `bound_data_dir` and `bound_retention_secs` are removed
+by ADR-0027, phase B, and `prover.example.toml` is updated.
+
+**R0 V6 (revision 5;** `docs/pool-v3-spec.md` §9.5; R0 V6, ADR-0027: pending
+implementation**).** `r6` and `p1` are each served through a routing adapter
+(pool-v3-spec §6).
+
+- **Per-route proof ages.** Each relation's configuration names its route: the statement
+  account (the route key), its class, account tag, OS program, proof version, variant, output
+  version and `max_proof_age` (pool-v3-spec §6.1). `max_proof_age` moves from the network section
+  to each relation's route. The startup check compares each route, read through the adapter's
+  views (`get_pool`, `get_kind`, `get_routes`, `get_route`) instead of its storage.
+  `pending_margin_secs` defaults to the largest age served times 6 seconds.
+- **Pending changes.** The server refuses a relation's jobs from `pending_margin_secs` before
+  `eta` until `eta + T`, unless the change is applied, cancelled or lapsed, when either of these
+  is due:
+  - an R0 verifier change;
+  - a change to the server's own route: the route keyed by the statement in the relation's
+    configuration.
+
+  A pending route addition under a new key does not stop the server. The same rules apply to
+  `p1`, keyed on `'P1'` (PR2-1). Pending route changes are read from `get_route_proposals()`.
+- **The config hash** (`facts[6]`) stays pinned. If an OS rotation changes it, it moves into that
+  route's pin.
+- **Dual-version operation, for the cutover only.**
+  - The server starts with both `r5` and `r6` configured, and treats whichever is not the pool's
+    current R0 verifier as dormant, not fatal. It switches on `get_verifier('R0')`, without a
+    restart, when the swap applies.
+  - For `p1`, no new relation version is needed, only an adapter switch. The old P1 adapter and
+    the P1 routing adapter are both configured, and `get_verifier('P1')` selects one. The one not
+    selected is dormant, not fatal at startup.
+  - The release after apply removes the `r5` pins and the old P1 adapter.
 
 ## 9. Build and distribution
 
@@ -306,8 +411,10 @@ compose example ships that way.
 **Pool V3 (revision 4).** Logs never contain a bound account, salt or signature. Bound job
 directories live on a tmpfs and are deleted when proving ends; swap is off or encrypted; results
 go on acknowledgement or after `bound_retention_secs`. The free-withdrawal counter keys bound
-accounts by a keyed hash. The spent-ticket logs are kept on their own volume and never deleted
-in P4.
+accounts by a keyed hash. (These bound data rules are removed by ADR-0027, phase B: with no
+tmpfs requirement, no memory-only retention for bound jobs and no operator-controlled node, jobs
+follow the ordinary retention of §6; `docs/pool-v3-spec.md` §9.4.) The spent-ticket logs are kept
+on their own volume and never deleted in P4.
 
 ## 11. Tests
 
