@@ -23,7 +23,8 @@ instead. Working that design through showed four problems:
 - **Opt-in proofs of innocence are the larger build.** They need a new relation (forward
   propagation through spends), a registry, status-aware coin control, and a payer's cooperation
   at every hop.
-- **Comparable projects hold every deposit.** Research on 2026-09-27 (Railgun, Privacy Pools
+- **Comparable projects hold every deposit.** Research on 2026-09-27
+  ([compliance-enforcement-research.md](../reviews/compliance-enforcement-research.md): Railgun, Privacy Pools
   (0xbow), Nocturne, STRK20, Tornado Cash, Samourai) found that each project with institutional
   traction enforces its control by default in some layer. They also hold every deposit for a
   while (Railgun one hour; Privacy Pools and Nocturne hours). Nocturne's deposit manager had a
