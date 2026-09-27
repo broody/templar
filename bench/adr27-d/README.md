@@ -1,9 +1,15 @@
 # ADR-0027 phase D: R0 V6 and the routing adapters on Sepolia
 
 [`docs/pool-v3-spec.md`](../../docs/pool-v3-spec.md) §11.1. **Status (2026-09-27):** deployed by the owner (05:51–05:52) and independently verified; V6
-measured on live state; the dual-version server running. Pool V3 still has its V5 adapters until
-phase E. Records: [`results/deployment.json`](results/deployment.json),
+measured on live state. Records: [`results/deployment.json`](results/deployment.json),
 [`results/measure-v6.json`](results/measure-v6.json).
+
+**Phase E stopped (2026-09-27); Templar development is paused ([README](../../README.md)).** Both
+verifier proposals were sent (`propose-r0` in block 15687383, `propose-p1` in block 15687388;
+[`results/cutover.json`](results/cutover.json)). The apply was stopped while it waited for the
+timelock, before it sent anything. The proposals were left to lapse, at 10:19:56 and 10:20:05 CST
+on 2026-09-27, so pool V3 keeps its V5 adapters. The drill and the V6 end to end did not run. The
+dual-version prover and relayer are stopped. The runbook below is kept for reference.
 
 | Contract | Address | Class |
 | --- | --- | --- |
